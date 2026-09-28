@@ -3,6 +3,24 @@
     <channel>
         <title>Islet</title>
         <item>
+            <title>1.2.0</title>
+            <pubDate>Mon, 28 Sep 2026 19:50:54 +0200</pubDate>
+            <link>https://getislet.vercel.app</link>
+            <sparkle:fullReleaseNotesLink>https://github.com/ruben4reall/islet/releases</sparkle:fullReleaseNotesLink>
+            <sparkle:version>1.2.0</sparkle:version>
+            <sparkle:shortVersionString>1.2.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <description sparkle:format="markdown"><![CDATA[- **GitHub Copilot in VS Code**, contributed by [@BonnetAdam](https://github.com/BonnetAdam): Copilot's agent sessions
+  show in the notch like the other agents, with the project, the tool it runs, and Done when an answer is complete,
+  through VS Code's own hooks. Connect it in Settings, Developers, or with `islet hooks install --agent copilot`. Islet
+  only watches: VS Code keeps each session's own permission mode.
+- **Agents**: each has its own symbol in the notch (Claude Code keeps the sparkle), and two permission requests from
+  one session no longer cancel each other (also by @BonnetAdam). A request answered in the terminal leaves the island
+  once its tool has run.
+]]></description>
+            <enclosure url="https://github.com/ruben4reall/islet/releases/download/v1.2.0/Islet-1.2.0.dmg" length="4147360" type="application/octet-stream" sparkle:edSignature="ByJTf4Z4X/qqayERY7A7srub+wasloMuX5sgI+rjlM+XEE+9MMo9TMxT+twCANRWS0dp1TtlmLWVhu5CQrZlCw=="/>
+        </item>
+        <item>
             <title>1.1.0</title>
             <pubDate>Sun, 27 Sep 2026 22:47:20 +0200</pubDate>
             <link>https://getislet.vercel.app</link>
