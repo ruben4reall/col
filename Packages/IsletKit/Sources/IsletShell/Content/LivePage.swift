@@ -9,16 +9,17 @@ struct LivePage: View {
     var body: some View {
         let sessions = agents.sessions
         let requests = agents.pending.values.sorted { $0.received > $1.received }
+        let sessionsWithRequests = Set(requests.map(\.sessionID))
         if sessions.isEmpty && custom.entries.isEmpty {
             EmptyLive()
         } else {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 8) {
                     ForEach(requests) { request in
-                        PermissionCard(request: request) { agents.decide(request.sessionID, $0) }
+                        PermissionCard(request: request) { agents.decide(request.id, $0) }
                             .transition(.scale(scale: 0.96).combined(with: .opacity))
                     }
-                    ForEach(sessions.filter { agents.pending[$0.id] == nil }) { session in
+                    ForEach(sessions.filter { !sessionsWithRequests.contains($0.id) }) { session in
                         AgentRow(session: session) { agents.reveal(session) }
                     }
                     ForEach(custom.entries) { entry in
@@ -147,7 +148,7 @@ private struct AgentRow: View {
             HStack(spacing: 10) {
                 ZStack {
                     Circle().fill(Theme.coral.color.opacity(0.15))
-                    Image(systemName: "sparkle")
+                    Image(systemName: CodingAgent.symbol(for: session.agent))
                         .font(.system(size: 12, weight: .bold))
                         .foregroundStyle(Theme.coral.color)
                         .symbolEffect(.pulse, isActive: isWorking)

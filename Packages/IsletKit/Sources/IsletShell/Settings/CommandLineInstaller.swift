@@ -1,4 +1,5 @@
 import Foundation
+import AppKit
 import IsletCore
 
 /// Puts the `islet` command on the user's path and connects Claude Code to Islet, both without administrator rights.
@@ -37,6 +38,7 @@ enum CommandLineInstaller {
         case .codex: home.appendingPathComponent(".codex/hooks.json")
         case .gemini: home.appendingPathComponent(".gemini/settings.json")
         case .cursor: home.appendingPathComponent(".cursor/hooks.json")
+        case .copilot: home.appendingPathComponent(".copilot/hooks/islet.json")
         }
     }
 
@@ -44,6 +46,9 @@ enum CommandLineInstaller {
     static func isInstalled(_ agent: CodingAgent) -> Bool {
         FileManager.default.fileExists(atPath: settingsURL(for: agent).deletingLastPathComponent().path)
             || (agent == .cursor && FileManager.default.fileExists(atPath: "/Applications/Cursor.app"))
+            || (agent == .copilot && ["com.microsoft.VSCode", "com.microsoft.VSCodeInsiders"].contains {
+                NSWorkspace.shared.urlForApplication(withBundleIdentifier: $0) != nil
+            })
     }
 
     /// True when the agent's settings call `islet hook`.

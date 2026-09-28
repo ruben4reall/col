@@ -371,22 +371,22 @@
         }
       }
     },
-    "Claude Code, Codex, Gemini CLI and Cursor connect in Settings once installed.": {
+    "Claude Code, Codex, Gemini CLI, Cursor and GitHub Copilot connect in Settings once installed.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Claude Code, Codex, Gemini CLI et Cursor se connectent dans les Réglages une fois installés."
+            "value": "Claude Code, Codex, Gemini CLI, Cursor et GitHub Copilot se connectent dans les Réglages une fois installés."
           }
         }
       }
     },
-    "Claude Code, Codex, Gemini CLI and Cursor sessions, and their permission requests.": {
+    "Claude Code, Codex, Gemini CLI, Cursor and GitHub Copilot sessions, and the permission requests of Claude Code and Codex.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Les sessions Claude Code, Codex, Gemini CLI et Cursor, et leurs demandes d’autorisation."
+            "value": "Les sessions Claude Code, Codex, Gemini CLI, Cursor et GitHub Copilot, et les demandes d’autorisation de Claude Code et Codex."
           }
         }
       }
@@ -701,6 +701,16 @@
         }
       }
     },
+    "GitHub Copilot (VS Code)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHub Copilot (VS Code)"
+          }
+        }
+      }
+    },
     "Grant…": {
       "localizations": {
         "fr": {
@@ -901,12 +911,12 @@
         }
       }
     },
-    "Islet never signs in to any AI service: it only hears the hooks each agent calls on your Mac. Any other agent or script can report with islet agent.": {
+    "Islet never signs in to any AI service: it only hears the hooks each agent calls on your Mac. VS Code keeps Copilot permissions according to each session's mode. ChatGPT for macOS has no activity hooks; other agents and scripts can report with islet agent.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Islet ne se connecte à aucun service d’IA : il entend seulement les hooks que chaque agent appelle sur votre Mac. Tout autre agent ou script peut s’annoncer avec islet agent."
+            "value": "Islet ne se connecte à aucun service d’IA : il reçoit seulement les hooks des agents sur votre Mac. VS Code applique le mode d’autorisation propre à chaque session Copilot. ChatGPT pour macOS ne propose pas de hooks d’activité ; les autres agents et scripts peuvent envoyer leur état avec islet agent."
           }
         }
       }

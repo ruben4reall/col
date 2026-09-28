@@ -1,5 +1,7 @@
 #!/bin/bash
-# scripts/build.sh: generates the Xcode project with XcodeGen and builds Islet.app into .build/xcode.
+# scripts/build.sh: generates the Xcode project with XcodeGen and builds Islet.app into .build/xcode, or into
+# ISLET_BUILD_DIR when it is set (a folder outside the clone, for a clone kept in a synced folder such as iCloud
+# Drive, whose file attributes can make codesign refuse the app).
 #
 #   scripts/build.sh [Debug|Release]
 #
@@ -18,11 +20,12 @@ SIGNING=(ENABLE_HARDENED_RUNTIME=NO)
 if [ -n "${ISLET_TEAM_ID:-}" ]; then
   SIGNING=(-allowProvisioningUpdates CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM="$ISLET_TEAM_ID" CODE_SIGN_IDENTITY="Apple Development")
 fi
-mkdir -p .build/xcode
-LOG=.build/xcode/build.log
+BUILD_DIR="${ISLET_BUILD_DIR:-.build/xcode}"
+mkdir -p "$BUILD_DIR"
+LOG="$BUILD_DIR/build.log"
 xcodebuild -project Islet.xcodeproj -scheme Islet -configuration "$CONFIGURATION" -destination 'generic/platform=macOS' \
-  -derivedDataPath .build/xcode -clonedSourcePackagesDirPath .build/spm ${SIGNING[@]+"${SIGNING[@]}"} build > "$LOG" 2>&1 \
+  -derivedDataPath "$BUILD_DIR" -clonedSourcePackagesDirPath .build/spm ${SIGNING[@]+"${SIGNING[@]}"} build > "$LOG" 2>&1 \
   || { grep -E "error:" "$LOG" | head -20 >&2; tail -n 20 "$LOG" >&2; exit 1; }
-APP=".build/xcode/Build/Products/$CONFIGURATION/Islet.app"
+APP="$BUILD_DIR/Build/Products/$CONFIGURATION/Islet.app"
 codesign --verify --strict "$APP"
 echo "$APP"

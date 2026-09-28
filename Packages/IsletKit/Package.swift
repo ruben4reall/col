@@ -15,5 +15,6 @@ let package = Package(
         // The window, the island's drawing and its motion.
         .target(name: "IsletShell", dependencies: ["IsletCore"], resources: [.process("Resources")]),
         .testTarget(name: "IsletCoreTests", dependencies: ["IsletCore"]),
+        .testTarget(name: "IsletShellTests", dependencies: ["IsletCore", "IsletShell"]),
     ]
 )

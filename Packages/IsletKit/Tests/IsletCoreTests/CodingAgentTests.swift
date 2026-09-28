@@ -66,4 +66,53 @@ import Testing
         #expect(event.agent == nil)
         #expect(event.project == "Aider")
     }
+
+    @Test func vscodeCopilotEventsUseLocalHookPayloads() throws {
+        let event = try #require(CodingAgent.copilot.event(from: raw("""
+        {"session_id":"v1","hook_event_name":"UserPromptSubmit","cwd":"/Users/me/shop",
+         "prompt":"Show me the current project status"}
+        """)))
+        #expect(event.agent == .copilot)
+        #expect(event.event == "UserPromptSubmit")
+        #expect(event.project == "shop")
+        // The prompt is never read: the island shows that Copilot works, not what it was asked.
+        #expect(event.message == nil)
+        #expect(!CodingAgent.copilot.answersPermissions)
+
+        var board = AgentBoard()
+        board.apply(event, at: Date())
+        #expect(board.ordered.first?.state == .working(nil))
+
+        let permission = try #require(CodingAgent.copilot.event(from: raw("""
+        {"session_id":"v1","hook_event_name":"PreToolUse","cwd":"/Users/me/shop",
+         "tool_name":"run_in_terminal","tool_input":{"command":"swift test"}}
+        """)))
+        #expect(permission.event == "PreToolUse")
+        #expect(permission.toolSummary == "run_in_terminal · swift test")
+        board.apply(permission, at: Date())
+        #expect(board.ordered.first?.state == .working("run_in_terminal · swift test"))
+
+        // Stop ends an answer: Done, as for the other agents, then the session leaves once it has settled, since VS
+        // Code never says a chat is over.
+        let stop = try #require(CodingAgent.copilot.event(from: raw("""
+        {"session_id":"v1","hook_event_name":"Stop","cwd":"/Users/me/shop","stop_hook_active":false}
+        """)))
+        #expect(stop.event == "Stop")
+        let end = Date()
+        board.apply(stop, at: end)
+        #expect(board.ordered.first?.state == .done)
+        board.settle(now: end.addingTimeInterval(7))
+        #expect(board.sessions.isEmpty)
+    }
+
+    @Test func agentsThatEndTheirSessionsStayIdleAfterDone() {
+        var board = AgentBoard()
+        let start = Date()
+        board.apply(HookEvent(sessionID: "c1", event: "UserPromptSubmit", cwd: "/Users/me/shop", agent: .claude), at: start)
+        board.apply(HookEvent(sessionID: "c1", event: "Stop", cwd: "/Users/me/shop", agent: .claude), at: start)
+        board.settle(now: start.addingTimeInterval(7))
+        #expect(board.ordered.first?.state == .idle)
+        #expect(CodingAgent.named("Claude Code")?.endsSessions == true)
+        #expect(CodingAgent.named(CodingAgent.copilot.name)?.endsSessions == false)
+    }
 }

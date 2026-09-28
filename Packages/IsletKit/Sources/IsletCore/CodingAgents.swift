@@ -3,7 +3,7 @@ import Foundation
 /// The coding agents Islet connects to through their own hooks. Each writes its events in its own shape; they all
 /// become the same `HookEvent` here, so the board and the island never need to know which agent sent one.
 public enum CodingAgent: String, CaseIterable, Sendable, Codable {
-    case claude, codex, gemini, cursor
+    case claude, codex, gemini, cursor, copilot
 
     public var name: String {
         switch self {
@@ -11,12 +11,34 @@ public enum CodingAgent: String, CaseIterable, Sendable, Codable {
         case .codex: "Codex"
         case .gemini: "Gemini CLI"
         case .cursor: "Cursor"
+        case .copilot: "GitHub Copilot (VS Code)"
+        }
+    }
+
+    public static func symbol(for name: String?) -> String {
+        switch name {
+        // Claude Code keeps the sparkle the island has always shown for agents.
+        case CodingAgent.claude.name: "sparkle"
+        case CodingAgent.codex.name: "curlybraces.square"
+        case CodingAgent.gemini.name: "sparkles"
+        case CodingAgent.cursor.name: "cursorarrow"
+        case CodingAgent.copilot.name: "chevron.left.forwardslash.chevron.right"
+        default: "sparkle"
         }
     }
 
     /// Agents whose hooks can wait for an answer: their permission requests get Allow and Deny in the island. The
     /// others say they need the user, who answers in the agent itself.
     public var answersPermissions: Bool { self == .claude || self == .codex }
+
+    /// False for an agent that never says a session is over: VS Code sends no event when a Copilot chat ends, so its
+    /// sessions leave the island once their Done has settled instead of staying there, idle, for good.
+    public var endsSessions: Bool { self != .copilot }
+
+    /// The agent behind a session, from the name the session keeps.
+    public static func named(_ name: String?) -> CodingAgent? {
+        allCases.first { $0.name == name }
+    }
 
     /// Turns one hook payload, as this agent wrote it, into an event. Nil for events Islet does not follow.
     public func event(from raw: [String: JSONValue]) -> HookEvent? {
@@ -67,6 +89,16 @@ public enum CodingAgent: String, CaseIterable, Sendable, Codable {
                 return nil
             }
             return event
+        case .copilot:
+            // VS Code's own hooks (the Local agent): SessionStart, UserPromptSubmit, PreToolUse, PostToolUse, and Stop
+            // when an answer is complete. The cwd is the workspace's first folder.
+            guard let name = string("hook_event_name") else { return nil }
+            let session = string("session_id") ?? string("transcript_path") ?? string("cwd") ?? "vscode-copilot"
+            return HookEvent(
+                sessionID: session, event: name,
+                cwd: string("cwd"), toolName: string("tool_name"),
+                toolInput: raw["tool_input"]?.object, message: string("message"), agent: self
+            )
         }
     }
 }

@@ -7,7 +7,7 @@
 # demo track playing so no sound and no personal data (calendar, clipboard) appear.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-APP=.build/xcode/Build/Products/Debug/Islet.app
+APP="${ISLET_BUILD_DIR:-.build/xcode}/Build/Products/Debug/Islet.app"
 DESKTOP="${ISLET_DESKTOP:?set ISLET_DESKTOP to a 3024 x 1964 PNG of a macOS desktop}"
 # The user's own Islet, relaunched at the end if it was running.
 USER_ISLET=$(ps -axo command= | grep -m1 "/Islet.app/Contents/MacOS/Islet$" | sed 's|/Contents/MacOS/Islet$||' || true)

@@ -12,13 +12,16 @@ final class AgentCenter {
     }
 
     struct PendingRequest: Identifiable {
-        var id: String { sessionID }
+        var id: String
         var sessionID: String
         var project: String
         var agent: String?
         var summary: String
         var detail: String?
         var received: Date
+        /// The tool the request is for, to recognise it once the tool has run.
+        var toolName: String? = nil
+        var toolInput: [String: JSONValue]? = nil
     }
 
     private(set) var board = AgentBoard()
@@ -41,47 +44,66 @@ final class AgentCenter {
         board.apply(event, at: now)
         // Only agents whose hooks wait for an answer get the buttons; the others show they are waiting for the user.
         if event.event == "PermissionRequest", event.agent?.answersPermissions ?? true {
-            // A newer request from the same session replaces an unanswered one.
-            resolve(event.sessionID, .ask)
-            pending[event.sessionID] = PendingRequest(
+            let requestID = UUID().uuidString
+            pending[requestID] = PendingRequest(
+                id: requestID,
                 sessionID: event.sessionID,
                 project: event.project,
                 agent: event.agent?.name,
                 summary: event.toolSummary ?? event.toolName ?? "",
                 detail: event.toolDetail,
-                received: now
+                received: now,
+                toolName: event.toolName,
+                toolInput: event.toolInput
             )
-            responders[event.sessionID] = respond
-            timeouts[event.sessionID] = Task { @MainActor [weak self] in
+            responders[requestID] = respond
+            timeouts[requestID] = Task { @MainActor [weak self] in
                 try? await Task.sleep(for: Self.answerWindow)
                 guard !Task.isCancelled else { return }
-                self?.resolve(event.sessionID, .ask)
+                self?.resolve(requestID, .ask)
             }
             onRequest?()
         } else {
             respond(.ask)
-            if ["PostToolUse", "PostToolUseFailure", "Stop", "SessionEnd", "UserPromptSubmit"].contains(event.event) {
+            if ["Stop", "SessionEnd", "UserPromptSubmit"].contains(event.event) {
                 // The session moved on: a request it left behind was answered elsewhere.
-                resolve(event.sessionID, .ask, updateBoard: false)
+                resolvePending(for: event.sessionID, .ask, updateBoard: false)
+            } else if ["PostToolUse", "PostToolUseFailure"].contains(event.event) {
+                // A tool that ran was allowed, in the island or in the terminal: its request, and only its, is over.
+                resolveRequest(for: event, .ask)
             }
         }
         scheduleSettle()
         onChange?()
     }
 
-    func decide(_ sessionID: String, _ decision: Decision) {
-        resolve(sessionID, decision)
+    func decide(_ requestID: String, _ decision: Decision) {
+        resolve(requestID, decision)
         onChange?()
     }
 
-    private func resolve(_ sessionID: String, _ decision: Decision, updateBoard: Bool = true) {
-        timeouts.removeValue(forKey: sessionID)?.cancel()
-        guard let respond = responders.removeValue(forKey: sessionID) else { return }
-        pending[sessionID] = nil
+    private func resolve(_ requestID: String, _ decision: Decision, updateBoard: Bool = true) {
+        timeouts.removeValue(forKey: requestID)?.cancel()
+        guard let request = pending.removeValue(forKey: requestID),
+              let respond = responders.removeValue(forKey: requestID)
+        else { return }
         respond(decision)
         if updateBoard, decision != .ask {
-            board.apply(HookEvent(sessionID: sessionID, event: "PreToolUse"), at: Date())
+            board.apply(HookEvent(sessionID: request.sessionID, event: "PreToolUse"), at: Date())
         }
+    }
+
+    /// The oldest request of the event's session for the same tool with the same input.
+    private func resolveRequest(for event: HookEvent, _ decision: Decision) {
+        let match = pending.values
+            .filter { $0.sessionID == event.sessionID && $0.toolName == event.toolName && $0.toolInput == event.toolInput }
+            .min { $0.received < $1.received }
+        if let match { resolve(match.id, decision, updateBoard: false) }
+    }
+
+    private func resolvePending(for sessionID: String, _ decision: Decision, updateBoard: Bool) {
+        let requestIDs = pending.values.filter { $0.sessionID == sessionID }.map(\.id)
+        for requestID in requestIDs { resolve(requestID, decision, updateBoard: updateBoard) }
     }
 
     /// Finished sessions go quiet after a few seconds; one timer for all of them.
@@ -107,12 +129,23 @@ final class AgentCenter {
             cursor.activate()
             return
         }
-        let candidates = ["com.anthropic.claudefordesktop", "com.mitchellh.ghostty", "com.googlecode.iterm2", "com.apple.Terminal", "com.microsoft.VSCode", "dev.warp.Warp-Stable"]
-        for bundle in candidates {
+        for bundle in Self.revealCandidates(for: session) {
             if let app = NSRunningApplication.runningApplications(withBundleIdentifier: bundle).first {
                 app.activate()
                 return
             }
+            if session.agent == CodingAgent.copilot.name,
+               bundle == "com.microsoft.VSCode" || bundle == "com.microsoft.VSCodeInsiders",
+               let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundle) {
+                NSWorkspace.shared.openApplication(at: url, configuration: NSWorkspace.OpenConfiguration()) { _, _ in }
+                return
+            }
         }
+    }
+
+    static func revealCandidates(for session: AgentSession) -> [String] {
+        let fallback = ["com.anthropic.claudefordesktop", "com.mitchellh.ghostty", "com.googlecode.iterm2", "com.apple.Terminal", "com.microsoft.VSCode", "dev.warp.Warp-Stable"]
+        guard session.agent == CodingAgent.copilot.name else { return fallback }
+        return ["com.microsoft.VSCode", "com.microsoft.VSCodeInsiders"] + fallback.filter { $0 != "com.microsoft.VSCode" }
     }
 }

@@ -89,6 +89,20 @@ struct AgentBoardTests {
         #expect(board.ordered.first?.id == "b")
     }
 
+    @Test func eachAgentUsesDistinctIconInNotch() {
+        let symbols: [(CodingAgent, String)] = [
+            (.claude, "sparkle"), (.codex, "curlybraces.square"), (.gemini, "sparkles"),
+            (.cursor, "cursorarrow"), (.copilot, "chevron.left.forwardslash.chevron.right"),
+        ]
+        for (agent, symbol) in symbols {
+            var board = AgentBoard()
+            board.apply(HookEvent(sessionID: agent.rawValue, event: "UserPromptSubmit", agent: agent), at: t0)
+            #expect(CodingAgent.symbol(for: agent.name) == symbol)
+            #expect(board.activity(now: t0, tint: .white)?.compact.leading == .symbol(symbol, tint: .white))
+        }
+        #expect(CodingAgent.symbol(for: nil) == "sparkle")
+    }
+
     @Test func idleAgentsStayOutOfTheNotch() {
         var board = AgentBoard()
         board.apply(event("SessionStart"), at: t0)

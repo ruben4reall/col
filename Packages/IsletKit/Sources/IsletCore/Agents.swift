@@ -174,6 +174,7 @@ public struct AgentBoard: Sendable, Equatable {
         case "SessionStart":
             session.state = .idle
         case "UserPromptSubmit":
+            // Never the prompt itself: the island can be on a shared screen.
             session.state = .working(nil)
         case "PreToolUse", "PostToolUse", "PostToolUseFailure", "SubagentStart":
             session.state = .working(event.toolSummary ?? current(previous))
@@ -222,7 +223,12 @@ public struct AgentBoard: Sendable, Equatable {
     /// Sessions that have finished long enough ago go quiet.
     public mutating func settle(now: Date, after interval: TimeInterval = 6) {
         for (id, session) in sessions where session.state == .done && now.timeIntervalSince(session.updated) >= interval {
-            sessions[id]?.state = .idle
+            if CodingAgent.named(session.agent)?.endsSessions == false {
+                // No end will ever come for this session: it leaves with its Done.
+                sessions[id] = nil
+            } else {
+                sessions[id]?.state = .idle
+            }
         }
     }
 
@@ -251,7 +257,7 @@ public struct AgentBoard: Sendable, Equatable {
         let active = ordered.filter { $0.state != .idle }
         guard let top = active.first else { return nil }
         let count = active.count
-        let leading: CompactItem = .symbol("sparkle", tint: tint)
+        let leading: CompactItem = .symbol(CodingAgent.symbol(for: top.agent), tint: tint)
         switch top.state {
         case .waiting:
             return Activity(

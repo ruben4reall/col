@@ -37,8 +37,9 @@ your scripts and your AI agents.
   work; swipe the closed island to skip a track.
 - **AirPods, by model.** Islet reads the model your headphones report (AirPods, AirPods Pro, AirPods Max, Beats) and
   shows each earbud and the case, or the headphones' single battery.
-- **AI agents.** Claude Code, Codex, Gemini CLI and Cursor sessions show in the notch while they work. When Claude
-  Code or Codex asks for permission, the island opens with Allow and Deny. Islet never signs in to any AI service.
+- **AI agents.** Claude Code, Codex, Gemini CLI, Cursor and GitHub Copilot in VS Code show in the notch while they
+  work. When Claude Code or Codex asks for permission, the island opens with Allow and Deny. Islet never signs in to
+  any AI service.
 - **Volume and brightness.** A quiet gauge in the notch instead of the big square in the middle of the screen.
 - **Files, clipboard, agenda.** A shelf for files with AirDrop, a clipboard history with pins kept in memory only, the
   next events of your day with a Join button for calls, and today's reminders.
@@ -106,10 +107,13 @@ islet hooks status
 | Codex | `~/.codex/hooks.json` | Sessions, and permission requests with Allow and Deny |
 | Gemini CLI | `~/.gemini/settings.json` | Sessions, and a sign when Gemini waits for you |
 | Cursor | `~/.cursor/hooks.json` | Agent sessions, their edits and commands |
+| GitHub Copilot in VS Code (Local harness) | `~/.copilot/hooks/islet.json` | Sessions, prompts and tools; VS Code handles permissions |
 
 Islet keeps a backup of every file it edits and leaves the rest untouched. Codex runs a new hook once you trust it with
-`/hooks`. Ignore a request and the agent asks in the terminal as usual; if Islet is closed, the hooks exit at once.
-Anything else reports with one line: `islet agent Aider working --message "Refactoring"`.
+`/hooks`. Copilot hooks are observational: VS Code applies each session's own permission mode, including bypass,
+without Islet forcing an extra approval. This uses VS Code's Local agent harness; the Agent Host harness has a separate hook format.
+If Islet is closed, hooks exit at once. Other agents or scripts can do the same, for example:
+`islet agent Aider working --message "Refactoring"`.
 
 ## Programmable notch
 
@@ -188,6 +192,9 @@ scripts/build.sh                               # prints the path of the Debug ap
 open .build/xcode/Build/Products/Debug/Islet.app
 ```
 
+- A clone kept in a synced folder (iCloud Drive) can make codesign refuse the build: set `ISLET_BUILD_DIR` to a
+  folder outside it, for example `ISLET_BUILD_DIR=~/Library/Caches/Islet/Xcode scripts/build.sh`.
+
 - `swift scripts/fake-player.swift` publishes a silent track, to work on the player without sound.
 - Debug switches, for screenshots and for working on one screen: `-IsletOpen YES`, `-IsletPage live`,
   `-IsletDemo headphones` or `max`, `-IsletSettings island`. `scripts/capture-site.sh` uses them to photograph the
@@ -220,7 +227,8 @@ Licenses and notices: [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 
 ## Contributing
 
-Bugs and ideas go to [issues](https://github.com/ruben4reall/islet/issues); pull requests are welcome.
+Bugs and ideas go to [issues](https://github.com/ruben4reall/islet/issues); pull requests are welcome. Thanks to
+[@BonnetAdam](https://github.com/BonnetAdam), who brought GitHub Copilot in VS Code to the notch.
 [CONTRIBUTING.md](CONTRIBUTING.md) gives the workflow and the promises every change keeps (light, native, the rules
 tested in `IsletCore`), and [SECURITY.md](SECURITY.md) how to report a vulnerability privately.
 

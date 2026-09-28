@@ -17,7 +17,7 @@ Everything Islet reads, writes or runs, and why.
 | `~/Library/Application Support/Islet/islet.sock` | The local socket scripts and agents talk to: mode 0600 in a 0700 folder, so only your user can connect. It never listens on the network | While Islet runs |
 | `~/Library/Application Support/Islet/Extensions/` | Your extensions, one folder each | When you add one |
 | `~/.local/bin/islet` | A link to the `islet` command inside the app | When you install the command |
-| `~/.claude/settings.json`, `~/.codex/hooks.json`, `~/.gemini/settings.json`, `~/.cursor/hooks.json` | Islet's hooks, added next to yours; the previous file is kept as `<file>.islet-backup` | When you connect that agent; disconnecting removes them |
+| `~/.claude/settings.json`, `~/.codex/hooks.json`, `~/.gemini/settings.json`, `~/.cursor/hooks.json`, `~/.copilot/hooks/islet.json` | Islet's hooks, added next to yours; the previous file is kept as `<file>.islet-backup` | When you connect that agent; disconnecting removes them |
 
 Clipboard history (except the text you pin) and the pictures you copy stay in memory and are never written to disk.
 Copies that password managers mark as concealed or transient are skipped.

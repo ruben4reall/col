@@ -17,7 +17,7 @@ usage: islet <command> [options]
 
   hooks install [--agent AGENT] [--settings PATH]
                         connect a coding agent to the notch; AGENT is claude (default),
-                        codex, gemini, cursor or all
+                        codex, gemini, cursor, copilot or all
   hooks uninstall [--agent AGENT] [--settings PATH]
   hooks status          show which agents are connected
   hook [--agent AGENT]  the hook itself: reads the agent's event on stdin
@@ -126,7 +126,7 @@ func percentOrFraction(_ value: String) -> Double? {
 
 /// The coding agents Islet connects to, where each keeps its hooks, and the events Islet follows.
 struct Agent {
-    enum Format { case claude, gemini, cursor }
+    enum Format { case claude, gemini, cursor, vscode }
 
     let id: String
     let name: String
@@ -154,6 +154,10 @@ struct Agent {
             ("sessionStart", false, 5), ("beforeSubmitPrompt", false, 5), ("postToolUse", false, 5),
             ("afterShellExecution", false, 5), ("afterFileEdit", false, 5), ("stop", false, 5), ("sessionEnd", false, 2),
         ]),
+        Agent(id: "copilot", name: "GitHub Copilot (VS Code)", settings: "~/.copilot/hooks/islet.json", format: .vscode, events: [
+            ("SessionStart", false, 5), ("UserPromptSubmit", false, 5), ("PreToolUse", false, 5),
+            ("PostToolUse", false, 5), ("Stop", false, 5),
+        ]),
     ]
 
     static func named(_ id: String) -> Agent? { all.first { $0.id == id } }
@@ -172,6 +176,7 @@ func hook(_ agent: Agent) -> Never {
     case .claude: nil
     case .gemini: "{}"
     case .cursor: name == "beforeSubmitPrompt" ? #"{"continue":true}"# : "{}"
+    case .vscode: name == "PreToolUse" ? "{}" : nil
     }
     func carryOn() -> Never {
         if let neutral { FileHandle.standardOutput.write(Data(neutral.utf8)) }
@@ -218,6 +223,8 @@ func entry(for agent: Agent, _ event: (name: String, matcher: Bool, timeout: Int
         return ["matcher": "*", "hooks": [["name": "islet", "type": "command", "command": agent.command, "timeout": event.timeout * 1000]]]
     case .cursor:
         return ["command": agent.command]
+    case .vscode:
+        return ["type": "command", "command": agent.command, "timeout": event.timeout]
     }
 }
 
@@ -247,7 +254,14 @@ func editSettings(_ agent: Agent, path: String?, install: Bool) throws -> String
         // The hooks call the command through ~/.local/bin, so moving the app never breaks them.
         let tool = URL(fileURLWithPath: CommandLine.arguments[0]).resolvingSymlinksInPath()
         let link = linkPath()
-        if (try? FileManager.default.destinationOfSymbolicLink(atPath: link)) == nil, !FileManager.default.fileExists(atPath: link) {
+        if let destination = try? FileManager.default.destinationOfSymbolicLink(atPath: link) {
+            let parent = URL(fileURLWithPath: link).deletingLastPathComponent()
+            let current = URL(fileURLWithPath: destination, relativeTo: parent).resolvingSymlinksInPath()
+            if current.path != tool.path {
+                try? FileManager.default.removeItem(atPath: link)
+                try? FileManager.default.createSymbolicLink(atPath: link, withDestinationPath: tool.path)
+            }
+        } else if !FileManager.default.fileExists(atPath: link) {
             try? FileManager.default.createDirectory(atPath: (link as NSString).deletingLastPathComponent, withIntermediateDirectories: true)
             try? FileManager.default.createSymbolicLink(atPath: link, withDestinationPath: tool.path)
         }
@@ -349,15 +363,14 @@ case "hooks":
     let action = arguments.dropFirst().first ?? ""
     let values = options(arguments.dropFirst(2))
     let id = values["agent"] ?? "claude"
-    guard id == "all" || Agent.named(id) != nil else { fail("unknown agent \(id): claude, codex, gemini, cursor or all") }
+    guard id == "all" || Agent.named(id) != nil else { fail("unknown agent \(id): claude, codex, gemini, cursor, copilot or all") }
     let agents = id == "all" ? Agent.all : Agent.all.filter { $0.id == id }
     switch action {
     case "install", "uninstall":
         var failed = false
         for agent in agents {
             // With --agent all, only agents present on this Mac are connected.
-            if id == "all", action == "install",
-               !FileManager.default.fileExists(atPath: ((agent.settings as NSString).deletingLastPathComponent as NSString).expandingTildeInPath) {
+            if id == "all", action == "install", !isInstalled(agent) {
                 continue
             }
             do {
@@ -381,4 +394,16 @@ case "help", "--help", "-h":
 
 default:
     fail("unknown command \(command). Run `islet help`.")
+}
+
+func isInstalled(_ agent: Agent) -> Bool {
+    let directory = ((agent.settings as NSString).deletingLastPathComponent as NSString).expandingTildeInPath
+    if FileManager.default.fileExists(atPath: directory) { return true }
+    guard agent.id == "copilot" else { return false }
+    return [
+        "/Applications/Visual Studio Code.app", NSHomeDirectory() + "/Applications/Visual Studio Code.app",
+        "/Applications/Visual Studio Code - Insiders.app", NSHomeDirectory() + "/Applications/Visual Studio Code - Insiders.app",
+        NSHomeDirectory() + "/.vscode/extensions",
+    ]
+        .contains { FileManager.default.fileExists(atPath: $0) }
 }

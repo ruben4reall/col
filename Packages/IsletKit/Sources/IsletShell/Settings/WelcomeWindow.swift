@@ -598,7 +598,7 @@ private struct DevelopersStep: View {
                     withAnimation(.spring(duration: 0.4, bounce: 0.3)) { cliInstalled = FileManager.default.fileExists(atPath: CommandLineInstaller.linkURL.path) }
                 }
                 if found.isEmpty {
-                    PermissionCard(symbol: "sparkle", tint: Color(red: 0.89, green: 0.28, blue: 0.18), title: "AI agents", detail: "Claude Code, Codex, Gemini CLI and Cursor connect in Settings once installed.", granted: false, action: "Later") {}
+                    PermissionCard(symbol: "sparkle", tint: Color(red: 0.89, green: 0.28, blue: 0.18), title: "AI agents", detail: "Claude Code, Codex, Gemini CLI, Cursor and GitHub Copilot connect in Settings once installed.", granted: false, action: "Later") {}
                         .disabled(true)
                 } else {
                     PermissionCard(symbol: "sparkle", tint: Color(red: 0.89, green: 0.28, blue: 0.18), title: "AI agents", detail: "Found on this Mac: \(foundNames). Adds Islet’s hooks to each, with a backup.", granted: connected, action: "Connect") {

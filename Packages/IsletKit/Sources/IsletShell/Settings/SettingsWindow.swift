@@ -454,7 +454,7 @@ private struct ActivitiesPane: View {
             } header: { Text("System", bundle: .module) }
             Section {
                 row("arrow.down.circle.fill", .blue, $downloads, "Downloads in progress", "Files your browser is still writing. Asks to read the Downloads folder.") { Preferences.watchesDownloads = $0 }
-                row("sparkle", Color(red: 0.93, green: 0.36, blue: 0.24), $agents, "Coding agents", "Claude Code, Codex, Gemini CLI and Cursor sessions, and their permission requests.") { Preferences.showsAgents = $0 }
+                row("sparkle", Color(red: 0.93, green: 0.36, blue: 0.24), $agents, "Coding agents", "Claude Code, Codex, Gemini CLI, Cursor and GitHub Copilot sessions, and the permission requests of Claude Code and Codex.") { Preferences.showsAgents = $0 }
                 row("lock.fill", .indigo, $lockScreen, "Show on the Lock Screen", "Beta. Takes effect the next time Islet opens.") { Preferences.showsOnLockScreen = $0 }
             } header: { Text("More", bundle: .module) }
         }
@@ -607,7 +607,7 @@ private struct DevelopersPane: View {
             } header: {
                 Text("AI agents", bundle: .module)
             } footer: {
-                Text("Islet never signs in to any AI service: it only hears the hooks each agent calls on your Mac. Any other agent or script can report with islet agent.", bundle: .module)
+                Text("Islet never signs in to any AI service: it only hears the hooks each agent calls on your Mac. VS Code keeps Copilot permissions according to each session's mode. ChatGPT for macOS has no activity hooks; other agents and scripts can report with islet agent.", bundle: .module)
             }
             if let extensions {
                 Section {

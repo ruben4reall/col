@@ -2,6 +2,16 @@
 
 Each release's section is what Islet's update window and the GitHub release show. Dates are in ISO format.
 
+## Unreleased
+
+- **GitHub Copilot in VS Code**, contributed by [@BonnetAdam](https://github.com/BonnetAdam): Copilot's agent sessions
+  show in the notch like the other agents, with the project, the tool it runs, and Done when an answer is complete,
+  through VS Code's own hooks. Connect it in Settings, Developers, or with `islet hooks install --agent copilot`. Islet
+  only watches: VS Code keeps each session's own permission mode.
+- **Agents**: each has its own symbol in the notch (Claude Code keeps the sparkle), and two permission requests from
+  one session no longer cancel each other (also by @BonnetAdam). A request answered in the terminal leaves the island
+  once its tool has run.
+
 ## 1.1.0 (2026-09-27)
 
 - **Liquid Glass**: on macOS 26, the open island stays black where it meets the notch and melts into glass toward its
