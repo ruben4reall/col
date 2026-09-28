@@ -98,6 +98,14 @@ run -IsletOpen YES -IsletPage live; sleep 3
   | "$APP/Contents/Helpers/islet" hook >/dev/null 2>&1) &
 sleep 3; shoot panel agent-request
 pkill -f "Helpers/islet hook" 2>/dev/null || true
+# GitHub Copilot in VS Code: a session running a command, as VS Code's own hooks report it (Islet only watches).
+run -IsletOpen YES -IsletPage live; sleep 3
+for event in '"hook_event_name":"SessionStart","source":"new"' '"hook_event_name":"UserPromptSubmit","prompt":"Fix the test"' \
+  '"hook_event_name":"PreToolUse","tool_name":"run_in_terminal","tool_input":{"command":"swift test"},"tool_use_id":"t1"'; do
+  echo "{\"session_id\":\"site\",\"transcript_path\":\"/tmp/site.json\",\"cwd\":\"/Users/me/islet\",$event}" \
+    | "$APP/Contents/Helpers/islet" hook --agent copilot >/dev/null 2>&1
+done
+sleep 2; shoot panel agent-copilot
 # The shelf: files dragged over, one dropped, then three. Demo files only: the user's shelf is never read.
 run -IsletDemoShelf "$TMP/none" -IsletDemo drop -IsletOpen YES -IsletPage shelf; sleep 4; shoot panel shelf-drop
 run -IsletDemoShelf "$TMP/one" -IsletOpen YES -IsletPage shelf; sleep 4; shoot panel shelf-one
@@ -147,7 +155,7 @@ run -IsletSettings island -IsletSettingsHeight 900 -enabledPages '()'; sleep 3; 
 
 echo "Website and README images:"
 mkdir -p site/assets/island site/assets/app docs/images
-for s in rest music-compact music-open airpods-pro airpods-max agent-request shelf-drop shelf-one shelf-files clipboard \
+for s in rest music-compact music-open airpods-pro airpods-max agent-request agent-copilot shelf-drop shelf-one shelf-files clipboard \
   music-open-minimal music-open-compact music-open-large glass-liquid glass-transparent glass-tinted glass-black; do cwebp -quiet -q 90 -alpha_q 100 "$OUT/$s.png" -o "site/assets/island/$s.webp"; done
 for s in settings-general settings-island settings-activities settings-pages-on settings-pages-off; do cwebp -quiet -q 88 "$OUT/$s.png" -o "site/assets/app/$s.webp"; done
 # The pieces of macOS the scenes move around: the arrow cursor and the brief as it sits on a desktop.

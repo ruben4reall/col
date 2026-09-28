@@ -178,6 +178,7 @@
   };
   chipTour(document.querySelector('.sizes:not(.glass) .size-stage'), [...document.querySelectorAll('.sizes:not(.glass) .size-chips .chip')], 'size', 'standard');
   chipTour(document.querySelector('.glass-stage'), [...document.querySelectorAll('.glass-chips .chip')], 'glass', 'liquid');
+  chipTour(document.querySelector('.agent-stage'), [...document.querySelectorAll('.agent-chips .chip')], 'agent', 'claude');
 
   // Ruben's own page counter (ruben-analytics): one anonymous page view, no cookie, no identifier, sent only from
   // the published site.
