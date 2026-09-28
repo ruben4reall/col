@@ -2,7 +2,7 @@
 
 Each release's section is what Islet's update window and the GitHub release show. Dates are in ISO format.
 
-## Unreleased
+## 1.2.0 (2026-09-28)
 
 - **GitHub Copilot in VS Code**, contributed by [@BonnetAdam](https://github.com/BonnetAdam): Copilot's agent sessions
   show in the notch like the other agents, with the project, the tool it runs, and Done when an answer is complete,
