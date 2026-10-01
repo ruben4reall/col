@@ -229,6 +229,7 @@ open .build/xcode/Build/Products/Debug/Islet.app
 - Now playing on macOS 15.4 and later: the technique of [ungive/mediaremote-adapter](https://github.com/ungive/mediaremote-adapter) (BSD 3-Clause), rewritten.
 - The window above the Lock Screen: the technique of [Lakr233/SkyLightWindow](https://github.com/Lakr233/SkyLightWindow) (MIT), rewritten.
 - Updates by [Sparkle](https://sparkle-project.org) (MIT).
+- The logos of AI apps and agents whose app is not installed: [LobeHub Icons](https://github.com/lobehub/lobe-icons) (MIT). The logos belong to their owners.
 
 Licenses and notices: [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 

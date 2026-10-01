@@ -27,6 +27,22 @@ public enum CodingAgent: String, CaseIterable, Sendable, Codable {
         }
     }
 
+    /// The agent's colour, close to its maker's own: its tile when its app is not on the Mac.
+    public var tint: RGBA {
+        switch self {
+        case .claude: RGBA(red: 0.85, green: 0.47, blue: 0.34)
+        case .codex: RGBA(red: 0.42, green: 0.45, blue: 0.5)
+        case .gemini: RGBA(red: 0.26, green: 0.52, blue: 0.96)
+        case .cursor: RGBA(red: 0.55, green: 0.55, blue: 0.6)
+        case .copilot: RGBA(red: 0.47, green: 0.36, blue: 0.95)
+        }
+    }
+
+    /// The colour of an agent named in a session; Islet's coral for others.
+    public static func tint(for name: String?) -> RGBA {
+        named(name)?.tint ?? RGBA(red: 1, green: 0.478, blue: 0.349)
+    }
+
     /// Agents whose hooks can wait for an answer: their permission requests get Allow and Deny in the island. The
     /// others say they need the user, who answers in the agent itself.
     public var answersPermissions: Bool { self == .claude || self == .codex }

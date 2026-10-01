@@ -15,7 +15,6 @@ final class AIAppsModel {
     private(set) var servers: [ModelServer] = []
     private(set) var statuses: [String: ModelServerStatus] = [:]
 
-    @ObservationIgnored private var icons: [String: NSImage] = [:]
     @ObservationIgnored private var watchers = 0
     @ObservationIgnored private var poll: Task<Void, Never>?
     @ObservationIgnored private var observers: [NSObjectProtocol] = []
@@ -38,9 +37,8 @@ final class AIAppsModel {
 
     /// The installed apps, looked up again: after an app was installed or removed, and when the settings open.
     func refreshInstalled() {
-        installed = AICatalog.apps.filter { app in
-            app.bundleIdentifiers.contains { NSWorkspace.shared.urlForApplication(withBundleIdentifier: $0) != nil }
-        }
+        AppIcons.forget()
+        installed = AICatalog.apps.filter { AppIcons.url(for: $0.icon) != nil }
         refreshServers()
         refreshRunning()
     }
@@ -61,16 +59,9 @@ final class AIAppsModel {
         statuses = statuses.filter { id, _ in self.servers.contains { $0.id == id } }
     }
 
-    func icon(for app: AIApp) -> NSImage? {
-        if let icon = icons[app.id] { return icon }
-        guard let url = app.bundleIdentifiers.lazy.compactMap({ NSWorkspace.shared.urlForApplication(withBundleIdentifier: $0) }).first else { return nil }
-        let icon = NSWorkspace.shared.icon(forFile: url.path)
-        icons[app.id] = icon
-        return icon
-    }
-
+    /// Opens the app, the copy named as the app when several share its identifier.
     func open(_ app: AIApp) {
-        guard let url = app.bundleIdentifiers.lazy.compactMap({ NSWorkspace.shared.urlForApplication(withBundleIdentifier: $0) }).first else { return }
+        guard let url = AppIcons.url(for: app.icon) else { return }
         NSWorkspace.shared.openApplication(at: url, configuration: NSWorkspace.OpenConfiguration())
     }
 

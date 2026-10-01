@@ -1,4 +1,5 @@
 import AppKit
+import IsletCore
 import SwiftUI
 
 /// The pieces every settings pane is built from, so all panes read alike: a fixed header, then a grouped form that
@@ -86,20 +87,20 @@ struct IconTile: View {
 
 /// An app's own icon, or a tile when the app is not on this Mac.
 struct AppIconTile: View {
-    let icon: NSImage?
-    let symbol: String
-    let tint: Color
+    let icon: AppIcon
     var size: CGFloat = 28
+    @Environment(\.displayScale) private var scale
 
     var body: some View {
-        if let icon {
-            Image(nsImage: icon)
+        // App icons keep a margin around their tile: drawn a little larger, they line up with the settings' tiles.
+        if let image = AppIcons.image(for: icon, side: size + 4, scale: scale) {
+            Image(decorative: image, scale: scale)
                 .resizable()
                 .interpolation(.high)
                 .frame(width: size + 4, height: size + 4)
                 .padding(-2)
         } else {
-            IconTile(symbol: symbol, tint: tint, size: size)
+            IconTile(symbol: icon.symbol, tint: icon.tint.color, size: size)
         }
     }
 }

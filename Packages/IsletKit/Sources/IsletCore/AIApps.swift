@@ -19,14 +19,18 @@ public struct AIApp: Sendable, Identifiable, Equatable {
     public let agent: CodingAgent?
     /// The model server the app runs on this Mac, if any.
     public let server: ModelServerKind?
+    /// The brand's logo Islet carries, shown when the app is not installed.
+    public let mark: String?
 
-    public init(id: String, name: String, bundleIdentifiers: [String], role: Role, agent: CodingAgent? = nil, server: ModelServerKind? = nil) {
+    public init(id: String, name: String, bundleIdentifiers: [String], role: Role, agent: CodingAgent? = nil, server: ModelServerKind? = nil,
+                mark: String? = nil) {
         self.id = id
         self.name = name
         self.bundleIdentifiers = bundleIdentifiers
         self.role = role
         self.agent = agent
         self.server = server
+        self.mark = mark
     }
 }
 
@@ -34,26 +38,26 @@ public struct AIApp: Sendable, Identifiable, Equatable {
 /// apps merged); several per app when an app changed its identifier or has editions.
 public enum AICatalog {
     public static let apps: [AIApp] = [
-        AIApp(id: "claude", name: "Claude", bundleIdentifiers: ["com.anthropic.claudefordesktop"], role: .assistant, agent: .claude),
-        AIApp(id: "chatgpt", name: "ChatGPT", bundleIdentifiers: ["com.openai.codex", "com.openai.chat"], role: .assistant, agent: .codex),
-        AIApp(id: "gemini", name: "Gemini", bundleIdentifiers: ["com.google.GeminiMacOS"], role: .assistant, agent: .gemini),
-        AIApp(id: "perplexity", name: "Perplexity", bundleIdentifiers: ["ai.perplexity.macv3", "ai.perplexity.comet"], role: .assistant),
-        AIApp(id: "grok", name: "Grok Bot", bundleIdentifiers: ["com.anysphere.sand"], role: .assistant),
-        AIApp(id: "copilot", name: "Copilot", bundleIdentifiers: ["com.microsoft.m365copilot", "com.github.githubapp"], role: .assistant),
+        AIApp(id: "claude", name: "Claude", bundleIdentifiers: ["com.anthropic.claudefordesktop"], role: .assistant, agent: .claude, mark: "claude"),
+        AIApp(id: "chatgpt", name: "ChatGPT", bundleIdentifiers: ["com.openai.codex", "com.openai.chat"], role: .assistant, agent: .codex, mark: "openai"),
+        AIApp(id: "gemini", name: "Gemini", bundleIdentifiers: ["com.google.GeminiMacOS"], role: .assistant, agent: .gemini, mark: "gemini"),
+        AIApp(id: "perplexity", name: "Perplexity", bundleIdentifiers: ["ai.perplexity.macv3", "ai.perplexity.comet"], role: .assistant, mark: "perplexity"),
+        AIApp(id: "grok", name: "Grok Bot", bundleIdentifiers: ["com.anysphere.sand"], role: .assistant, mark: "grok"),
+        AIApp(id: "copilot", name: "Copilot", bundleIdentifiers: ["com.microsoft.m365copilot", "com.github.githubapp"], role: .assistant, mark: "copilot"),
         AIApp(id: "raycast", name: "Raycast", bundleIdentifiers: ["com.raycast.macos"], role: .assistant),
-        AIApp(id: "kimi", name: "Kimi", bundleIdentifiers: ["com.moonshot.kimichat"], role: .assistant),
-        AIApp(id: "manus", name: "Manus", bundleIdentifiers: ["im.manus.desktop"], role: .assistant),
-        AIApp(id: "cursor", name: "Cursor", bundleIdentifiers: ["com.todesktop.230313mzl4w4u92"], role: .coding, agent: .cursor),
+        AIApp(id: "kimi", name: "Kimi", bundleIdentifiers: ["com.moonshot.kimichat"], role: .assistant, mark: "kimi"),
+        AIApp(id: "manus", name: "Manus", bundleIdentifiers: ["im.manus.desktop"], role: .assistant, mark: "manus"),
+        AIApp(id: "cursor", name: "Cursor", bundleIdentifiers: ["com.todesktop.230313mzl4w4u92"], role: .coding, agent: .cursor, mark: "cursor"),
         AIApp(id: "vscode", name: "VS Code", bundleIdentifiers: ["com.microsoft.VSCode", "com.microsoft.VSCodeInsiders"], role: .coding, agent: .copilot),
-        AIApp(id: "devin", name: "Devin Desktop", bundleIdentifiers: ["com.exafunction.windsurf"], role: .coding),
+        AIApp(id: "devin", name: "Devin Desktop", bundleIdentifiers: ["com.exafunction.windsurf"], role: .coding, mark: "devin"),
         AIApp(id: "zed", name: "Zed", bundleIdentifiers: ["dev.zed.Zed"], role: .coding),
-        AIApp(id: "kiro", name: "Kiro", bundleIdentifiers: ["dev.kiro.desktop"], role: .coding),
+        AIApp(id: "kiro", name: "Kiro", bundleIdentifiers: ["dev.kiro.desktop"], role: .coding, mark: "kiro"),
         AIApp(id: "antigravity", name: "Antigravity", bundleIdentifiers: ["com.google.antigravity"], role: .coding),
-        AIApp(id: "trae", name: "Trae", bundleIdentifiers: ["com.trae.app"], role: .coding),
-        AIApp(id: "opencode", name: "OpenCode", bundleIdentifiers: ["ai.opencode.desktop"], role: .coding),
-        AIApp(id: "amp", name: "Amp", bundleIdentifiers: ["com.ampcode.amp.macos"], role: .coding),
-        AIApp(id: "ollama", name: "Ollama", bundleIdentifiers: ["com.electron.ollama"], role: .models, server: .ollama),
-        AIApp(id: "lmstudio", name: "LM Studio", bundleIdentifiers: ["ai.elementlabs.lmstudio"], role: .models, server: .lmStudio),
+        AIApp(id: "trae", name: "Trae", bundleIdentifiers: ["com.trae.app"], role: .coding, mark: "trae"),
+        AIApp(id: "opencode", name: "OpenCode", bundleIdentifiers: ["ai.opencode.desktop"], role: .coding, mark: "opencode"),
+        AIApp(id: "amp", name: "Amp", bundleIdentifiers: ["com.ampcode.amp.macos"], role: .coding, mark: "amp"),
+        AIApp(id: "ollama", name: "Ollama", bundleIdentifiers: ["com.electron.ollama"], role: .models, server: .ollama, mark: "ollama"),
+        AIApp(id: "lmstudio", name: "LM Studio", bundleIdentifiers: ["ai.elementlabs.lmstudio"], role: .models, server: .lmStudio, mark: "lmstudio"),
         AIApp(id: "msty", name: "Msty", bundleIdentifiers: ["app.msty.app"], role: .models),
         AIApp(id: "jan", name: "Jan", bundleIdentifiers: ["jan.ai.app"], role: .models),
         AIApp(id: "gpt4all", name: "GPT4All", bundleIdentifiers: ["com.nomic-ai.gpt4all"], role: .models),

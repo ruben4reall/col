@@ -116,3 +116,39 @@ import Testing
         #expect(CodingAgent.named(CodingAgent.copilot.name)?.endsSessions == false)
     }
 }
+
+struct AgentIconTests {
+    let now = Date(timeIntervalSince1970: 10_000)
+
+    @Test func eachAgentShowsItsOwnLogo() {
+        #expect(CodingAgent.claude.icon.bundleIdentifiers == ["com.anthropic.claudefordesktop"])
+        #expect(CodingAgent.claude.icon.name == "Claude")
+        #expect(CodingAgent.claude.icon.mark == "claude")
+        #expect(CodingAgent.gemini.icon.mark == "gemini")
+        // Codex lives in ChatGPT now and Copilot runs in VS Code: neither app is their logo.
+        #expect(CodingAgent.codex.icon.bundleIdentifiers.isEmpty && CodingAgent.codex.icon.mark == "codex")
+        #expect(CodingAgent.copilot.icon.bundleIdentifiers.isEmpty && CodingAgent.copilot.icon.mark == "githubcopilot")
+        for agent in CodingAgent.allCases { #expect(agent.icon.mark != nil) }
+    }
+
+    @Test func agentsReportingByNameFindTheirApp() {
+        #expect(CodingAgent.icon(for: "Claude Code") == CodingAgent.claude.icon)
+        #expect(CodingAgent.icon(for: "opencode").bundleIdentifiers == ["ai.opencode.desktop"])
+        #expect(CodingAgent.icon(for: "OpenCode").mark == "opencode")
+        #expect(CodingAgent.icon(for: "my-script") == .islet)
+        #expect(CodingAgent.icon(for: nil) == .islet)
+        #expect(ModelServerKind.ollama.icon.bundleIdentifiers == ["com.electron.ollama"])
+        #expect(ModelServerKind.ollama.icon.mark == "ollama")
+        #expect(ModelServerKind.llamaCpp.icon.bundleIdentifiers.isEmpty && ModelServerKind.llamaCpp.icon.mark == nil)
+    }
+
+    @Test func theWingShowsTheAgentsIconBouncingWhileItWaits() throws {
+        var board = AgentBoard()
+        board.apply(HookEvent(sessionID: "s", event: "UserPromptSubmit", cwd: "/x/islet", agent: .gemini), at: now)
+        let working = try #require(board.activity(now: now, tint: .white))
+        #expect(working.compact.leading == .appIcon(CodingAgent.gemini.icon, bouncing: false))
+        board.apply(HookEvent(sessionID: "s", event: "PermissionRequest", cwd: "/x/islet", toolName: "Bash", agent: .gemini), at: now)
+        let waiting = try #require(board.activity(now: now, tint: .white))
+        #expect(waiting.compact.leading == .appIcon(CodingAgent.gemini.icon, bouncing: true))
+    }
+}
