@@ -146,14 +146,7 @@ private struct AgentRow: View {
     var body: some View {
         Button(action: reveal) {
             HStack(spacing: 10) {
-                ZStack {
-                    Circle().fill(Theme.coral.color.opacity(0.15))
-                    Image(systemName: CodingAgent.symbol(for: session.agent))
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundStyle(Theme.coral.color)
-                        .symbolEffect(.pulse, isActive: isWorking)
-                }
-                .frame(width: 28, height: 28)
+                AppIconView(icon: CodingAgent.icon(for: session.agent), size: 30)
                 VStack(alignment: .leading, spacing: 1) {
                     HStack(spacing: 6) {
                         Text(session.project)

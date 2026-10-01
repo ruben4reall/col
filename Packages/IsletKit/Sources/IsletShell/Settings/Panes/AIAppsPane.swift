@@ -23,12 +23,12 @@ struct AIAppsPane: View {
                             .foregroundStyle(.secondary)
                     }
                     ForEach(ai.installed, id: \.id) { app in
-                        InstalledAppRow(app: app, icon: ai.icon(for: app), open: ai.running.contains(app.id)) { ai.open(app) }
+                        InstalledAppRow(app: app, open: ai.running.contains(app.id)) { ai.open(app) }
                     }
                 } header: {
                     Text("On this Mac", bundle: .module)
                 } footer: {
-                    Text("Recognized by their identifiers. Their icons come from the apps themselves: Islet ships no logo.", bundle: .module)
+                    Text("Recognized by their identifiers and shown with their own icons. Logos belong to their owners.", bundle: .module)
                 }
             }
             Section {
@@ -71,13 +71,12 @@ struct AIAppsPane: View {
 
 private struct InstalledAppRow: View {
     let app: AIApp
-    let icon: NSImage?
     let open: Bool
     let action: () -> Void
 
     var body: some View {
         HStack(spacing: 12) {
-            AppIconTile(icon: icon, symbol: "sparkles", tint: SettingsPane.aiApps.tint)
+            AppIconTile(icon: app.icon)
             VStack(alignment: .leading, spacing: 1) {
                 HStack(spacing: 6) {
                     Text(verbatim: app.name)
@@ -118,7 +117,7 @@ private struct AgentRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            AppIconTile(icon: AIAppIcons.icon(for: agent), symbol: CodingAgent.symbol(for: agent.name), tint: AIAppIcons.tint(for: agent))
+            AppIconTile(icon: agent.icon)
             VStack(alignment: .leading, spacing: 1) {
                 HStack(spacing: 6) {
                     Text(agent.name)
@@ -166,7 +165,10 @@ private struct ServerSettingsRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            IconTile(symbol: server.isLocal ? "desktopcomputer" : "network", tint: server.isLocal ? .gray : .blue)
+            // The icon of the app that serves it, Ollama or LM Studio, else where it runs.
+            AppIconTile(icon: AppIcon(bundleIdentifiers: server.kind.icon.bundleIdentifiers, name: server.kind.icon.name, mark: server.kind.icon.mark,
+                                      symbol: server.isLocal ? "desktopcomputer" : "network",
+                                      tint: server.isLocal ? RGBA(red: 0.56, green: 0.56, blue: 0.58) : .blue))
             VStack(alignment: .leading, spacing: 1) {
                 HStack(spacing: 6) {
                     Text(verbatim: server.name)
@@ -290,33 +292,6 @@ private struct AddServerSheet: View {
                 }
             }
             failed = true
-        }
-    }
-}
-
-/// The icon of the app behind each coding agent, read from the app itself when it is installed: Islet ships no logos.
-@MainActor
-enum AIAppIcons {
-    private static var cache: [CodingAgent: NSImage?] = [:]
-
-    static func icon(for agent: CodingAgent) -> NSImage? {
-        if let cached = cache[agent] { return cached }
-        let icon = AICatalog.apps.first { $0.agent == agent }?.bundleIdentifiers
-            .lazy
-            .compactMap { NSWorkspace.shared.urlForApplication(withBundleIdentifier: $0) }
-            .first
-            .map { NSWorkspace.shared.icon(forFile: $0.path) }
-        cache[agent] = icon
-        return icon
-    }
-
-    static func tint(for agent: CodingAgent) -> Color {
-        switch agent {
-        case .claude: Color(red: 0.85, green: 0.47, blue: 0.34)
-        case .codex: Color(red: 0.2, green: 0.2, blue: 0.22)
-        case .gemini: Color(red: 0.26, green: 0.52, blue: 0.96)
-        case .cursor: Color(red: 0.12, green: 0.12, blue: 0.14)
-        case .copilot: Color(red: 0.0, green: 0.47, blue: 0.83)
         }
     }
 }

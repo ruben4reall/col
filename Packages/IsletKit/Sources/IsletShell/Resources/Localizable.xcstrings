@@ -2901,12 +2901,12 @@
         }
       }
     },
-    "Recognized by their identifiers. Their icons come from the apps themselves: Islet ships no logo.": {
+    "Recognized by their identifiers and shown with their own icons. Logos belong to their owners.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Reconnues par leurs identifiants. Leurs icônes viennent des apps elles-mêmes : Islet n’embarque aucun logo."
+            "value": "Reconnues par leurs identifiants et montrées avec leurs propres icônes. Les logos appartiennent à leurs propriétaires."
           }
         }
       }

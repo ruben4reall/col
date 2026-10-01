@@ -98,8 +98,11 @@ struct AgentBoardTests {
             var board = AgentBoard()
             board.apply(HookEvent(sessionID: agent.rawValue, event: "UserPromptSubmit", agent: agent), at: t0)
             #expect(CodingAgent.symbol(for: agent.name) == symbol)
-            #expect(board.activity(now: t0, tint: .white)?.compact.leading == .symbol(symbol, tint: .white))
+            // The app's own icon, its symbol standing in when the app is not installed.
+            #expect(board.activity(now: t0, tint: .white)?.compact.leading == .appIcon(agent.icon))
+            #expect(agent.icon.symbol == symbol)
         }
+        #expect(Set(CodingAgent.allCases.map(\.icon)).count == CodingAgent.allCases.count)
         #expect(CodingAgent.symbol(for: nil) == "sparkle")
     }
 

@@ -31,6 +31,10 @@ Each release's section is what Islet's update window and the GitHub release show
   island, a tap away. Add your own AI: an Ollama, LM Studio, llama.cpp or OpenAI-compatible server on this Mac or on
   another machine of your network; the island shows whether it answers, the model it holds and, when the server can
   tell, whether it is generating. Tokens stay in your Keychain. Settings, AI apps.
+- **Agents show their logo**: Claude Code shows Claude's logo, and Codex, Gemini CLI, Cursor and GitHub Copilot theirs,
+  in the closed island, on the Live page, on the AI page and in the settings. The icon of the app installed when there
+  is one, else the brand's own logo, which Islet carries. The logo bounces, as in the Dock, while the agent needs you
+  (not with Reduce Motion). Each icon is kept only at the size it shows.
 - **More pages fit**: six tabs fit beside the camera; with more pages, the tabs become dots, as on the iPhone.
 - **Permissions**: one pane says what each permission is for and which feature needs it.
 - **Shortcuts and gestures**: every way to open and drive the island, in one place.

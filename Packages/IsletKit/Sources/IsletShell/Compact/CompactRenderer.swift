@@ -163,6 +163,9 @@ private final class WingSlot {
         case .countdown(let ends, let total, let tint):
             content.contents = nil
             drawCountdown(ends: ends, total: total, size: size, tint: tint)
+        case .appIcon(let icon, let bouncing):
+            content.contents = nil
+            drawAppIcon(icon, bouncing: bouncing, size: size, scale: scale)
         }
         CATransaction.commit()
     }
@@ -173,6 +176,7 @@ private final class WingSlot {
         case (.symbol(let x, _), .symbol(let y, _)): x == y
         case (.image(let x), .image(let y)): x == y
         case (.equalizer, .equalizer), (.text, .text), (.ring, .ring), (.level, .level), (.battery, .battery), (.spinner, .spinner), (.countdown, .countdown): true
+        case (.appIcon(let x, _), .appIcon(let y, _)): x == y
         default: false
         }
     }
@@ -192,6 +196,33 @@ private final class WingSlot {
     }
 
     // MARK: Items
+
+    /// The app's own icon. App icons keep a margin around their tile, so it is drawn a little larger than a symbol to
+    /// look the same size. While the app needs the user it bounces as Dock icons do, low enough to stay in the island.
+    private func drawAppIcon(_ icon: AppIcon, bouncing: Bool, size: CGSize, scale: CGFloat) {
+        let image = part(0) { CALayer() }
+        let found = AppIcons.image(for: icon, side: size.height * 1.15, scale: scale)
+        let side = found == nil ? size.height : size.height * 1.15
+        image.contentsGravity = .resizeAspect
+        image.contentsScale = scale
+        image.contents = found ?? SymbolRenderer.image(icon.symbol, tint: icon.tint, pointSize: size.height * 0.82, scale: scale)
+        image.bounds = CGRect(x: 0, y: 0, width: side, height: side)
+        image.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        let bounces = bouncing && !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
+        if bounces, image.animation(forKey: "bounce") == nil {
+            let bounce = CAKeyframeAnimation(keyPath: "transform.translation.y")
+            bounce.values = [0, size.height * 0.2, 0, 0]
+            bounce.keyTimes = [0, 0.28, 0.56, 1]
+            bounce.timingFunctions = [
+                CAMediaTimingFunction(name: .easeOut), CAMediaTimingFunction(name: .easeIn), CAMediaTimingFunction(name: .linear),
+            ]
+            bounce.duration = 0.95
+            bounce.repeatCount = .infinity
+            image.add(bounce, forKey: "bounce")
+        } else if !bounces {
+            image.removeAnimation(forKey: "bounce")
+        }
+    }
 
     private func drawEqualizer(size: CGSize, tint: RGBA, playing: Bool, restart: Bool) {
         let count = 4

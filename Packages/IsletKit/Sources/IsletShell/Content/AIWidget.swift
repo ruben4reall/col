@@ -36,7 +36,7 @@ struct AIWidget: View {
         let ordered = ai.installed.sorted { ai.running.contains($0.id) && !ai.running.contains($1.id) }
         return HStack(alignment: .top, spacing: 6) {
             ForEach(ordered.prefix(limit), id: \.id) { app in
-                AppIconButton(app: app, icon: ai.icon(for: app), open: ai.running.contains(app.id), size: size) { ai.open(app) }
+                AppIconButton(app: app, open: ai.running.contains(app.id), size: size) { ai.open(app) }
             }
         }
     }
@@ -83,18 +83,36 @@ struct AIWidget: View {
     }
 }
 
-/// The coding agents at work, in a line that opens the Live page.
+/// The coding agents at work, in a line that opens the Live page: their apps' icons, overlapping as in a group.
 private struct AgentsLine: View {
     let agents: AgentCenter
     let open: () -> Void
 
+    /// One icon per agent at work, the busiest first.
+    private var icons: [AppIcon] {
+        var seen: [AppIcon] = []
+        for session in agents.sessions {
+            let icon = CodingAgent.icon(for: session.agent)
+            if !seen.contains(icon) { seen.append(icon) }
+        }
+        return Array(seen.prefix(3))
+    }
+
     var body: some View {
         Button(action: open) {
             HStack(spacing: 8) {
-                Image(systemName: agents.sessions.isEmpty ? "sparkles" : "sparkles")
-                    .font(.system(size: 11, weight: .bold))
-                    .foregroundStyle(agents.sessions.isEmpty ? Theme.tertiaryText : Theme.coral.color)
-                    .symbolEffect(.pulse, isActive: !agents.sessions.isEmpty)
+                if icons.isEmpty {
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundStyle(Theme.tertiaryText)
+                } else {
+                    // The busiest on top, the others tucked behind it.
+                    HStack(spacing: -5) {
+                        ForEach(Array(icons.enumerated()), id: \.element) { index, icon in
+                            AppIconView(icon: icon, size: 20).zIndex(Double(icons.count - index))
+                        }
+                    }
+                }
                 Group {
                     if agents.sessions.isEmpty {
                         Text("No agent at work", bundle: .module)
@@ -121,7 +139,6 @@ private struct AgentsLine: View {
 /// An app's own icon; open, it is bright with a dot beneath, like the Dock.
 private struct AppIconButton: View {
     let app: AIApp
-    let icon: NSImage?
     let open: Bool
     let size: CGFloat
     let action: () -> Void
@@ -130,15 +147,8 @@ private struct AppIconButton: View {
     var body: some View {
         Button(action: action) {
             VStack(spacing: 4) {
-                Group {
-                    if let icon {
-                        Image(nsImage: icon).resizable().interpolation(.high)
-                    } else {
-                        Image(systemName: "sparkles").font(.system(size: size * 0.45)).foregroundStyle(.white)
-                    }
-                }
-                .frame(width: size, height: size)
-                .opacity(open ? 1 : 0.5)
+                AppIconView(icon: app.icon, size: size)
+                    .opacity(open ? 1 : 0.5)
                 .scaleEffect(hovering ? 1.08 : 1)
                 Text(verbatim: app.name)
                     .font(.system(size: 10, weight: .medium))
@@ -165,10 +175,17 @@ private struct ServerRow: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            Circle()
-                .fill(color)
-                .frame(width: 7, height: 7)
-                .shadow(color: color.opacity(0.7), radius: status?.generating == true ? 4 : 0)
+            // The server's app, with a light in its corner: green with a model loaded, red when it does not answer.
+            AppIconView(icon: AppIcon(bundleIdentifiers: server.kind.icon.bundleIdentifiers, name: server.kind.icon.name, mark: server.kind.icon.mark,
+                                      symbol: server.isLocal ? "desktopcomputer" : "network", tint: server.kind.icon.tint), size: 20)
+                .overlay(alignment: .bottomTrailing) {
+                    Circle()
+                        .fill(color)
+                        .frame(width: 7, height: 7)
+                        .background(Circle().stroke(Color.black, lineWidth: 2.5))
+                        .shadow(color: color.opacity(0.7), radius: status?.generating == true ? 4 : 0)
+                        .offset(x: 1, y: 1)
+                }
             Text(verbatim: server.name)
                 .font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(.white)
@@ -182,12 +199,15 @@ private struct ServerRow: View {
                 .truncationMode(.middle)
             Spacer(minLength: 0)
             if status?.generating == true, !compact {
-                Text("Generating", bundle: .module)
-                    .font(.system(size: 10.5, weight: .semibold))
+                // Dots that type, as in Messages: short enough to leave the model's name its room.
+                Image(systemName: "ellipsis")
+                    .font(.system(size: 11, weight: .bold))
+                    .symbolEffect(.variableColor.iterative, isActive: true)
                     .foregroundStyle(.black)
-                    .padding(.horizontal, 7)
-                    .frame(height: 18)
+                    .frame(width: 26, height: 18)
                     .background(Capsule().fill(Color(red: 0.2, green: 0.84, blue: 0.4)))
+                    .accessibilityLabel(Text("Generating", bundle: .module))
+                    .help(Text("Generating", bundle: .module))
             }
         }
         .padding(.horizontal, 10)

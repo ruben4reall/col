@@ -153,5 +153,6 @@ private struct TabButton: View {
         .onHover { hovering = $0 }
         .animation(.easeOut(duration: 0.15), value: hovering)
         .help(Text(verbatim: title))
+        .accessibilityLabel(Text(verbatim: title))
     }
 }
