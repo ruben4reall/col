@@ -41,7 +41,9 @@ enum ApplicationsFolder {
         // Open the copy once this process has exited, then quit; the disk image can then be ejected.
         let relaunch = Process()
         relaunch.executableURL = URL(fileURLWithPath: "/bin/sh")
-        relaunch.arguments = ["-c", "sleep 0.5; /usr/bin/open \"$0\"", destination.path]
+        // The moved Islet starts once this one is gone.
+        relaunch.arguments = ["-c", "while /bin/kill -0 \"$1\" 2>/dev/null; do /bin/sleep 0.1; done; /usr/bin/open \"$0\"",
+                              destination.path, String(ProcessInfo.processInfo.processIdentifier)]
         try? relaunch.run()
         NSApp.terminate(nil)
         return true

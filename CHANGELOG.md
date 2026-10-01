@@ -35,6 +35,8 @@ Each release's section is what Islet's update window and the GitHub release show
 - **Permissions**: one pane says what each permission is for and which feature needs it.
 - **Shortcuts and gestures**: every way to open and drive the island, in one place.
 - **Language**: Islet follows the language of your Mac, or the one you pick in Settings, General.
+- **One island**: a second copy of Islet, opened from Downloads or from a build folder, hands over to the one already
+  running instead of drawing a second island and taking its connection to your agents.
 
 ## 1.2.0 (2026-09-28)
 

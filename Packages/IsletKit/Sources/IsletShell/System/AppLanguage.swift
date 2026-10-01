@@ -51,7 +51,9 @@ enum AppLanguage {
         let path = Bundle.main.bundleURL.path
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/bin/sh")
-        process.arguments = ["-c", "sleep 0.6; /usr/bin/open \"$0\"", path]
+        // The new Islet starts once this one is gone: two would mean two islands on one notch.
+        process.arguments = ["-c", "while /bin/kill -0 \"$1\" 2>/dev/null; do /bin/sleep 0.1; done; /usr/bin/open \"$0\"",
+                             path, String(ProcessInfo.processInfo.processIdentifier)]
         try? process.run()
         NSApp.terminate(nil)
     }

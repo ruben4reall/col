@@ -50,20 +50,13 @@ final class ControlServer: @unchecked Sendable {
             at: url.deletingLastPathComponent(), withIntermediateDirectories: true,
             attributes: [.posixPermissions: 0o700]
         )
+        // A socket that answers belongs to an Islet that runs: taking it would cut that one off from its agents.
+        guard !Self.isAnswered(at: url) else { throw POSIXError(.EADDRINUSE) }
+        guard var address = Self.address(of: url) else { throw POSIXError(.ENAMETOOLONG) }
         unlink(url.path)
 
         let fd = socket(AF_UNIX, SOCK_STREAM, 0)
         guard fd >= 0 else { throw POSIXError(.EIO) }
-        var address = sockaddr_un()
-        address.sun_family = sa_family_t(AF_UNIX)
-        let path = Array(url.path.utf8CString)
-        guard path.count <= MemoryLayout.size(ofValue: address.sun_path) else {
-            close(fd)
-            throw POSIXError(.ENAMETOOLONG)
-        }
-        withUnsafeMutableBytes(of: &address.sun_path) { buffer in
-            path.withUnsafeBytes { buffer.copyMemory(from: $0) }
-        }
         let bound = withUnsafePointer(to: &address) {
             $0.withMemoryRebound(to: sockaddr.self, capacity: 1) { bind(fd, $0, socklen_t(MemoryLayout<sockaddr_un>.size)) }
         }
@@ -80,8 +73,34 @@ final class ControlServer: @unchecked Sendable {
 
     func stop() {
         source?.cancel()
-        if listener >= 0 { close(listener) }
+        // Only the Islet that made the socket removes it.
+        guard listener >= 0 else { return }
+        close(listener)
+        listener = -1
         unlink(Self.socketURL.path)
+    }
+
+    /// Whether an Islet listens on the socket now. A file left by an Islet that quit refuses the connection.
+    static func isAnswered(at url: URL) -> Bool {
+        guard var address = address(of: url) else { return false }
+        let fd = socket(AF_UNIX, SOCK_STREAM, 0)
+        guard fd >= 0 else { return false }
+        defer { close(fd) }
+        let connected = withUnsafePointer(to: &address) {
+            $0.withMemoryRebound(to: sockaddr.self, capacity: 1) { connect(fd, $0, socklen_t(MemoryLayout<sockaddr_un>.size)) }
+        }
+        return connected == 0
+    }
+
+    private static func address(of url: URL) -> sockaddr_un? {
+        var address = sockaddr_un()
+        address.sun_family = sa_family_t(AF_UNIX)
+        let path = Array(url.path.utf8CString)
+        guard path.count <= MemoryLayout.size(ofValue: address.sun_path) else { return nil }
+        withUnsafeMutableBytes(of: &address.sun_path) { buffer in
+            path.withUnsafeBytes { buffer.copyMemory(from: $0) }
+        }
+        return address
     }
 
     private func accept() {
