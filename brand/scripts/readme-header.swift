@@ -19,14 +19,14 @@ for dark in [false, true] {
     (dark ? color("#0A0A0C") : color("#F5F5F7")).setFill()
     card.fill()
     card.addClip()
-    // The coral light of the notch, from the top edge.
-    NSGradient(colors: [color("#FF7A59", alpha: dark ? 0.30 : 0.20), color("#FF7A59", alpha: 0)])!
+    // The blue light of the notch, from the top edge.
+    NSGradient(colors: [color("#0A84FF", alpha: dark ? 0.32 : 0.18), color("#0A84FF", alpha: 0)])!
         .draw(fromCenter: NSPoint(x: width / 2, y: height + 40), radius: 0, toCenter: NSPoint(x: width / 2, y: height + 40), radius: 520, options: [])
     color("#000000").setFill(); NSBezierPath(roundedRect: NSRect(x: width / 2 - 150, y: height - 34, width: 300, height: 60), xRadius: 22, yRadius: 22).fill()
 
     icon.draw(in: NSRect(x: 250, y: 124, width: 232, height: 232))
     let ink = dark ? color("#F5F5F7") : color("#1D1D1F"), soft = dark ? color("#86868B") : color("#6E6E73")
-    ("Islet" as NSString).draw(at: NSPoint(x: 540, y: 238), withAttributes: [.font: NSFont.systemFont(ofSize: 128, weight: .semibold), .foregroundColor: ink, .kern: -3])
+    ("Col" as NSString).draw(at: NSPoint(x: 540, y: 238), withAttributes: [.font: NSFont.systemFont(ofSize: 128, weight: .semibold), .foregroundColor: ink, .kern: -3])
     ("The notch, made useful." as NSString).draw(at: NSPoint(x: 546, y: 176), withAttributes: [.font: NSFont.systemFont(ofSize: 44, weight: .semibold), .foregroundColor: ink, .kern: -0.5])
     ("Music, AirPods, files, timers and your AI agents, in the MacBook notch." as NSString).draw(at: NSPoint(x: 548, y: 128), withAttributes: [.font: NSFont.systemFont(ofSize: 26, weight: .regular), .foregroundColor: soft])
     NSGraphicsContext.restoreGraphicsState()

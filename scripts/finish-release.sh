@@ -1,18 +1,18 @@
 #!/bin/bash
-# scripts/finish-release.sh <version>: turns the notarized dist/Islet-<version>.dmg into everything a release
-# publishes, and publishes nothing: the stapled image and its stable copy dist/Islet.dmg, its SHA-256, the release
+# scripts/finish-release.sh <version>: turns the notarized dist/Col-<version>.dmg into everything a release
+# publishes, and publishes nothing: the stapled image and its stable copy dist/Col.dmg, its SHA-256, the release
 # notes (from CHANGELOG.md), the Homebrew cask and the new appcast item, EdDSA-signed with the key in the login keychain (account
 # "islet"; macOS asks once to let generate_appcast use it). scripts/release.sh runs it; after NOTARIZE_LATER, run it
 # yourself.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 VERSION="${1:?usage: scripts/finish-release.sh <version>}"
-REPO_URL=https://github.com/ruben4reall/islet
-SITE_URL=https://getislet.vercel.app
-ACCOUNT=islet
+REPO_URL=https://github.com/ruben4reall/col
+SITE_URL=https://getcol.vercel.app
+ACCOUNT=islet  # the Sparkle key keeps the name it was made under
 APPCAST=site/appcast.xml
 PREFIX="$REPO_URL/releases/download/v$VERSION/"
-DMG="dist/Islet-$VERSION.dmg"
+DMG="dist/Col-$VERSION.dmg"
 fail() { echo "finish-release: $*" >&2; exit 1; }
 [ -f "$DMG" ] || fail "$DMG is missing: run scripts/release.sh first"
 
@@ -20,20 +20,20 @@ fail() { echo "finish-release: $*" >&2; exit 1; }
 xcrun stapler staple "$DMG" >/dev/null || fail "Apple has not accepted $DMG yet"
 xcrun stapler validate "$DMG" >/dev/null || fail "$DMG carries no valid ticket"
 hdiutil verify "$DMG" >/dev/null 2>&1 || fail "$DMG does not verify"
-cp "$DMG" dist/Islet.dmg
+cp "$DMG" dist/Col.dmg
 SHA=$(shasum -a 256 "$DMG" | awk '{print $1}')
-echo "$SHA  Islet-$VERSION.dmg" > "dist/Islet-$VERSION.dmg.sha256"
+echo "$SHA  Col-$VERSION.dmg" > "dist/Col-$VERSION.dmg.sha256"
 
 # 2. Release notes, for GitHub and for Sparkle's update window.
 NOTES=$(scripts/changelog-section.sh "$VERSION")
 UPDATES=.build/release-updates
 rm -rf "$UPDATES" && mkdir -p "$UPDATES"
 cp "$DMG" "$UPDATES/"
-printf '%s\n' "$NOTES" > "$UPDATES/Islet-$VERSION.md"
+printf '%s\n' "$NOTES" > "$UPDATES/Col-$VERSION.md"
 {
   printf '%s\n\n' "$NOTES"
-  printf 'SHA-256 of Islet-%s.dmg: `%s`\n\n' "$VERSION" "$SHA"
-  printf 'Islet is not affiliated with Apple.\n'
+  printf 'SHA-256 of Col-%s.dmg: `%s`\n\n' "$VERSION" "$SHA"
+  printf 'Col is not affiliated with Apple.\n'
 } > dist/release-notes.md
 
 # 3. The appcast: the new item on top, older items kept.
@@ -47,7 +47,7 @@ grep -q "sparkle:edSignature" "$APPCAST" || fail "$APPCAST has no EdDSA signatur
 
 # 4. The cask for the tap (ruben4reall/homebrew-tap).
 mkdir -p dist/homebrew/Casks
-scripts/render-cask.sh "$VERSION" "$SHA" > dist/homebrew/Casks/islet.rb
+scripts/render-cask.sh "$VERSION" "$SHA" > dist/homebrew/Casks/col.rb
 
-echo "Ready: $DMG, dist/Islet.dmg, dist/release-notes.md, $APPCAST, dist/homebrew/Casks/islet.rb"
+echo "Ready: $DMG, dist/Col.dmg, dist/release-notes.md, $APPCAST, dist/homebrew/Casks/col.rb"
 echo "Publication, on Ruben's go-ahead: the GitHub release v$VERSION with the two disk images, the site, then the tap."

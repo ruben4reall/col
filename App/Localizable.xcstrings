@@ -61,12 +61,12 @@
         }
       }
     },
-    "Islet works best from Applications: it can open at login and update itself there.": {
+    "Col works best from Applications: it can open at login and update itself there.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Islet fonctionne mieux depuis Applications : il peut s’y ouvrir à la connexion et s’y mettre à jour."
+            "value": "Col fonctionne mieux depuis Applications : il peut s’y ouvrir à la connexion et s’y mettre à jour."
           }
         }
       }
@@ -91,12 +91,12 @@
         }
       }
     },
-    "Move Islet to the Applications folder?": {
+    "Move Col to the Applications folder?": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Déplacer Islet dans le dossier Applications ?"
+            "value": "Déplacer Col dans le dossier Applications ?"
           }
         }
       }

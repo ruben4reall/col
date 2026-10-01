@@ -5,16 +5,16 @@ Two techniques it uses were learned from open source projects, credited here:
 
 - **Now playing on macOS 15.4 and later**: running a helper library inside `/usr/bin/perl`, which macOS entitles to
   read MediaRemote. Approach from [mediaremote-adapter](https://github.com/ungive/mediaremote-adapter) by Jonas van
-  den Berg (BSD 3-Clause). Islet's helper (`MediaBridge/`) is its own implementation.
+  den Berg (BSD 3-Clause). Col's helper (`MediaBridge/`) is its own implementation.
 - **Windows above the Lock Screen**: a SkyLight space at the notification-centre-at-lock level. Approach from
-  [SkyLightWindow](https://github.com/Lakr233/SkyLightWindow) by Lakr233 (MIT). Islet's `LockScreenSpace` is its own
+  [SkyLightWindow](https://github.com/Lakr233/SkyLightWindow) by Lakr233 (MIT). Col's `LockScreenSpace` is its own
   implementation.
 
 ## The logos of AI apps and agents
 
-When an AI app is installed, Islet shows the app's own icon, read from the app. For an agent or a model server whose
+When an AI app is installed, Col shows the app's own icon, read from the app. For an agent or a model server whose
 app is not installed (Gemini CLI, GitHub Copilot, Ollama on another machine), it shows that brand's logo on a tile in
-the brand's colours: the pictures in `Packages/IsletKit/Sources/IsletShell/Resources/Marks/`. They are drawn from the
+the brand's colours: the pictures in `Packages/ColKit/Sources/ColShell/Resources/Marks/`. They are drawn from the
 marks and colours of [LobeHub Icons](https://github.com/lobehub/lobe-icons), under the MIT License below. The logos are
 trademarks of their owners, shown only to say which app or agent is at work.
 
@@ -49,4 +49,4 @@ SOFTWARE.
 used where SF Pro is not available. The page's stylesheet is adapted from the Pli website, by the same author.
 
 The website's pictures of macOS (the desktop and its wallpaper, the Dock's icons, the menu bar, the arrow cursor, a
-TextEdit window) are screenshots of Apple's software, shown to illustrate Islet running on it. They belong to Apple.
+TextEdit window) are screenshots of Apple's software, shown to illustrate Col running on it. They belong to Apple.

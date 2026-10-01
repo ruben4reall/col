@@ -1,25 +1,25 @@
 #!/bin/bash
 # scripts/capture-site.sh: photographs the real app for the website, window by window, then lays the island on a
-# real macOS desktop (ISLET_DESKTOP, a 3024 x 1964 PNG) and writes the WebP files the website uses.
+# real macOS desktop (COL_DESKTOP, a 3024 x 1964 PNG) and writes the WebP files the website uses.
 # While the island is photographed, that same desktop covers the screen just under it, so its glass shows the website's
 # desktop and nothing of the Mac the pictures are taken on.
-# Nothing is drawn by hand: each picture is Islet itself, in English, driven by its debug switches, with a silent
+# Nothing is drawn by hand: each picture is Col itself, in English, driven by its debug switches, with a silent
 # demo track playing so no sound and no personal data (calendar, clipboard) appear.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-APP="${ISLET_BUILD_DIR:-.build/xcode}/Build/Products/Debug/Islet.app"
-DESKTOP="${ISLET_DESKTOP:?set ISLET_DESKTOP to a 3024 x 1964 PNG of a macOS desktop}"
-# The user's own Islet, relaunched at the end if it was running.
-USER_ISLET=$(ps -axo command= | grep -m1 "/Islet.app/Contents/MacOS/Islet$" | sed 's|/Contents/MacOS/Islet$||' || true)
+APP="${COL_BUILD_DIR:-.build/xcode}/Build/Products/Debug/Col.app"
+DESKTOP="${COL_DESKTOP:?set COL_DESKTOP to a 3024 x 1964 PNG of a macOS desktop}"
+# The user's own Col, relaunched at the end if it was running.
+USER_COL=$(ps -axo command= | grep -m1 "/Col.app/Contents/MacOS/Col$" | sed 's|/Contents/MacOS/Col$||' || true)
 OUT=.build/site-shots
 TMP=$(mktemp -d)
 mkdir -p "$OUT"
-# Whatever happens, the desktop over the screen and the demo track go, and the user's Islet comes back.
+# Whatever happens, the desktop over the screen and the demo track go, and the user's Col comes back.
 PLAYER= BACKDROP=
-trap 'kill $PLAYER $BACKDROP 2>/dev/null; pkill -x Islet 2>/dev/null; rm -rf "$TMP"; [ -n "$USER_ISLET" ] && open "$USER_ISLET"' EXIT
+trap 'kill $PLAYER $BACKDROP 2>/dev/null; pkill -x Col 2>/dev/null; rm -rf "$TMP"; [ -n "$USER_COL" ] && open "$USER_COL"' EXIT
 [ -d "$APP" ] || scripts/build.sh >/dev/null
 
-# The window of Islet whose frame matches, "panel" (the island, hanging from the top of the screen) or "window": its
+# The window of Col whose frame matches, "panel" (the island, hanging from the top of the screen) or "window": its
 # number, then its frame in points, "id x y width height". With "clear", it prints nothing but waits (up to a minute)
 # until no other app's window lies over the island's frame: the screen capture of the glass must be the island alone.
 window_info() {
@@ -32,7 +32,7 @@ func frame(_ w: [String: Any]) -> CGRect {
     let b = w["kCGWindowBounds"] as! [String: Double]
     return CGRect(x: b["X"]!, y: b["Y"]!, width: b["Width"]!, height: b["Height"]!)
 }
-let system: Set<String> = ["Islet", "Control Center", "Centre de contrôle", "Window Server", "SystemUIServer", "Dock"]
+let system: Set<String> = ["Col", "Control Center", "Centre de contrôle", "Window Server", "SystemUIServer", "Dock"]
 if kind == "clear" {
     let rect = CGRect(x: Double(CommandLine.arguments[2])!, y: 0, width: Double(CommandLine.arguments[3])!, height: Double(CommandLine.arguments[4])!)
     for _ in 0..<60 {
@@ -43,7 +43,7 @@ if kind == "clear" {
         Thread.sleep(forTimeInterval: 1)
     }
 } else {
-    for w in windows() where (w["kCGWindowOwnerName"] as? String) == "Islet" {
+    for w in windows() where (w["kCGWindowOwnerName"] as? String) == "Col" {
         let f = frame(w)
         if (kind == "panel") == (f.minY == 0) { print(w["kCGWindowNumber"]!, Int(f.minX), Int(f.minY), Int(f.width), Int(f.height)); break }
     }
@@ -64,7 +64,7 @@ shoot() {
   echo "  $2"
 }
 # Liquid glass unless GLASS says otherwise, whatever the user chose.
-run() { pkill -x Islet 2>/dev/null || true; sleep 0.6; ("$APP/Contents/MacOS/Islet" -AppleLanguages '(en)' -AppleLocale en_US -islandGlass "${GLASS:-liquid}" "$@" >/dev/null 2>&1 &) }
+run() { pkill -x Col 2>/dev/null || true; sleep 0.6; ("$APP/Contents/MacOS/Col" -AppleLanguages '(en)' -AppleLocale en_US -islandGlass "${GLASS:-liquid}" "$@" >/dev/null 2>&1 &) }
 
 echo "Island:"
 swift scripts/desktop-backdrop.swift "$DESKTOP" >/dev/null 2>&1 &
@@ -89,33 +89,33 @@ player() {
 player
 sleep 4
 player; run; sleep 4; shoot panel music-compact
-player; run -IsletOpen YES; sleep 4; shoot panel music-open
-run -IsletDemo headphones; sleep 7; shoot panel airpods-pro
-run -IsletDemo max; sleep 7; shoot panel airpods-max
-run -IsletOpen YES -IsletPage live; sleep 3
+player; run -ColOpen YES; sleep 4; shoot panel music-open
+run -ColDemo headphones; sleep 7; shoot panel airpods-pro
+run -ColDemo max; sleep 7; shoot panel airpods-max
+run -ColOpen YES -ColPage live; sleep 3
 # In a background list the shell would give the hook an empty stdin: the pipe stays inside the subshell.
-(echo '{"session_id":"site","hook_event_name":"PermissionRequest","cwd":"/Users/me/islet","tool_name":"Bash","tool_input":{"command":"git push origin main","description":"Push the release"}}' \
-  | "$APP/Contents/Helpers/islet" hook >/dev/null 2>&1) &
+(echo '{"session_id":"site","hook_event_name":"PermissionRequest","cwd":"/Users/me/col","tool_name":"Bash","tool_input":{"command":"git push origin main","description":"Push the release"}}' \
+  | "$APP/Contents/Helpers/colctl" hook >/dev/null 2>&1) &
 sleep 3; shoot panel agent-request
-pkill -f "Helpers/islet hook" 2>/dev/null || true
-# GitHub Copilot in VS Code: a session running a command, as VS Code's own hooks report it (Islet only watches).
-run -IsletOpen YES -IsletPage live; sleep 3
+pkill -f "Helpers/colctl hook" 2>/dev/null || true
+# GitHub Copilot in VS Code: a session running a command, as VS Code's own hooks report it (Col only watches).
+run -ColOpen YES -ColPage live; sleep 3
 for event in '"hook_event_name":"SessionStart","source":"new"' '"hook_event_name":"UserPromptSubmit","prompt":"Fix the test"' \
   '"hook_event_name":"PreToolUse","tool_name":"run_in_terminal","tool_input":{"command":"swift test"},"tool_use_id":"t1"'; do
-  echo "{\"session_id\":\"site\",\"transcript_path\":\"/tmp/site.json\",\"cwd\":\"/Users/me/islet\",$event}" \
-    | "$APP/Contents/Helpers/islet" hook --agent copilot >/dev/null 2>&1
+  echo "{\"session_id\":\"site\",\"transcript_path\":\"/tmp/site.json\",\"cwd\":\"/Users/me/col\",$event}" \
+    | "$APP/Contents/Helpers/colctl" hook --agent copilot >/dev/null 2>&1
 done
 sleep 2; shoot panel agent-copilot
 # The shelf: files dragged over, one dropped, then three. Demo files only: the user's shelf is never read.
-run -IsletDemoShelf "$TMP/none" -IsletDemo drop -IsletOpen YES -IsletPage shelf; sleep 4; shoot panel shelf-drop
-run -IsletDemoShelf "$TMP/one" -IsletOpen YES -IsletPage shelf; sleep 4; shoot panel shelf-one
-run -IsletDemoShelf "$TMP/files" -IsletOpen YES -IsletPage shelf; sleep 4; shoot panel shelf-files
+run -ColDemoShelf "$TMP/none" -ColDemo drop -ColOpen YES -ColPage shelf; sleep 4; shoot panel shelf-drop
+run -ColDemoShelf "$TMP/one" -ColOpen YES -ColPage shelf; sleep 4; shoot panel shelf-one
+run -ColDemoShelf "$TMP/files" -ColOpen YES -ColPage shelf; sleep 4; shoot panel shelf-files
 # The clipboard, with demo copies: the real pasteboard is never read.
-run -IsletDemo clipboard -IsletDemoImage "$TMP/cover.png" -IsletOpen YES -IsletPage clipboard; sleep 4; shoot panel clipboard
+run -ColDemo clipboard -ColDemoImage "$TMP/cover.png" -ColOpen YES -ColPage clipboard; sleep 4; shoot panel clipboard
 # Settings made visible: every page off, then the three sizes of the open island.
-player; run -IsletOpen YES -enabledPages '()'; sleep 4; shoot panel music-open-minimal
-player; run -IsletOpen YES -islandSize compact; sleep 4; shoot panel music-open-compact
-player; run -IsletOpen YES -islandSize large; sleep 4; shoot panel music-open-large
+player; run -ColOpen YES -enabledPages '()'; sleep 4; shoot panel music-open-minimal
+player; run -ColOpen YES -islandSize compact; sleep 4; shoot panel music-open-compact
+player; run -ColOpen YES -islandSize large; sleep 4; shoot panel music-open-large
 kill "$BACKDROP" 2>/dev/null || true
 # The four kinds of glass, over the lake and its rocks (the desktop raised by 440 points), where the glass has
 # something to bend: the website shows them on the same part of the desktop.
@@ -124,7 +124,7 @@ BACKDROP=$!
 sleep 3
 for glass in liquid transparent tinted off; do
   name=$glass; [ "$glass" = off ] && name=black
-  player; GLASS=$glass run -IsletOpen YES; sleep 4; shoot panel "glass-$name"
+  player; GLASS=$glass run -ColOpen YES; sleep 4; shoot panel "glass-$name"
 done
 kill "$BACKDROP" 2>/dev/null || true
 
@@ -147,11 +147,11 @@ SWIFT
   [ -n "$TEXTEDIT" ] && screencapture -x -o -l "$TEXTEDIT" "$OUT/textedit-copy.png" && echo "  textedit-copy"
   osascript -e 'tell application "System Events" to tell process "TextEdit" to set frontmost to true' -e 'tell application "System Events" to keystroke "q" using command down' >/dev/null 2>&1
 fi
-front() { osascript -e 'tell application "System Events" to set frontmost of process "Islet" to true' >/dev/null 2>&1 || true; sleep 0.8; }
-for pane in general island activities; do run -IsletSettings "$pane"; sleep 3; front; shoot window "settings-$pane"; done
+front() { osascript -e 'tell application "System Events" to set frontmost of process "Col" to true' >/dev/null 2>&1 || true; sleep 0.8; }
+for pane in general island activities; do run -ColSettings "$pane"; sleep 3; front; shoot window "settings-$pane"; done
 # The Pages section, with System on, then off.
-run -IsletSettings island -IsletSettingsHeight 900; sleep 3; front; shoot window settings-pages-on
-run -IsletSettings island -IsletSettingsHeight 900 -enabledPages '()'; sleep 3; front; shoot window settings-pages-off
+run -ColSettings island -ColSettingsHeight 900; sleep 3; front; shoot window settings-pages-on
+run -ColSettings island -ColSettingsHeight 900 -enabledPages '()'; sleep 3; front; shoot window settings-pages-off
 
 echo "Website and README images:"
 mkdir -p site/assets/island site/assets/app docs/images

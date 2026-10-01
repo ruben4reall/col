@@ -1,33 +1,35 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme-header-dark.png">
-    <img src="docs/images/readme-header.png" alt="Islet: the notch, made useful" width="800">
+    <img src="docs/images/readme-header.png" alt="Col: the notch, made useful" width="800">
   </picture>
 </p>
 
 <p align="center">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-FF7A59" alt="MIT license"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-0A84FF" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/macOS-14%2B-1D1D1F" alt="macOS 14 or later">
   <img src="https://img.shields.io/badge/Swift-6-1D1D1F" alt="Swift 6">
   <img src="https://img.shields.io/badge/memory-15%20MB-1D1D1F" alt="15 MB of memory at rest">
-  <a href="https://github.com/ruben4reall/islet/actions/workflows/ci.yml"><img src="https://github.com/ruben4reall/islet/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/ruben4reall/col/actions/workflows/ci.yml"><img src="https://github.com/ruben4reall/col/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
 </p>
 
-# Islet
+# Col
 
 **The notch, made useful.**
 
-[Website](https://getislet.vercel.app) · [Download for Mac](https://github.com/ruben4reall/islet/releases/latest/download/Islet.dmg) · [Changelog](CHANGELOG.md) · [API](docs/api.md)
+Col was called Islet until version 2.0: the name changed, nothing you set up does.
 
-Islet turns the camera cutout of your MacBook into a living island. While you work, it shows what matters beside the
+[Website](https://getcol.vercel.app) · [Download for Mac](https://github.com/ruben4reall/col/releases/latest) · [Changelog](CHANGELOG.md) · [API](docs/api.md)
+
+Col turns the camera cutout of your MacBook into a living island. While you work, it shows what matters beside the
 camera: the song playing, your AirPods connecting, the volume, a build running, an AI agent waiting for you. Hover or
 click, and it opens.
 
-Islet is a free, open source Mac app, written in Swift. It does what the best notch apps do, then opens the notch to
+Col is a free, open source Mac app, written in Swift. It does what the best notch apps do, then opens the notch to
 your scripts and your AI agents.
 
 <p align="center">
-  <img src="docs/images/open.webp" alt="Islet open below the notch of a MacBook, playing a song: the cover, the title, a scrubber and the controls" width="800">
+  <img src="docs/images/open.webp" alt="Col open below the notch of a MacBook, playing a song: the cover, the title, a scrubber and the controls" width="800">
 </p>
 
 ## What it does
@@ -40,11 +42,11 @@ your scripts and your AI agents.
 - **A prompter in the notch.** Your script comes out of the notch right under the camera, at the pace of your voice:
   it waits when you stop talking (Voice Pace), follows your words one by one (Voice Follow), rolls at a steady pace, or
   moves only when you move it. Recognition runs on your Mac, and the prompter stays out of screenshots, recordings and
-  calls. Drive it with shortcuts, a presentation clicker or your phone. It was Souffleur, now part of Islet.
-- **AirPods, by model.** Islet reads the model your headphones report (AirPods, AirPods Pro, AirPods Max, Beats) and
+  calls. Drive it with shortcuts, a presentation clicker or your phone. It was Souffleur, now part of Col.
+- **AirPods, by model.** Col reads the model your headphones report (AirPods, AirPods Pro, AirPods Max, Beats) and
   shows each earbud and the case, or the headphones' single battery.
 - **AI agents.** Claude Code, Codex, Gemini CLI, Cursor and GitHub Copilot in VS Code show in the notch while they
-  work, each with its logo. When Claude Code or Codex asks for permission, the island opens with Allow and Deny. Islet
+  work, each with its logo. When Claude Code or Codex asks for permission, the island opens with Allow and Deny. Col
   never signs in to any AI service.
 - **Your AI, in the island.** The AI apps of your Mac, a tap away, and your own model servers (Ollama, LM Studio,
   llama.cpp or any OpenAI-compatible server, on this Mac or another one of your network) with the model each one
@@ -56,7 +58,7 @@ your scripts and your AI agents.
 - **Tools.** A timer that counts down in the wings, a colour picker, a camera mirror, system stats, keep awake,
   downloads.
 - **Privacy at a glance.** The app using your microphone or camera, right where the camera is.
-- **Programmable.** The `islet` command, a local API, `islet://` links, Shortcuts actions and extensions put your own
+- **Programmable.** The `colctl` command, a local API, `col://` links, Shortcuts actions and extensions put your own
   live activities in the notch.
 - **Never in the way.** The wings never cover a menu or a menu bar icon, the island steps aside in full screen, and on
   a Mac without a notch it floats just under the menu bar.
@@ -76,9 +78,9 @@ your scripts and your AI agents.
 
 ### Download
 
-1. [Download Islet](https://github.com/ruben4reall/islet/releases/latest/download/Islet.dmg), open the disk image and
-   drag Islet to Applications.
-2. Open Islet. It says hello from the notch, then a short welcome shows the gestures and asks for the permissions the
+1. [Download Col](https://github.com/ruben4reall/col/releases/latest), open the disk image and
+   drag Col to Applications.
+2. Open Col. It says hello from the notch, then a short welcome shows the gestures and asks for the permissions the
    modules you chose need.
 
 Releases are signed with a Developer ID and notarized by Apple.
@@ -86,54 +88,54 @@ Releases are signed with a Developer ID and notarized by Apple.
 ### Homebrew
 
 ```sh
-brew install --cask ruben4reall/tap/islet
+brew install --cask ruben4reall/tap/col
 ```
 
-The cask also links the `islet` command.
+The cask also links the `colctl` command.
 
 ### Updates
 
-Islet updates itself with [Sparkle](https://sparkle-project.org). The welcome asks whether to keep it up to date;
+Col updates itself with [Sparkle](https://sparkle-project.org). The welcome asks whether to keep it up to date;
 you can change your mind in Settings, About, or choose *Check for Updates…* from the island's right-click menu. Every
-update is signed with Islet's own key.
+update is signed with Col's own key.
 
 ### Uninstall
 
-In Settings, Developers, disconnect your AI agents, so their settings files forget Islet. Then quit Islet from its
+In Settings, Developers, disconnect your AI agents, so their settings files forget Col. Then quit Col from its
 right-click menu and move it to the Trash. Its settings are in `~/Library/Preferences/ch.rubencatalao.islet.plist`.
-With Homebrew: `brew uninstall --cask --zap islet`.
+With Homebrew: `brew uninstall --cask --zap colctl`.
 
 ## Connect your AI agents
 
 In Settings, Developers, click Connect next to each agent, or from a terminal:
 
 ```sh
-islet hooks install --agent all      # every agent found on this Mac
-islet hooks status
+colctl hooks install --agent all      # every agent found on this Mac
+colctl hooks status
 ```
 
-| Agent | Where Islet adds its hooks | In the notch |
+| Agent | Where Col adds its hooks | In the notch |
 |---|---|---|
 | Claude Code | `~/.claude/settings.json` | Sessions, and permission requests with Allow and Deny |
 | Codex | `~/.codex/hooks.json` | Sessions, and permission requests with Allow and Deny |
 | Gemini CLI | `~/.gemini/settings.json` | Sessions, and a sign when Gemini waits for you |
 | Cursor | `~/.cursor/hooks.json` | Agent sessions, their edits and commands |
-| GitHub Copilot in VS Code (Local harness) | `~/.copilot/hooks/islet.json` | Sessions, prompts and tools; VS Code handles permissions |
+| GitHub Copilot in VS Code (Local harness) | `~/.copilot/hooks/col.json` | Sessions, prompts and tools; VS Code handles permissions |
 
-Islet keeps a backup of every file it edits and leaves the rest untouched. Codex runs a new hook once you trust it with
+Col keeps a backup of every file it edits and leaves the rest untouched. Codex runs a new hook once you trust it with
 `/hooks`. Copilot hooks are observational: VS Code applies each session's own permission mode, including bypass,
-without Islet forcing an extra approval. This uses VS Code's Local agent harness; the Agent Host harness has a separate hook format.
-If Islet is closed, hooks exit at once. Other agents or scripts can do the same, for example:
-`islet agent Aider working --message "Refactoring"`.
+without Col forcing an extra approval. This uses VS Code's Local agent harness; the Agent Host harness has a separate hook format.
+If Col is closed, hooks exit at once. Other agents or scripts can do the same, for example:
+`colctl agent Aider working --message "Refactoring"`.
 
 ## Programmable notch
 
 ```sh
-islet push build --title "Build" --symbol hammer.fill --tint orange --progress 40%
-islet done build
+colctl push build --title "Build" --symbol hammer.fill --tint orange --progress 40%
+colctl done build
 ```
 
-The command, the local API over a Unix socket that only your account can open, `islet://` links and extensions are
+The command, the local API over a Unix socket that only your account can open, `col://` links and extensions are
 described in [docs/api.md](docs/api.md) and [docs/extensions.md](docs/extensions.md).
 
 ## Permissions
@@ -151,19 +153,19 @@ Each one only if a module you chose needs it:
 - No account, no telemetry, no analytics, no crash reports.
 - One network connection: the update check, which you can turn off. Sparkle's system profile is off.
 - The clipboard history lives in memory and skips copies that password managers mark as private.
-- Scripts and agents reach Islet through a socket in your user folder, mode 0600. No network port.
+- Scripts and agents reach Col through a socket in your user folder, mode 0600. No network port.
 
-[SECURITY.md](SECURITY.md) lists everything Islet touches on your Mac.
+[SECURITY.md](SECURITY.md) lists everything Col touches on your Mac.
 
 ## Light on your Mac
 
-| | Islet | Alcove | boring.notch | Atoll |
+| | Col | Alcove | boring.notch | Atoll |
 |---|---|---|---|---|
 | Memory at rest | **15 MB** | 56 MB | 71 MB | 106 MB |
 | Processor at rest | **0.004 %** | 0.01 % | 3.9 % | 6.8 % |
 
 One minute idle after launch, helper processes included, on a 14-inch MacBook Pro (M3 Pro), macOS 26.5. While you use
-the Mac, clipboard history checks the pasteboard every two seconds and Islet uses about 0.013 %. How it is measured:
+the Mac, clipboard history checks the pasteboard every two seconds and Col uses about 0.013 %. How it is measured:
 [docs/benchmark.md](docs/benchmark.md).
 
 The island is a borderless window exactly the size of the notch; its outline is a Core Animation shape morphed with
@@ -178,12 +180,12 @@ opens and thrown away as it closes, and the Liquid Glass under them only draws w
 
 ## Private macOS APIs
 
-Islet uses private macOS functions for six features. Each is looked up at runtime: if a macOS update removes one, its
+Col uses private macOS functions for six features. Each is looked up at runtime: if a macOS update removes one, its
 feature turns off and nothing crashes.
 
 | Feature | Functions | Why |
 |---|---|---|
-| Now playing | `MRMediaRemoteGetNowPlayingInfo`, `MRMediaRemoteSendCommand` and neighbours (MediaRemote) | Since macOS 15.4 only Apple-signed processes may read them: Islet's helper runs inside `/usr/bin/perl`. Approach from [ungive/mediaremote-adapter](https://github.com/ungive/mediaremote-adapter) (BSD 3-Clause), rewritten. |
+| Now playing | `MRMediaRemoteGetNowPlayingInfo`, `MRMediaRemoteSendCommand` and neighbours (MediaRemote) | Since macOS 15.4 only Apple-signed processes may read them: Col's helper runs inside `/usr/bin/perl`. Approach from [ungive/mediaremote-adapter](https://github.com/ungive/mediaremote-adapter) (BSD 3-Clause), rewritten. |
 | Brightness | `DisplayServicesGetBrightness`, `DisplayServicesSetBrightness` | Reading and setting the built-in display's brightness. |
 | Headphone battery and model | `batteryPercentLeft`, `batteryPercentCase`, `productID` on `IOBluetoothDevice` | AirPods report them through properties IOBluetooth does not document. |
 | Liquid glass of the open island | The `glassBackground` filter of `NSGlassEffectView` (Core Animation): its refraction and blur inputs | Liquid Glass can bend what lies behind it like a lens, but macOS turns that off on large panels and frosts them. Only inputs that exist are set: otherwise the glass stays Apple's own. |
@@ -196,36 +198,36 @@ You need Xcode 26 and [XcodeGen](https://github.com/yonaskolb/XcodeGen).
 
 ```sh
 brew install xcodegen
-git clone https://github.com/ruben4reall/islet.git
-cd islet
-swift test --package-path Packages/IsletKit   # the island's rules, activities, agents, parsers
+git clone https://github.com/ruben4reall/col.git
+cd colctl
+swift test --package-path Packages/ColKit   # the island's rules, activities, agents, parsers
 scripts/build.sh                               # prints the path of the Debug app
-open .build/xcode/Build/Products/Debug/Islet.app
+open .build/xcode/Build/Products/Debug/Col.app
 ```
 
-- A clone kept in a synced folder (iCloud Drive) can make codesign refuse the build: set `ISLET_BUILD_DIR` to a
-  folder outside it, for example `ISLET_BUILD_DIR=~/Library/Caches/Islet/Xcode scripts/build.sh`.
+- A clone kept in a synced folder (iCloud Drive) can make codesign refuse the build: set `COL_BUILD_DIR` to a
+  folder outside it, for example `COL_BUILD_DIR=~/Library/Caches/Col/Xcode scripts/build.sh`.
 
 - `swift scripts/fake-player.swift` publishes a silent track, to work on the player without sound.
-- Debug switches, for screenshots and for working on one screen: `-IsletOpen YES`, `-IsletPage live`,
-  `-IsletDemo headphones` or `max`, `-IsletSettings island`. `scripts/capture-site.sh` uses them to photograph the
+- Debug switches, for screenshots and for working on one screen: `-ColOpen YES`, `-ColPage live`,
+  `-ColDemo headphones` or `max`, `-ColSettings island`. `scripts/capture-site.sh` uses them to photograph the
   real app for the website and this README.
 - `node site/tools/audit.mjs` checks the website at four sizes under its production headers (errors, blocked
   resources, broken images, overflow, the contrast of every text) and writes a screenshot of every section to
   `site/.shots/`; `node site/tools/frames.mjs` photographs the animated scenes at several moments.
 - The website's scenes move real captures of the app and real pieces of macOS. Their demo content (the shelf's files,
-  a few copies, a TextEdit window) comes from `-IsletDemoShelf <folder>`, `-IsletDemo clipboard` and
+  a few copies, a TextEdit window) comes from `-ColDemoShelf <folder>`, `-ColDemo clipboard` and
   `brand/scripts/demo-files.swift`: the user's own shelf and clipboard are never read.
-- `scripts/release.sh` makes a disk image. Without `ISLET_TEAM_ID` it is ad hoc, for your own use; with a team it is
+- `scripts/release.sh` makes a disk image. Without `COL_TEAM_ID` it is ad hoc, for your own use; with a team it is
   signed, notarized and stapled, and `scripts/finish-release.sh` writes the signed update feed.
 
 | Folder | What lives there |
 |---|---|
-| `Packages/IsletKit/Sources/IsletCore` | Geometry, the rules that open and close the island, activities, agents, parsers. No AppKit, fully tested |
-| `Packages/IsletKit/Sources/IsletShell` | The panel, Core Animation drawing, SwiftUI pages, system monitors, the socket server |
+| `Packages/ColKit/Sources/ColCore` | Geometry, the rules that open and close the island, activities, agents, parsers. No AppKit, fully tested |
+| `Packages/ColKit/Sources/ColShell` | The panel, Core Animation drawing, SwiftUI pages, system monitors, the socket server |
 | `App/` | Entry point, updates, Shortcuts actions |
 | `MediaBridge/` | The helper that reads now playing information |
-| `CLI/` | The `islet` command and the agents' hooks |
+| `CLI/` | The `colctl` command and the agents' hooks |
 | `site/` | The website and the update feed |
 
 ## Credits
@@ -239,16 +241,16 @@ Licenses and notices: [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 
 ## Contributing
 
-Bugs and ideas go to [issues](https://github.com/ruben4reall/islet/issues); pull requests are welcome. Thanks to
+Bugs and ideas go to [issues](https://github.com/ruben4reall/col/issues); pull requests are welcome. Thanks to
 [@BonnetAdam](https://github.com/BonnetAdam), who brought GitHub Copilot in VS Code to the notch.
 [CONTRIBUTING.md](CONTRIBUTING.md) gives the workflow and the promises every change keeps (light, native, the rules
-tested in `IsletCore`), and [SECURITY.md](SECURITY.md) how to report a vulnerability privately.
+tested in `ColCore`), and [SECURITY.md](SECURITY.md) how to report a vulnerability privately.
 
-Islet follows the language of your Mac. Its translations were made by AI, not by native speakers: if a word sounds
+Col follows the language of your Mac. Its translations were made by AI, not by native speakers: if a word sounds
 wrong in your language, please [fix it](CONTRIBUTING.md#translations).
 
 ## License
 
 MIT. See [LICENSE](LICENSE).
 
-Islet is not affiliated with Apple. MacBook, AirPods and macOS are trademarks of Apple Inc.
+Col is not affiliated with Apple. MacBook, AirPods and macOS are trademarks of Apple Inc.

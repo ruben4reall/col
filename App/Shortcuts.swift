@@ -1,8 +1,8 @@
 import AppIntents
-import IsletPrompter
-import IsletShell
+import ColPrompter
+import ColShell
 
-/// Shortcuts actions: the same things the `islet` command does, without a terminal.
+/// Shortcuts actions: the same things the `colctl` command does, without a terminal.
 struct ShowActivityIntent: AppIntent {
     static let title: LocalizedStringResource = "Show in the Notch"
     static let description = IntentDescription("Shows a live activity beside the camera, or updates the one with the same name.")
@@ -127,7 +127,7 @@ struct ClosePrompterIntent: AppIntent {
     }
 }
 
-struct IsletShortcuts: AppShortcutsProvider {
+struct ColShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
         AppShortcut(intent: StartTimerIntent(), phrases: ["Start a timer in \(.applicationName)"], shortTitle: "Timer", systemImageName: "timer")
         AppShortcut(intent: OpenIslandIntent(), phrases: ["Open \(.applicationName)"], shortTitle: "Open the Island", systemImageName: "rectangle.topthird.inset.filled")

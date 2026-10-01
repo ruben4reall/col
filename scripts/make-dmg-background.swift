@@ -1,10 +1,10 @@
 // swift scripts/make-dmg-background.swift [output.png]
 //
-// The installer window's background: 660 x 400 points, rendered at 2x. scripts/release.sh places Islet's icon at
+// The installer window's background: 660 x 400 points, rendered at 2x. scripts/release.sh places Col's icon at
 // (165, 205) and Applications at (495, 205), in Finder's coordinates (points from the top left), with 112-point icons.
 //
 // Light on purpose: Finder draws the labels under the icons in black on any window with a background picture, whatever
-// the appearance, so a Night ground would hide "Islet" and "Applications". The coral comes back as the lit notch at the
+// the appearance, so a Night ground would hide "Col" and "Applications". The blue comes back as the lit notch at the
 // top edge, the icon's own window.
 import AppKit
 
@@ -15,7 +15,7 @@ func color(_ hex: String, alpha: CGFloat = 1) -> NSColor {
 }
 
 // Brand tokens (brand/README.md).
-let night = color("#05080A"), coral = color("#FF7A59"), ember = color("#E2472D"), peach = color("#FFC7A8")
+let night = color("#05080A"), blue = color("#0A84FF"), deep = color("#0060DF"), sky = color("#B8DAFF")
 let ink = color("#0F1B1F"), graphite = color("#6E6E73")
 let white = color("#FFFFFF"), paper = color("#F5F5F7")
 
@@ -33,9 +33,9 @@ NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: rep)
 // 1. The ground: White at the top, Paper at the bottom.
 NSGradient(colors: [paper, white])!.draw(in: NSRect(x: 0, y: 0, width: width, height: height), angle: 90)
 
-// 2. The notch, hanging from the top edge, with its coral glow below: the island, closed.
+// 2. The notch, hanging from the top edge, with its blue glow below: the island, closed.
 let notch = NSRect(x: (width - 150) / 2, y: height - 30, width: 150, height: 30)
-let glow = NSGradient(colors: [coral.withAlphaComponent(0.28), peach.withAlphaComponent(0.10), white.withAlphaComponent(0)],
+let glow = NSGradient(colors: [blue.withAlphaComponent(0.28), sky.withAlphaComponent(0.10), white.withAlphaComponent(0)],
                       atLocations: [0, 0.45, 1], colorSpace: .sRGB)!
 glow.draw(fromCenter: NSPoint(x: width / 2, y: height - 20), radius: 0,
           toCenter: NSPoint(x: width / 2, y: height - 20), radius: 150, options: [])
@@ -56,11 +56,11 @@ notchPath.curve(to: NSPoint(x: notch.maxX + flare, y: height), controlPoint1: NS
 notchPath.close()
 night.setFill()
 notchPath.fill()
-// The coral dot of a live activity, in the notch's right wing.
-coral.setFill()
+// The blue dot of a live activity, in the notch's right wing.
+blue.setFill()
 NSBezierPath(ovalIn: NSRect(x: notch.maxX - 26, y: notch.minY + 11, width: 8, height: 8)).fill()
 
-// 3. The arrow from Islet to Applications, at icon height, coral fading into ember.
+// 3. The arrow from Col to Applications, at icon height, blue fading into its deeper shade.
 let arrow = NSBezierPath()
 arrow.lineWidth = 3
 arrow.lineCapStyle = .round
@@ -70,17 +70,17 @@ arrow.line(to: NSPoint(x: 398, y: 195))
 arrow.move(to: NSPoint(x: 380, y: 212))
 arrow.line(to: NSPoint(x: 398, y: 195))
 arrow.line(to: NSPoint(x: 380, y: 178))
-ember.withAlphaComponent(0.85).setStroke()
+deep.withAlphaComponent(0.85).setStroke()
 arrow.stroke()
 
-// 4. What to do, then who Islet is not.
+// 4. What to do, then who Col is not.
 func centered(_ text: String, size: CGFloat, weight: NSFont.Weight, color: NSColor, y: CGFloat) {
     let attributes: [NSAttributedString.Key: Any] = [.font: NSFont.systemFont(ofSize: size, weight: weight), .foregroundColor: color]
     let textWidth = (text as NSString).size(withAttributes: attributes).width
     (text as NSString).draw(at: NSPoint(x: (width - textWidth) / 2, y: y), withAttributes: attributes)
 }
-centered("Drag Islet to Applications.", size: 13, weight: .medium, color: ink, y: 58)
-centered("Free and open source, MIT License. Islet is not affiliated with Apple.", size: 10.5, weight: .regular,
+centered("Drag Col to Applications.", size: 13, weight: .medium, color: ink, y: 58)
+centered("Free and open source, MIT License. Col is not affiliated with Apple.", size: 10.5, weight: .regular,
          color: graphite, y: 26)
 
 NSGraphicsContext.restoreGraphicsState()
