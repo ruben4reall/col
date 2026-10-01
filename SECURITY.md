@@ -34,6 +34,10 @@ Copies that password managers mark as concealed or transient are skipped.
 - The update check: Sparkle reads `https://getislet.vercel.app/appcast.xml` once a day, and downloads new versions
   from GitHub. Updates are signed with Islet's EdDSA key and verified before they are opened. Sparkle's system profile
   is off. You can turn automatic checks off in Settings, About.
+- Lyrics, while they are on (Settings, Music and lyrics): the title, the artist, the album and the length of the
+  song that plays are sent to [LRCLIB](https://lrclib.net), an open lyrics database, once per song. Answers are kept in
+  `~/Library/Caches/Islet/Lyrics/`; your own `.lrc` files in `~/Library/Application Support/Islet/Lyrics/` are read
+  first and never sent anywhere.
 - The prompter's phone remote, off until you turn it on in Settings, Prompter: a small web server on your local
   network (port 7575 to 7579) that only answers a phone carrying the pairing code of the QR code you scanned. It
   stops when you turn the remote off. Nothing goes to the internet.

@@ -8,6 +8,11 @@ Each release's section is what Islet's update window and the GitHub release show
   field, and headers that stay put while the settings scroll beneath them. Appearance and Pages show your own island,
   drawn by Islet itself on your wallpaper with what it shows right now, and every change of size or glass also plays
   on the notch. While the settings are open, Islet has a Dock icon and menus, so ⌘Tab, copy and paste work as anywhere.
+- **Synced lyrics**: the words of the song beside the player, line by line, the way Apple Music shows them, whatever
+  plays (Spotify, Apple Music, Deezer, your browser). Tap a line to jump there; long instrumental passages breathe
+  three dots. Optionally, the line being sung in the closed island. Lyrics come from LRCLIB, an open database: only
+  the title, the artist, the album and the length of the track are sent, and the answer is kept on your Mac. Your own
+  `.lrc` files take precedence. Settings, Music and lyrics.
 - **The prompter, in the notch**: Souffleur joins Islet. Your script comes out of the notch right under the camera
   and rolls at the pace of your voice: it waits when you stop talking (Voice Pace), follows your words one by one
   (Voice Follow), rolls at a steady pace, or moves only when you move it. It lives on a page of the island with its

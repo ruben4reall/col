@@ -35,6 +35,8 @@ your scripts and your AI agents.
 - **Now playing.** Apple Music, Spotify, YouTube in your browser and any app that shows in Control Center, with the
   cover, a scrubber, the controls and the audio output. A cover and a live equalizer sit beside the camera while you
   work; swipe the closed island to skip a track.
+- **Synced lyrics.** The words of the song beside the player, line by line, as Apple Music shows them, whatever plays:
+  Spotify, Apple Music, Deezer or your browser. From LRCLIB, an open database, or your own `.lrc` files.
 - **A prompter in the notch.** Your script comes out of the notch right under the camera, at the pace of your voice:
   it waits when you stop talking (Voice Pace), follows your words one by one (Voice Follow), rolls at a steady pace, or
   moves only when you move it. Recognition runs on your Mac, and the prompter stays out of screenshots, recordings and

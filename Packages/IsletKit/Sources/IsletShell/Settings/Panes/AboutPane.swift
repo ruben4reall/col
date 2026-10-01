@@ -20,8 +20,8 @@ struct AboutPane: View {
                 .padding(.vertical, 14)
             }
             Section {
-                IconRow(symbol: "network", tint: .blue, title: Text("Updates only", bundle: .module),
-                        detail: Text("Islet goes online only to check for its own updates, on the Islet website. No account, no analytics: what it shows stays on your Mac.", bundle: .module)) {
+                IconRow(symbol: "network", tint: .blue, title: Text("What goes online", bundle: .module),
+                        detail: Text("The check for Islet’s own updates, on the Islet website, and, when lyrics are on, the title, artist, album and length of the song you play, sent to LRCLIB. No account, no analytics: everything else stays on your Mac.", bundle: .module)) {
                     EmptyView()
                 }
             } header: {
