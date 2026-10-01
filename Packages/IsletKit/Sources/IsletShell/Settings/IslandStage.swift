@@ -12,9 +12,12 @@ struct IslandStage: NSViewRepresentable {
     var opensOnAppear = true
     /// Bumped to replay the opening, after a setting changed.
     var replay = 0
-    /// Pages to show instead of the user's, such as a deck being edited, and the page to show.
+    /// Pages to show instead of the user's, such as a deck being edited, and the page to show: a page's id, or "live"
+    /// for the Live page.
     var deck: PageDeck?
     var page: String?
+    /// Agents of the stage's own, for an example request that must not reach the real ones.
+    var agents: AgentCenter?
 
     /// The open island, its shadow and some wallpaper below it.
     static func height(for size: IslandSize) -> CGFloat {
@@ -22,7 +25,7 @@ struct IslandStage: NSViewRepresentable {
     }
 
     func makeNSView(context: Context) -> IslandStageView {
-        IslandStageView(opensOnAppear: opensOnAppear)
+        IslandStageView(opensOnAppear: opensOnAppear, agents: agents)
     }
 
     func updateNSView(_ view: IslandStageView, context: Context) {
@@ -61,7 +64,7 @@ final class IslandStageView: NSView {
     private var generation = 0
     private var wallpaperImage: CGImage?
 
-    init(opensOnAppear: Bool) {
+    init(opensOnAppear: Bool, agents: AgentCenter? = nil) {
         self.opensOnAppear = opensOnAppear
         super.init(frame: .zero)
         wantsLayer = true
@@ -71,7 +74,7 @@ final class IslandStageView: NSView {
         layer?.addSublayer(wallpaper)
         scaler.wantsLayer = true
         addSubview(scaler)
-        if let services = IslandController.shared?.stageServices(navigation: navigation) {
+        if let services = IslandController.shared?.stageServices(navigation: navigation, agents: agents) {
             let island = IslandView(services: services)
             island.onEvent = { [weak self] event in self?.send(event) }
             island.onPageSwipe = { [weak self] step in self?.navigation.step(step) }
@@ -104,7 +107,12 @@ final class IslandStageView: NSView {
     /// Shows a page, from a deck of its own or from the user's.
     func show(deck: PageDeck?, page: String?) {
         if let deck { navigation.use(deck) }
-        if let page { navigation.show(.page(page)) }
+        guard let page else { return }
+        if page == "live" {
+            if navigation.route != .live { navigation.show(.live) }
+        } else if navigation.route != .page(page) {
+            navigation.show(.page(page))
+        }
     }
 
     /// Stops the timers and lets go of the island's content.

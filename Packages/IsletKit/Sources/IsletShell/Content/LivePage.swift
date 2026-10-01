@@ -72,9 +72,17 @@ private struct PermissionCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
-                Image(systemName: "hand.raised.fill")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundStyle(.orange)
+                // The agent's own logo, a small hand in its corner: it is asking.
+                AppIconView(icon: CodingAgent.icon(for: request.agent), size: 22)
+                    .overlay(alignment: .bottomTrailing) {
+                        Image(systemName: "hand.raised.fill")
+                            .font(.system(size: 7.5, weight: .bold))
+                            .foregroundStyle(.white)
+                            .frame(width: 13, height: 13)
+                            .background(Circle().fill(.orange))
+                            .background(Circle().stroke(Color.black, lineWidth: 2))
+                            .offset(x: 3, y: 3)
+                    }
                 Text(request.project)
                     .font(.system(size: 12.5, weight: .semibold))
                     .foregroundStyle(.white)
