@@ -144,8 +144,13 @@ final class WelcomeModel {
         Preferences.showsMicrophoneAndCamera = modules.contains(.privacy)
         Preferences.showsAgents = modules.contains(.agents)
         Preferences.keepsClipboardHistory = modules.contains(.clipboard)
-        let order: [(Module, String)] = [(.shelf, "shelf"), (.clipboard, "clipboard"), (.tools, "tools"), (.system, "system")]
-        Preferences.enabledPages = order.filter { modules.contains($0.0) }.map(\.1)
+        // Home first, then a page for each tool chosen.
+        var deck = PageDeck(pages: [PageDeck.standard.pages[0]])
+        let order: [(Module, WidgetKind)] = [(.shelf, .shelf), (.clipboard, .clipboard), (.tools, .tools), (.system, .system)]
+        for (module, kind) in order where modules.contains(module) {
+            deck.add([WidgetStack([kind])], id: kind.rawValue)
+        }
+        Preferences.pageDeck = deck
     }
 }
 

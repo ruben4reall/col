@@ -36,8 +36,9 @@ struct MediaPlayerView: View {
     }
 }
 
-private struct ArtworkView: View {
+struct ArtworkView: View {
     let media: MediaController
+    var size: CGFloat = 92
     @State private var hovering = false
 
     var body: some View {
@@ -51,14 +52,14 @@ private struct ArtworkView: View {
                     ZStack {
                         Color.white.opacity(0.08)
                         Image(systemName: "music.note")
-                            .font(.system(size: 30, weight: .medium))
+                            .font(.system(size: size * 0.33, weight: .medium))
                             .foregroundStyle(.white.opacity(0.35))
                     }
                 }
             }
-            .frame(width: 92, height: 92)
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-            .shadow(color: media.tint.color.opacity(0.45), radius: 18, y: 6)
+            .frame(width: size, height: size)
+            .clipShape(RoundedRectangle(cornerRadius: size * 0.174, style: .continuous))
+            .shadow(color: media.tint.color.opacity(0.45), radius: size * 0.2, y: size * 0.065)
             // Like a record that rests: the cover draws back a little while paused.
             .scaleEffect(media.nowPlaying.isPlaying ? 1 : 0.9)
             .brightness(hovering ? 0.06 : 0)
@@ -66,9 +67,9 @@ private struct ArtworkView: View {
             if let icon = media.playerIcon {
                 Image(nsImage: icon)
                     .resizable()
-                    .frame(width: 26, height: 26)
+                    .frame(width: size * 0.28, height: size * 0.28)
                     .shadow(color: .black.opacity(0.5), radius: 4, y: 2)
-                    .offset(x: 7, y: 7)
+                    .offset(x: size * 0.076, y: size * 0.076)
             }
         }
         .animation(.spring(duration: 0.45, bounce: 0.3), value: media.nowPlaying.isPlaying)
@@ -79,8 +80,10 @@ private struct ArtworkView: View {
     }
 }
 
-private struct PlaybackScrubber: View {
+struct PlaybackScrubber: View {
     let media: MediaController
+    /// Narrower times, for the half-width player.
+    var compact = false
     @State private var dragged: Double?
     @State private var hovering = false
 
@@ -88,9 +91,9 @@ private struct PlaybackScrubber: View {
         TimelineView(.periodic(from: .now, by: 0.5)) { context in
             let duration = media.nowPlaying.duration
             let position = dragged ?? media.nowPlaying.position(at: context.date)
-            HStack(spacing: 10) {
+            HStack(spacing: compact ? 7 : 10) {
                 Text(Self.format(position))
-                    .frame(width: 38, alignment: .leading)
+                    .frame(width: compact ? 30 : 38, alignment: .leading)
                 GeometryReader { geometry in
                     let fraction = duration > 0 ? min(max(position / duration, 0), 1) : 0
                     let thickness: CGFloat = hovering || dragged != nil ? 7 : 5
@@ -118,7 +121,7 @@ private struct PlaybackScrubber: View {
                 }
                 .frame(height: 14)
                 Text("-" + Self.format(max(duration - position, 0)))
-                    .frame(width: 42, alignment: .trailing)
+                    .frame(width: compact ? 34 : 42, alignment: .trailing)
             }
             .font(Theme.Font.figure)
             .foregroundStyle(Theme.tertiaryText)
@@ -136,18 +139,49 @@ private struct PlaybackScrubber: View {
     }
 }
 
-private struct TransportControls: View {
+struct TransportControls: View {
+    let media: MediaController
+    var scale: CGFloat = 1
+
+    var body: some View {
+        HStack(spacing: 34 * scale) {
+            ControlButton(symbol: "backward.fill", size: 17 * scale) { media.previousTrack() }
+            ControlButton(symbol: media.nowPlaying.isPlaying ? "pause.fill" : "play.fill", size: 25 * scale) {
+                media.togglePlayback()
+            }
+            ControlButton(symbol: "forward.fill", size: 17 * scale) { media.nextTrack() }
+        }
+        .frame(maxWidth: .infinity)
+    }
+}
+
+/// The player in half a page: the cover and the track on top, the scrubber, then the controls.
+struct CompactPlayerView: View {
     let media: MediaController
 
     var body: some View {
-        HStack(spacing: 34) {
-            ControlButton(symbol: "backward.fill", size: 17) { media.previousTrack() }
-            ControlButton(symbol: media.nowPlaying.isPlaying ? "pause.fill" : "play.fill", size: 25) {
-                media.togglePlayback()
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(spacing: 12) {
+                ArtworkView(media: media, size: 54)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(media.nowPlaying.title)
+                        .font(.system(size: 13.5, weight: .semibold))
+                        .foregroundStyle(.white)
+                    Text(media.nowPlaying.artist)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundStyle(Theme.secondaryText)
+                }
+                .lineLimit(1)
+                .contentTransition(.opacity)
+                .animation(.easeInOut(duration: 0.25), value: media.nowPlaying.trackKey)
+                Spacer(minLength: 0)
             }
-            ControlButton(symbol: "forward.fill", size: 17) { media.nextTrack() }
+            Spacer(minLength: 8)
+            PlaybackScrubber(media: media, compact: true)
+            Spacer(minLength: 2)
+            TransportControls(media: media, scale: 0.82)
         }
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 }
 

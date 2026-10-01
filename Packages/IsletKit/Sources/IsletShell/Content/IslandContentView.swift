@@ -56,7 +56,7 @@ struct IslandContentView: View {
                 openSettings: services.openSettings
             )
             .frame(height: model.notchHeight)
-            .opacity(model.isPresented && services.navigation.page != .greeting && services.navigation.page != .device ? 1 : 0)
+            .opacity(model.isPresented && services.navigation.route != .greeting && services.navigation.route != .device ? 1 : 0)
             .animation(model.isPresented ? .easeOut(duration: 0.3).delay(0.12) : .easeOut(duration: 0.1), value: model.isPresented)
 
             page
@@ -76,25 +76,19 @@ struct IslandContentView: View {
     @ViewBuilder private var page: some View {
         let direction = CGFloat(services.navigation.direction)
         ZStack {
-            switch services.navigation.page {
-            case .home:
-                IslandHomeView(media: services.media, calendar: services.calendar, audio: services.audio)
-                    .transition(slide(direction))
-            case .shelf:
-                ShelfPage(shelf: services.shelf)
-                    .transition(slide(direction))
-            case .clipboard:
-                ClipboardPage(clipboard: services.clipboard)
-                    .transition(slide(direction))
-            case .tools:
-                ToolsPage(timer: services.timer, picker: services.picker, mirror: services.mirror, awake: services.awake)
-                    .transition(slide(direction))
-            case .system:
-                SystemPage(stats: services.stats)
-                    .transition(slide(direction))
+            switch services.navigation.route {
+            case .page(let id):
+                if let layout = services.navigation.deck.page(id) {
+                    PageView(page: layout, services: services)
+                        .transition(slide(direction))
+                        .id(id)
+                }
             case .live:
                 LivePage(agents: services.agents, custom: services.custom)
                     .transition(slide(direction))
+            case .drop:
+                ShelfPage(shelf: services.shelf)
+                    .transition(.opacity)
             case .greeting:
                 GreetingView()
                     .transition(.opacity)

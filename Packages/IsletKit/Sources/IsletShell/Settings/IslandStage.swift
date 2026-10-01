@@ -12,6 +12,9 @@ struct IslandStage: NSViewRepresentable {
     var opensOnAppear = true
     /// Bumped to replay the opening, after a setting changed.
     var replay = 0
+    /// Pages to show instead of the user's, such as a deck being edited, and the page to show.
+    var deck: PageDeck?
+    var page: String?
 
     /// The open island, its shadow and some wallpaper below it.
     static func height(for size: IslandSize) -> CGFloat {
@@ -24,6 +27,7 @@ struct IslandStage: NSViewRepresentable {
 
     func updateNSView(_ view: IslandStageView, context: Context) {
         view.update(size: size, glass: glass, replay: replay)
+        view.show(deck: deck, page: page)
     }
 
     static func dismantleNSView(_ view: IslandStageView, coordinator: ()) {
@@ -95,6 +99,12 @@ final class IslandStageView: NSView {
             self.replay = replay
             if !resized { reopen(resizing: false) }
         }
+    }
+
+    /// Shows a page, from a deck of its own or from the user's.
+    func show(deck: PageDeck?, page: String?) {
+        if let deck { navigation.use(deck) }
+        if let page { navigation.show(.page(page)) }
     }
 
     /// Stops the timers and lets go of the island's content.

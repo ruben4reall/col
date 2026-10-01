@@ -8,6 +8,12 @@ Each release's section is what Islet's update window and the GitHub release show
   field, and headers that stay put while the settings scroll beneath them. Appearance and Pages show your own island,
   drawn by Islet itself on your wallpaper with what it shows right now, and every change of size or glass also plays
   on the notch. While the settings are open, Islet has a Dock icon and menus, so ⌘Tab, copy and paste work as anywhere.
+- **Pages you compose**: each page of the open island holds one widget across it or two side by side, and each place
+  can stack several widgets: the island shows the first one that has something to show. Home now puts the player
+  beside the agenda (the clock while nothing plays). Add, rename, reorder and remove pages in Settings, Pages, where
+  the island shows the page as you edit it. Your pages from Islet 1 carry over.
+- **What the closed island shows first**: when several things run at once, the order is yours (Settings, Live
+  activities). Volume, brightness, alerts and requests still come first.
 - **AI apps**: the AI tools Islet works with get a pane of their own, with each app's own icon.
 - **Permissions**: one pane says what each permission is for and which feature needs it.
 - **Shortcuts and gestures**: every way to open and drive the island, in one place.

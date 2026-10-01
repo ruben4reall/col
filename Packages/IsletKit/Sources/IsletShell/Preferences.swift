@@ -105,10 +105,30 @@ enum Preferences {
         set { defaults.set(newValue, forKey: "hoverDelay"); changed() }
     }
 
-    /// The optional pages shown in the island, in order. Home and Live are always there.
-    static var enabledPages: [String] {
-        get { defaults.stringArray(forKey: "enabledPages") ?? ["shelf", "clipboard", "tools", "system"] }
-        set { defaults.set(newValue, forKey: "enabledPages"); changed() }
+    /// Which running things the closed island shows first, when several run at once. Alerts and brief displays always
+    /// come before them.
+    static var activityRanking: [ActivitySource] {
+        get {
+            let saved = (defaults.stringArray(forKey: "activityRanking") ?? []).compactMap(ActivitySource.init(rawValue:))
+            return ActivitySource.completed(saved)
+        }
+        set { defaults.set(newValue.map(\.rawValue), forKey: "activityRanking"); changed() }
+    }
+
+    /// The pages of the open island, in tab order. Islet 1 kept a list of its optional pages instead: that list becomes
+    /// the first deck, so an update keeps the island as it was.
+    static var pageDeck: PageDeck {
+        get {
+            if let data = defaults.data(forKey: "pageDeck"), let deck = try? JSONDecoder().decode(PageDeck.self, from: data) {
+                return deck.validated()
+            }
+            if let legacy = defaults.stringArray(forKey: "enabledPages") { return PageDeck.migrating(enabledPages: legacy) }
+            return .standard
+        }
+        set {
+            defaults.set(try? JSONEncoder().encode(newValue.validated()), forKey: "pageDeck")
+            changed()
+        }
     }
 
     /// Keep the island out of screenshots and screen recordings.

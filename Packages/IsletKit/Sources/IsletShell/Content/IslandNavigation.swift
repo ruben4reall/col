@@ -1,99 +1,111 @@
+import IsletCore
 import Observation
 import SwiftUI
 
-enum IslandPage: Int, CaseIterable, Identifiable {
-    case home
-    case shelf
-    case clipboard
-    case tools
-    case system
+/// Where the open island is: one of the user's pages, or one of the views the island opens on by itself.
+enum IslandRoute: Hashable {
+    /// A page of the user's deck, by its id.
+    case page(String)
+    /// Everything running: AI apps and activities pushed by scripts. Its tab sits right of the camera.
     case live
     /// The hello written on first launch; never a tab.
     case greeting
     /// Headphones that just connected; never a tab.
     case device
-
-    var id: Int { rawValue }
-
-    /// The pages the user can turn off and reorder.
-    static let optional: [IslandPage] = [.shelf, .clipboard, .tools, .system]
-
-    /// Pages listed on the left of the camera, in the user's order; Live sits on the right, beside the battery.
-    @MainActor static var tabs: [IslandPage] {
-        [.home] + Preferences.enabledPages.compactMap(IslandPage.init(key:))
-    }
-
-    init?(key: String) {
-        guard let page = Self.optional.first(where: { $0.key == key }) else { return nil }
-        self = page
-    }
-
-    var key: String {
-        switch self {
-        case .home: "home"
-        case .shelf: "shelf"
-        case .clipboard: "clipboard"
-        case .tools: "tools"
-        case .system: "system"
-        case .live: "live"
-        case .greeting: "greeting"
-        case .device: "device"
-        }
-    }
+    /// Files dragged over the island when no page holds the shelf: the shelf all the same.
+    case drop
 
     var symbol: String {
         switch self {
-        case .home: "house.fill"
-        case .shelf: "tray.full.fill"
-        case .clipboard: "doc.on.clipboard.fill"
-        case .tools: "square.grid.2x2.fill"
-        case .system: "gauge.with.dots.needle.67percent"
+        case .page: "square.fill"
         case .live: "dot.radiowaves.left.and.right"
         case .greeting: "hand.wave.fill"
         case .device: "airpodspro"
+        case .drop: "tray.full.fill"
         }
     }
+}
 
-    var title: LocalizedStringResource {
-        let bundle = LocalizedStringResource.BundleDescription.atURL(Bundle.module.bundleURL)
-        return switch self {
-        case .home: LocalizedStringResource("Home", bundle: bundle)
-        case .shelf: LocalizedStringResource("Shelf", bundle: bundle)
-        case .clipboard: LocalizedStringResource("Clipboard", bundle: bundle)
-        case .tools: LocalizedStringResource("Tools", bundle: bundle)
-        case .system: LocalizedStringResource("System", bundle: bundle)
-        case .live: LocalizedStringResource("Live", bundle: bundle)
-        case .greeting: LocalizedStringResource("Hello", bundle: bundle)
-        case .device: LocalizedStringResource("Connected", bundle: bundle)
-        }
+extension PageLayout {
+    /// The page's name: the user's, else one made from what it holds.
+    var title: String {
+        if let name, !name.trimmingCharacters(in: .whitespaces).isEmpty { return name }
+        if id == PageDeck.homeID { return String(localized: "Home", bundle: .module) }
+        let kinds = widgets
+        if kinds.count == 1 { return String(localized: kinds[0].title) }
+        return ListFormatter.localizedString(byJoining: stacks.compactMap(\.widgets.first).map { String(localized: $0.title) })
+    }
+
+    /// The symbol of the page's tab.
+    var tabSymbol: String {
+        if let symbol { return symbol }
+        if id == PageDeck.homeID { return "house.fill" }
+        return widgets.first?.symbol ?? "square.fill"
     }
 }
 
 @MainActor
 @Observable
 final class IslandNavigation {
-    var page: IslandPage = .home
-    /// Mirrors the enabled pages, so the tab bar redraws when they change.
-    private(set) var tabs: [IslandPage] = IslandPage.tabs
-
-    func reloadTabs() {
-        tabs = IslandPage.tabs
-        if page != .live, !tabs.contains(page) { page = .home }
-    }
+    private(set) var route: IslandRoute
+    /// The user's pages, so the tab bar redraws when they change.
+    private(set) var deck: PageDeck
     /// +1 when moving right, -1 when moving left: pages slide in from the side they come from.
     private(set) var direction = 1
 
-    func show(_ page: IslandPage) {
-        guard page != self.page else { return }
-        let order = tabs + [.live]
-        direction = (order.firstIndex(of: page) ?? 0) > (order.firstIndex(of: self.page) ?? 0) ? 1 : -1
-        withAnimation(.spring(duration: 0.42, bounce: 0.18)) { self.page = page }
+    init(deck: PageDeck = Preferences.pageDeck) {
+        self.deck = deck
+        route = .page(deck.pages.first?.id ?? PageDeck.homeID)
+    }
+
+    var tabs: [PageLayout] { deck.pages }
+
+    /// The page on show, when the island shows a page.
+    var currentPage: PageLayout? {
+        if case .page(let id) = route { return deck.page(id) }
+        return nil
+    }
+
+    func reloadDeck() {
+        deck = Preferences.pageDeck
+        if case .page(let id) = route, deck.page(id) == nil { route = .page(deck.pages[0].id) }
+    }
+
+    /// Shows a page without a deck of its own, such as the settings' preview of a page being edited.
+    func use(_ deck: PageDeck) {
+        self.deck = deck
+        if case .page(let id) = route, deck.page(id) == nil { route = .page(deck.pages[0].id) }
+    }
+
+    func showHome() {
+        show(.page(deck.pages[0].id))
+    }
+
+    /// Back to the first page without moving, once a view the island opened on by itself has gone.
+    func jumpHome() {
+        route = .page(deck.pages[0].id)
+    }
+
+    /// Shows the first page that holds a widget, or the given route when none does.
+    func show(_ kind: WidgetKind, otherwise fallback: IslandRoute) {
+        show(deck.firstPage(holding: kind).map { .page($0.id) } ?? fallback)
+    }
+
+    func show(_ route: IslandRoute) {
+        guard route != self.route else { return }
+        let order = deck.pages.map { IslandRoute.page($0.id) } + [.live]
+        direction = (order.firstIndex(of: route) ?? 0) > (order.firstIndex(of: self.route) ?? 0) ? 1 : -1
+        withAnimation(.spring(duration: 0.42, bounce: 0.18)) { self.route = route }
+    }
+
+    /// Sets the route without moving, for views the island opens on by itself.
+    func jump(to route: IslandRoute) {
+        self.route = route
     }
 
     func step(_ offset: Int) {
-        let pages = tabs + [.live]
-        guard let index = pages.firstIndex(of: page) else { return }
-        let next = min(max(index + offset, 0), pages.count - 1)
-        show(pages[next])
+        let routes = deck.pages.map { IslandRoute.page($0.id) } + [.live]
+        guard let index = routes.firstIndex(of: route) else { return }
+        show(routes[min(max(index + offset, 0), routes.count - 1)])
     }
 }
