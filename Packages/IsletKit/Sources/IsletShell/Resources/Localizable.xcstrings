@@ -71,6 +71,26 @@
         }
       }
     },
+    "%@, chosen in Islet.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, choisi dans Islet."
+          }
+        }
+      }
+    },
+    "%@, like your Mac.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, comme votre Mac."
+          }
+        }
+      }
+    },
     "%@: plugging in and a low battery show in the notch.": {
       "localizations": {
         "fr": {
@@ -847,6 +867,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Centré"
+          }
+        }
+      }
+    },
+    "Change": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Changer"
           }
         }
       }

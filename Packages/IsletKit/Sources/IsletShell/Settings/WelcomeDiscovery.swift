@@ -84,15 +84,18 @@ struct DiscoverStep: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 8) {
                     SectionTitle(text: Text("On this Mac", bundle: .module))
+                    LanguageRow()
+                        .opacity(shown > 0 ? 1 : 0)
+                        .offset(y: shown > 0 ? 0 : 10)
                     ForEach(Array(found.enumerated()), id: \.element) { index, feature in
                         FeatureRow(feature: feature, model: model)
-                            .opacity(shown > index ? 1 : 0)
-                            .offset(y: shown > index ? 0 : 10)
+                            .opacity(shown > index + 1 ? 1 : 0)
+                            .offset(y: shown > index + 1 ? 0 : 10)
                     }
                     SectionTitle(text: Text("Also in Islet", bundle: .module)).padding(.top, 10)
                     ForEach(others) { feature in
                         FeatureRow(feature: feature, model: model)
-                            .opacity(shown > found.count ? 1 : 0)
+                            .opacity(shown > found.count + 1 ? 1 : 0)
                     }
                 }
                 .padding(.horizontal, 36)
@@ -104,11 +107,67 @@ struct DiscoverStep: View {
         .padding(.top, 34)
         .task {
             // One line after another, as Islet looks around the Mac.
-            for index in 0...found.count {
+            for index in 0...(found.count + 1) {
                 try? await Task.sleep(for: .milliseconds(index == 0 ? 250 : 110))
                 withAnimation(.spring(duration: 0.45, bounce: 0.2)) { shown = index + 1 }
             }
         }
+    }
+}
+
+/// The language Islet speaks: the Mac's, found like the rest; another is a menu away, and Islet starts again in it.
+private struct LanguageRow: View {
+    var body: some View {
+        let current = AppLanguage.current
+        HStack(spacing: 12) {
+            Tile(symbol: "globe", tint: .blue).frame(width: 40, height: 40)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Language", bundle: .module).font(.system(size: 13.5, weight: .semibold))
+                Group {
+                    if AppLanguage.chosen == nil {
+                        Text("\(AppLanguage.name(for: current)), like your Mac.", bundle: .module)
+                    } else {
+                        Text("\(AppLanguage.name(for: current)), chosen in Islet.", bundle: .module)
+                    }
+                }
+                .font(.system(size: 12))
+                .foregroundStyle(.white.opacity(0.55))
+            }
+            Spacer(minLength: 8)
+            Menu {
+                ForEach(AppLanguage.available, id: \.self) { language in
+                    Button {
+                        guard language != current else { return }
+                        AppLanguage.choose(language == AppLanguage.system ? nil : language)
+                        AppLanguage.relaunch()
+                    } label: {
+                        if language == current {
+                            Label(AppLanguage.name(for: language), systemImage: "checkmark")
+                        } else {
+                            Text(verbatim: AppLanguage.name(for: language))
+                        }
+                    }
+                }
+            } label: {
+                Text("Change", bundle: .module)
+                    .font(.system(size: 11.5, weight: .semibold))
+                    .foregroundStyle(.white.opacity(0.9))
+                    .padding(.horizontal, 10)
+                    .frame(height: 24)
+                    .background(Capsule().fill(Color.white.opacity(0.12)))
+            }
+            .menuStyle(.button)
+            .buttonStyle(.plain)
+            .menuIndicator(.hidden)
+            .fixedSize()
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .background(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(Color.white.opacity(0.05))
+                .strokeBorder(Color.white.opacity(0.06), lineWidth: 1)
+        )
     }
 }
 
