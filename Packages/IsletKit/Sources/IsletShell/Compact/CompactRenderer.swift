@@ -22,6 +22,9 @@ final class CompactRenderer {
         self.scale = scale
     }
 
+    /// The images registered so far, for a second island that shows the same wings.
+    var registeredImages: [String: CGImage] { images }
+
     /// Makes an image available to `.image(key:)` items.
     func register(_ image: CGImage?, for key: String) {
         images[key] = image

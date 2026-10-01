@@ -41,12 +41,42 @@
         }
       }
     },
+    "A sign beside the camera while one works, and the island opens when one needs you.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un signe à côté de la caméra pendant qu’une app travaille, et l’île s’ouvre quand l’une d’elles a besoin de vous."
+          }
+        }
+      }
+    },
     "AI agents": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Agents IA"
+          }
+        }
+      }
+    },
+    "AI apps": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apps IA"
+          }
+        }
+      }
+    },
+    "AI apps and activities from scripts": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apps IA et activités des scripts"
           }
         }
       }
@@ -171,6 +201,16 @@
         }
       }
     },
+    "Always": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toujours"
+          }
+        }
+      }
+    },
     "Animation speed": {
       "localizations": {
         "fr": {
@@ -197,6 +237,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Répondre dans le terminal"
+          }
+        }
+      }
+    },
+    "Appearance": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apparence"
+          }
+        }
+      }
+    },
+    "Asked when you turn on Downloads in progress, so Islet can see files still being written.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demandé quand vous activez les téléchargements en cours, pour qu’Islet voie les fichiers encore en cours d’écriture."
           }
         }
       }
@@ -331,6 +391,16 @@
         }
       }
     },
+    "Check Now": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechercher maintenant"
+          }
+        }
+      }
+    },
     "Check for Updates…": {
       "localizations": {
         "fr": {
@@ -396,7 +466,27 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Vider"
+            "value": "Effacer"
+          }
+        }
+      }
+    },
+    "Click": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clic"
+          }
+        }
+      }
+    },
+    "Click the notch": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cliquez sur l’encoche"
           }
         }
       }
@@ -407,6 +497,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Presse-papiers"
+          }
+        }
+      }
+    },
+    "Close": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fermer"
+          }
+        }
+      }
+    },
+    "Closes it.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La ferme."
+          }
+        }
+      }
+    },
+    "Codex": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Codex"
           }
         }
       }
@@ -461,6 +581,16 @@
         }
       }
     },
+    "Connected through their hooks": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reliées par leurs crochets"
+          }
+        }
+      }
+    },
     "Connected. In Codex, run /hooks once and trust Islet’s hooks.": {
       "localizations": {
         "fr": {
@@ -487,6 +617,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Continuer"
+          }
+        }
+      }
+    },
+    "Copy": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copier"
+          }
+        }
+      }
+    },
+    "Cursor": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cursor"
+          }
+        }
+      }
+    },
+    "Cut": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couper"
           }
         }
       }
@@ -571,12 +731,42 @@
         }
       }
     },
+    "Documentation": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Documentation"
+          }
+        }
+      }
+    },
     "Done": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Terminé"
+          }
+        }
+      }
+    },
+    "Downloads": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Téléchargements"
+          }
+        }
+      }
+    },
+    "Downloads folder": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dossier Téléchargements"
           }
         }
       }
@@ -591,6 +781,16 @@
         }
       }
     },
+    "Drag files onto the notch": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Glissez des fichiers sur l’encoche"
+          }
+        }
+      }
+    },
     "Drop files on the notch": {
       "localizations": {
         "fr": {
@@ -601,12 +801,42 @@
         }
       }
     },
+    "Each change also shows on the notch, at the top of your screen.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chaque changement se voit aussi sur l’encoche, en haut de votre écran."
+          }
+        }
+      }
+    },
+    "Edit": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Édition"
+          }
+        }
+      }
+    },
     "Essentials": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Essentiel"
+          }
+        }
+      }
+    },
+    "Every way to open and drive the island.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toutes les façons d’ouvrir et de piloter l’île."
           }
         }
       }
@@ -637,6 +867,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Extensions"
+          }
+        }
+      }
+    },
+    "Files": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fichiers"
           }
         }
       }
@@ -681,12 +921,32 @@
         }
       }
     },
+    "Gemini CLI": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gemini CLI"
+          }
+        }
+      }
+    },
     "General": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Général"
+          }
+        }
+      }
+    },
+    "Gestures": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gestes"
           }
         }
       }
@@ -741,6 +1001,26 @@
         }
       }
     },
+    "Hide Islet": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masquer Islet"
+          }
+        }
+      }
+    },
+    "Hide Others": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masquer les autres"
+          }
+        }
+      }
+    },
     "Hide the island from screenshots and recordings": {
       "localizations": {
         "fr": {
@@ -771,6 +1051,16 @@
         }
       }
     },
+    "Home is always first. Live sits on the right of the camera while something runs. Turned-off pages leave the island entirely, tab included.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’accueil vient toujours en premier. En direct s’affiche à droite de la caméra quand quelque chose tourne. Une page coupée quitte l’île entièrement, onglet compris."
+          }
+        }
+      }
+    },
     "Idle": {
       "localizations": {
         "fr": {
@@ -787,6 +1077,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Image %lld × %lld"
+          }
+        }
+      }
+    },
+    "Improve a Translation…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Améliorer une traduction…"
           }
         }
       }
@@ -881,6 +1181,26 @@
         }
       }
     },
+    "Islet follows the language of your Mac. Its translations were made by AI: if a word sounds wrong, you can fix it.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Islet suit la langue de votre Mac. Ses traductions ont été faites par IA : si un mot sonne faux, vous pouvez le corriger."
+          }
+        }
+      }
+    },
+    "Islet goes online only to check for its own updates, on the Islet website. No account, no analytics: what it shows stays on your Mac.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Islet ne va en ligne que pour chercher ses propres mises à jour, sur le site d’Islet. Pas de compte, pas de statistiques : ce qu’il affiche reste sur votre Mac."
+          }
+        }
+      }
+    },
     "Islet never asks for Screen Recording, Full Disk Access or Input Monitoring.": {
       "localizations": {
         "fr": {
@@ -921,6 +1241,36 @@
         }
       }
     },
+    "Islet never signs in to any AI service: it only hears the hooks each app calls on your Mac. Connecting adds Islet’s hooks to the app’s settings and keeps a backup next to them. VS Code keeps Copilot permissions according to each session’s mode; other apps and scripts can report with islet agent.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Islet ne se connecte à aucun service d’IA : il entend seulement les crochets que chaque app appelle sur votre Mac. Relier une app ajoute les crochets d’Islet à ses réglages et garde une copie de sauvegarde à côté. VS Code garde les autorisations de Copilot selon le mode de chaque session ; les autres apps et vos scripts peuvent se signaler avec islet agent."
+          }
+        }
+      }
+    },
+    "Islet only watches the pointer over the notch, never anywhere else.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Islet ne regarde le pointeur qu’au-dessus de l’encoche, jamais ailleurs."
+          }
+        }
+      }
+    },
+    "Islet speaks the new language after a restart.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Islet parle la nouvelle langue après un redémarrage."
+          }
+        }
+      }
+    },
     "Islet stays out of the Dock and the menu bar.": {
       "localizations": {
         "fr": {
@@ -947,6 +1297,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Elle gonfle, puis s’ouvre."
+          }
+        }
+      }
+    },
+    "It swells, then opens. The delay is in Appearance.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elle gonfle, puis s’ouvre. Le délai se règle dans Apparence."
           }
         }
       }
@@ -1007,6 +1367,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Gardées en mémoire seulement, jamais écrites sur le disque. Les copies des gestionnaires de mots de passe sont ignorées."
+          }
+        }
+      }
+    },
+    "Keyboard": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clavier"
+          }
+        }
+      }
+    },
+    "Language": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Langue"
           }
         }
       }
@@ -1151,6 +1531,16 @@
         }
       }
     },
+    "Minimize": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Placer dans le Dock"
+          }
+        }
+      }
+    },
     "Mirror": {
       "localizations": {
         "fr": {
@@ -1161,12 +1551,42 @@
         }
       }
     },
+    "Modules": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modules"
+          }
+        }
+      }
+    },
     "More": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Plus"
+          }
+        }
+      }
+    },
+    "Move down": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descendre"
+          }
+        }
+      }
+    },
+    "Move up": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Monter"
           }
         }
       }
@@ -1227,6 +1647,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Réseau"
+          }
+        }
+      }
+    },
+    "Next or previous track, while music plays.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Morceau suivant ou précédent, pendant la musique."
+          }
+        }
+      }
+    },
+    "No Results": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun résultat"
           }
         }
       }
@@ -1331,12 +1771,32 @@
         }
       }
     },
+    "Open Settings…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir les Réglages…"
+          }
+        }
+      }
+    },
     "Open at login": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Ouvrir à la connexion"
+          }
+        }
+      }
+    },
+    "Open or close the island": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir ou fermer l’île"
           }
         }
       }
@@ -1381,6 +1841,16 @@
         }
       }
     },
+    "Opens it at once.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’ouvre tout de suite."
+          }
+        }
+      }
+    },
     "Opens the island with the battery of each earbud and the case. Needs Bluetooth.": {
       "localizations": {
         "fr": {
@@ -1417,6 +1887,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pages"
+          }
+        }
+      }
+    },
+    "Paste": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coller"
           }
         }
       }
@@ -1521,6 +2001,16 @@
         }
       }
     },
+    "Puts them on the shelf, ready for AirDrop.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les pose sur l’étagère, prêts pour AirDrop."
+          }
+        }
+      }
+    },
     "Quit Islet": {
       "localizations": {
         "fr": {
@@ -1537,6 +2027,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lit la batterie de vos AirPods et autres écouteurs. Sans lui, la carte n’affiche pas la batterie."
+          }
+        }
+      }
+    },
+    "Redo": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rétablir"
           }
         }
       }
@@ -1611,6 +2111,86 @@
         }
       }
     },
+    "Restart Islet": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Redémarrer Islet"
+          }
+        }
+      }
+    },
+    "Right-click": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clic droit"
+          }
+        }
+      }
+    },
+    "Right-click the island": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faites un clic droit sur l’île"
+          }
+        }
+      }
+    },
+    "Same as the Mac (%@)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comme le Mac (%@)"
+          }
+        }
+      }
+    },
+    "Scripts, Shortcuts and islet:// links all reach the same local API. Nothing listens on the network.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scripts, Raccourcis et liens islet:// passent tous par la même API locale. Rien n’écoute sur le réseau."
+          }
+        }
+      }
+    },
+    "Search": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechercher"
+          }
+        }
+      }
+    },
+    "Select All": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tout sélectionner"
+          }
+        }
+      }
+    },
+    "Sessions at work and the requests that wait for you.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les sessions au travail et les demandes qui vous attendent."
+          }
+        }
+      }
+    },
     "Sessions in the notch, and permission requests with Allow and Deny.": {
       "localizations": {
         "fr": {
@@ -1631,6 +2211,26 @@
         }
       }
     },
+    "Sessions in the notch; you answer permission requests in the app.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les sessions dans l’encoche ; vous répondez aux demandes d’autorisation dans l’app."
+          }
+        }
+      }
+    },
+    "Settings, updates and Quit.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réglages, mises à jour et Quitter."
+          }
+        }
+      }
+    },
     "Settings…": {
       "localizations": {
         "fr": {
@@ -1647,6 +2247,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Étagère"
+          }
+        }
+      }
+    },
+    "Shortcuts and gestures": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Raccourcis et gestes"
+          }
+        }
+      }
+    },
+    "Show AI apps in the notch": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Montrer les apps IA dans l’encoche"
+          }
+        }
+      }
+    },
+    "Show All": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tout afficher"
           }
         }
       }
@@ -1771,6 +2401,16 @@
         }
       }
     },
+    "Size, glass and motion, shown on your own screen.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taille, verre et mouvement, montrés sur votre propre écran."
+          }
+        }
+      }
+    },
     "Snappy": {
       "localizations": {
         "fr": {
@@ -1851,12 +2491,32 @@
         }
       }
     },
+    "Startup, screen, privacy and updates.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Démarrage, écran, confidentialité et mises à jour."
+          }
+        }
+      }
+    },
     "Step aside in full screen": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "S’effacer en plein écran"
+          }
+        }
+      }
+    },
+    "Swipe": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Balayer"
           }
         }
       }
@@ -1871,12 +2531,42 @@
         }
       }
     },
+    "Swipe down with two fingers on the notch": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Balayez vers le bas à deux doigts sur l’encoche"
+          }
+        }
+      }
+    },
+    "Swipe sideways on the closed island": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Balayez sur le côté sur l’île fermée"
+          }
+        }
+      }
+    },
     "Swipe sideways on the open island": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Balayez sur le côté sur l’île ouverte"
+          }
+        }
+      }
+    },
+    "Swipe up with two fingers": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Balayez vers le haut à deux doigts"
           }
         }
       }
@@ -1921,12 +2611,32 @@
         }
       }
     },
+    "The island": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’île"
+          }
+        }
+      }
+    },
     "The islet command": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "La commande islet"
+          }
+        }
+      }
+    },
+    "The islet command, the local API and extensions.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La commande islet, l’API locale et les extensions."
           }
         }
       }
@@ -1967,6 +2677,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "L’écran sur lequel vous travaillez"
+          }
+        }
+      }
+    },
+    "The tabs at the top left of the open island follow the order below. Swipe sideways on the island to turn the pages.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les onglets en haut à gauche de l’île ouverte suivent l’ordre ci-dessous. Balayez sur le côté sur l’île pour tourner les pages."
           }
         }
       }
@@ -2041,6 +2761,26 @@
         }
       }
     },
+    "Trackpad": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trackpad"
+          }
+        }
+      }
+    },
+    "Trackpad and pointer": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trackpad et pointeur"
+          }
+        }
+      }
+    },
     "Transparent": {
       "localizations": {
         "fr": {
@@ -2071,6 +2811,26 @@
         }
       }
     },
+    "Turns the pages.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tourne les pages."
+          }
+        }
+      }
+    },
+    "Undo": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annuler"
+          }
+        }
+      }
+    },
     "Updates": {
       "localizations": {
         "fr": {
@@ -2081,12 +2841,32 @@
         }
       }
     },
+    "Updates are signed and come from the Islet website.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les mises à jour sont signées et viennent du site d’Islet."
+          }
+        }
+      }
+    },
     "Updates are signed and come from the Islet website. Islet makes no other network request.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Les mises à jour sont signées et viennent du site d’Islet. Islet ne fait aucune autre requête réseau."
+          }
+        }
+      }
+    },
+    "Updates only": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seulement les mises à jour"
           }
         }
       }
@@ -2111,6 +2891,16 @@
         }
       }
     },
+    "Version": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version"
+          }
+        }
+      }
+    },
     "Version %@": {
       "localizations": {
         "fr": {
@@ -2127,6 +2917,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Version %@. Licence MIT."
+          }
+        }
+      }
+    },
+    "Version, privacy and credits.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version, vie privée et crédits."
           }
         }
       }
@@ -2161,6 +2961,16 @@
         }
       }
     },
+    "Volume, brightness and requests always come first; music waits behind everything else. Timers and activities pushed by scripts always show.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le volume, la luminosité et les demandes passent toujours en premier ; la musique attend derrière tout le reste. Les minuteurs et les activités envoyées par des scripts s’affichent toujours."
+          }
+        }
+      }
+    },
     "Waiting for you": {
       "localizations": {
         "fr": {
@@ -2191,6 +3001,36 @@
         }
       }
     },
+    "What Islet may use, and for what.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce qu’Islet peut utiliser, et pour quoi faire."
+          }
+        }
+      }
+    },
+    "What the closed island shows beside the camera.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce que montre l’île fermée à côté de la caméra."
+          }
+        }
+      }
+    },
+    "What the open island shows, page by page.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce que montre l’île ouverte, page par page."
+          }
+        }
+      }
+    },
     "When you plug in, and at 20 % and 10 %.": {
       "localizations": {
         "fr": {
@@ -2211,12 +3051,32 @@
         }
       }
     },
+    "Window": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fenêtre"
+          }
+        }
+      }
+    },
     "Working": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Au travail"
+          }
+        }
+      }
+    },
+    "Works in every app.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marche dans toutes les apps."
           }
         }
       }
@@ -2241,6 +3101,16 @@
         }
       }
     },
+    "Your AI apps in the notch: their sessions, their requests, their state.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vos apps IA dans l’encoche : leurs sessions, leurs demandes, leur état."
+          }
+        }
+      }
+    },
     "Your next events beside the clock.": {
       "localizations": {
         "fr": {
@@ -2257,6 +3127,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Vos prochains événements, ici même."
+          }
+        }
+      }
+    },
+    "Your own island, drawn by Islet on your wallpaper with what it shows right now. It opens and closes like the one in the notch.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre île, dessinée par Islet sur votre fond d’écran avec ce qu’elle montre en ce moment. Elle s’ouvre et se ferme comme celle de l’encoche."
           }
         }
       }
@@ -2287,6 +3167,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tout est prêt"
+          }
+        }
+      }
+    },
+    "Zoom": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réduire/agrandir"
           }
         }
       }

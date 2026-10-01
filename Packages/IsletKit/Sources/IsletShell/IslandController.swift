@@ -49,6 +49,10 @@ public final class IslandController {
     private var generation = 0
     private var observers: [NSObjectProtocol] = []
 
+    /// The models the island's content reads, kept to draw a second island in the settings.
+    private let services: IslandServices
+    private var previewClose: Task<Void, Never>?
+
     public init() {
         let services = IslandServices(
             media: media, agents: agents, custom: custom, navigation: navigation, power: system.power,
@@ -56,6 +60,7 @@ public final class IslandController {
             device: device, audio: system.audio, awake: awake,
             openSettings: { SettingsWindow.shared.show() }
         )
+        self.services = services
         islandView = IslandView(services: services)
         let root = NSView()
         root.wantsLayer = true
@@ -191,6 +196,57 @@ public final class IslandController {
         navigation.show(.home)
         openedByRequest = true
         send(.requested)
+    }
+
+    // MARK: Windows and the settings
+
+    /// Where windows that open from the island go, so they never sit under the open island.
+    var windowAnchor: WindowAnchor? {
+        guard let screen, let layout else { return nil }
+        return WindowAnchor(
+            screen: screen,
+            islandBottom: screen.frame.maxY - layout.frame(for: .expanded).maxY,
+            centerX: screen.frame.minX + layout.notch.centerX
+        )
+    }
+
+    /// The notch of the island's screen, for an island drawn at its real size elsewhere.
+    var notchMetrics: NotchMetrics? { layout?.notch }
+    var screenForPreview: NSScreen? { screen }
+
+    /// The models of this island with pages of their own, for the island the settings draw.
+    func stageServices(navigation: IslandNavigation) -> IslandServices {
+        services.with(navigation: navigation)
+    }
+
+    /// What the closed island shows now, and how wide its wings are.
+    var compactNow: (presentation: CompactPresentation?, wings: Wings) {
+        (shownActivity?.compact.fitted(to: wings), wings)
+    }
+
+    var compactImages: [String: CGImage] { islandView.compact.registeredImages }
+
+    /// Opens the island for a moment to show a change made in the settings, then tucks it back in, unless the
+    /// pointer has come to it in the meantime.
+    func previewChange() {
+        // On the next turn, once a new size has laid the island out again.
+        DispatchQueue.main.async { [weak self] in
+            MainActor.assumeIsolated {
+                guard let self else { return }
+                if self.machine.state != .expanded {
+                    self.navigation.show(.home)
+                    self.openedByRequest = true
+                    self.send(.requested)
+                }
+                self.previewClose?.cancel()
+                self.previewClose = Task { @MainActor [weak self] in
+                    try? await Task.sleep(for: .seconds(2.4))
+                    guard let self, !Task.isCancelled, self.openedByRequest, !self.machine.pointerInside, self.agents.pending.isEmpty else { return }
+                    self.openedByRequest = false
+                    self.send(.dismissed)
+                }
+            }
+        }
     }
 
     // MARK: Headphones, gestures, shortcut, downloads, full screen
@@ -339,7 +395,8 @@ public final class IslandController {
             _ = machine.handle(.dismissed)
             islandView.dismissContent()
             islandView.discardContent()
-            place()
+            // The menu bar has not changed: measuring its status items again would only slow the change down.
+            place(measuringStatusItems: false)
         }
         mediaChanged(trackChanged: false)
         agentsChanged()
@@ -545,7 +602,7 @@ public final class IslandController {
             ?? NSScreen.main
     }
 
-    private func place() {
+    private func place(measuringStatusItems: Bool = true) {
         guard let screen = Self.notchScreen() else {
             panel.orderOut(nil)
             return
@@ -569,7 +626,7 @@ public final class IslandController {
         resizeWindow(to: layout.windowSize(for: state, wings: effectiveWings))
         islandView.showCompact(shownActivity?.compact.fitted(to: wings), wings: wings)
         panel.orderFrontRegardless()
-        measureMenuBar(statusItems: true)
+        measureMenuBar(statusItems: measuringStatusItems)
     }
 
     private func screensChanged() {

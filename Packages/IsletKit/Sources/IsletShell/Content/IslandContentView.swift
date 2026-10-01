@@ -28,6 +28,15 @@ struct IslandServices {
     let audio: AudioMonitor
     let awake: KeepAwake
     let openSettings: () -> Void
+
+    /// The same models with pages of their own, for a second island such as the one in the settings.
+    func with(navigation: IslandNavigation) -> IslandServices {
+        IslandServices(
+            media: media, agents: agents, custom: custom, navigation: navigation, power: power, shelf: shelf,
+            clipboard: clipboard, timer: timer, picker: picker, mirror: mirror, calendar: calendar, stats: stats,
+            device: device, audio: audio, awake: awake, openSettings: openSettings
+        )
+    }
 }
 
 /// The open island: the top row beside the camera, then the current page. The content materialises from a blur as

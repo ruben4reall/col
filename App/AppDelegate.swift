@@ -8,6 +8,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         if ApplicationsFolder.offerToMoveIfNeeded() { return }
+        AppMenu.install()
         let updater = SparkleUpdater()
         self.updater = updater
         Updates.checker = updater
