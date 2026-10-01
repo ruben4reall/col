@@ -54,13 +54,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The prompter's remote lets your phone, on the same network, play, pause and move the script."
+            "value": "Islet reaches the devices you choose on your network, and only them: your phone for the prompter's remote, and the AI servers you add."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "La télécommande du prompteur permet à votre téléphone, sur le même réseau, de lancer, mettre en pause et déplacer le script."
+            "value": "Islet joint les appareils que vous choisissez sur votre réseau, et eux seuls : votre téléphone pour la télécommande du prompteur, et les serveurs d’IA que vous ajoutez."
           }
         }
       }

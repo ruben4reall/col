@@ -14,6 +14,7 @@ final class IslandContentModel {
 struct IslandServices {
     let media: MediaController
     let lyrics: LyricsModel
+    let ai: AIAppsModel
     let agents: AgentCenter
     let custom: CustomActivities
     let navigation: IslandNavigation
@@ -33,7 +34,7 @@ struct IslandServices {
     /// The same models with pages of their own, for a second island such as the one in the settings.
     func with(navigation: IslandNavigation) -> IslandServices {
         IslandServices(
-            media: media, lyrics: lyrics, agents: agents, custom: custom, navigation: navigation, power: power, shelf: shelf,
+            media: media, lyrics: lyrics, ai: ai, agents: agents, custom: custom, navigation: navigation, power: power, shelf: shelf,
             clipboard: clipboard, timer: timer, picker: picker, mirror: mirror, calendar: calendar, stats: stats,
             device: device, audio: audio, awake: awake, openSettings: openSettings
         )

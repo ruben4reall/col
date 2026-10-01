@@ -36,8 +36,10 @@ final class ControlServer: @unchecked Sendable {
     private var listener: Int32 = -1
     private var source: DispatchSourceRead?
 
+    /// `ISLET_SOCKET` moves it, so a development build can run beside the installed Islet without taking its socket.
     static var socketURL: URL {
-        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+        if let path = ProcessInfo.processInfo.environment["ISLET_SOCKET"], !path.isEmpty { return URL(fileURLWithPath: path) }
+        return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("Islet", isDirectory: true)
             .appendingPathComponent("islet.sock")
     }
