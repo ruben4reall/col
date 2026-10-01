@@ -72,6 +72,7 @@ public final class IslandController {
         system.remove = { [weak self] id in self?.removeActivity(id) }
         system.registerImage = { [weak self] image, key in self?.islandView.compact.register(image, for: key) }
         machine.opensOnHover = Preferences.opensOnHover
+        board.ranking = Preferences.activityRanking
         islandView.onPageSwipe = { [weak self] step in
             self?.navigation.step(step)
             WelcomeWindow.shared.gesture(.swipeSide)
@@ -117,7 +118,7 @@ public final class IslandController {
     private func dragChanged(_ inside: Bool) {
         shelf.isTargeted = inside
         if inside {
-            navigation.show(.shelf)
+            navigation.show(.shelf, otherwise: .drop)
             if machine.state != .expanded { openedByRequest = true }
             send(.requested)
         } else {
@@ -155,15 +156,15 @@ public final class IslandController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
             MainActor.assumeIsolated {
                 guard let self else { return }
-                self.navigation.page = .greeting
+                self.navigation.jump(to: .greeting)
                 self.openedByRequest = true
                 self.send(.requested)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3.4) {
                     MainActor.assumeIsolated {
-                        if self.navigation.page == .greeting, !self.machine.pointerInside { self.send(.dismissed) }
+                        if self.navigation.route == .greeting, !self.machine.pointerInside { self.send(.dismissed) }
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                             MainActor.assumeIsolated {
-                                if self.navigation.page == .greeting { self.navigation.page = .home }
+                                if self.navigation.route == .greeting { self.navigation.jumpHome() }
                                 WelcomeWindow.shared.show()
                             }
                         }
@@ -193,7 +194,7 @@ public final class IslandController {
     }
 
     public func openIsland() {
-        navigation.show(.home)
+        navigation.showHome()
         openedByRequest = true
         send(.requested)
     }
@@ -234,7 +235,7 @@ public final class IslandController {
             MainActor.assumeIsolated {
                 guard let self else { return }
                 if self.machine.state != .expanded {
-                    self.navigation.show(.home)
+                    self.navigation.showHome()
                     self.openedByRequest = true
                     self.send(.requested)
                 }
@@ -265,24 +266,24 @@ public final class IslandController {
             compact: CompactPresentation(leading: .symbol(device.symbol), trailing: .text(device.name)),
             expires: Date().addingTimeInterval(4), updated: Date()
         ))
-        navigation.page = .device
+        navigation.jump(to: .device)
         if machine.state != .expanded { openedByRequest = true }
         send(.requested)
         // Headphones report their battery a moment after they connect.
         for delay in [0.8, 2.5] {
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
                 MainActor.assumeIsolated {
-                    guard let self, self.navigation.page == .device else { return }
+                    guard let self, self.navigation.route == .device else { return }
                     if let battery = demo ?? BluetoothAccessories.battery(forName: output.name) { self.device.battery = battery }
                 }
             }
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 4.2) { [weak self] in
             MainActor.assumeIsolated {
-                guard let self, self.navigation.page == .device else { return }
+                guard let self, self.navigation.route == .device else { return }
                 if !self.machine.pointerInside { self.send(.dismissed) }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    MainActor.assumeIsolated { if self.navigation.page == .device { self.navigation.page = .home } }
+                    MainActor.assumeIsolated { if self.navigation.route == .device { self.navigation.jumpHome() } }
                 }
             }
         }
@@ -300,7 +301,7 @@ public final class IslandController {
             openedByRequest = false
             send(.dismissed)
         } else {
-            navigation.show(.home)
+            navigation.showHome()
             openedByRequest = true
             send(.requested)
         }
@@ -388,7 +389,8 @@ public final class IslandController {
         environmentChanged()
         machine.opensOnHover = Preferences.opensOnHover
         system.startKeyTapIfAllowed()
-        navigation.reloadTabs()
+        navigation.reloadDeck()
+        board.ranking = Preferences.activityRanking
         panel.sharingType = Preferences.hiddenFromScreenCapture ? .none : .readOnly
         islandView.setGlass(Preferences.islandGlass)
         if layout?.size != Preferences.islandSize {
@@ -497,7 +499,7 @@ public final class IslandController {
         // `-IsletOpen YES` starts the island open, for screenshots and for working on its content; `-IsletPage live`
         // chooses the page.
         if UserDefaults.standard.bool(forKey: "IsletOpen") {
-            if let page = UserDefaults.standard.string(forKey: "IsletPage").flatMap({ $0 == "live" ? IslandPage.live : IslandPage(key: $0) }) { navigation.show(page) }
+            if let page = UserDefaults.standard.string(forKey: "IsletPage") { navigation.show(page == "live" ? .live : .page(page)) }
             send(.pressed)
         }
     }

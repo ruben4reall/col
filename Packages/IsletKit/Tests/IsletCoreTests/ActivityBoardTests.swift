@@ -58,6 +58,32 @@ struct ActivityBoardTests {
         #expect(board.current(now: now) == nil)
     }
 
+    @Test func theUsersOrderDecidesAmongWhatRuns() {
+        var board = ActivityBoard()
+        board.upsert(activity("media", .ambient, at: 1))
+        board.upsert(activity("agents", .standard, at: 2))
+        #expect(board.current(now: now)?.id == "agents")
+        board.ranking = [.music]
+        #expect(board.ranking.first == .music)
+        #expect(board.ranking.count == ActivitySource.allCases.count)
+        #expect(board.current(now: now)?.id == "media")
+    }
+
+    @Test func alertsComeFirstWhateverTheOrder() {
+        var board = ActivityBoard()
+        board.ranking = [.music]
+        board.upsert(activity("media", .ambient))
+        board.upsert(activity("agents", .alert))
+        #expect(board.current(now: now)?.id == "agents")
+    }
+
+    @Test func sourcesAreReadFromIdentifiers() {
+        #expect(ActivitySource(activityID: "download.report.pdf") == .downloads)
+        #expect(ActivitySource(activityID: "api.ext-weather") == .scripts)
+        #expect(ActivitySource(activityID: "media.track") == .music)
+        #expect(ActivitySource(activityID: "hud") == nil)
+    }
+
     @Test func tiesResolveTheSameWayEveryTime() {
         var board = ActivityBoard()
         board.upsert(activity("b", .standard))

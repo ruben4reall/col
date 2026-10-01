@@ -15,7 +15,7 @@ struct TopBar: View {
         HStack(spacing: 0) {
             HStack(spacing: 2) {
                 ForEach(navigation.tabs) { page in
-                    tab(page)
+                    tab(.page(page.id), symbol: page.tabSymbol, title: page.title)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -24,8 +24,8 @@ struct TopBar: View {
             Color.clear.frame(width: notchWidth + 12)
 
             HStack(spacing: 8) {
-                if hasLive || navigation.page == .live {
-                    tab(.live)
+                if hasLive || navigation.route == .live {
+                    tab(.live, symbol: IslandRoute.live.symbol, title: String(localized: "Live", bundle: .module))
                 }
                 if let state = power.state {
                     BatteryBadge(state: state)
@@ -48,9 +48,9 @@ struct TopBar: View {
         !agents.sessions.isEmpty || !custom.entries.isEmpty
     }
 
-    private func tab(_ page: IslandPage) -> some View {
-        TabButton(page: page, selected: navigation.page == page, badge: page == .live && !agents.pending.isEmpty, selection: selection) {
-            navigation.show(page)
+    private func tab(_ route: IslandRoute, symbol: String, title: String) -> some View {
+        TabButton(symbol: symbol, title: title, selected: navigation.route == route, badge: route == .live && !agents.pending.isEmpty, selection: selection) {
+            navigation.show(route)
         }
     }
 
@@ -92,7 +92,8 @@ private struct BatteryBadge: View {
 
 /// A page tab: the selected one sits on a capsule that slides between tabs; others brighten under the pointer.
 private struct TabButton: View {
-    let page: IslandPage
+    let symbol: String
+    let title: String
     let selected: Bool
     let badge: Bool
     let selection: Namespace.ID
@@ -102,7 +103,7 @@ private struct TabButton: View {
     var body: some View {
         Button(action: action) {
             ZStack(alignment: .topTrailing) {
-                Image(systemName: page.symbol)
+                Image(systemName: symbol)
                     .font(.system(size: 11.5, weight: .semibold))
                     .foregroundStyle(selected ? .white : (hovering ? Theme.secondaryText : Theme.tertiaryText))
                     .frame(width: 24, height: 22)
@@ -122,6 +123,6 @@ private struct TabButton: View {
         .buttonStyle(PressableStyle())
         .onHover { hovering = $0 }
         .animation(.easeOut(duration: 0.15), value: hovering)
-        .help(Text(page.title))
+        .help(Text(verbatim: title))
     }
 }

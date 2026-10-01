@@ -93,9 +93,40 @@ public struct Activity: Equatable, Sendable, Identifiable {
     }
 }
 
-/// Every live activity, and the rule that picks the one the notch shows: the highest priority, then the most recent.
+/// Where an activity that is not urgent comes from. The user orders these sources to choose what the closed island
+/// shows first when several things run at once.
+public enum ActivitySource: String, CaseIterable, Codable, Sendable {
+    case privacy, agents, timers, downloads, scripts, music, keepAwake
+
+    /// The source of an activity, from its identifier; nil for one that belongs to none (brief displays, alerts).
+    public init?(activityID id: String) {
+        if id == "privacy" { self = .privacy }
+        else if id == "agents" { self = .agents }
+        else if id == "timer" { self = .timers }
+        else if id.hasPrefix("download.") { self = .downloads }
+        else if id.hasPrefix("api.") { self = .scripts }
+        else if id == "media" || id.hasPrefix("media.") { self = .music }
+        else if id == "awake" { self = .keepAwake }
+        else { return nil }
+    }
+
+    /// The order a source list is read in: the user's, with any source it does not mention added at the end.
+    public static func completed(_ ranking: [ActivitySource]) -> [ActivitySource] {
+        var order: [ActivitySource] = []
+        for source in ranking + allCases where !order.contains(source) { order.append(source) }
+        return order
+    }
+}
+
+/// Every live activity, and the rule that picks the one the notch shows. Alerts and brief displays come first, the
+/// highest priority then the most recent. Then the sources in the user's order; within a source, the highest
+/// priority, then the most recent.
 public struct ActivityBoard: Sendable {
     public private(set) var activities: [String: Activity] = [:]
+    /// The sources from first to last. By default the ones that need an eye before the ones that keep company.
+    public var ranking: [ActivitySource] = ActivitySource.allCases {
+        didSet { ranking = ActivitySource.completed(ranking) }
+    }
 
     public init() {}
 
@@ -116,9 +147,20 @@ public struct ActivityBoard: Sendable {
     }
 
     public func current(now: Date) -> Activity? {
-        activities.values
-            .filter { ($0.expires ?? .distantFuture) > now }
-            .max { ($0.priority, $0.updated, $1.id) < ($1.priority, $1.updated, $0.id) }
+        let live = activities.values.filter { ($0.expires ?? .distantFuture) > now }
+        if let urgent = live.filter({ $0.priority >= .alert }).max(by: { ($0.priority, $0.updated, $1.id) < ($1.priority, $1.updated, $0.id) }) {
+            return urgent
+        }
+        func rank(_ activity: Activity) -> Int {
+            ActivitySource(activityID: activity.id).flatMap { ranking.firstIndex(of: $0) } ?? ranking.count
+        }
+        return live.min { lhs, rhs in
+            let (left, right) = (rank(lhs), rank(rhs))
+            if left != right { return left < right }
+            if lhs.priority != rhs.priority { return lhs.priority > rhs.priority }
+            if lhs.updated != rhs.updated { return lhs.updated > rhs.updated }
+            return lhs.id < rhs.id
+        }
     }
 
     /// The next moment an activity expires, to wake up exactly then instead of polling.

@@ -81,6 +81,16 @@
         }
       }
     },
+    "AI apps at work": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apps IA au travail"
+          }
+        }
+      }
+    },
     "API reference": {
       "localizations": {
         "fr": {
@@ -107,6 +117,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "Accessibilité"
+          }
+        }
+      }
+    },
+    "Across the page": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sur toute la page"
+          }
+        }
+      }
+    },
+    "Activities from scripts and extensions": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activités des scripts et des extensions"
+          }
+        }
+      }
+    },
+    "Add a Page": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter une page"
+          }
+        }
+      }
+    },
+    "Add a Widget": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter un widget"
           }
         }
       }
@@ -501,6 +551,16 @@
         }
       }
     },
+    "Clock": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Horloge"
+          }
+        }
+      }
+    },
     "Close": {
       "localizations": {
         "fr": {
@@ -657,6 +717,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Délai avant l’ouverture"
+          }
+        }
+      }
+    },
+    "Delete This Page": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer cette page"
           }
         }
       }
@@ -1411,6 +1481,26 @@
         }
       }
     },
+    "Layout": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disposition"
+          }
+        }
+      }
+    },
+    "Left": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "À gauche"
+          }
+        }
+      }
+    },
     "Lets Islet take over the volume and brightness keys. Without it, macOS shows its own display too.": {
       "localizations": {
         "fr": {
@@ -1621,6 +1711,16 @@
         }
       }
     },
+    "Name": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom"
+          }
+        }
+      }
+    },
     "Needs Accessibility.": {
       "localizations": {
         "fr": {
@@ -1737,6 +1837,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sur l’encoche : elle s’ouvre aussitôt. Vers le haut pour fermer."
+          }
+        }
+      }
+    },
+    "One Wide Place": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une seule case"
           }
         }
       }
@@ -2061,6 +2171,16 @@
         }
       }
     },
+    "Remove": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retirer"
+          }
+        }
+      }
+    },
     "Remove from shelf": {
       "localizations": {
         "fr": {
@@ -2117,6 +2237,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Redémarrer Islet"
+          }
+        }
+      }
+    },
+    "Restore the Original Pages": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Revenir aux pages d’origine"
+          }
+        }
+      }
+    },
+    "Right": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "À droite"
           }
         }
       }
@@ -2581,6 +2721,26 @@
         }
       }
     },
+    "Tab": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Onglet"
+          }
+        }
+      }
+    },
+    "The closed island shows the highest one in this list. Volume, brightness, alerts and requests always come first.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’île fermée montre celle qui est la plus haute dans cette liste. Le volume, la luminosité, les alertes et les demandes passent toujours en premier."
+          }
+        }
+      }
+    },
     "The command is missing from this build.": {
       "localizations": {
         "fr": {
@@ -2617,6 +2777,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "L’île"
+          }
+        }
+      }
+    },
+    "The island shows the first one that has something to show: here, %@ while it can, else the next.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’île montre le premier qui a quelque chose à montrer : ici, %@ tant que possible, sinon le suivant."
           }
         }
       }
@@ -2661,6 +2831,26 @@
         }
       }
     },
+    "The page you are editing, on your own island.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La page que vous modifiez, sur votre propre île."
+          }
+        }
+      }
+    },
+    "The player, while something plays": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le lecteur, pendant la lecture"
+          }
+        }
+      }
+    },
     "The screen with the notch": {
       "localizations": {
         "fr": {
@@ -2687,6 +2877,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Les onglets en haut à gauche de l’île ouverte suivent l’ordre ci-dessous. Balayez sur le côté sur l’île pour tourner les pages."
+          }
+        }
+      }
+    },
+    "The tabs of the open island, in this order. Live joins them on the right of the camera while something runs.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les onglets de l’île ouverte, dans cet ordre. En direct les rejoint à droite de la caméra quand quelque chose tourne."
+          }
+        }
+      }
+    },
+    "The time and the date": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’heure et la date"
           }
         }
       }
@@ -2727,6 +2937,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Minuteur, pipette, miroir"
+          }
+        }
+      }
+    },
+    "Timers": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Minuteurs"
           }
         }
       }
@@ -2817,6 +3037,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tourne les pages."
+          }
+        }
+      }
+    },
+    "Two Places": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deux cases"
           }
         }
       }
@@ -3031,6 +3261,16 @@
         }
       }
     },
+    "When several things run": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quand plusieurs choses tournent"
+          }
+        }
+      }
+    },
     "When you plug in, and at 20 % and 10 %.": {
       "localizations": {
         "fr": {
@@ -3107,6 +3347,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Vos apps IA dans l’encoche : leurs sessions, leurs demandes, leur état."
+          }
+        }
+      }
+    },
+    "Your next events and today’s reminders": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vos prochains événements et les rappels du jour"
           }
         }
       }
