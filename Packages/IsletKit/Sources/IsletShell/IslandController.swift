@@ -100,7 +100,7 @@ public final class IslandController {
         awake.changed = { [weak self] on in
             guard let self else { return }
             if on {
-                self.post(Activity(id: "awake", priority: .ambient, compact: CompactPresentation(leading: .symbol("cup.and.saucer.fill", tint: Theme.coral)), updated: Date()))
+                self.post(Activity(id: "awake", priority: .ambient, compact: CompactPresentation(leading: .symbol("cup.and.saucer.fill", tint: Theme.accentRGBA)), updated: Date()))
             } else {
                 self.removeActivity("awake")
             }
@@ -521,7 +521,7 @@ public final class IslandController {
     }
 
     private func agentsChanged() {
-        if Preferences.showsAgents, let activity = agents.activity(tint: Theme.coral) {
+        if Preferences.showsAgents, let activity = agents.activity(tint: Theme.accentRGBA) {
             post(activity)
         } else {
             removeActivity("agents")

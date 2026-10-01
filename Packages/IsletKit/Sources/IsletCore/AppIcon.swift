@@ -22,7 +22,7 @@ public struct AppIcon: Equatable, Hashable, Sendable {
     }
 
     /// Islet's own, for an agent no app stands for.
-    public static let islet = AppIcon(bundleIdentifiers: [], symbol: "sparkle", tint: RGBA(red: 1, green: 0.478, blue: 0.349))
+    public static let islet = AppIcon(bundleIdentifiers: [], symbol: "sparkle", tint: .blue)
 }
 
 extension AIApp {

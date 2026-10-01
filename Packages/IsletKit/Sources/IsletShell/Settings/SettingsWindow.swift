@@ -174,15 +174,15 @@ enum SettingsPane: String, CaseIterable, Identifiable {
     var tint: Color {
         switch self {
         case .general: .gray
-        case .appearance: Theme.coral.color
+        case .appearance: .indigo
         case .pages: .orange
         case .activities: .purple
         case .music: Color(red: 0.98, green: 0.24, blue: 0.4)
-        case .prompter: Color(red: 0.89, green: 0.28, blue: 0.18)
+        case .prompter: .orange
         case .aiApps: Color(red: 0.36, green: 0.42, blue: 1)
         case .permissions: .blue
         case .shortcuts: Color(red: 0.42, green: 0.45, blue: 0.5)
-        case .developers: .indigo
+        case .developers: Color(red: 0.42, green: 0.45, blue: 0.5)
         case .about: .gray
         }
     }

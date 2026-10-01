@@ -10,7 +10,7 @@ struct AgendaView: View {
             if calendar.isAuthorized {
                 if calendar.events.isEmpty && calendar.reminders.isEmpty {
                     VStack(alignment: .leading, spacing: 4) {
-                        Image(systemName: "checkmark.circle.fill").foregroundStyle(Theme.coral.color)
+                        Image(systemName: "checkmark.circle.fill").foregroundStyle(Theme.accent)
                         Text("Nothing else today", bundle: .module)
                             .font(.system(size: 12.5, weight: .semibold))
                             .foregroundStyle(.white)
@@ -44,7 +44,7 @@ struct AgendaView: View {
                     HStack(spacing: 10) {
                         Image(systemName: "calendar")
                             .font(.system(size: 17, weight: .medium))
-                            .foregroundStyle(Theme.coral.color)
+                            .foregroundStyle(Theme.accent)
                         VStack(alignment: .leading, spacing: 2) {
                             Text(calendar.canAsk ? "Show my agenda" : "Calendar access is off", bundle: .module)
                                 .font(.system(size: 12.5, weight: .semibold))

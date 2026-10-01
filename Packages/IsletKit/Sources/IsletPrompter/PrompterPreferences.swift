@@ -99,13 +99,14 @@ public enum PrompterFont: String, CaseIterable, Identifiable, Sendable {
     }
 }
 
-/// The light around the prompter, and the colour of the next word.
+/// The light around the prompter, and the colour of the next word. By default the Mac's accent, as in Apple's apps.
 public enum StageLight: String, CaseIterable, Identifiable, Sendable {
-    case coral, violet, ocean, ember, mint, gold, off
+    case accent, coral, violet, ocean, ember, mint, gold, off
     public var id: String { rawValue }
 
     public var title: String {
         switch self {
+        case .accent: String(localized: "Accent Color", bundle: .module)
         case .coral: String(localized: "Coral", bundle: .module)
         case .violet: String(localized: "Violet", bundle: .module)
         case .ocean: String(localized: "Ocean", bundle: .module)
@@ -119,6 +120,7 @@ public enum StageLight: String, CaseIterable, Identifiable, Sendable {
     /// The colour of the light inside the prompter and of the halo beneath it, in sRGB: saturated, like a lamp.
     var lamp: (Double, Double, Double) {
         switch self {
+        case .accent: Self.systemAccent
         case .coral, .off: (1, 0.478, 0.349)
         case .violet: (0.486, 0.231, 1)
         case .ocean: (0.051, 0.435, 1)
@@ -131,6 +133,7 @@ public enum StageLight: String, CaseIterable, Identifiable, Sendable {
     /// The stops of the gradient on the swatches and the level meter, in sRGB, from its start round to the same colour.
     var stops: [(Double, Double, Double)] {
         switch self {
+        case .accent: Self.accentStops(Self.systemAccent)
         case .coral, .off: [(1, 0.42, 0.30), (1, 0.55, 0.42), (1, 0.78, 0.66), (0.89, 0.28, 0.18), (1, 0.55, 0.42), (1, 0.42, 0.30)]
         case .violet: [(0.431, 0.357, 1), (0.643, 0.361, 1), (1, 0.353, 0.784), (1, 0.561, 0.690), (0.643, 0.361, 1), (0.431, 0.357, 1)]
         case .ocean: [(0.184, 0.420, 1), (0.247, 0.663, 1), (0.361, 0.882, 1), (0.561, 0.608, 1), (0.247, 0.663, 1), (0.184, 0.420, 1)]
@@ -143,6 +146,7 @@ public enum StageLight: String, CaseIterable, Identifiable, Sendable {
     /// A light tint of the colour that reads well on black, for the next word and figures.
     var highlight: (Double, Double, Double) {
         switch self {
+        case .accent: Self.mix(Self.systemAccent, (1, 1, 1), 0.62)
         case .coral, .off: (1, 0.80, 0.70)
         case .violet: (0.804, 0.725, 1)
         case .ocean: (0.663, 0.847, 1)
@@ -150,6 +154,27 @@ public enum StageLight: String, CaseIterable, Identifiable, Sendable {
         case .mint: (0.714, 0.961, 0.855)
         case .gold: (1, 0.890, 0.639)
         }
+    }
+}
+
+extension StageLight {
+    /// The accent chosen in System Settings, as it shows on black, in sRGB.
+    static var systemAccent: (Double, Double, Double) {
+        var color = NSColor.systemBlue
+        NSAppearance(named: .darkAqua)?.performAsCurrentDrawingAppearance {
+            color = NSColor.controlAccentColor.usingColorSpace(.sRGB) ?? .systemBlue
+        }
+        return (Double(color.redComponent), Double(color.greenComponent), Double(color.blueComponent))
+    }
+
+    /// Round the accent and back: lighter, lighter still, a little deeper, as the other lights go round their colour.
+    static func accentStops(_ accent: (Double, Double, Double)) -> [(Double, Double, Double)] {
+        let white = (1.0, 1.0, 1.0), black = (0.0, 0.0, 0.0)
+        return [accent, mix(accent, white, 0.2), mix(accent, white, 0.5), mix(accent, black, 0.2), mix(accent, white, 0.2), accent]
+    }
+
+    static func mix(_ a: (Double, Double, Double), _ b: (Double, Double, Double), _ amount: Double) -> (Double, Double, Double) {
+        (a.0 + (b.0 - a.0) * amount, a.1 + (b.1 - a.1) * amount, a.2 + (b.2 - a.2) * amount)
     }
 }
 
@@ -246,7 +271,7 @@ public enum PrompterPreferences {
         Key.fullScreenFontSize: 64.0,
         Key.mirror: MirrorMode.none.rawValue,
         Key.alignment: "center",
-        Key.stageLight: StageLight.coral.rawValue,
+        Key.stageLight: StageLight.accent.rawValue,
         Key.countdown: true,
         Key.hiddenFromCapture: true,
         Key.dimsReadWords: true,
@@ -307,7 +332,7 @@ public enum PrompterPreferences {
     }
     public static var fullScreenDisplay: String? { store.string(forKey: Key.fullScreenDisplay) }
     public static var mirror: MirrorMode { MirrorMode(rawValue: store.string(forKey: Key.mirror) ?? "") ?? .none }
-    public static var stageLight: StageLight { StageLight(rawValue: store.string(forKey: Key.stageLight) ?? "") ?? .coral }
+    public static var stageLight: StageLight { StageLight(rawValue: store.string(forKey: Key.stageLight) ?? "") ?? .accent }
     public static var countdown: Bool { store.bool(forKey: Key.countdown) }
     /// Centred text keeps the eyes under the camera; left-aligned reads like a page.
     public static var centersText: Bool { store.string(forKey: Key.alignment) != "left" }

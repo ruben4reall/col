@@ -55,11 +55,11 @@ extension WidgetKind {
         case .lyrics: Color(red: 0.98, green: 0.24, blue: 0.4)
         case .clock: .gray
         case .agenda: .red
-        case .prompter: Theme.coral.color
+        case .prompter: .orange
         case .ai: Color(red: 0.36, green: 0.42, blue: 1)
         case .shelf: .blue
         case .clipboard: .orange
-        case .tools: Theme.coral.color
+        case .tools: .teal
         case .system: .green
         }
     }

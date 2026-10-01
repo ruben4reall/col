@@ -38,9 +38,9 @@ public enum CodingAgent: String, CaseIterable, Sendable, Codable {
         }
     }
 
-    /// The colour of an agent named in a session; Islet's coral for others.
+    /// The colour of an agent named in a session; the system's blue for others.
     public static func tint(for name: String?) -> RGBA {
-        named(name)?.tint ?? RGBA(red: 1, green: 0.478, blue: 0.349)
+        named(name)?.tint ?? .blue
     }
 
     /// Agents whose hooks can wait for an answer: their permission requests get Allow and Deny in the island. The

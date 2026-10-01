@@ -2,17 +2,17 @@ import AppKit
 import SwiftUI
 
 /// The prompter's design tokens. The prompter is black like the notch it hangs from; its signature is stage light,
-/// Islet's coral by default, which marks what belongs to the prompter: the light inside the notch, the next word, the
-/// voice, the main button.
+/// the Mac's accent by default, which marks what belongs to the prompter: the light inside the notch, the next word,
+/// the voice, the main button.
 public enum StageTheme {
-    /// Islet's coral, the accent: buttons, selection, the level meter.
-    public static let accent = Color(red: 1, green: 0.478, blue: 0.349)
-    public static let accentNS = NSColor(srgbRed: 1, green: 0.478, blue: 0.349, alpha: 1)
-    /// The deep end of the coral, for gradients.
-    public static let ember = Color(red: 0.886, green: 0.278, blue: 0.176)
-    /// A light coral that reads well on black: the next word, figures on the prompter.
-    public static let highlight = Color(red: 1, green: 0.78, blue: 0.66)
-    public static let highlightNS = NSColor(srgbRed: 1, green: 0.78, blue: 0.66, alpha: 1)
+    /// The Mac's accent: buttons, selection, the level meter.
+    public static var accent: Color { Color.accentColor }
+    public static var accentNS: NSColor { NSColor.controlAccentColor }
+    /// The deep end of the accent, for gradients.
+    public static var ember: Color { Color(nsColor: NSColor.controlAccentColor.blended(withFraction: 0.25, of: .black) ?? .controlAccentColor) }
+    /// A light tint of the accent that reads well on black: the next word, figures on the prompter.
+    public static var highlight: Color { Color(nsColor: highlightNS) }
+    public static var highlightNS: NSColor { NSColor.controlAccentColor.blended(withFraction: 0.6, of: .white) ?? .white }
     public static let stage = Color(red: 0.027, green: 0.027, blue: 0.031)
 
     /// The panels of the main window: near black in dark mode, white in light mode.
@@ -22,8 +22,8 @@ public enum StageTheme {
             : NSColor.white
     })
 
-    /// The stage light inside the prompter and the halo beneath it, in the colour chosen in Settings (coral by
-    /// default).
+    /// The stage light inside the prompter and the halo beneath it, in the colour chosen in Settings (the Mac's accent
+    /// by default).
     static func lamp(_ light: StageLight) -> NSColor {
         let (red, green, blue) = light.lamp
         return NSColor(srgbRed: red, green: green, blue: blue, alpha: 1)

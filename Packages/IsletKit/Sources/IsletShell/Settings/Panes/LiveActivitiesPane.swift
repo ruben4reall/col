@@ -116,7 +116,7 @@ extension ActivitySource {
         switch self {
         case .privacy: .orange
         case .agents: SettingsPane.aiApps.tint
-        case .timers: Theme.coral.color
+        case .timers: .orange
         case .downloads: .blue
         case .scripts: .black
         case .music: .pink

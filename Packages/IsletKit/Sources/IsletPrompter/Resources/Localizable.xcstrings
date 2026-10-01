@@ -41,6 +41,16 @@
         }
       }
     },
+    "Accent Color": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couleur d’accentuation"
+          }
+        }
+      }
+    },
     "Again": {
       "localizations": {
         "fr": {

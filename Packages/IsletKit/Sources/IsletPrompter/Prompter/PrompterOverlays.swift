@@ -47,7 +47,7 @@ struct ControlBar: View {
 /// Everything drawn over the text: the countdown, notes, the summary of a take, the controls.
 struct PrompterOverlay: View {
     let state: PrompterState
-    @AppStorage(PrompterPreferences.Key.stageLight) private var light = StageLight.violet.rawValue
+    @AppStorage(PrompterPreferences.Key.stageLight) private var light = StageLight.accent.rawValue
     /// The floating and full screen prompters show the timer and the level over the text; the notch in a band above it.
     let showsStatusRow: Bool
     var scale: CGFloat = 1
@@ -86,7 +86,7 @@ struct PrompterOverlay: View {
         .animation(.easeInOut(duration: 0.2), value: state.flash)
     }
 
-    private var stageLight: StageLight { StageLight(rawValue: light) ?? .violet }
+    private var stageLight: StageLight { StageLight(rawValue: light) ?? .accent }
 
     @ViewBuilder private var center: some View {
         switch state.phase {
@@ -169,12 +169,12 @@ struct CameraWing: View {
 struct TimerLabel: View {
     let state: PrompterState
     var compact = false
-    @AppStorage(PrompterPreferences.Key.stageLight) private var light = StageLight.violet.rawValue
+    @AppStorage(PrompterPreferences.Key.stageLight) private var light = StageLight.accent.rawValue
 
     var body: some View {
         HStack(spacing: 5) {
             Circle()
-                .fill(state.isRolling ? StageTheme.lightEnds(StageLight(rawValue: light) ?? .violet)[0] : Color.white.opacity(0.35))
+                .fill(state.isRolling ? StageTheme.lightEnds(StageLight(rawValue: light) ?? .accent)[0] : Color.white.opacity(0.35))
                 .frame(width: 5, height: 5)
             Text(Pace.clock(state.elapsed))
                 .foregroundStyle(Color.white.opacity(0.9))
@@ -211,7 +211,7 @@ struct LevelLabel: View {
 struct LevelMeter: View {
     let level: Float
     let speaking: Bool
-    @AppStorage(PrompterPreferences.Key.stageLight) private var light = StageLight.violet.rawValue
+    @AppStorage(PrompterPreferences.Key.stageLight) private var light = StageLight.accent.rawValue
 
     var body: some View {
         HStack(alignment: .center, spacing: 2) {
@@ -219,7 +219,7 @@ struct LevelMeter: View {
                 let weights: [Float] = [0.6, 1, 0.8, 0.5]
                 let height = 3 + CGFloat(min(1, level * weights[index] * 1.4)) * 9
                 Capsule()
-                    .fill(speaking ? AnyShapeStyle(LinearGradient(colors: StageTheme.lightEnds(StageLight(rawValue: light) ?? .violet).reversed(), startPoint: .bottom, endPoint: .top)) : AnyShapeStyle(Color.white.opacity(0.4)))
+                    .fill(speaking ? AnyShapeStyle(LinearGradient(colors: StageTheme.lightEnds(StageLight(rawValue: light) ?? .accent).reversed(), startPoint: .bottom, endPoint: .top)) : AnyShapeStyle(Color.white.opacity(0.4)))
                     .frame(width: 2.5, height: height)
             }
         }
@@ -231,7 +231,7 @@ struct LevelMeter: View {
 struct SummaryCard: View {
     let summary: TakeSummary
     let state: PrompterState
-    @AppStorage(PrompterPreferences.Key.stageLight) private var light = StageLight.violet.rawValue
+    @AppStorage(PrompterPreferences.Key.stageLight) private var light = StageLight.accent.rawValue
 
     var body: some View {
         VStack(spacing: 10) {
@@ -264,7 +264,7 @@ struct SummaryCard: View {
         VStack(spacing: 2) {
             Text(value)
                 .font(.system(size: 17, weight: .semibold, design: .rounded).monospacedDigit())
-                .foregroundStyle(StageTheme.highlightColor(StageLight(rawValue: light) ?? .violet))
+                .foregroundStyle(StageTheme.highlightColor(StageLight(rawValue: light) ?? .accent))
             Text(label)
                 .font(.system(size: 10, weight: .medium))
                 .foregroundStyle(StageTheme.secondaryText)

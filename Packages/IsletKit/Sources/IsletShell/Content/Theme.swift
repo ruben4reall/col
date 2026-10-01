@@ -1,10 +1,22 @@
+import AppKit
 import IsletCore
 import SwiftUI
 
-/// Islet's design tokens. The island is black; one accent, Coral, marks what belongs to Islet itself. Greys follow
-/// the system's label colours on dark, and radii are concentric with the island's rounded corners.
+/// Islet's design tokens. The island is black; its accent is the Mac's own, the colour chosen in System Settings,
+/// Appearance, as in Apple's apps (blue unless changed). Greys follow the system's label colours on dark, and radii are
+/// concentric with the island's rounded corners.
 enum Theme {
-    static let coral = RGBA(red: 1, green: 0.478, blue: 0.349)
+    /// The accent for SwiftUI: buttons, switches, selection, what is on.
+    static var accent: Color { Color.accentColor }
+
+    /// The same accent for drawings outside SwiftUI, as it shows on black, read when they are drawn.
+    @MainActor static var accentRGBA: RGBA {
+        var color = NSColor.systemBlue
+        NSAppearance(named: .darkAqua)?.performAsCurrentDrawingAppearance {
+            color = NSColor.controlAccentColor.usingColorSpace(.sRGB) ?? .systemBlue
+        }
+        return RGBA(red: Double(color.redComponent), green: Double(color.greenComponent), blue: Double(color.blueComponent))
+    }
 
     // The system's secondary and tertiary label colours on a dark background.
     static let secondaryText = Color(red: 0.92, green: 0.92, blue: 0.96).opacity(0.6)
