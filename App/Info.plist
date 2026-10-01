@@ -79,7 +79,7 @@
 	<key>NSHumanReadableCopyright</key>
 	<string>Ruben Catalao. MIT License. Islet is not affiliated with Apple.</string>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>The prompter's remote lets your phone, on the same network, play, pause and move the script.</string>
+	<string>Islet reaches the devices you choose on your network, and only them: your phone for the prompter's remote, and the AI servers you add.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>The prompter listens to your voice to roll the script as you speak. The sound never leaves your Mac and is never recorded.</string>
 	<key>NSRemindersFullAccessUsageDescription</key>

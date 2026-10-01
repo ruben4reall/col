@@ -84,7 +84,7 @@ targets:
         NSRemindersFullAccessUsageDescription: Islet shows the reminders due today beside your agenda.
         NSMicrophoneUsageDescription: The prompter listens to your voice to roll the script as you speak. The sound never leaves your Mac and is never recorded.
         NSSpeechRecognitionUsageDescription: In Voice Follow, the prompter recognizes your words on your Mac to keep your place in the script.
-        NSLocalNetworkUsageDescription: The prompter's remote lets your phone, on the same network, play, pause and move the script.
+        NSLocalNetworkUsageDescription: "Islet reaches the devices you choose on your network, and only them: your phone for the prompter's remote, and the AI servers you add."
         CFBundleURLTypes:
           - CFBundleURLName: ch.rubencatalao.islet
             CFBundleURLSchemes: [islet]

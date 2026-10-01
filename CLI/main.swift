@@ -31,7 +31,8 @@ Example: islet push build --title Build --symbol hammer.fill --tint orange --pro
 // MARK: Socket
 
 func socketPath() -> String {
-    FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+    if let path = ProcessInfo.processInfo.environment["ISLET_SOCKET"], !path.isEmpty { return path }
+    return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
         .appendingPathComponent("Islet/islet.sock").path
 }
 

@@ -105,6 +105,12 @@ enum Preferences {
         set { defaults.set(newValue, forKey: "hoverDelay"); changed() }
     }
 
+    /// The model servers the user added, on this Mac or another machine. Their tokens live in the Keychain.
+    static var aiServers: [ModelServer] {
+        get { defaults.data(forKey: "aiServers").flatMap { try? JSONDecoder().decode([ModelServer].self, from: $0) } ?? [] }
+        set { defaults.set(try? JSONEncoder().encode(newValue), forKey: "aiServers"); changed() }
+    }
+
     /// Which running things the closed island shows first, when several run at once. Alerts and brief displays always
     /// come before them.
     static var activityRanking: [ActivitySource] {

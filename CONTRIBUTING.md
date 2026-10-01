@@ -16,7 +16,9 @@ Thank you for helping. A few principles keep Islet what it is.
 
 ## Workflow
 
-1. `scripts/build.sh` and `swift test --package-path Packages/IsletKit` must pass without warnings.
+1. `scripts/build.sh` and `swift test --package-path Packages/IsletKit` must pass without warnings. To run a build next
+   to the Islet you use, give it a socket of its own: `ISLET_SOCKET=/tmp/islet-dev.sock`, so your agents keep
+   talking to yours.
 2. User-facing strings go through the string catalogs (`Localizable.xcstrings`), in English. Add the other languages
    when you can; see [Translations](#translations).
 3. One change per pull request, with a screenshot or a short video for anything visible.

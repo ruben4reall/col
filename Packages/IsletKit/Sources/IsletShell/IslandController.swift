@@ -10,6 +10,7 @@ public final class IslandController {
     private let islandView: IslandView
     private let media = MediaController()
     private let lyrics = LyricsModel()
+    private let ai = AIAppsModel()
     /// The closed island's wing follows the lyrics: their line is followed while it does.
     private var wingFollowsLyrics = false
     private let system = SystemActivities()
@@ -61,7 +62,7 @@ public final class IslandController {
 
     public init() {
         let services = IslandServices(
-            media: media, lyrics: lyrics, agents: agents, custom: custom, navigation: navigation, power: system.power,
+            media: media, lyrics: lyrics, ai: ai, agents: agents, custom: custom, navigation: navigation, power: system.power,
             shelf: shelf, clipboard: clipboard, timer: timer, picker: picker, mirror: mirror, calendar: calendar, stats: stats,
             device: device, audio: system.audio, awake: awake,
             openSettings: { SettingsWindow.shared.show() }
@@ -236,6 +237,9 @@ public final class IslandController {
     }
 
     var compactImages: [String: CGImage] { islandView.compact.registeredImages }
+
+    /// The AI apps and model servers, for the settings.
+    var aiApps: AIAppsModel { ai }
 
     /// Opens the island for a moment to show a change made in the settings, then tucks it back in, unless the
     /// pointer has come to it in the meantime.
@@ -501,6 +505,7 @@ public final class IslandController {
                 }
             })
         }
+        ai.start()
         let prompter = PrompterCenter.shared
         prompter.showLibraryHandler = { ScriptLibraryWindow.shared.show() }
         prompter.onActiveChange = { [weak self] active, placement in self?.prompterChanged(active: active, placement: placement) }

@@ -13,10 +13,14 @@ struct TopBar: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            HStack(spacing: 2) {
-                ForEach(navigation.tabs) { page in
-                    tab(.page(page.id), symbol: page.tabSymbol, title: page.title)
+            // Icons while they fit beside the camera; with more pages, dots, as the iPhone shows its pages.
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 0) {
+                    ForEach(navigation.tabs) { page in
+                        tab(.page(page.id), symbol: page.tabSymbol, title: page.title)
+                    }
                 }
+                PageDots(navigation: navigation)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -41,7 +45,7 @@ struct TopBar: View {
             }
             .frame(maxWidth: .infinity, alignment: .trailing)
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, 14)
     }
 
     private var hasLive: Bool {
@@ -90,6 +94,30 @@ private struct BatteryBadge: View {
     }
 }
 
+/// The pages as dots, when their icons no longer fit beside the camera: the current one is a longer bar.
+private struct PageDots: View {
+    let navigation: IslandNavigation
+
+    var body: some View {
+        HStack(spacing: 5) {
+            ForEach(navigation.tabs) { page in
+                let selected = navigation.route == .page(page.id)
+                Button { navigation.show(.page(page.id)) } label: {
+                    Capsule()
+                        .fill(.white.opacity(selected ? 0.95 : 0.3))
+                        .frame(width: selected ? 16 : 6, height: 6)
+                        .frame(height: 22)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(PressableStyle())
+                .help(Text(verbatim: page.title))
+            }
+        }
+        .padding(.horizontal, 6)
+        .animation(.spring(duration: 0.35, bounce: 0.25), value: navigation.route)
+    }
+}
+
 /// A page tab: the selected one sits on a capsule that slides between tabs; others brighten under the pointer.
 private struct TabButton: View {
     let symbol: String
@@ -106,7 +134,8 @@ private struct TabButton: View {
                 Image(systemName: symbol)
                     .font(.system(size: 11.5, weight: .semibold))
                     .foregroundStyle(selected ? .white : (hovering ? Theme.secondaryText : Theme.tertiaryText))
-                    .frame(width: 24, height: 22)
+                    // Six tabs fit beside the camera of a standard island; more become dots.
+                    .frame(width: 21, height: 22)
                     .background {
                         if selected {
                             Capsule().fill(Theme.raisedFill).matchedGeometryEffect(id: "tab", in: selection)

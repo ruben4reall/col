@@ -1,6 +1,46 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "%@ answers, with %lld models.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ répond, avec %lld modèles."
+          }
+        }
+      }
+    },
+    "%@ loaded": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ en mémoire"
+          }
+        }
+      }
+    },
+    "%lld agent sessions": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld sessions d’agents"
+          }
+        }
+      }
+    },
+    "%lld at work": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld au travail"
+          }
+        }
+      }
+    },
     "%lld connected": {
       "localizations": {
         "fr": {
@@ -27,6 +67,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld min"
+          }
+        }
+      }
+    },
+    "%lld models, none loaded": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld modèles, aucun en mémoire"
           }
         }
       }
@@ -61,12 +111,42 @@
         }
       }
     },
+    "A code editor with AI: open it from the island.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un éditeur de code avec IA : ouvrez-le depuis l’île."
+          }
+        }
+      }
+    },
     "A couple of permissions": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Deux ou trois autorisations"
+          }
+        }
+      }
+    },
+    "A model server on this Mac or another machine of your network.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un serveur de modèles sur ce Mac ou sur une autre machine de votre réseau."
+          }
+        }
+      }
+    },
+    "A model server on this Mac or on another machine of your network: Ollama, LM Studio, llama.cpp or any OpenAI-compatible server. Islet shows whether it answers, the model it holds and, when the server can tell, whether it is generating. Tokens are kept in your Keychain.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un serveur de modèles sur ce Mac ou sur une autre machine de votre réseau : Ollama, LM Studio, llama.cpp ou tout serveur compatible OpenAI. Islet montre s’il répond, le modèle qu’il garde en mémoire et, quand le serveur sait le dire, s’il est en train de générer. Les jetons sont gardés dans votre trousseau."
           }
         }
       }
@@ -181,6 +261,36 @@
         }
       }
     },
+    "Add": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter"
+          }
+        }
+      }
+    },
+    "Add Your AI": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter votre IA"
+          }
+        }
+      }
+    },
+    "Add Your AI…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter votre IA…"
+          }
+        }
+      }
+    },
     "Add a Page": {
       "localizations": {
         "fr": {
@@ -207,6 +317,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ajouter ou corriger des paroles sur LRCLIB"
+          }
+        }
+      }
+    },
+    "Address": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adresse"
           }
         }
       }
@@ -317,6 +437,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Toujours"
+          }
+        }
+      }
+    },
+    "An AI assistant: open it from the island.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un assistant IA : ouvrez-le depuis l’île."
           }
         }
       }
@@ -541,6 +671,16 @@
         }
       }
     },
+    "Cancel": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annuler"
+          }
+        }
+      }
+    },
     "Centered": {
       "localizations": {
         "fr": {
@@ -591,6 +731,16 @@
         }
       }
     },
+    "Checking…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérification…"
+          }
+        }
+      }
+    },
     "Choose what the island shows": {
       "localizations": {
         "fr": {
@@ -627,6 +777,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Les sessions Claude Code, Codex, Gemini CLI, Cursor et GitHub Copilot, et les demandes d’autorisation de Claude Code et Codex."
+          }
+        }
+      }
+    },
+    "Claude, ChatGPT, Ollama, LM Studio and others show here once installed.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claude, ChatGPT, Ollama, LM Studio et d’autres apparaissent ici une fois installées."
           }
         }
       }
@@ -1211,6 +1371,16 @@
         }
       }
     },
+    "Generating": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Génère"
+          }
+        }
+      }
+    },
     "Gestures": {
       "localizations": {
         "fr": {
@@ -1617,6 +1787,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Elle gonfle, puis s’ouvre. Le délai se règle dans Apparence."
+          }
+        }
+      }
+    },
+    "Its agent, %@, connects below.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Son agent, %@, se relie plus bas."
           }
         }
       }
@@ -2141,12 +2321,42 @@
         }
       }
     },
+    "No AI app found on this Mac yet. Claude, ChatGPT, Gemini, Perplexity, Cursor, Ollama, LM Studio and many others show here once installed.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune app IA trouvée sur ce Mac pour l’instant. Claude, ChatGPT, Gemini, Perplexity, Cursor, Ollama, LM Studio et bien d’autres apparaissent ici une fois installées."
+          }
+        }
+      }
+    },
+    "No AI app on this Mac": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune app IA sur ce Mac"
+          }
+        }
+      }
+    },
     "No Results": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Aucun résultat"
+          }
+        }
+      }
+    },
+    "No agent at work": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun agent au travail"
           }
         }
       }
@@ -2171,12 +2381,32 @@
         }
       }
     },
+    "Not answering": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ne répond pas"
+          }
+        }
+      }
+    },
     "Not on this Mac": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Absent de ce Mac"
+          }
+        }
+      }
+    },
+    "Nothing answers at this address. Check that the server listens on your network, not only on its own machine.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rien ne répond à cette adresse. Vérifiez que le serveur écoute sur votre réseau, et pas seulement sur sa propre machine."
           }
         }
       }
@@ -2231,12 +2461,32 @@
         }
       }
     },
+    "Ollama listens on port 11434, LM Studio on 1234, llama.cpp on 8080.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ollama écoute sur le port 11434, LM Studio sur 1234, llama.cpp sur 8080."
+          }
+        }
+      }
+    },
     "On the notch: it opens at once. Swipe up to close.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Sur l’encoche : elle s’ouvre aussitôt. Vers le haut pour fermer."
+          }
+        }
+      }
+    },
+    "On this Mac": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sur ce Mac"
           }
         }
       }
@@ -2257,6 +2507,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Seulement pour les modules choisis. Tout le reste marche sans rien demander."
+          }
+        }
+      }
+    },
+    "Only if the server asks for one": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seulement si le serveur en demande un"
           }
         }
       }
@@ -2641,6 +2901,16 @@
         }
       }
     },
+    "Recognized by their identifiers. Their icons come from the apps themselves: Islet ships no logo.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reconnues par leurs identifiants. Leurs icônes viennent des apps elles-mêmes : Islet n’embarque aucun logo."
+          }
+        }
+      }
+    },
     "Redo": {
       "localizations": {
         "fr": {
@@ -2831,6 +3101,36 @@
         }
       }
     },
+    "Running": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouverte"
+          }
+        }
+      }
+    },
+    "Runs models on this Mac.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fait tourner des modèles sur ce Mac."
+          }
+        }
+      }
+    },
+    "Runs models on this Mac: its server shows under Your AI.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fait tourner des modèles sur ce Mac : son serveur apparaît dans Vos IA."
+          }
+        }
+      }
+    },
     "Same as the Mac (%@)": {
       "localizations": {
         "fr": {
@@ -2977,6 +3277,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Raccourcis et gestes"
+          }
+        }
+      }
+    },
+    "Show": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher"
           }
         }
       }
@@ -3321,6 +3631,16 @@
         }
       }
     },
+    "Studio PC": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PC du studio"
+          }
+        }
+      }
+    },
     "Swipe": {
       "localizations": {
         "fr": {
@@ -3437,6 +3757,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Téléprompteur"
+          }
+        }
+      }
+    },
+    "Test": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tester"
           }
         }
       }
@@ -3747,6 +4077,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Teinté"
+          }
+        }
+      }
+    },
+    "Token": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeton"
           }
         }
       }
@@ -4207,6 +4547,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Vous pourrez tout changer plus tard dans les Réglages."
+          }
+        }
+      }
+    },
+    "Your AI": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vos IA"
+          }
+        }
+      }
+    },
+    "Your AI apps and your models, at a glance": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vos apps IA et vos modèles, d’un coup d’œil"
           }
         }
       }

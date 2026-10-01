@@ -26,7 +26,12 @@ Each release's section is what Islet's update window and the GitHub release show
   the island shows the page as you edit it. Your pages from Islet 1 carry over.
 - **What the closed island shows first**: when several things run at once, the order is yours (Settings, Live
   activities). Volume, brightness, alerts and requests still come first.
-- **AI apps**: the AI tools Islet works with get a pane of their own, with each app's own icon.
+- **AI apps, all of them**: Islet recognizes the AI apps on your Mac (Claude, ChatGPT, Gemini, Perplexity, Grok Bot,
+  Cursor, VS Code, Zed, Ollama, LM Studio and more) with their own icons, and shows the open ones on an AI page of the
+  island, a tap away. Add your own AI: an Ollama, LM Studio, llama.cpp or OpenAI-compatible server on this Mac or on
+  another machine of your network; the island shows whether it answers, the model it holds and, when the server can
+  tell, whether it is generating. Tokens stay in your Keychain. Settings, AI apps.
+- **More pages fit**: six tabs fit beside the camera; with more pages, the tabs become dots, as on the iPhone.
 - **Permissions**: one pane says what each permission is for and which feature needs it.
 - **Shortcuts and gestures**: every way to open and drive the island, in one place.
 - **Language**: Islet follows the language of your Mac, or the one you pick in Settings, General.
