@@ -34,6 +34,8 @@ public final class IslandController {
     private var prompterInNotch = false
     /// A field of the open island has the keyboard: the island stays open until it gives it back.
     private var keyboardTaken = false
+    /// The first-launch welcome has been shown, by the greeting or by its safety delay.
+    private var welcomeShown = false
     /// Free width beside the notch before the app's menus (left) and the status items (right); nil when unknown.
     private var freeLeft: CGFloat?
     private var freeRight: CGFloat?
@@ -164,27 +166,64 @@ public final class IslandController {
 
     // MARK: First launch
 
-    /// The island opens by itself and writes "Hello", then tucks back in and the welcome window appears.
+    /// The island opens by itself and says hello in one language after another; once it reaches the Mac's own, the
+    /// welcome window is born out of it, and the island tucks back in.
     private func greet() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
             MainActor.assumeIsolated {
                 guard let self else { return }
+                self.navigation.greetsReady = false
                 self.navigation.jump(to: .greeting)
                 self.openedByRequest = true
                 self.send(.requested)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3.4) {
+                // In case the greeting cannot show, in full screen say: the welcome comes all the same.
+                DispatchQueue.main.asyncAfter(deadline: .now() + 16) { MainActor.assumeIsolated { self.greetingDone() } }
+            }
+        }
+    }
+
+    /// The greeting has said its last hello, or was clicked: the welcome window comes out of the island.
+    func greetingDone() {
+        guard !welcomeShown else { return }
+        welcomeShown = true
+        WelcomeWindow.shared.show(fromIsland: navigation.route == .greeting && machine.state == .expanded)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) { [weak self] in
+            MainActor.assumeIsolated {
+                guard let self else { return }
+                if self.navigation.route == .greeting, !self.machine.pointerInside { self.send(.dismissed) }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    MainActor.assumeIsolated { if self.navigation.route == .greeting { self.navigation.jumpHome() } }
+                }
+            }
+        }
+    }
+
+    /// The welcome went back into the notch: the island opens on "Let's go" for a moment.
+    func sayReady() {
+        navigation.greetsReady = true
+        navigation.jump(to: .greeting)
+        openedByRequest = true
+        send(.requested)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.6) { [weak self] in
+            MainActor.assumeIsolated {
+                guard let self else { return }
+                if self.navigation.route == .greeting, !self.machine.pointerInside { self.send(.dismissed) }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     MainActor.assumeIsolated {
-                        if self.navigation.route == .greeting, !self.machine.pointerInside { self.send(.dismissed) }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            MainActor.assumeIsolated {
-                                if self.navigation.route == .greeting { self.navigation.jumpHome() }
-                                WelcomeWindow.shared.show()
-                            }
-                        }
+                        if self.navigation.route == .greeting { self.navigation.jumpHome() }
+                        self.navigation.greetsReady = false
                     }
                 }
             }
         }
+    }
+
+    /// The island's shape for a state, in screen coordinates: where the welcome comes from and goes back to.
+    func islandFrame(for state: IslandState) -> NSRect? {
+        guard let screen, let layout else { return nil }
+        let frame = layout.frame(for: state)
+        let left = screen.frame.minX + layout.notch.centerX - layout.canvasSize.width / 2
+        return NSRect(x: left + frame.minX, y: screen.frame.maxY - frame.maxY, width: frame.width, height: frame.height)
     }
 
     // MARK: Shortcuts

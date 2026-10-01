@@ -1561,6 +1561,16 @@
         }
       }
     },
+    "Hover the notch whenever you need Islet.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Survolez l’encoche dès que vous avez besoin d’Islet."
+          }
+        }
+      }
+    },
     "How the script moves": {
       "localizations": {
         "fr": {
@@ -2017,6 +2027,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Permet au prompteur de défiler pendant que vous parlez et d’attendre quand vous vous arrêtez. Le son reste sur votre Mac et n’est jamais enregistré."
+          }
+        }
+      }
+    },
+    "Let’s go": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "C’est parti"
           }
         }
       }

@@ -92,7 +92,7 @@ struct IslandContentView: View {
                 ShelfPage(shelf: services.shelf)
                     .transition(.opacity)
             case .greeting:
-                GreetingView()
+                GreetingView(ready: services.navigation.greetsReady)
                     .transition(.opacity)
             case .device:
                 DeviceCardView(model: services.device)

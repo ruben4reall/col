@@ -6,41 +6,193 @@ import Observation
 import ServiceManagement
 import SwiftUI
 
-/// The first-launch welcome. The island greets first, from the notch; then this window teaches the gestures on the
-/// real notch, lets the user pick modules, and asks only for the permissions those modules need.
+/// The first-launch welcome. The island greets first, from the notch; then this window is born out of the island, teaches
+/// the gestures on the real notch, lets the user pick modules, and asks only for the permissions those modules need.
+/// When it is done, it goes back into the notch and the island says it is ready.
 @MainActor
 final class WelcomeWindow: NSObject, NSWindowDelegate {
     static let shared = WelcomeWindow()
     private var window: NSWindow?
+    /// The rounded card the window shows; the window around it is transparent.
+    private var card: NSView?
+    private var content: NSView?
     private(set) var model: WelcomeModel?
     private static let key = "hasWelcomed"
+    static let size = NSSize(width: 640, height: 560)
+    private static let radius: CGFloat = 26
+    private static let dark = NSColor(srgbRed: 0.05, green: 0.05, blue: 0.055, alpha: 1)
 
     static var hasWelcomed: Bool { UserDefaults.standard.bool(forKey: key) }
 
-    func show() {
-        if window == nil {
-            let model = WelcomeModel()
-            self.model = model
-            let hosting = NSHostingController(rootView: WelcomeView(model: model) { [weak self] in self?.finish() })
-            let window = NSWindow(contentViewController: hosting)
-            window.styleMask = [.titled, .closable, .fullSizeContentView]
-            window.titlebarAppearsTransparent = true
-            window.titleVisibility = .hidden
-            window.isMovableByWindowBackground = true
-            window.appearance = NSAppearance(named: .darkAqua)
-            window.backgroundColor = NSColor(srgbRed: 0.05, green: 0.05, blue: 0.055, alpha: 1)
-            window.isReleasedWhenClosed = false
-            window.delegate = self
-            window.setContentSize(NSSize(width: 640, height: 560))
-            window.center()
-            // Sit a little below the centre, so the notch and the window read together.
-            var frame = window.frame
-            frame.origin.y -= 60
-            window.setFrame(frame, display: false)
-            self.window = window
-        }
+    private var still: Bool { NSWorkspace.shared.accessibilityDisplayShouldReduceMotion }
+
+    /// Shows the welcome. From the island, the window is born out of it: it starts as the open island, hidden behind
+    /// it, and grows out from under it to its place below.
+    func show(fromIsland: Bool = false) {
+        if window == nil { makeWindow() }
+        guard let window else { return }
         NSApp.activate()
-        window?.makeKeyAndOrderFront(nil)
+        if fromIsland, !still, let island = IslandController.shared?.islandFrame(for: .expanded) {
+            appear(window, from: island)
+        } else {
+            window.makeKeyAndOrderFront(nil)
+        }
+    }
+
+    private func makeWindow() {
+        let model = WelcomeModel()
+        self.model = model
+        let hosting = NSHostingView(rootView: WelcomeView(model: model) { [weak self] in self?.finish() })
+        let window = WelcomePanel(contentRect: NSRect(origin: .zero, size: Self.size), styleMask: [.borderless, .fullSizeContentView],
+                                  backing: .buffered, defer: false)
+        window.isOpaque = false
+        window.backgroundColor = .clear
+        window.hasShadow = true
+        window.isMovableByWindowBackground = true
+        window.appearance = NSAppearance(named: .darkAqua)
+        window.isReleasedWhenClosed = false
+        window.delegate = self
+        let container = NSView(frame: NSRect(origin: .zero, size: Self.size))
+        container.wantsLayer = true
+        let card = NSView(frame: container.bounds)
+        card.wantsLayer = true
+        card.layer?.cornerRadius = Self.radius
+        card.layer?.cornerCurve = .continuous
+        card.layer?.masksToBounds = true
+        card.layer?.backgroundColor = Self.dark.cgColor
+        card.layer?.borderWidth = 1
+        card.layer?.borderColor = NSColor(white: 1, alpha: 0.1).cgColor
+        hosting.frame = card.bounds
+        hosting.autoresizingMask = [.width, .height]
+        card.addSubview(hosting)
+        container.addSubview(card)
+        window.contentView = container
+        WindowPlacement.belowIsland(window, preferred: Self.size, minimum: Self.size, sizeKey: "welcomeWindowFrame")
+        self.window = window
+        self.card = card
+        self.content = hosting
+    }
+
+    // MARK: Born from the island, back into the notch
+
+    /// The window reaches up to the top of the screen while the card travels, so the card can be drawn where the
+    /// island is. Below the island and the menu bar, the card starts out hidden behind them.
+    private func stretch(_ window: NSWindow, over rect: NSRect) -> NSRect {
+        let frame = window.frame
+        let top = (window.screen ?? NSScreen.main)?.frame.maxY ?? frame.maxY
+        let minX = min(frame.minX, rect.minX), maxX = max(frame.maxX, rect.maxX)
+        let tall = NSRect(x: minX, y: frame.minY, width: maxX - minX, height: top - frame.minY)
+        window.setFrame(tall, display: false)
+        return NSRect(x: frame.minX - tall.minX, y: 0, width: frame.width, height: frame.height)
+    }
+
+    /// The transform that draws the card's `rect` at `target`, both in the layer's own coordinates, for a layer that
+    /// transforms its sublayers about its anchor point.
+    private static func transform(from rect: NSRect, to target: NSRect, in layer: CALayer) -> CATransform3D {
+        let sx = target.width / rect.width, sy = target.height / rect.height
+        let pivot = CGPoint(x: layer.anchorPoint.x * layer.bounds.width, y: layer.anchorPoint.y * layer.bounds.height)
+        let tx = target.minX - pivot.x + sx * (pivot.x - rect.minX)
+        let ty = target.minY - pivot.y + sy * (pivot.y - rect.minY)
+        return CATransform3DConcat(CATransform3DMakeScale(sx, sy, 1), CATransform3DMakeTranslation(tx, ty, 0))
+    }
+
+    private func appear(_ window: NSWindow, from island: NSRect) {
+        guard let card, let content, let layer = window.contentView?.layer else { return window.makeKeyAndOrderFront(nil) }
+        let final = window.frame
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        window.hasShadow = false
+        let cardFrame = stretch(window, over: island)
+        card.frame = cardFrame
+        let start = NSRect(x: island.minX - window.frame.minX, y: island.minY - window.frame.minY, width: island.width, height: island.height)
+        let from = Self.transform(from: cardFrame, to: start, in: layer)
+        layer.sublayerTransform = CATransform3DIdentity
+        content.alphaValue = 0
+        CATransaction.commit()
+        window.makeKeyAndOrderFront(nil)
+
+        // The card grows out of the island, black as the island at first, its corners from the island's to its own.
+        let grow = CASpringAnimation(perceptualDuration: 0.75, bounce: 0.1)
+        grow.keyPath = "sublayerTransform"
+        grow.fromValue = NSValue(caTransform3D: from)
+        grow.toValue = NSValue(caTransform3D: CATransform3DIdentity)
+        grow.duration = grow.settlingDuration
+        layer.add(grow, forKey: "birth")
+        let colour = CABasicAnimation(keyPath: "backgroundColor")
+        colour.fromValue = NSColor.black.cgColor
+        colour.toValue = Self.dark.cgColor
+        colour.duration = 0.5
+        card.layer?.add(colour, forKey: "birth")
+        let corner = CABasicAnimation(keyPath: "cornerRadius")
+        corner.fromValue = Theme.islandCorner * cardFrame.width / island.width
+        corner.toValue = Self.radius
+        corner.duration = 0.55
+        corner.timingFunction = CAMediaTimingFunction(name: .easeOut)
+        card.layer?.add(corner, forKey: "corner")
+        NSAnimationContext.runAnimationGroup { context in
+            context.duration = 0.4
+            context.timingFunction = CAMediaTimingFunction(name: .easeOut)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.22) { content.animator().alphaValue = 1 }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + grow.settlingDuration) { [weak self] in
+            self?.settle(window, at: final)
+        }
+    }
+
+    /// Back to a window the size of its card, its shadow on.
+    private func settle(_ window: NSWindow, at frame: NSRect) {
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        window.setFrame(frame, display: true)
+        card?.frame = NSRect(origin: .zero, size: frame.size)
+        window.hasShadow = true
+        CATransaction.commit()
+        window.invalidateShadow()
+    }
+
+    /// The card shrinks back into the notch, fading to the island's black, and the window closes.
+    private func goBack(then done: @escaping () -> Void) {
+        guard let window, !still, let card, let content, let layer = window.contentView?.layer,
+              let notch = IslandController.shared?.islandFrame(for: .collapsed)
+        else {
+            window?.close()
+            return done()
+        }
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        window.hasShadow = false
+        let cardFrame = stretch(window, over: notch)
+        card.frame = cardFrame
+        CATransaction.commit()
+        let target = NSRect(x: notch.minX - window.frame.minX, y: notch.minY - window.frame.minY, width: notch.width, height: notch.height)
+        let to = Self.transform(from: cardFrame, to: target, in: layer)
+        // Quick to leave, gentle as it reaches the notch; its colour turns to the island's black on the way.
+        let duration = 0.6
+        let shrink = CABasicAnimation(keyPath: "sublayerTransform")
+        shrink.fromValue = NSValue(caTransform3D: CATransform3DIdentity)
+        shrink.toValue = NSValue(caTransform3D: to)
+        shrink.duration = duration
+        shrink.timingFunction = CAMediaTimingFunction(controlPoints: 0.4, 0, 0.2, 1)
+        layer.add(shrink, forKey: "back")
+        layer.sublayerTransform = to
+        let colour = CABasicAnimation(keyPath: "backgroundColor")
+        colour.fromValue = Self.dark.cgColor
+        colour.toValue = NSColor.black.cgColor
+        colour.beginTime = CACurrentMediaTime() + duration * 0.35
+        colour.duration = duration * 0.45
+        colour.fillMode = .backwards
+        card.layer?.add(colour, forKey: "back")
+        card.layer?.backgroundColor = NSColor.black.cgColor
+        NSAnimationContext.runAnimationGroup { context in
+            context.duration = 0.15
+            content.animator().alphaValue = 0
+        }
+        // The island starts to open as the card arrives, as if the card became it.
+        DispatchQueue.main.asyncAfter(deadline: .now() + duration * 0.75) { done() }
+        DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
+            window.orderOut(nil)
+            window.close()
+        }
     }
 
     /// The island reports the gestures, so the tutorial can tick them as they happen.
@@ -53,6 +205,11 @@ final class WelcomeWindow: NSObject, NSWindowDelegate {
         if launches { try? SMAppService.mainApp.register() } else { try? SMAppService.mainApp.unregister() }
         // Answered here, so Sparkle never has to ask about automatic checks in an alert of its own.
         Updates.checker?.automaticallyChecksForUpdates = UserDefaults.standard.object(forKey: "welcomeChecksForUpdates") as? Bool ?? true
+        goBack { IslandController.shared?.sayReady() }
+    }
+
+    /// Escape, or Later: the welcome closes where it stands and comes back from the island's menu.
+    func dismiss() {
         window?.close()
     }
 
@@ -60,8 +217,18 @@ final class WelcomeWindow: NSObject, NSWindowDelegate {
         UserDefaults.standard.set(true, forKey: Self.key)
         window?.emptyWhenClosed()
         window = nil
+        card = nil
+        content = nil
         model = nil
     }
+}
+
+/// The welcome's window: no title bar, its card drawn inside, so it can come out of the island and go back in.
+final class WelcomePanel: NSWindow {
+    override var canBecomeKey: Bool { true }
+    override var canBecomeMain: Bool { true }
+    /// While the card travels the window reaches the top of the screen: no constraint pushes it under the menu bar.
+    override func constrainFrameRect(_ frameRect: NSRect, to screen: NSScreen?) -> NSRect { frameRect }
 }
 
 @MainActor
@@ -222,6 +389,11 @@ private struct Footer: View {
             if model.step != .meet {
                 Button { model.back() } label: { Text("Back", bundle: .module) }
                     .buttonStyle(QuietButton())
+            } else {
+                // No title bar: Later, or Escape, closes the welcome; it comes back from the island's menu.
+                Button { WelcomeWindow.shared.dismiss() } label: { Text("Later", bundle: .module) }
+                    .buttonStyle(QuietButton())
+                    .keyboardShortcut(.cancelAction)
             }
             Button {
                 if model.step == .modules { model.save() }
@@ -667,26 +839,81 @@ private struct ReadyStep: View {
 
 // MARK: The greeting in the island
 
-/// "Hello", written into the open island on first launch, before the welcome window appears.
+/// The island's first words. "Hello" in the Mac's own language, then in other languages and scripts, each word giving
+/// way to the next in a soft blur, and back to the Mac's language with "Let's set up Islet"; a click goes straight on.
+/// After the welcome, it says "Let's go". Set in the system font: Islet's own lettering, never Apple's handwriting.
 struct GreetingView: View {
-    @State private var revealed = false
+    let ready: Bool
+    @State private var index = 0
+    @State private var settled = false
+    private let words = GreetingView.sequence(for: AppLanguage.current)
+
+    /// "Hello" by language, written as each says it.
+    static let hellos: [(language: String, word: String)] = [
+        ("en", "Hello"), ("fr", "Bonjour"), ("es", "Hola"), ("de", "Hallo"), ("it", "Ciao"), ("pt", "Olá"),
+        ("ja", "こんにちは"), ("zh", "你好"), ("ko", "안녕하세요"), ("ru", "Привет"), ("ar", "مرحبا"),
+        ("hi", "नमस्ते"), ("el", "Γεια σου"), ("th", "สวัสดี"), ("he", "שלום"), ("tr", "Merhaba"),
+        ("sv", "Hej"), ("pl", "Cześć"), ("vi", "Xin chào"), ("uk", "Привіт"),
+    ]
+
+    /// The Mac's language first and last; between them, seven others across scripts, never the same twice.
+    static func sequence(for language: String) -> [String] {
+        let code = String(language.prefix(2))
+        let own = hellos.first { $0.language == code }?.word ?? "Hello"
+        let order = ["en", "ja", "es", "ar", "zh", "fr", "hi", "it", "ko", "de", "ru", "pt", "el", "th"]
+        let others = order.filter { $0 != code }.prefix(7).compactMap { language in hellos.first { $0.language == language }?.word }
+        return [own] + others.filter { $0 != own } + [own]
+    }
+
+    private var still: Bool { NSWorkspace.shared.accessibilityDisplayShouldReduceMotion }
 
     var body: some View {
-        VStack(spacing: 4) {
-            Text("Hello", bundle: .module)
-                .font(.system(size: 54, weight: .bold, design: .rounded))
-                .foregroundStyle(LinearGradient(colors: [Color(red: 1, green: 0.85, blue: 0.76), Color(red: 1, green: 0.48, blue: 0.35)], startPoint: .top, endPoint: .bottom))
-                .mask(alignment: .leading) {
-                    Rectangle().frame(width: revealed ? 400 : 0).frame(maxWidth: .infinity, alignment: .leading)
+        VStack(spacing: 6) {
+            ZStack {
+                Text(verbatim: ready ? "" : words[index])
+                    .font(.system(size: 52, weight: .bold, design: .rounded))
+                    .foregroundStyle(LinearGradient(colors: [Color(red: 1, green: 0.85, blue: 0.76), Color(red: 1, green: 0.48, blue: 0.35)],
+                                                    startPoint: .top, endPoint: .bottom))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
+                    .id(index)
+                    .transition(still ? AnyTransition.opacity : AnyTransition(.blurReplace))
+                    .opacity(ready ? 0 : 1)
+                if ready {
+                    Text("Let’s go", bundle: .module)
+                        .font(.system(size: 52, weight: .bold, design: .rounded))
+                        .foregroundStyle(LinearGradient(colors: [Color(red: 1, green: 0.85, blue: 0.76), Color(red: 1, green: 0.48, blue: 0.35)],
+                                                        startPoint: .top, endPoint: .bottom))
+                        .transition(still ? AnyTransition.opacity : AnyTransition(.blurReplace))
                 }
-                .blur(radius: revealed ? 0 : 6)
-            Text("Let’s set up Islet", bundle: .module)
-                .font(.system(size: 13, weight: .medium))
-                .foregroundStyle(.white.opacity(revealed ? 0.6 : 0))
+            }
+            // Room for the blur and for scripts taller than Latin.
+            .frame(height: 70)
+            Group {
+                if ready {
+                    Text("Hover the notch whenever you need Islet.", bundle: .module)
+                } else {
+                    Text("Let’s set up Islet", bundle: .module)
+                }
+            }
+            .font(.system(size: 13, weight: .medium))
+            .foregroundStyle(.white.opacity(settled || ready ? 0.6 : 0))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onAppear {
-            withAnimation(.easeOut(duration: 1.4).delay(0.25)) { revealed = true }
+        .contentShape(Rectangle())
+        .onTapGesture { if !ready { IslandController.shared?.greetingDone() } }
+        .task(id: ready) {
+            guard !ready else { return }
+            // Each word stays a little over a second; the fog between two takes most of a second.
+            for next in 1..<words.count {
+                try? await Task.sleep(for: .milliseconds(next == 1 ? 1500 : 1050))
+                guard !Task.isCancelled else { return }
+                withAnimation(still ? .easeInOut(duration: 0.4) : .smooth(duration: 0.85)) { index = next }
+            }
+            withAnimation(.easeOut(duration: 0.6)) { settled = true }
+            try? await Task.sleep(for: .milliseconds(1700))
+            guard !Task.isCancelled else { return }
+            IslandController.shared?.greetingDone()
         }
     }
 }

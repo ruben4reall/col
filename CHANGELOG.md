@@ -43,6 +43,10 @@ Each release's section is what Islet's update window and the GitHub release show
 - **Permissions**: one pane says what each permission is for and which feature needs it.
 - **Shortcuts and gestures**: every way to open and drive the island, in one place.
 - **Language**: Islet follows the language of your Mac, or the one you pick in Settings, General.
+- **A first hello in every language**: on first launch the island says hello in your language, then in others, from
+  Japanese to Arabic, each word giving way to the next in a soft blur, and back to yours. The welcome window is born
+  out of the island, and at the end goes back into the notch while the island says "Let's go". With Reduce Motion,
+  simple fades.
 - **One island**: a second copy of Islet, opened from Downloads or from a build folder, hands over to the one already
   running instead of drawing a second island and taking its connection to your agents.
 
