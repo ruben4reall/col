@@ -86,7 +86,7 @@ private struct BatteryRing: View {
                 }
             }
             .frame(width: 36, height: 36)
-            Text("\(level) %")
+            Text(verbatim: "\(level) %")
                 .font(.system(size: 11, weight: .semibold).monospacedDigit())
                 .foregroundStyle(Theme.secondaryText)
         }

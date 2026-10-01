@@ -22,6 +22,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func application(_ application: NSApplication, open urls: [URL]) {
-        urls.forEach { island?.open($0) }
+        let files = urls.filter(\.isFileURL)
+        if !files.isEmpty { island?.importScripts(files) }
+        urls.filter { !$0.isFileURL }.forEach { island?.open($0) }
     }
 }

@@ -14,7 +14,7 @@ struct ShortcutsPane: View {
                     }
                     Spacer(minLength: 12)
                     KeyCaps(keys: ["⌃", "⌥", "⌘", "I"]).opacity(hotKey ? 1 : 0.4)
-                    Toggle("", isOn: $hotKey).labelsHidden().toggleStyle(.switch)
+                    Toggle(String(), isOn: $hotKey).labelsHidden().toggleStyle(.switch)
                         .onChange(of: hotKey) { Preferences.hotKeyEnabled = hotKey }
                 }
             } header: {

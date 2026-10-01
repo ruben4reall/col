@@ -6,6 +6,26 @@
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
 	<string>Islet</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Script</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.plain-text</string>
+				<string>net.daringfireball.markdown</string>
+				<string>public.rtf</string>
+				<string>org.openxmlformats.wordprocessingml.document</string>
+				<string>org.openxmlformats.presentationml.presentation</string>
+				<string>com.adobe.pdf</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -33,6 +53,14 @@
 				<string>islet</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>ch.rubencatalao.islet.souffleur</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>souffleur</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
@@ -50,8 +78,14 @@
 	<string>Islet uses the camera only when you open its mirror.</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Ruben Catalao. MIT License. Islet is not affiliated with Apple.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>The prompter's remote lets your phone, on the same network, play, pause and move the script.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>The prompter listens to your voice to roll the script as you speak. The sound never leaves your Mac and is never recorded.</string>
 	<key>NSRemindersFullAccessUsageDescription</key>
 	<string>Islet shows the reminders due today beside your agenda.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>In Voice Follow, the prompter recognizes your words on your Mac to keep your place in the script.</string>
 	<key>SUEnableAutomaticChecks</key>
 	<true/>
 	<key>SUFeedURL</key>

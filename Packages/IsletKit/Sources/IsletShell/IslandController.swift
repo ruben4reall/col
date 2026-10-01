@@ -1,5 +1,6 @@
 import AppKit
 import IsletCore
+import IsletPrompter
 
 /// Owns the island on the screen that has the notch: places the panel, runs the interaction rules, keeps the board
 /// of live activities, and turns all of it into motion.
@@ -25,6 +26,8 @@ public final class IslandController {
     private var hotKey: HotKey?
     /// An app covers the notch's screen in full screen: the island only shows brief displays.
     private var fullScreenActive = false
+    /// The prompter is out of the notch: the island leaves it the place until the take ends.
+    private var prompterInNotch = false
     /// Free width beside the notch before the app's menus (left) and the status items (right); nil when unknown.
     private var freeLeft: CGFloat?
     private var freeRight: CGFloat?
@@ -375,11 +378,30 @@ public final class IslandController {
         return FullScreen.isActive(windows: windows, screen: frame, frontmostPID: NSWorkspace.shared.frontmostApplication?.processIdentifier)
     }
 
-    /// In full screen the island shows only while something brief or urgent is on, or while it is open.
+    /// In full screen the island shows only while something brief or urgent is on, or while it is open. While the
+    /// prompter is out of the notch, it does not show at all.
     private func updateVisibility() {
         let urgent = (shownActivity?.priority ?? .ambient) >= .alert
-        let visible = !fullScreenActive || urgent || machine.state == .expanded
+        let visible = !prompterInNotch && (!fullScreenActive || urgent || machine.state == .expanded)
         if visible { panel.orderFrontRegardless() } else { panel.orderOut(nil) }
+    }
+
+    /// The prompter came out of the notch, or went back in: the island steps aside for the take and returns after it.
+    private func prompterChanged(active: Bool, placement: PrompterPlacement) {
+        let inNotch = active && placement == .notch
+        guard inNotch != prompterInNotch else { return }
+        prompterInNotch = inNotch
+        if inNotch {
+            openedByRequest = false
+            if machine.state != .collapsed { send(.dismissed) }
+            // Once the island has tucked in, behind the prompter that grows from the same place.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                MainActor.assumeIsolated { self?.updateVisibility() }
+            }
+        } else {
+            updateVisibility()
+            refreshActivity()
+        }
     }
 
     /// Applies settings as they change: the island re-lays itself out only when its size did.
@@ -404,9 +426,18 @@ public final class IslandController {
         agentsChanged()
     }
 
-    /// Handles an `islet://` link.
+    /// Handles an `islet://` link, and the prompter's links (`islet://prompter/…`, and Souffleur's `souffleur://…`).
     public func open(_ url: URL) {
-        api.open(url)
+        if url.scheme == "souffleur" || (url.scheme == "islet" && url.host == "prompter") {
+            PrompterCenter.shared.open(url)
+        } else {
+            api.open(url)
+        }
+    }
+
+    /// Documents opened with Islet go to the prompter's library.
+    public func importScripts(_ urls: [URL]) {
+        PrompterCenter.shared.importDocuments(urls)
     }
 
     private func agentsChanged() {
@@ -463,6 +494,10 @@ public final class IslandController {
                 }
             })
         }
+        let prompter = PrompterCenter.shared
+        prompter.showLibraryHandler = { ScriptLibraryWindow.shared.show() }
+        prompter.onActiveChange = { [weak self] active, placement in self?.prompterChanged(active: active, placement: placement) }
+        prompter.start()
         lockScreen.start()
         if Preferences.showsOnLockScreen { LockScreenSpace.shared?.adopt(panel) }
         if !WelcomeWindow.hasWelcomed { greet() }
@@ -493,7 +528,7 @@ public final class IslandController {
             break
         }
         // `-IsletSettings island` opens the settings on a pane, for screenshots and for working on them.
-        if let pane = UserDefaults.standard.string(forKey: "IsletSettings").flatMap(SettingsPane.init(rawValue:)) {
+        if let pane = UserDefaults.standard.string(forKey: "IsletSettings").flatMap(SettingsPane.init(link:)) {
             SettingsWindow.shared.show(pane)
         }
         // `-IsletOpen YES` starts the island open, for screenshots and for working on its content; `-IsletPage live`
@@ -505,6 +540,7 @@ public final class IslandController {
     }
 
     public func stop() {
+        PrompterCenter.shared.willTerminate()
         lockScreen.stop()
         media.stop()
         api.stop()

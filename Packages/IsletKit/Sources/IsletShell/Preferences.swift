@@ -122,7 +122,12 @@ enum Preferences {
             if let data = defaults.data(forKey: "pageDeck"), let deck = try? JSONDecoder().decode(PageDeck.self, from: data) {
                 return deck.validated()
             }
-            if let legacy = defaults.stringArray(forKey: "enabledPages") { return PageDeck.migrating(enabledPages: legacy) }
+            if let legacy = defaults.stringArray(forKey: "enabledPages") {
+                // Someone who used Souffleur finds the prompter, now part of Islet, on the page after Home.
+                let support = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+                let usedSouffleur = FileManager.default.fileExists(atPath: support.appendingPathComponent("Souffleur").path)
+                return PageDeck.migrating(enabledPages: (usedSouffleur ? ["prompter"] : []) + legacy)
+            }
             return .standard
         }
         set {

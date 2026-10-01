@@ -1,0 +1,796 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "# Welcome to the prompter\nHello, and welcome to Islet's prompter. [smile]\nYour script comes out of the notch, right under your camera, so you can read it and still look your audience in the eye.\nPress play and start speaking. When you stop talking, the script stops with you, and it rolls on as soon as you speak again.\nMove the speed until the words arrive just as you need them. Or choose Voice Follow, and the script follows your words, line by line. [pause]\n\n# Make it yours\nWrite your own script in this window, or drop a document on it: a text file, a Word document, a PDF, or the speaker notes of a presentation.\nPut a cue in square brackets, like [breathe], and it shows quietly. Two stars around a word make it **stand out**.\nWhen you are ready, press play, look at the camera, and speak.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "# Bienvenue dans le prompteur\nBonjour, et bienvenue dans le prompteur d’Islet. [sourire]\nVotre script sort de l’encoche, juste sous votre caméra : vous le lisez en regardant votre public dans les yeux.\nAppuyez sur lecture et commencez à parler. Quand vous vous taisez, le script s’arrête avec vous, et il repart dès que vous reparlez.\nRéglez la vitesse jusqu’à ce que les mots arrivent au bon moment. Ou choisissez le suivi de la voix : le script suit vos mots, ligne après ligne. [pause]\n\n# Faites-le vôtre\nÉcrivez votre propre script dans cette fenêtre, ou déposez-y un document : un fichier texte, un document Word, un PDF ou les notes d’une présentation.\nMettez une indication entre crochets, comme [respirer], et elle s’affiche discrètement. Deux étoiles autour d’un mot le font **ressortir**.\nQuand vous êtes prêt, appuyez sur lecture, regardez la caméra et parlez."
+          }
+        }
+      }
+    },
+    "%@ Your text stays in the window, and Islet tries again at your next change.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ Votre texte reste dans la fenêtre, et Islet réessaie à votre prochaine modification."
+          }
+        }
+      }
+    },
+    "%lld words a minute · %lld words · %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld mots par minute · %lld mots · %@"
+          }
+        }
+      }
+    },
+    "%lld wpm": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld mots/min"
+          }
+        }
+      }
+    },
+    "Again": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encore"
+          }
+        }
+      }
+    },
+    "Auto Scroll": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défilement auto"
+          }
+        }
+      }
+    },
+    "Both": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les deux"
+          }
+        }
+      }
+    },
+    "Clipboard": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Presse-papiers"
+          }
+        }
+      }
+    },
+    "Close": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fermer"
+          }
+        }
+      }
+    },
+    "Contrast": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contraste"
+          }
+        }
+      }
+    },
+    "Coral": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Corail"
+          }
+        }
+      }
+    },
+    "Duplicate": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dupliquer"
+          }
+        }
+      }
+    },
+    "Ember": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Braise"
+          }
+        }
+      }
+    },
+    "Fit in": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tenir en"
+          }
+        }
+      }
+    },
+    "Floating": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Flottant"
+          }
+        }
+      }
+    },
+    "Follows your words as you read.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suit vos mots pendant que vous lisez."
+          }
+        }
+      }
+    },
+    "Follows your words · %lld words": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suit vos mots · %lld mots"
+          }
+        }
+      }
+    },
+    "Full Screen": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plein écran"
+          }
+        }
+      }
+    },
+    "Gold": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Or"
+          }
+        }
+      }
+    },
+    "Horizontal": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Horizontal"
+          }
+        }
+      }
+    },
+    "How the script moves": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comment le script avance"
+          }
+        }
+      }
+    },
+    "Import": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importer"
+          }
+        }
+      }
+    },
+    "Import a text, a Word document, a PDF or a presentation's notes (⌘O)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importer un texte, un document Word, un PDF ou les notes d’une présentation (⌘O)"
+          }
+        }
+      }
+    },
+    "Import…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importer…"
+          }
+        }
+      }
+    },
+    "Islet can't hear you: microphone access is off.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Islet ne vous entend pas : l’accès au micro est désactivé."
+          }
+        }
+      }
+    },
+    "Islet can't read the text of “%@”.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Islet ne peut pas lire le texte de « %@ »."
+          }
+        }
+      }
+    },
+    "Islet can't save “%@”.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Islet ne peut pas enregistrer « %@ »."
+          }
+        }
+      }
+    },
+    "Last take: %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dernière prise : %@"
+          }
+        }
+      }
+    },
+    "Manual": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manuel"
+          }
+        }
+      }
+    },
+    "Mint": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menthe"
+          }
+        }
+      }
+    },
+    "Move to Trash": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Placer dans la corbeille"
+          }
+        }
+      }
+    },
+    "Moves only when you move it · %lld words": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avance seulement quand vous le faites avancer · %lld mots"
+          }
+        }
+      }
+    },
+    "Moves only when you move it.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avance seulement quand vous le faites avancer."
+          }
+        }
+      }
+    },
+    "New Script": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouveau script"
+          }
+        }
+      }
+    },
+    "New Script (⌘N)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouveau script (⌘N)"
+          }
+        }
+      }
+    },
+    "Night": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nuit"
+          }
+        }
+      }
+    },
+    "No Script": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun script"
+          }
+        }
+      }
+    },
+    "No microphone is available.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun micro n’est disponible."
+          }
+        }
+      }
+    },
+    "Notch": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encoche"
+          }
+        }
+      }
+    },
+    "Ocean": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Océan"
+          }
+        }
+      }
+    },
+    "Off": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune"
+          }
+        }
+      }
+    },
+    "Open System Settings": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir Réglages Système"
+          }
+        }
+      }
+    },
+    "Paper": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Papier"
+          }
+        }
+      }
+    },
+    "Pause": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pause"
+          }
+        }
+      }
+    },
+    "Pause (⌘↩)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pause (⌘↩)"
+          }
+        }
+      }
+    },
+    "Pause when I stop talking": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pause quand je me tais"
+          }
+        }
+      }
+    },
+    "Place": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Emplacement"
+          }
+        }
+      }
+    },
+    "Play": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lecture"
+          }
+        }
+      }
+    },
+    "Play this script (⌘↩, or ⌃⌥⌘P from any app)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lire ce script (⌘↩, ou ⌃⌥⌘P depuis n’importe quelle app)"
+          }
+        }
+      }
+    },
+    "Preparing the voice model…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Préparation du modèle vocal…"
+          }
+        }
+      }
+    },
+    "Prompt": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lancer"
+          }
+        }
+      }
+    },
+    "Roll the script at the pace you just read at.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faire défiler le script au rythme que vous venez de lire."
+          }
+        }
+      }
+    },
+    "Rolls at a steady pace.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défile à un rythme régulier."
+          }
+        }
+      }
+    },
+    "Rolls while you speak, waits when you pause.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défile pendant que vous parlez, attend quand vous faites une pause."
+          }
+        }
+      }
+    },
+    "Scrolling": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défilement"
+          }
+        }
+      }
+    },
+    "Search": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechercher"
+          }
+        }
+      }
+    },
+    "Sets the speed so the script lasts exactly this long.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Règle la vitesse pour que le script dure exactement ce temps."
+          }
+        }
+      }
+    },
+    "Speech recognition is off for Islet.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La reconnaissance vocale est désactivée pour Islet."
+          }
+        }
+      }
+    },
+    "Speed": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vitesse"
+          }
+        }
+      }
+    },
+    "Speed set to %lld words a minute": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vitesse réglée sur %lld mots par minute"
+          }
+        }
+      }
+    },
+    "That's a take.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "C’est dans la boîte."
+          }
+        }
+      }
+    },
+    "The script rolls at this speed while you speak and waits as soon as you stop. Your voice is heard on your Mac and never recorded.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le script défile à cette vitesse pendant que vous parlez et attend dès que vous vous arrêtez. Votre voix est entendue sur votre Mac et jamais enregistrée."
+          }
+        }
+      }
+    },
+    "Untitled Script": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Script sans titre"
+          }
+        }
+      }
+    },
+    "Use %lld wpm": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Garder %lld mots/min"
+          }
+        }
+      }
+    },
+    "Use Auto Scroll": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passer au défilement auto"
+          }
+        }
+      }
+    },
+    "Vertical": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vertical"
+          }
+        }
+      }
+    },
+    "Violet": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Violet"
+          }
+        }
+      }
+    },
+    "Voice Follow": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suivi de la voix"
+          }
+        }
+      }
+    },
+    "Voice Pace": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rythme de la voix"
+          }
+        }
+      }
+    },
+    "Voice follow can't hear %@ on this Mac yet. Rolling at your pace instead.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le suivi de la voix ne comprend pas encore le %@ sur ce Mac. Le script défile à votre rythme à la place."
+          }
+        }
+      }
+    },
+    "Voice follow stopped hearing words. Rolling at your pace instead.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le suivi de la voix n’entend plus de mots. Le script défile à votre rythme à la place."
+          }
+        }
+      }
+    },
+    "Where the prompter appears": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Où le prompteur apparaît"
+          }
+        }
+      }
+    },
+    "Write a new script, or drop a text file, a Word document, a PDF or a presentation here.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Écrivez un nouveau script, ou déposez ici un fichier texte, un document Word, un PDF ou une présentation."
+          }
+        }
+      }
+    },
+    "filler": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mot de remplissage"
+          }
+        }
+      }
+    },
+    "fillers": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mots de remplissage"
+          }
+        }
+      }
+    },
+    "of the script": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "du script"
+          }
+        }
+      }
+    },
+    "time": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "durée"
+          }
+        }
+      }
+    },
+    "words a minute": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mots par minute"
+          }
+        }
+      }
+    },
+    "“%@” has no text to prompt.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "« %@ » n’a pas de texte à faire défiler."
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

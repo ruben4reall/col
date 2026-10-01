@@ -1,12 +1,52 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "%lld connected": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld connecté(s)"
+          }
+        }
+      }
+    },
+    "%lld in your library. Drop a text, a Word document, a PDF or a presentation on it.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld dans votre bibliothèque. Déposez-y un texte, un document Word, un PDF ou une présentation."
+          }
+        }
+      }
+    },
     "%lld min": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "%lld min"
+          }
+        }
+      }
+    },
+    "%lld words": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld mots"
+          }
+        }
+      }
+    },
+    "%lld wpm": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld mots/min"
           }
         }
       }
@@ -201,6 +241,16 @@
         }
       }
     },
+    "Alignment": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alignement"
+          }
+        }
+      }
+    },
     "All day": {
       "localizations": {
         "fr": {
@@ -281,6 +331,16 @@
         }
       }
     },
+    "Another app already uses %@. Quit it or change its shortcut, then turn this off and on.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une autre app utilise déjà %@. Quittez-la ou changez son raccourci, puis désactivez et réactivez ceci."
+          }
+        }
+      }
+    },
     "Answer in terminal": {
       "localizations": {
         "fr": {
@@ -311,6 +371,26 @@
         }
       }
     },
+    "Auto Scroll": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défilement auto"
+          }
+        }
+      }
+    },
+    "Automatic": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatique"
+          }
+        }
+      }
+    },
     "Awake": {
       "localizations": {
         "fr": {
@@ -327,6 +407,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Retour"
+          }
+        }
+      }
+    },
+    "Back or forward a line": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une ligne en arrière ou en avant"
           }
         }
       }
@@ -427,6 +517,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Accès à la caméra désactivé"
+          }
+        }
+      }
+    },
+    "Centered": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Centré"
           }
         }
       }
@@ -601,6 +701,16 @@
         }
       }
     },
+    "Colors": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couleurs"
+          }
+        }
+      }
+    },
     "Command line": {
       "localizations": {
         "fr": {
@@ -681,12 +791,32 @@
         }
       }
     },
+    "Controls": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commandes"
+          }
+        }
+      }
+    },
     "Copy": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Copier"
+          }
+        }
+      }
+    },
+    "Count down from 3 before rolling": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compter de 3 à 1 avant de démarrer"
           }
         }
       }
@@ -761,6 +891,16 @@
         }
       }
     },
+    "Dim the words already read": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atténuer les mots déjà lus"
+          }
+        }
+      }
+    },
     "Disconnect": {
       "localizations": {
         "fr": {
@@ -787,6 +927,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Disque"
+          }
+        }
+      }
+    },
+    "Display": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Écran"
           }
         }
       }
@@ -941,6 +1091,16 @@
         }
       }
     },
+    "Faster, slower": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plus vite, plus lentement"
+          }
+        }
+      }
+    },
     "Files": {
       "localizations": {
         "fr": {
@@ -967,6 +1127,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Les fichiers que votre navigateur écrit encore. Demande à lire le dossier Téléchargements."
+          }
+        }
+      }
+    },
+    "Font": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Police"
           }
         }
       }
@@ -1061,6 +1231,16 @@
         }
       }
     },
+    "Height": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hauteur"
+          }
+        }
+      }
+    },
     "Hello": {
       "localizations": {
         "fr": {
@@ -1087,6 +1267,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Masquer les autres"
+          }
+        }
+      }
+    },
+    "Hide from screen sharing and recordings": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masquer du partage d’écran et des enregistrements"
           }
         }
       }
@@ -1131,6 +1321,16 @@
         }
       }
     },
+    "How the script moves": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comment le script avance"
+          }
+        }
+      }
+    },
     "Idle": {
       "localizations": {
         "fr": {
@@ -1157,6 +1357,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Améliorer une traduction…"
+          }
+        }
+      }
+    },
+    "In the notch, the prompter grows from the camera and the island steps aside until the take ends. The stage light glows inside it and brightens with your voice.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dans l’encoche, le prompteur sort de la caméra et l’île lui laisse la place jusqu’à la fin de la prise. La lumière de scène brille à l’intérieur et monte avec votre voix."
           }
         }
       }
@@ -1451,6 +1661,16 @@
         }
       }
     },
+    "Keyboard shortcuts in every app": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Raccourcis clavier dans toutes les apps"
+          }
+        }
+      }
+    },
     "Language": {
       "localizations": {
         "fr": {
@@ -1511,12 +1731,52 @@
         }
       }
     },
+    "Lets Voice Follow keep your place word by word. Recognition runs on your Mac.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permet au suivi de la voix de garder votre place mot à mot. La reconnaissance se fait sur votre Mac."
+          }
+        }
+      }
+    },
+    "Lets the prompter roll while you speak and wait when you stop. The sound stays on your Mac and is never recorded.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permet au prompteur de défiler pendant que vous parlez et d’attendre quand vous vous arrêtez. Le son reste sur votre Mac et n’est jamais enregistré."
+          }
+        }
+      }
+    },
     "Let’s set up Islet": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Configurons Islet"
+          }
+        }
+      }
+    },
+    "Line spacing": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Interligne"
+          }
+        }
+      }
+    },
+    "Lines": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lignes"
           }
         }
       }
@@ -1591,12 +1851,32 @@
         }
       }
     },
+    "Manual": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manuel"
+          }
+        }
+      }
+    },
     "Memory": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Mémoire"
+          }
+        }
+      }
+    },
+    "Microphone": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Micro"
           }
         }
       }
@@ -1751,6 +2031,16 @@
         }
       }
     },
+    "New Pairing Code": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouveau code d’appairage"
+          }
+        }
+      }
+    },
     "Next or previous track, while music plays.": {
       "localizations": {
         "fr": {
@@ -1767,6 +2057,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aucun résultat"
+          }
+        }
+      }
+    },
+    "No phone connected": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun téléphone connecté"
+          }
+        }
+      }
+    },
+    "No script yet": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pas encore de script"
           }
         }
       }
@@ -1881,6 +2191,16 @@
         }
       }
     },
+    "Open Scripts…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir les scripts…"
+          }
+        }
+      }
+    },
     "Open Settings…": {
       "localizations": {
         "fr": {
@@ -1991,6 +2311,16 @@
         }
       }
     },
+    "Pace": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rythme"
+          }
+        }
+      }
+    },
     "Pages": {
       "localizations": {
         "fr": {
@@ -2031,12 +2361,52 @@
         }
       }
     },
+    "Phone remote": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Télécommande sur le téléphone"
+          }
+        }
+      }
+    },
     "Pick a colour": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Choisir une couleur"
+          }
+        }
+      }
+    },
+    "Place": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Emplacement"
+          }
+        }
+      }
+    },
+    "Play": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lecture"
+          }
+        }
+      }
+    },
+    "Presentation remotes and foot pedals": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Télécommandes de présentation et pédales"
           }
         }
       }
@@ -2077,6 +2447,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Encoche programmable"
+          }
+        }
+      }
+    },
+    "Prompt the selected script, play or pause": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lancer le script choisi, lecture ou pause"
+          }
+        }
+      }
+    },
+    "Prompter": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prompteur"
           }
         }
       }
@@ -2171,6 +2561,16 @@
         }
       }
     },
+    "Remote": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Télécommande"
+          }
+        }
+      }
+    },
     "Remove": {
       "localizations": {
         "fr": {
@@ -2231,6 +2631,16 @@
         }
       }
     },
+    "Restart": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recommencer"
+          }
+        }
+      }
+    },
     "Restart Islet": {
       "localizations": {
         "fr": {
@@ -2281,12 +2691,62 @@
         }
       }
     },
+    "Roll the script out of the notch (⌃⌥⌘P)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faire sortir le script de l’encoche (⌃⌥⌘P)"
+          }
+        }
+      }
+    },
+    "Roll the text on the clipboard": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faire défiler le texte du presse-papiers"
+          }
+        }
+      }
+    },
     "Same as the Mac (%@)": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Comme le Mac (%@)"
+          }
+        }
+      }
+    },
+    "Same as the script": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Celle du script"
+          }
+        }
+      }
+    },
+    "Scan with your phone’s camera": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scannez avec l’appareil photo de votre téléphone"
+          }
+        }
+      }
+    },
+    "Scripts": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scripts"
           }
         }
       }
@@ -2481,6 +2941,16 @@
         }
       }
     },
+    "Show or hide the prompter": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher ou masquer le prompteur"
+          }
+        }
+      }
+    },
     "Show reminders too": {
       "localizations": {
         "fr": {
@@ -2511,6 +2981,26 @@
         }
       }
     },
+    "Show the prompter": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher le prompteur"
+          }
+        }
+      }
+    },
+    "Show the timer": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher le minuteur"
+          }
+        }
+      }
+    },
     "Show which app uses the microphone or camera": {
       "localizations": {
         "fr": {
@@ -2527,6 +3017,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Affiche vos prochains événements à côté de l’heure. Sans lui, l’agenda reste vide."
+          }
+        }
+      }
+    },
+    "Size": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taille"
           }
         }
       }
@@ -2601,6 +3101,26 @@
         }
       }
     },
+    "Speech Recognition": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reconnaissance vocale"
+          }
+        }
+      }
+    },
+    "Stage light": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lumière de scène"
+          }
+        }
+      }
+    },
     "Standard": {
       "localizations": {
         "fr": {
@@ -2627,6 +3147,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Commencer avec Islet"
+          }
+        }
+      }
+    },
+    "Starting the remote…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Démarrage de la télécommande…"
           }
         }
       }
@@ -2727,6 +3257,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "Onglet"
+          }
+        }
+      }
+    },
+    "Take": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prise"
+          }
+        }
+      }
+    },
+    "Teleprompter": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Téléprompteur"
+          }
+        }
+      }
+    },
+    "Text": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Texte"
+          }
+        }
+      }
+    },
+    "Text size": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taille du texte"
           }
         }
       }
@@ -2847,6 +3417,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Le lecteur, pendant la lecture"
+          }
+        }
+      }
+    },
+    "The prompter stays on your screen and out of screenshots, recordings and calls. Turn this off to show it in a tutorial.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le prompteur reste sur votre écran mais hors des captures, des enregistrements et des appels. Désactivez ceci pour le montrer dans un tutoriel."
           }
         }
       }
@@ -3011,6 +3591,16 @@
         }
       }
     },
+    "Try It": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Essayer"
+          }
+        }
+      }
+    },
     "Try it on your notch": {
       "localizations": {
         "fr": {
@@ -3161,6 +3751,36 @@
         }
       }
     },
+    "Voice Follow": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suivi de la voix"
+          }
+        }
+      }
+    },
+    "Voice Pace": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rythme de la voix"
+          }
+        }
+      }
+    },
+    "Voice language": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Langue de la voix"
+          }
+        }
+      }
+    },
     "Volume and brightness": {
       "localizations": {
         "fr": {
@@ -3281,12 +3901,42 @@
         }
       }
     },
+    "Where the prompter appears": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Où le prompteur apparaît"
+          }
+        }
+      }
+    },
     "Which app is listening or filming.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Quelle app écoute ou filme."
+          }
+        }
+      }
+    },
+    "While the prompter is open, Page Down moves on a line, or starts a paused take, and Page Up goes back. The rest of the time these keys work as usual.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quand le prompteur est ouvert, Page suivante avance d’une ligne, ou relance une prise en pause, et Page précédente revient en arrière. Le reste du temps, ces touches marchent comme d’habitude."
+          }
+        }
+      }
+    },
+    "Width": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Largeur"
           }
         }
       }
@@ -3317,6 +3967,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Marche dans toutes les apps."
+          }
+        }
+      }
+    },
+    "Write a Script": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Écrire un script"
           }
         }
       }
@@ -3391,6 +4051,16 @@
         }
       }
     },
+    "Your phone must be on the same network. Only a phone that scanned this code can drive the prompter.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre téléphone doit être sur le même réseau. Seul un téléphone qui a scanné ce code peut piloter le prompteur."
+          }
+        }
+      }
+    },
     "Your recent copies": {
       "localizations": {
         "fr": {
@@ -3407,6 +4077,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Vos dernières copies arrivent ici. Elles restent en mémoire et ne touchent jamais le disque."
+          }
+        }
+      }
+    },
+    "Your script under the camera, at the pace of your voice": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre script sous la caméra, au rythme de votre voix"
+          }
+        }
+      }
+    },
+    "Your script under the camera, at the pace of your voice.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre script sous la caméra, au rythme de votre voix."
+          }
+        }
+      }
+    },
+    "Your voice is heard on your Mac and never recorded. The recognizer is given the words of your script, so names and jargon are heard right.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre voix est entendue sur votre Mac et jamais enregistrée. La reconnaissance reçoit les mots de votre script : les noms propres et le jargon sont bien compris."
           }
         }
       }

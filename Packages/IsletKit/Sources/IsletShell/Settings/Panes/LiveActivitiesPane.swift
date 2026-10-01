@@ -21,7 +21,7 @@ struct LiveActivitiesPane: View {
             Section {
                 ForEach(Array(ranking.enumerated()), id: \.element) { index, source in
                     HStack(spacing: 12) {
-                        Text("\(index + 1)")
+                        Text(verbatim: "\(index + 1)")
                             .font(.system(size: 12, weight: .semibold).monospacedDigit())
                             .foregroundStyle(.secondary)
                             .frame(width: 16)

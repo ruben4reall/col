@@ -79,9 +79,27 @@ curl --unix-socket "$HOME/Library/Application Support/Islet/islet.sock" \
 islet://push?id=tea&title=Tea&symbol=cup.and.saucer.fill&ttl=240
 islet://done?id=tea
 islet://remove?id=tea
-islet://settings?pane=developers   # general, island, activities, permissions, developers, about
+islet://settings?pane=developers   # general, appearance, pages, activities, prompter, aiApps, permissions,
+                                   # shortcuts, developers, about
 islet://welcome                    # the welcome tour
 ```
+
+## The prompter
+
+The prompter answers its own links, from a script, a Shortcut or a browser:
+
+| Link | Does |
+|---|---|
+| `islet://prompter/prompt?text=…&title=…` | Rolls this text out of the notch (without `text`, the script selected in the library) |
+| `islet://prompter/toggle` | Plays or pauses; opens the selected script when nothing rolls |
+| `islet://prompter/play`, `pause`, `stop` | Plays, pauses, closes the prompter |
+| `islet://prompter/faster`, `slower`, `restart` | Ten words a minute more or less; back to the start |
+| `islet://prompter/clipboard` | Rolls the text on the clipboard |
+| `islet://prompter/library` | Opens the Scripts window |
+
+The links of Souffleur, the prompter's former app, still work: `souffleur://toggle` is `islet://prompter/toggle`.
+Shortcuts has actions for the same things: Prompt Text, Prompt the Selected Script, Play or Pause the Prompter and
+Close the Prompter.
 
 ## Agents
 

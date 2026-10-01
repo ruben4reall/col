@@ -11,7 +11,7 @@ struct AboutPane: View {
                     Image(nsImage: NSApp.applicationIconImage)
                         .resizable()
                         .frame(width: 96, height: 96)
-                    Text("Islet").font(.system(size: 26, weight: .bold))
+                    Text(verbatim: "Islet").font(.system(size: 26, weight: .bold))
                     Text("The notch, made useful.", bundle: .module).foregroundStyle(.secondary)
                     Text("Version \(Self.version)", bundle: .module)
                         .font(.callout).foregroundStyle(.tertiary)
