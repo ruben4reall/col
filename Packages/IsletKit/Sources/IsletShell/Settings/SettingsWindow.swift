@@ -90,7 +90,7 @@ final class SettingsModel {
 /// The panes, in the order of the sidebar.
 enum SettingsPane: String, CaseIterable, Identifiable {
     case general, appearance, pages, activities
-    case prompter, aiApps
+    case music, prompter, aiApps
     case permissions, shortcuts, developers, about
     var id: String { rawValue }
 
@@ -111,7 +111,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
     var group: Group {
         switch self {
         case .general, .appearance, .pages, .activities: .island
-        case .prompter, .aiApps: .modules
+        case .music, .prompter, .aiApps: .modules
         case .permissions, .shortcuts, .developers, .about: .app
         }
     }
@@ -122,6 +122,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .appearance: LocalizedStringResource("Appearance", bundle: .settings)
         case .pages: LocalizedStringResource("Pages", bundle: .settings)
         case .activities: LocalizedStringResource("Live activities", bundle: .settings)
+        case .music: LocalizedStringResource("Music and lyrics", bundle: .settings)
         case .prompter: LocalizedStringResource("Prompter", bundle: .settings)
         case .aiApps: LocalizedStringResource("AI apps", bundle: .settings)
         case .permissions: LocalizedStringResource("Permissions", bundle: .settings)
@@ -137,6 +138,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .appearance: LocalizedStringResource("Size, glass and motion, shown on your own screen.", bundle: .settings)
         case .pages: LocalizedStringResource("What the open island shows, page by page.", bundle: .settings)
         case .activities: LocalizedStringResource("What the closed island shows beside the camera.", bundle: .settings)
+        case .music: LocalizedStringResource("Synced lyrics beside the player, whatever plays.", bundle: .settings)
         case .prompter: LocalizedStringResource("Your script under the camera, at the pace of your voice.", bundle: .settings)
         case .aiApps: LocalizedStringResource("Your AI apps in the notch: their sessions, their requests, their state.", bundle: .settings)
         case .permissions: LocalizedStringResource("What Islet may use, and for what.", bundle: .settings)
@@ -152,6 +154,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .appearance: "paintbrush.pointed.fill"
         case .pages: "rectangle.split.3x1.fill"
         case .activities: "dot.radiowaves.left.and.right"
+        case .music: "music.note"
         case .prompter: "text.aligncenter"
         case .aiApps: "sparkles"
         case .permissions: "hand.raised.fill"
@@ -167,6 +170,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .appearance: Theme.coral.color
         case .pages: .orange
         case .activities: .purple
+        case .music: Color(red: 0.98, green: 0.24, blue: 0.4)
         case .prompter: Color(red: 0.89, green: 0.28, blue: 0.18)
         case .aiApps: Color(red: 0.36, green: 0.42, blue: 1)
         case .permissions: .blue
@@ -187,6 +191,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .activities: ["Music beside the camera", "Announce new tracks", "Replace the volume and brightness displays",
                            "Headphones and speakers", "Battery card for headphones", "Charging and low battery",
                            "Microphone and camera in use", "Downloads in progress", "Show on the Lock Screen"]
+        case .music: ["Synced lyrics", "Lyrics", "Spotify", "Apple Music", "Deezer", "LRCLIB", "Your own lyrics", "Karaoke"]
         case .prompter: ["Scripts", "Voice Pace", "Voice Follow", "Auto Scroll", "Manual", "Stage light", "Phone remote",
                          "Presentation remotes and foot pedals", "Hide from screen sharing and recordings", "Teleprompter"]
         case .aiApps: ["Claude Code", "Codex", "Gemini CLI", "Cursor", "GitHub Copilot (VS Code)", "Connect", "Allow", "Deny"]
@@ -287,6 +292,7 @@ struct SettingsView: View {
         case .appearance: AppearancePane()
         case .pages: PagesPane()
         case .activities: LiveActivitiesPane()
+        case .music: MusicPane()
         case .prompter: PrompterPane()
         case .aiApps: AIAppsPane()
         case .permissions: PermissionsPane()

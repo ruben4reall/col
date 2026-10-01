@@ -157,6 +157,18 @@ enum Preferences {
         set { defaults.set(newValue, forKey: "showsAgents"); changed() }
     }
 
+    /// Synced lyrics for what plays, looked up on LRCLIB.
+    static var showsLyrics: Bool {
+        get { bool("showsLyrics", default: true) }
+        set { defaults.set(newValue, forKey: "showsLyrics"); changed() }
+    }
+
+    /// The line being sung, in the closed island's right wing.
+    static var showsLyricsInClosedIsland: Bool {
+        get { bool("showsLyricsInClosedIsland", default: false) }
+        set { defaults.set(newValue, forKey: "showsLyricsInClosedIsland"); changed() }
+    }
+
     /// A card with the battery when headphones connect.
     static var showsDeviceCard: Bool {
         get { bool("showsDeviceCard", default: true) }

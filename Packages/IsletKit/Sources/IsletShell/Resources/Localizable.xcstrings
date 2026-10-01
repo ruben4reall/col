@@ -201,6 +201,16 @@
         }
       }
     },
+    "Add or fix lyrics on LRCLIB": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter ou corriger des paroles sur LRCLIB"
+          }
+        }
+      }
+    },
     "Agenda": {
       "localizations": {
         "fr": {
@@ -357,6 +367,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Apparence"
+          }
+        }
+      }
+    },
+    "Apple Music": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Music"
           }
         }
       }
@@ -837,6 +857,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Couper"
+          }
+        }
+      }
+    },
+    "Deezer": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deezer"
           }
         }
       }
@@ -1601,6 +1631,16 @@
         }
       }
     },
+    "Karaoke": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Karaoké"
+          }
+        }
+      }
+    },
     "Keep Islet up to date": {
       "localizations": {
         "fr": {
@@ -1667,6 +1707,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Raccourcis clavier dans toutes les apps"
+          }
+        }
+      }
+    },
+    "LRCLIB": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LRCLIB"
           }
         }
       }
@@ -1841,6 +1891,26 @@
         }
       }
     },
+    "Lyrics": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paroles"
+          }
+        }
+      }
+    },
+    "Lyrics come from LRCLIB, an open database written by its users. Islet sends it only the title, the artist, the album and the length of the track, and keeps the answer on your Mac so each song is asked once.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les paroles viennent de LRCLIB, une base libre écrite par ses utilisateurs. Islet ne lui envoie que le titre, l’artiste, l’album et la durée du morceau, et garde la réponse sur votre Mac : chaque morceau n’est demandé qu’une fois."
+          }
+        }
+      }
+    },
     "MIT License. Islet is not affiliated with Apple.": {
       "localizations": {
         "fr": {
@@ -1857,6 +1927,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Manuel"
+          }
+        }
+      }
+    },
+    "Medium": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Moyen"
           }
         }
       }
@@ -1967,6 +2047,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Musique"
+          }
+        }
+      }
+    },
+    "Music and lyrics": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Musique et paroles"
           }
         }
       }
@@ -2241,6 +2331,16 @@
         }
       }
     },
+    "Open the Folder": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir le dossier"
+          }
+        }
+      }
+    },
     "Open the island with ⌃⌥⌘I": {
       "localizations": {
         "fr": {
@@ -2491,6 +2591,16 @@
         }
       }
     },
+    "Put a .lrc file named “Artist - Title.lrc” in this folder: Islet prefers it to LRCLIB.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déposez dans ce dossier un fichier .lrc nommé « Artiste - Titre.lrc » : Islet le préfère à LRCLIB."
+          }
+        }
+      }
+    },
     "Put an extension folder here, with an extension.json and a script. Each one shows what its script prints.": {
       "localizations": {
         "fr": {
@@ -2667,6 +2777,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "À droite"
+          }
+        }
+      }
+    },
+    "Right of the camera, in place of the bars, as far as the menu bar leaves room.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "À droite de la caméra, à la place des barres, dans la place que laisse la barre des menus."
           }
         }
       }
@@ -3051,6 +3171,16 @@
         }
       }
     },
+    "Small": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Petit"
+          }
+        }
+      }
+    },
     "Snappy": {
       "localizations": {
         "fr": {
@@ -3107,6 +3237,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Reconnaissance vocale"
+          }
+        }
+      }
+    },
+    "Spotify": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spotify"
           }
         }
       }
@@ -3241,6 +3381,26 @@
         }
       }
     },
+    "Synced lyrics": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paroles synchronisées"
+          }
+        }
+      }
+    },
+    "Synced lyrics beside the player, whatever plays.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Des paroles synchronisées à côté du lecteur, quoi qui joue."
+          }
+        }
+      }
+    },
     "System": {
       "localizations": {
         "fr": {
@@ -3297,6 +3457,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Taille du texte"
+          }
+        }
+      }
+    },
+    "The check for Islet’s own updates, on the Islet website, and, when lyrics are on, the title, artist, album and length of the song you play, sent to LRCLIB. No account, no analytics: everything else stays on your Mac.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La recherche des mises à jour d’Islet, sur le site d’Islet, et, quand les paroles sont activées, le titre, l’artiste, l’album et la durée du morceau joué, envoyés à LRCLIB. Pas de compte, pas de statistiques : tout le reste reste sur votre Mac."
           }
         }
       }
@@ -3377,6 +3547,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "La commande islet, l’API locale et les extensions."
+          }
+        }
+      }
+    },
+    "The line being sung in the closed island": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La ligne chantée dans l’île fermée"
           }
         }
       }
@@ -3487,6 +3667,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Le titre s’affiche un instant au début d’un morceau."
+          }
+        }
+      }
+    },
+    "The words of the song beside the player, line by line, whatever plays: Spotify, Apple Music, Deezer or your browser.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les paroles à côté du lecteur, ligne par ligne, quoi qui joue : Spotify, Apple Music, Deezer ou votre navigateur."
+          }
+        }
+      }
+    },
+    "The words of the song, as it plays": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les paroles du morceau, au fil de la musique"
           }
         }
       }
@@ -3861,6 +4061,16 @@
         }
       }
     },
+    "What goes online": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce qui passe par Internet"
+          }
+        }
+      }
+    },
     "What the closed island shows beside the camera.": {
       "localizations": {
         "fr": {
@@ -4047,6 +4257,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Votre île, dessinée par Islet sur votre fond d’écran avec ce qu’elle montre en ce moment. Elle s’ouvre et se ferme comme celle de l’encoche."
+          }
+        }
+      }
+    },
+    "Your own lyrics": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vos propres paroles"
           }
         }
       }

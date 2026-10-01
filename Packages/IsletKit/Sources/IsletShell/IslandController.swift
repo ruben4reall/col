@@ -9,6 +9,9 @@ public final class IslandController {
     private let panel = IslandPanel()
     private let islandView: IslandView
     private let media = MediaController()
+    private let lyrics = LyricsModel()
+    /// The closed island's wing follows the lyrics: their line is followed while it does.
+    private var wingFollowsLyrics = false
     private let system = SystemActivities()
     private let agents = AgentCenter()
     private let custom = CustomActivities()
@@ -58,7 +61,7 @@ public final class IslandController {
 
     public init() {
         let services = IslandServices(
-            media: media, agents: agents, custom: custom, navigation: navigation, power: system.power,
+            media: media, lyrics: lyrics, agents: agents, custom: custom, navigation: navigation, power: system.power,
             shelf: shelf, clipboard: clipboard, timer: timer, picker: picker, mirror: mirror, calendar: calendar, stats: stats,
             device: device, audio: system.audio, awake: awake,
             openSettings: { SettingsWindow.shared.show() }
@@ -71,6 +74,10 @@ public final class IslandController {
         root.addSubview(islandView)
         islandView.onEvent = { [weak self] event in self?.send(event) }
         media.onChange = { [weak self] trackChanged in self?.mediaChanged(trackChanged: trackChanged) }
+        lyrics.onLineChange = { [weak self] in
+            guard let self, Preferences.showsLyricsInClosedIsland else { return }
+            self.mediaChanged(trackChanged: false)
+        }
         system.post = { [weak self] activity in self?.post(activity) }
         system.remove = { [weak self] id in self?.removeActivity(id) }
         system.registerImage = { [weak self] image, key in self?.islandView.compact.register(image, for: key) }
@@ -597,6 +604,8 @@ public final class IslandController {
     private func mediaChanged(trackChanged: Bool) {
         let now = Date()
         let playing = media.nowPlaying
+        lyrics.update(playing)
+        followLyricsInWing(playing.isPlaying && Preferences.showsMediaActivity && Preferences.showsLyricsInClosedIsland)
         guard !playing.isEmpty, Preferences.showsMediaActivity else {
             board.remove("media")
             board.remove("media.track")
@@ -612,7 +621,8 @@ public final class IslandController {
             board.upsert(Activity(
                 id: "media",
                 priority: .ambient,
-                compact: CompactPresentation(leading: cover, trailing: .equalizer(tint: media.tint, playing: playing.isPlaying)),
+                // With lyrics in the wing, the line being sung takes the equalizer's place.
+                compact: CompactPresentation(leading: cover, trailing: wingLine(playing).map { .text($0) } ?? .equalizer(tint: media.tint, playing: playing.isPlaying)),
                 expires: expires,
                 updated: existing?.updated ?? now
             ))
@@ -628,6 +638,17 @@ public final class IslandController {
             ))
         }
         refreshActivity()
+    }
+
+    private func wingLine(_ playing: NowPlaying) -> String? {
+        guard Preferences.showsLyricsInClosedIsland, playing.isPlaying else { return nil }
+        return lyrics.currentLine
+    }
+
+    private func followLyricsInWing(_ follows: Bool) {
+        guard follows != wingFollowsLyrics else { return }
+        wingFollowsLyrics = follows
+        if follows { lyrics.watch() } else { lyrics.unwatch() }
     }
 
     // MARK: Placement

@@ -2,20 +2,20 @@ import Foundation
 
 /// What a page of the open island can hold.
 public enum WidgetKind: String, Codable, CaseIterable, Sendable {
-    case music, clock, agenda, prompter, shelf, clipboard, tools, system
+    case music, lyrics, clock, agenda, prompter, shelf, clipboard, tools, system
 
     /// The widths the widget can be drawn at: half a page beside another widget, or the whole page.
     public var widths: Set<WidgetWidth> {
         switch self {
-        case .music, .agenda, .prompter: [.half, .full]
+        case .music, .lyrics, .agenda, .prompter: [.half, .full]
         case .clock: [.half]
         case .shelf, .clipboard, .tools, .system: [.full]
         }
     }
 
-    /// False for a widget that has nothing to show at times (the player, while nothing plays): another widget of the
-    /// same place stands in for it.
-    public var alwaysShows: Bool { self != .music }
+    /// False for a widget that has nothing to show at times (the player while nothing plays, lyrics a track has not):
+    /// another widget of the same place stands in for it.
+    public var alwaysShows: Bool { self != .music && self != .lyrics }
 }
 
 public enum WidgetWidth: String, Codable, Sendable {
@@ -85,10 +85,10 @@ public struct PageDeck: Codable, Equatable, Sendable {
 
     public static let homeID = "home"
 
-    /// The pages Islet starts with: the player beside the agenda (the clock while nothing plays), the prompter, then
-    /// the tools.
+    /// The pages Islet starts with: the player with its lyrics beside it (the clock and the agenda while nothing plays),
+    /// the prompter, then the tools.
     public static let standard = PageDeck(pages: [
-        PageLayout(id: homeID, symbol: "house.fill", stacks: [WidgetStack([.music, .clock]), WidgetStack([.agenda])]),
+        PageLayout(id: homeID, symbol: "house.fill", stacks: [WidgetStack([.music, .clock]), WidgetStack([.lyrics, .agenda])]),
         PageLayout(id: "prompter", stacks: [WidgetStack([.prompter])]),
         PageLayout(id: "shelf", stacks: [WidgetStack([.shelf])]),
         PageLayout(id: "clipboard", stacks: [WidgetStack([.clipboard])]),

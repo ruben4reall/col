@@ -6,6 +6,7 @@ extension WidgetKind {
         let bundle = LocalizedStringResource.BundleDescription.atURL(Bundle.module.bundleURL)
         return switch self {
         case .music: LocalizedStringResource("Music", bundle: bundle)
+        case .lyrics: LocalizedStringResource("Lyrics", bundle: bundle)
         case .clock: LocalizedStringResource("Clock", bundle: bundle)
         case .agenda: LocalizedStringResource("Agenda", bundle: bundle)
         case .prompter: LocalizedStringResource("Prompter", bundle: bundle)
@@ -20,6 +21,7 @@ extension WidgetKind {
         let bundle = LocalizedStringResource.BundleDescription.atURL(Bundle.module.bundleURL)
         return switch self {
         case .music: LocalizedStringResource("The player, while something plays", bundle: bundle)
+        case .lyrics: LocalizedStringResource("The words of the song, as it plays", bundle: bundle)
         case .clock: LocalizedStringResource("The time and the date", bundle: bundle)
         case .agenda: LocalizedStringResource("Your next events and today’s reminders", bundle: bundle)
         case .prompter: LocalizedStringResource("Your script under the camera, at the pace of your voice", bundle: bundle)
@@ -33,6 +35,7 @@ extension WidgetKind {
     var symbol: String {
         switch self {
         case .music: "music.note"
+        case .lyrics: "quote.bubble.fill"
         case .clock: "clock.fill"
         case .agenda: "calendar"
         case .prompter: "text.aligncenter"
@@ -46,6 +49,7 @@ extension WidgetKind {
     var tint: Color {
         switch self {
         case .music: .pink
+        case .lyrics: Color(red: 0.98, green: 0.24, blue: 0.4)
         case .clock: .gray
         case .agenda: .red
         case .prompter: Theme.coral.color
@@ -97,6 +101,7 @@ enum WidgetAvailability {
     static func hasContent(_ kind: WidgetKind, services: IslandServices) -> Bool {
         switch kind {
         case .music: services.media.hasPlayer
+        case .lyrics: services.media.hasPlayer && services.lyrics.lyrics != nil
         case .clock, .agenda, .prompter, .shelf, .clipboard, .tools, .system: true
         }
     }
@@ -116,6 +121,8 @@ struct WidgetView: View {
             } else {
                 CompactPlayerView(media: services.media)
             }
+        case .lyrics:
+            LyricsView(lyrics: services.lyrics, media: services.media, width: width)
         case .clock:
             ClockView()
         case .agenda:
