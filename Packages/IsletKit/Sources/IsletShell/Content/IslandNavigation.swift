@@ -47,6 +47,8 @@ extension PageLayout {
 @MainActor
 @Observable
 final class IslandNavigation {
+    /// The greeting says it is ready ("Let's go") instead of hello: after the welcome.
+    var greetsReady = false
     private(set) var route: IslandRoute
     /// The user's pages, so the tab bar redraws when they change.
     private(set) var deck: PageDeck
