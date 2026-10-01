@@ -11,6 +11,16 @@
         }
       }
     },
+    "%@ did not answer.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ n’a pas répondu."
+          }
+        }
+      }
+    },
     "%@ loaded": {
       "localizations": {
         "fr": {
@@ -511,6 +521,26 @@
         }
       }
     },
+    "Ask %@…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demander à %@…"
+          }
+        }
+      }
+    },
+    "Ask a follow-up…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Poser une autre question…"
+          }
+        }
+      }
+    },
     "Asked when you turn on Downloads in progress, so Islet can see files still being written.": {
       "localizations": {
         "fr": {
@@ -987,6 +1017,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Copier"
+          }
+        }
+      }
+    },
+    "Copy the Answer": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copier la réponse"
           }
         }
       }
@@ -2181,6 +2221,16 @@
         }
       }
     },
+    "Model": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modèle"
+          }
+        }
+      }
+    },
     "Modules": {
       "localizations": {
         "fr": {
@@ -2297,6 +2347,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Réseau"
+          }
+        }
+      }
+    },
+    "New Conversation": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouvelle conversation"
           }
         }
       }
@@ -3201,6 +3261,16 @@
         }
       }
     },
+    "Send": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Envoyer"
+          }
+        }
+      }
+    },
     "Sessions at work and the requests that wait for you.": {
       "localizations": {
         "fr": {
@@ -3631,6 +3701,16 @@
         }
       }
     },
+    "Stop": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrêter"
+          }
+        }
+      }
+    },
     "Studio PC": {
       "localizations": {
         "fr": {
@@ -4027,6 +4107,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ils attendent ici jusqu’à ce que vous les glissiez ailleurs."
+          }
+        }
+      }
+    },
+    "Thinking…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réflexion…"
           }
         }
       }
@@ -4637,6 +4727,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Votre téléphone doit être sur le même réseau. Seul un téléphone qui a scanné ce code peut piloter le prompteur."
+          }
+        }
+      }
+    },
+    "Your question goes only to %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre question part uniquement vers %@"
           }
         }
       }

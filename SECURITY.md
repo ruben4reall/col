@@ -40,8 +40,11 @@ Copies that password managers mark as concealed or transient are skipped.
   first and never sent anywhere.
 - The AI servers you add in Settings, AI apps, and the Ollama or LM Studio of this Mac when they are installed:
   Islet asks them every few seconds, only while their page or the settings show them, for their models
-  (`/api/tags`, `/api/ps`, `/api/v0/models`, `/v1/models`, `/slots`). Nothing is sent to them; a token you give is
-  kept in your Keychain and sent only to that server.
+  (`/api/tags`, `/api/ps`, `/api/v0/models`, `/v1/models`, `/slots`). A token you give is kept in your Keychain and
+  sent only to that server.
+- A question you ask from the AI page goes to the server and model you picked, and nowhere else, with the conversation
+  so far (the last twenty messages at most). The conversation stays in memory until you start a new one or quit Islet;
+  it is never written to disk.
 - The prompter's phone remote, off until you turn it on in Settings, Prompter: a small web server on your local
   network (port 7575 to 7579) that only answers a phone carrying the pairing code of the QR code you scanned. It
   stops when you turn the remote off. Nothing goes to the internet.

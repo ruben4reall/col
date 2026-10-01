@@ -44,8 +44,12 @@ your scripts and your AI agents.
 - **AirPods, by model.** Islet reads the model your headphones report (AirPods, AirPods Pro, AirPods Max, Beats) and
   shows each earbud and the case, or the headphones' single battery.
 - **AI agents.** Claude Code, Codex, Gemini CLI, Cursor and GitHub Copilot in VS Code show in the notch while they
-  work. When Claude Code or Codex asks for permission, the island opens with Allow and Deny. Islet never signs in to
-  any AI service.
+  work, each with its logo. When Claude Code or Codex asks for permission, the island opens with Allow and Deny. Islet
+  never signs in to any AI service.
+- **Your AI, in the island.** The AI apps of your Mac, a tap away, and your own model servers (Ollama, LM Studio,
+  llama.cpp or any OpenAI-compatible server, on this Mac or another one of your network) with the model each one
+  holds. Ask one a question from the island: the answer comes as it is written, and the question goes to that server
+  only.
 - **Volume and brightness.** A quiet gauge in the notch instead of the big square in the middle of the screen.
 - **Files, clipboard, agenda.** A shelf for files with AirDrop, a clipboard history with pins kept in memory only, the
   next events of your day with a Join button for calls, and today's reminders.

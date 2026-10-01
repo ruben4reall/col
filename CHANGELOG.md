@@ -31,6 +31,10 @@ Each release's section is what Islet's update window and the GitHub release show
   island, a tap away. Add your own AI: an Ollama, LM Studio, llama.cpp or OpenAI-compatible server on this Mac or on
   another machine of your network; the island shows whether it answers, the model it holds and, when the server can
   tell, whether it is generating. Tokens stay in your Keychain. Settings, AI apps.
+- **Ask your AI from the island**: a field at the foot of the AI page asks the model you pick on your own servers
+  (Ollama, LM Studio, llama.cpp, OpenAI-compatible). The answer comes as the model writes it, Markdown included, with
+  its thinking aloud kept out of sight; follow up, copy the answer, or start over. The island takes the keyboard only
+  while you type, as Spotlight does. Questions go to that server only and the conversation is never written to disk.
 - **Agents show their logo**: Claude Code shows Claude's logo, and Codex, Gemini CLI, Cursor and GitHub Copilot theirs,
   in the closed island, on the Live page, on the AI page and in the settings. The icon of the app installed when there
   is one, else the brand's own logo, which Islet carries. The logo bounces, as in the Dock, while the agent needs you

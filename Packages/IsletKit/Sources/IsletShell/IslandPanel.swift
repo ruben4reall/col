@@ -21,7 +21,19 @@ final class IslandPanel: NSPanel {
         collectionBehavior = [.canJoinAllSpaces, .stationary, .fullScreenAuxiliary, .ignoresCycle]
     }
 
-    override var canBecomeKey: Bool { false }
+    /// True while a field of the island takes the keyboard, such as the question to an AI. The panel then becomes key
+    /// without activating Islet, as Spotlight does, and gives the keyboard back when the island closes.
+    var acceptsKeyboard = false
+
+    override var canBecomeKey: Bool { acceptsKeyboard }
+
+    /// Called whenever the panel stops being key: Escape, the island closing, or a click in another app.
+    var onResignKey: (() -> Void)?
+
+    override func resignKey() {
+        super.resignKey()
+        onResignKey?()
+    }
     override var canBecomeMain: Bool { false }
 
     /// AppKit pushes windows below the menu bar; the island lives in it.

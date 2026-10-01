@@ -10,14 +10,23 @@ struct AIWidget: View {
     let width: WidgetWidth
 
     var body: some View {
+        // The models that can answer now, for the field at the foot of a wide page.
+        let choices = ai.ask.choices(servers: ai.servers, statuses: ai.statuses)
         Group {
             if ai.installed.isEmpty && ai.servers.isEmpty {
                 empty
+            } else if width == .full, !ai.ask.messages.isEmpty {
+                AskConversation(ai: ai, choices: choices)
             } else if width == .full {
-                HStack(alignment: .top, spacing: 16) {
-                    apps(limit: 4, size: 40)
-                        .frame(width: 200, alignment: .leading)
-                    status
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack(alignment: .top, spacing: 16) {
+                        apps(limit: 4, size: 40)
+                            .frame(width: 200, alignment: .leading)
+                        // The field takes a line of the island's height: the column keeps two lines then.
+                        status(lines: choices.isEmpty ? 3 : 2)
+                    }
+                    Spacer(minLength: 0)
+                    if !choices.isEmpty { AskBar(ai: ai, choices: choices) }
                 }
             } else {
                 VStack(alignment: .leading, spacing: 10) {
@@ -27,7 +36,14 @@ struct AIWidget: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .onAppear { ai.watch() }
+        .onAppear {
+            ai.watch()
+            ai.ask.resolve(choices)
+        }
+        .onChange(of: choices) {
+            ai.ask.resolve(choices)
+            ai.ask.askOnLaunch()
+        }
         .onDisappear { ai.unwatch() }
     }
 
@@ -41,11 +57,13 @@ struct AIWidget: View {
         }
     }
 
-    /// Agents at work and the model servers, the right column of a wide page.
-    private var status: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            AgentsLine(agents: agents) { navigation.show(.live) }
-            ForEach(Array(ai.servers.prefix(2)), id: \.id) { server in
+    /// Agents at work and the model servers, the right column of a wide page, in as many lines as it has: the agents'
+    /// line gives way to a server while no agent works and room is short.
+    private func status(lines: Int) -> some View {
+        let showsAgents = !agents.sessions.isEmpty || lines > 2 || ai.servers.isEmpty
+        return VStack(alignment: .leading, spacing: 6) {
+            if showsAgents { AgentsLine(agents: agents) { navigation.show(.live) } }
+            ForEach(Array(ai.servers.prefix(lines - (showsAgents ? 1 : 0))), id: \.id) { server in
                 ServerRow(server: server, status: ai.statuses[server.id], compact: false)
             }
             if ai.servers.isEmpty {
