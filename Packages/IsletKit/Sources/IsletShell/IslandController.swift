@@ -32,6 +32,8 @@ public final class IslandController {
     private var fullScreenActive = false
     /// The prompter is out of the notch: the island leaves it the place until the take ends.
     private var prompterInNotch = false
+    /// A field of the open island has the keyboard: the island stays open until it gives it back.
+    private var keyboardTaken = false
     /// Free width beside the notch before the app's menus (left) and the status items (right); nil when unknown.
     private var freeLeft: CGFloat?
     private var freeRight: CGFloat?
@@ -240,6 +242,31 @@ public final class IslandController {
 
     /// The AI apps and model servers, for the settings.
     var aiApps: AIAppsModel { ai }
+
+    /// A field of the open island asks for the keyboard: the panel becomes key without activating Islet.
+    func takeKeyboard() {
+        guard !keyboardTaken, machine.state == .expanded else { return }
+        keyboardTaken = true
+        exitTimer?.cancel()
+        panel.acceptsKeyboard = true
+        panel.makeKeyAndOrderFront(nil)
+    }
+
+    /// The keyboard goes back to the app the user works in; a pointer already away lets the island close.
+    func releaseKeyboard() {
+        guard keyboardTaken else { return }
+        panel.resignKey()
+        keyboardLost()
+    }
+
+    /// The panel is no longer key, given back or taken by a click elsewhere: no field types any more.
+    private func keyboardLost() {
+        guard keyboardTaken else { return }
+        keyboardTaken = false
+        panel.acceptsKeyboard = false
+        ai.ask.editing = false
+        if machine.state == .expanded, !machine.pointerInside { perform(.startExitTimer) }
+    }
 
     /// Opens the island for a moment to show a change made in the settings, then tucks it back in, unless the
     /// pointer has come to it in the meantime.
@@ -467,6 +494,7 @@ public final class IslandController {
     public func start() {
         Self.shared = self
         place()
+        panel.onResignKey = { [weak self] in self?.keyboardLost() }
         observers.append(NotificationCenter.default.addObserver(
             forName: NSApplication.didChangeScreenParametersNotification, object: nil, queue: .main
         ) { [weak self] _ in
@@ -752,6 +780,8 @@ public final class IslandController {
             hoverTimer = nil
         case .startExitTimer:
             exitTimer?.cancel()
+            // Typing in the island: the pointer may wander, the island stays.
+            guard !keyboardTaken else { return }
             exitTimer = after(Motion.exitGrace) { $0.send(.exitTimerFired) }
         case .cancelExitTimer:
             exitTimer?.cancel()
@@ -793,6 +823,7 @@ public final class IslandController {
         }
         if previous == .expanded, state != .expanded {
             mirror.stop()
+            releaseKeyboard()
             islandView.dismissContent()
         }
 

@@ -14,6 +14,8 @@ final class AIAppsModel {
     private(set) var running: Set<String> = []
     private(set) var servers: [ModelServer] = []
     private(set) var statuses: [String: ModelServerStatus] = [:]
+    /// The conversation with one of these servers, from the island.
+    let ask = AskSession()
 
     @ObservationIgnored private var watchers = 0
     @ObservationIgnored private var poll: Task<Void, Never>?
