@@ -268,8 +268,11 @@ public final class IslandController {
     var screenForPreview: NSScreen? { screen }
 
     /// The models of this island with pages of their own, for the island the settings draw.
-    func stageServices(navigation: IslandNavigation) -> IslandServices {
-        services.with(navigation: navigation)
+    /// The island's models, for the welcome to show what is happening on the Mac now.
+    var models: IslandServices { services }
+
+    func stageServices(navigation: IslandNavigation, agents: AgentCenter? = nil) -> IslandServices {
+        services.with(navigation: navigation, agents: agents)
     }
 
     /// What the closed island shows now, and how wide its wings are.
@@ -606,6 +609,8 @@ public final class IslandController {
         default:
             break
         }
+        // `-IsletWelcome YES` opens the welcome at once, for screenshots and for working on it.
+        if UserDefaults.standard.bool(forKey: "IsletWelcome") { WelcomeWindow.shared.show() }
         // `-IsletSettings island` opens the settings on a pane, for screenshots and for working on them.
         if let pane = UserDefaults.standard.string(forKey: "IsletSettings").flatMap(SettingsPane.init(link:)) {
             SettingsWindow.shared.show(pane)

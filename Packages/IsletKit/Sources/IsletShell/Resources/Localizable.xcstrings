@@ -11,6 +11,16 @@
         }
       }
     },
+    "%@ connected: the island shows them, with their battery, as they connect.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ est connecté : l’île l’affiche avec sa batterie à chaque connexion."
+          }
+        }
+      }
+    },
     "%@ did not answer.": {
       "localizations": {
         "fr": {
@@ -27,6 +37,76 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ en mémoire"
+          }
+        }
+      }
+    },
+    "%@ on this Mac: whatever plays shows in the island.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ sur ce Mac : ce qui joue s’affiche dans l’île."
+          }
+        }
+      }
+    },
+    "%@, a tap away; your own AI servers too, and a question to them from the island.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ à portée de clic ; vos propres serveurs d’IA aussi, et une question posée depuis l’île."
+          }
+        }
+      }
+    },
+    "%@, charging: plugging in and a low battery show in the notch.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, en charge : le branchement et la batterie faible s’affichent dans l’encoche."
+          }
+        }
+      }
+    },
+    "%@, chosen in Islet.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, choisi dans Islet."
+          }
+        }
+      }
+    },
+    "%@, like your Mac.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, comme votre Mac."
+          }
+        }
+      }
+    },
+    "%@: plugging in and a low battery show in the notch.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ : le branchement et la batterie faible s’affichent dans l’encoche."
+          }
+        }
+      }
+    },
+    "%@: their sessions in the notch, and their permission requests answered from it.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ : leurs sessions dans l’encoche, et leurs demandes d’autorisation réglées depuis l’île."
           }
         }
       }
@@ -141,6 +221,16 @@
         }
       }
     },
+    "A dot beside the camera while an app uses the microphone or the camera.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un point à côté de la caméra quand une app utilise le micro ou la caméra."
+          }
+        }
+      }
+    },
     "A model server on this Mac or another machine of your network.": {
       "localizations": {
         "fr": {
@@ -177,6 +267,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Un signe à côté de la caméra pendant qu’une app travaille, et l’île s’ouvre quand l’une d’elles a besoin de vous."
+          }
+        }
+      }
+    },
+    "A timer in the wings, a colour picker, a mirror and a way to keep the Mac awake.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un minuteur dans les ailes, une pipette, un miroir et de quoi garder le Mac éveillé."
           }
         }
       }
@@ -411,6 +511,26 @@
         }
       }
     },
+    "Allow Calendars": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autoriser les calendriers"
+          }
+        }
+      }
+    },
+    "Allow in System Settings": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autoriser dans les Réglages Système"
+          }
+        }
+      }
+    },
     "Allow it in System Settings.": {
       "localizations": {
         "fr": {
@@ -441,6 +561,16 @@
         }
       }
     },
+    "Also in Islet": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aussi dans Islet"
+          }
+        }
+      }
+    },
     "Always": {
       "localizations": {
         "fr": {
@@ -457,6 +587,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Un assistant IA : ouvrez-le depuis l’île."
+          }
+        }
+      }
+    },
+    "An agent asks": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un agent demande"
+          }
+        }
+      }
+    },
+    "An example: when %@ asks to run a command, the island opens with Allow and Deny.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un exemple : quand %@ demande à lancer une commande, l’île s’ouvre avec Autoriser et Refuser."
           }
         }
       }
@@ -721,6 +871,16 @@
         }
       }
     },
+    "Change": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Changer"
+          }
+        }
+      }
+    },
     "Charging and low battery": {
       "localizations": {
         "fr": {
@@ -956,7 +1116,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Connectés"
+            "value": "Connecté"
           }
         }
       }
@@ -1251,6 +1411,16 @@
         }
       }
     },
+    "Drop files on the notch to keep them at hand, and AirDrop them from there.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déposez des fichiers sur l’encoche pour les garder sous la main, et envoyez-les par AirDrop."
+          }
+        }
+      }
+    },
     "Each change also shows on the notch, at the top of your screen.": {
       "localizations": {
         "fr": {
@@ -1381,6 +1551,16 @@
         }
       }
     },
+    "For videos and calls: your text comes out of the notch, right under the camera, at the pace of your voice.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pour vos vidéos et vos appels : votre texte sort de l’encoche, juste sous la caméra, au rythme de votre voix."
+          }
+        }
+      }
+    },
     "Found on this Mac: %@. Adds Islet’s hooks to each, with a backup.": {
       "localizations": {
         "fr": {
@@ -1461,6 +1641,16 @@
         }
       }
     },
+    "Headphones": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Écouteurs"
+          }
+        }
+      }
+    },
     "Headphones and speakers": {
       "localizations": {
         "fr": {
@@ -1487,6 +1677,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bonjour"
+          }
+        }
+      }
+    },
+    "Here is what it found. Keep what helps you; all of it can change later in Settings.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voici ce qu’il a trouvé. Gardez ce qui vous sert : tout se change ensuite dans les Réglages."
           }
         }
       }
@@ -1707,6 +1907,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Réglages d’Islet"
+          }
+        }
+      }
+    },
+    "Islet adapts to your Mac": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Islet s’adapte à votre Mac"
           }
         }
       }
@@ -2401,6 +2611,16 @@
         }
       }
     },
+    "Next: %@, %@.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prochain : %@, %@."
+          }
+        }
+      }
+    },
     "No AI app found on this Mac yet. Claude, ChatGPT, Gemini, Perplexity, Cursor, Ollama, LM Studio and many others show here once installed.": {
       "localizations": {
         "fr": {
@@ -2841,6 +3061,16 @@
         }
       }
     },
+    "Plugging in and a low battery show in the notch.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le branchement et la batterie faible s’affichent dans l’encoche."
+          }
+        }
+      }
+    },
     "Presentation remotes and foot pedals": {
       "localizations": {
         "fr": {
@@ -2877,6 +3107,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Processeur, mémoire, disque, réseau"
+          }
+        }
+      }
+    },
+    "Processor, memory, network and disk, measured only while you look.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Processeur, mémoire, réseau et disque, mesurés seulement quand vous regardez."
           }
         }
       }
@@ -4111,6 +4351,16 @@
         }
       }
     },
+    "The words of the song beside the player, line by line. Titles go to LRCLIB, an open database.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les paroles à côté du lecteur, ligne après ligne. Les titres sont envoyés à LRCLIB, une base ouverte."
+          }
+        }
+      }
+    },
     "The words of the song, as it plays": {
       "localizations": {
         "fr": {
@@ -4441,6 +4691,16 @@
         }
       }
     },
+    "Volume and brightness in the notch, instead of the big square in the middle of the screen.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le volume et la luminosité dans l’encoche, au lieu du grand carré au milieu de l’écran."
+          }
+        }
+      }
+    },
     "Volume and brightness keys": {
       "localizations": {
         "fr": {
@@ -4521,6 +4781,16 @@
         }
       }
     },
+    "What plays, the time, the song’s words and your next event, each when there is something to show.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce qui joue, l’heure, les paroles et votre prochain rendez-vous, chacun quand il a quelque chose à montrer."
+          }
+        }
+      }
+    },
     "What the closed island shows beside the camera.": {
       "localizations": {
         "fr": {
@@ -4537,6 +4807,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ce que montre l’île ouverte, page par page."
+          }
+        }
+      }
+    },
+    "What you copied, kept in memory only, never on disk.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce que vous avez copié, gardé en mémoire seulement, jamais sur le disque."
           }
         }
       }
@@ -4691,12 +4971,62 @@
         }
       }
     },
+    "Your AirPods and headphones, with their battery, as they connect.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vos AirPods et écouteurs, avec leur batterie, dès qu’ils se connectent."
+          }
+        }
+      }
+    },
+    "Your Souffleur scripts are here: the text comes out of the notch, right under the camera, at the pace of your voice.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vos scripts de Souffleur sont là : le texte sort de l’encoche, juste sous la caméra, au rythme de votre voix."
+          }
+        }
+      }
+    },
+    "Your island": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre île"
+          }
+        }
+      }
+    },
     "Your next events and today’s reminders": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Vos prochains événements et les rappels du jour"
+          }
+        }
+      }
+    },
+    "Your next events beside the clock, and a button to join a call.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vos prochains rendez-vous à côté de l’horloge, et un bouton pour rejoindre un appel."
+          }
+        }
+      }
+    },
+    "Your next events beside the clock, and a button to join a call. Islet needs your calendars for that.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vos prochains rendez-vous à côté de l’horloge, et un bouton pour rejoindre un appel. Islet a besoin de vos calendriers pour cela."
           }
         }
       }
@@ -4737,6 +5067,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Vos propres paroles"
+          }
+        }
+      }
+    },
+    "Your pages, with what is really happening on your Mac. Pick one to see it; hover the island to try it.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vos pages, avec ce qui se passe vraiment sur votre Mac. Choisissez-en une pour la voir ; survolez l’île pour l’essayer."
           }
         }
       }
@@ -4837,6 +5177,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "libres"
+          }
+        }
+      }
+    },
+    "“%@” by %@ is playing: the island shows it with its cover, and its controls.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "« %@ » de %@ est en lecture : l’île l’affiche avec sa pochette et ses commandes."
           }
         }
       }

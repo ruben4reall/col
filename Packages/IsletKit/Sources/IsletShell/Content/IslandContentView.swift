@@ -31,10 +31,11 @@ struct IslandServices {
     let awake: KeepAwake
     let openSettings: () -> Void
 
-    /// The same models with pages of their own, for a second island such as the one in the settings.
-    func with(navigation: IslandNavigation) -> IslandServices {
+    /// The same models with pages of their own, for a second island such as the one in the settings; agents of its own
+    /// too when given, for an example that must not reach the real ones.
+    func with(navigation: IslandNavigation, agents: AgentCenter? = nil) -> IslandServices {
         IslandServices(
-            media: media, lyrics: lyrics, ai: ai, agents: agents, custom: custom, navigation: navigation, power: power, shelf: shelf,
+            media: media, lyrics: lyrics, ai: ai, agents: agents ?? self.agents, custom: custom, navigation: navigation, power: power, shelf: shelf,
             clipboard: clipboard, timer: timer, picker: picker, mirror: mirror, calendar: calendar, stats: stats,
             device: device, audio: audio, awake: awake, openSettings: openSettings
         )

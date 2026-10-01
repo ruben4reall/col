@@ -235,33 +235,103 @@ final class WelcomePanel: NSWindow {
 @Observable
 final class WelcomeModel {
     enum Step: Int, CaseIterable {
-        case meet, gestures, modules, permissions, developers, ready
+        case discover, island, gestures, ready
     }
 
     enum Gesture {
         case hover, swipeDown, swipeSide
     }
 
-    enum Preset: String, CaseIterable, Identifiable {
-        case essentials, developer, everything
+    /// What Islet can do. Each starts on when the Mac has what it needs.
+    enum Feature: String, CaseIterable, Identifiable {
+        case music, lyrics, headphones, ai, agents, agenda, prompter, hud, battery, privacy, shelf, clipboard, tools, system
         var id: String { rawValue }
+
+        var title: Text {
+            switch self {
+            case .music: Text("Music", bundle: .module)
+            case .lyrics: Text("Lyrics", bundle: .module)
+            case .headphones: Text("Headphones", bundle: .module)
+            case .ai: Text("AI apps", bundle: .module)
+            case .agents: Text("Coding agents", bundle: .module)
+            case .agenda: Text("Agenda", bundle: .module)
+            case .prompter: Text("Prompter", bundle: .module)
+            case .hud: Text("Volume and brightness", bundle: .module)
+            case .battery: Text("Battery", bundle: .module)
+            case .privacy: Text("Microphone and camera", bundle: .module)
+            case .shelf: Text("Shelf", bundle: .module)
+            case .clipboard: Text("Clipboard", bundle: .module)
+            case .tools: Text("Tools", bundle: .module)
+            case .system: Text("System", bundle: .module)
+            }
+        }
+
+        var symbol: String {
+            switch self {
+            case .music: "music.note"
+            case .lyrics: "quote.bubble.fill"
+            case .headphones: "airpodspro"
+            case .ai: "sparkles"
+            case .agents: "chevron.left.forwardslash.chevron.right"
+            case .agenda: "calendar"
+            case .prompter: "text.alignleft"
+            case .hud: "speaker.wave.2.fill"
+            case .battery: "battery.75percent"
+            case .privacy: "mic.fill"
+            case .shelf: "tray.fill"
+            case .clipboard: "doc.on.clipboard.fill"
+            case .tools: "timer"
+            case .system: "cpu"
+            }
+        }
+
+        var tint: Color {
+            switch self {
+            case .music, .lyrics: Color(red: 0.98, green: 0.26, blue: 0.4)
+            case .headphones, .shelf: .blue
+            case .ai: Color(red: 0.45, green: 0.5, blue: 1)
+            case .agents, .prompter: Theme.coral.color
+            case .agenda: .red
+            case .hud: .gray
+            case .battery: .green
+            case .privacy, .tools: .orange
+            case .clipboard: .indigo
+            case .system: .teal
+            }
+        }
     }
 
-    var step: Step = .meet
+    var step: Step = .discover
     private(set) var direction = 1
     private(set) var gestures: Set<Gesture> = []
-    var preset: Preset = .developer {
-        didSet { apply(preset) }
-    }
-    var modules: Set<Module> = []
-
-    enum Module: String, CaseIterable, Identifiable {
-        case music, hud, battery, devices, privacy, shelf, clipboard, tools, system, agenda, agents
-        var id: String { rawValue }
-    }
+    /// What the Mac has, looked at once as the welcome opens.
+    let found: Discovery
+    private(set) var features: Set<Feature>
+    /// An example request from Claude Code, or from the first agent found, for the island shown here only: it never
+    /// reaches the real agents.
+    @ObservationIgnored let exampleAgents = AgentCenter()
 
     init() {
-        apply(.developer)
+        let models = IslandController.shared?.models
+        found = Discovery.look(ai: models?.ai, power: models?.power)
+        features = found.suggested
+        let agent = found.agents.first ?? .claude
+        exampleAgents.receive(HookEvent(sessionID: "example", event: "UserPromptSubmit", cwd: "/Users/you/website", agent: agent)) { _ in }
+        exampleAgents.receive(HookEvent(
+            sessionID: "example", event: "PermissionRequest", cwd: "/Users/you/website", toolName: "Bash",
+            toolInput: ["command": .string("npm test")], agent: agent
+        )) { _ in }
+    }
+
+    /// The pages the island will have, from the features kept: Home first, then a page for each tool, in the order
+    /// they matter.
+    var deck: PageDeck {
+        var deck = PageDeck(pages: [PageDeck.standard.pages[0]])
+        let order: [(Feature, WidgetKind)] = [(.prompter, .prompter), (.ai, .ai), (.shelf, .shelf), (.clipboard, .clipboard), (.tools, .tools), (.system, .system)]
+        for (feature, kind) in order where features.contains(feature) {
+            deck.add([WidgetStack([kind])], id: kind.rawValue)
+        }
+        return deck
     }
 
     func go(_ step: Step) {
@@ -287,37 +357,23 @@ final class WelcomeModel {
 
     func contains(_ gesture: Gesture) -> Bool { gestures.contains(gesture) }
 
-    private func apply(_ preset: Preset) {
-        switch preset {
-        case .essentials: modules = [.music, .hud, .battery, .devices, .privacy, .shelf, .tools, .agenda]
-        case .developer: modules = [.music, .hud, .battery, .devices, .privacy, .shelf, .clipboard, .tools, .system, .agenda, .agents]
-        case .everything: modules = Set(Module.allCases)
+    func set(_ feature: Feature, on: Bool) {
+        withAnimation(.spring(duration: 0.3, bounce: 0.2)) {
+            if on { features.insert(feature) } else { features.remove(feature) }
         }
     }
 
-    func toggle(_ module: Module) {
-        if modules.contains(module) { modules.remove(module) } else { modules.insert(module) }
-    }
-
-    var needsAccessibility: Bool { modules.contains(.hud) }
-    var needsBluetooth: Bool { modules.contains(.devices) }
-    var needsCalendar: Bool { modules.contains(.agenda) }
-
-    /// Writes the choices to the settings.
+    /// Writes the choices to the settings: what the island shows, and its pages, Home first, then a page for each tool
+    /// kept, in the order they matter.
     func save() {
-        Preferences.showsMediaActivity = modules.contains(.music)
-        Preferences.replacesSystemHUD = modules.contains(.hud)
-        Preferences.showsBattery = modules.contains(.battery)
-        Preferences.showsAudioDevices = modules.contains(.devices)
-        Preferences.showsMicrophoneAndCamera = modules.contains(.privacy)
-        Preferences.showsAgents = modules.contains(.agents)
-        Preferences.keepsClipboardHistory = modules.contains(.clipboard)
-        // Home first, then a page for each tool chosen.
-        var deck = PageDeck(pages: [PageDeck.standard.pages[0]])
-        let order: [(Module, WidgetKind)] = [(.shelf, .shelf), (.clipboard, .clipboard), (.tools, .tools), (.system, .system)]
-        for (module, kind) in order where modules.contains(module) {
-            deck.add([WidgetStack([kind])], id: kind.rawValue)
-        }
+        Preferences.showsMediaActivity = features.contains(.music)
+        Preferences.showsLyrics = features.contains(.lyrics)
+        Preferences.replacesSystemHUD = features.contains(.hud)
+        Preferences.showsBattery = features.contains(.battery)
+        Preferences.showsAudioDevices = features.contains(.headphones)
+        Preferences.showsMicrophoneAndCamera = features.contains(.privacy)
+        Preferences.showsAgents = features.contains(.agents)
+        Preferences.keepsClipboardHistory = features.contains(.clipboard)
         Preferences.pageDeck = deck
     }
 }
@@ -336,11 +392,9 @@ struct WelcomeView: View {
                     let direction = CGFloat(model.direction)
                     Group {
                         switch model.step {
-                        case .meet: MeetStep(model: model)
+                        case .discover: DiscoverStep(model: model)
+                        case .island: IslandStep(model: model)
                         case .gestures: GesturesStep(model: model)
-                        case .modules: ModulesStep(model: model)
-                        case .permissions: PermissionsStep(model: model)
-                        case .developers: DevelopersStep()
                         case .ready: ReadyStep()
                         }
                     }
@@ -386,7 +440,7 @@ private struct Footer: View {
             }
             .animation(.spring(duration: 0.4, bounce: 0.3), value: model.step)
             Spacer()
-            if model.step != .meet {
+            if model.step != .discover {
                 Button { model.back() } label: { Text("Back", bundle: .module) }
                     .buttonStyle(QuietButton())
             } else {
@@ -396,10 +450,10 @@ private struct Footer: View {
                     .keyboardShortcut(.cancelAction)
             }
             Button {
-                if model.step == .modules { model.save() }
+                if model.step == .discover { model.save() }
                 if model.step == .ready { finish() } else { model.next() }
             } label: {
-                Text(model.step == .ready ? "Start using Islet" : (model.step == .meet ? "Get started" : "Continue"), bundle: .module)
+                Text(model.step == .ready ? "Start using Islet" : "Continue", bundle: .module)
             }
             .buttonStyle(CoralButton())
             .keyboardShortcut(.defaultAction)
@@ -462,7 +516,7 @@ private struct GlowBackground: NSViewRepresentable {
     func updateNSView(_ nsView: NSView, context: Context) {}
 }
 
-private struct StepHeader: View {
+struct StepHeader: View {
     let title: LocalizedStringKey
     let subtitle: LocalizedStringKey
 
@@ -481,29 +535,6 @@ private struct StepHeader: View {
 }
 
 // MARK: Steps
-
-private struct MeetStep: View {
-    let model: WelcomeModel
-    @State private var shown = false
-
-    var body: some View {
-        VStack(spacing: 26) {
-            Image(nsImage: NSApp.applicationIconImage)
-                .resizable()
-                .frame(width: 128, height: 128)
-                .shadow(color: Color(red: 1, green: 0.42, blue: 0.27).opacity(0.45), radius: 30, y: 10)
-                .scaleEffect(shown ? 1 : 0.6)
-                .opacity(shown ? 1 : 0)
-            StepHeader(title: "Welcome to Islet", subtitle: "The notch of your Mac becomes a living island: music, volume, battery, files, timers and your coding agents, right where you already look.")
-                .opacity(shown ? 1 : 0)
-                .offset(y: shown ? 0 : 14)
-        }
-        .padding(.top, 20)
-        .onAppear {
-            withAnimation(.spring(duration: 0.8, bounce: 0.35).delay(0.1)) { shown = true }
-        }
-    }
-}
 
 private struct GesturesStep: View {
     let model: WelcomeModel
@@ -550,247 +581,6 @@ private struct GestureRow: View {
                 .fill(Color.white.opacity(done ? 0.07 : 0.04))
                 .strokeBorder(done ? Color.green.opacity(0.35) : Color.white.opacity(0.06), lineWidth: 1)
         )
-    }
-}
-
-private struct ModulesStep: View {
-    let model: WelcomeModel
-
-    var body: some View {
-        VStack(spacing: 18) {
-            StepHeader(title: "Choose what the island shows", subtitle: "You can change all of this later in Settings.")
-            Picker("", selection: Binding(get: { model.preset }, set: { model.preset = $0 })) {
-                Text("Essentials", bundle: .module).tag(WelcomeModel.Preset.essentials)
-                Text("Developer", bundle: .module).tag(WelcomeModel.Preset.developer)
-                Text("Everything", bundle: .module).tag(WelcomeModel.Preset.everything)
-            }
-            .pickerStyle(.segmented)
-            .labelsHidden()
-            .frame(width: 330)
-            LazyVGrid(columns: Array(repeating: GridItem(.fixed(136), spacing: 10), count: 4), spacing: 10) {
-                ForEach(WelcomeModel.Module.allCases) { module in
-                    ModuleCard(module: module, on: model.modules.contains(module)) { model.toggle(module) }
-                }
-            }
-        }
-    }
-}
-
-private struct ModuleCard: View {
-    let module: WelcomeModel.Module
-    let on: Bool
-    let toggle: () -> Void
-
-    var body: some View {
-        Button(action: toggle) {
-            VStack(alignment: .leading, spacing: 6) {
-                HStack {
-                    Image(systemName: module.symbol)
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(on ? Theme.coral.color : .white.opacity(0.5))
-                    Spacer()
-                    Image(systemName: on ? "checkmark.circle.fill" : "circle")
-                        .foregroundStyle(on ? Theme.coral.color : .white.opacity(0.25))
-                        .contentTransition(.symbolEffect(.replace))
-                }
-                Text(module.title).font(.system(size: 12.5, weight: .semibold)).foregroundStyle(.white)
-                    .lineLimit(2)
-                    .fixedSize(horizontal: false, vertical: true)
-                Spacer(minLength: 0)
-                if module.needsPermission {
-                    Label { Text("Permission", bundle: .module) } icon: { Image(systemName: "lock.fill") }
-                        .font(.system(size: 10))
-                        .foregroundStyle(.white.opacity(0.45))
-                        .lineLimit(1)
-                }
-            }
-            .padding(11)
-            .frame(width: 136, height: 96, alignment: .topLeading)
-            .background(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(Color.white.opacity(on ? 0.08 : 0.03))
-                    .strokeBorder(on ? Theme.coral.color.opacity(0.45) : Color.white.opacity(0.06), lineWidth: 1)
-            )
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(PressableStyle())
-        .animation(.spring(duration: 0.3, bounce: 0.3), value: on)
-    }
-}
-
-extension WelcomeModel.Module {
-    var symbol: String {
-        switch self {
-        case .music: "music.note"
-        case .hud: "speaker.wave.2.fill"
-        case .battery: "battery.100.bolt"
-        case .devices: "airpodspro"
-        case .privacy: "mic.fill"
-        case .shelf: "tray.full.fill"
-        case .clipboard: "doc.on.clipboard.fill"
-        case .tools: "timer"
-        case .system: "gauge.with.dots.needle.67percent"
-        case .agenda: "calendar"
-        case .agents: "sparkle"
-        }
-    }
-
-    var title: LocalizedStringResource {
-        let bundle = LocalizedStringResource.BundleDescription.atURL(Bundle.module.bundleURL)
-        return switch self {
-        case .music: LocalizedStringResource("Music", bundle: bundle)
-        case .hud: LocalizedStringResource("Volume and brightness", bundle: bundle)
-        case .battery: LocalizedStringResource("Battery", bundle: bundle)
-        case .devices: LocalizedStringResource("AirPods and speakers", bundle: bundle)
-        case .privacy: LocalizedStringResource("Microphone and camera", bundle: bundle)
-        case .shelf: LocalizedStringResource("Shelf", bundle: bundle)
-        case .clipboard: LocalizedStringResource("Clipboard", bundle: bundle)
-        case .tools: LocalizedStringResource("Tools", bundle: bundle)
-        case .system: LocalizedStringResource("System", bundle: bundle)
-        case .agenda: LocalizedStringResource("Agenda", bundle: bundle)
-        case .agents: LocalizedStringResource("Coding agents", bundle: bundle)
-        }
-    }
-
-    var needsPermission: Bool { self == .hud || self == .agenda || self == .devices }
-}
-
-private struct PermissionsStep: View {
-    let model: WelcomeModel
-    @State private var trusted = MediaKeyTap.isTrusted
-    @State private var calendar = EKEventStore.authorizationStatus(for: .event)
-    @State private var bluetooth = CBCentralManager.authorization
-    @State private var waiting = false
-
-    var body: some View {
-        VStack(spacing: 22) {
-            StepHeader(title: "A couple of permissions", subtitle: "Only for the modules you chose. Everything else works without asking.")
-            VStack(spacing: 10) {
-                if model.needsAccessibility {
-                    PermissionCard(symbol: "accessibility", tint: .blue, title: "Accessibility", detail: "So Islet can take over the volume and brightness keys.", granted: trusted) {
-                        MediaKeyTap.requestTrust()
-                        NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!)
-                        waiting = true
-                    }
-                }
-                if model.needsCalendar {
-                    PermissionCard(symbol: "calendar", tint: .red, title: "Calendars", detail: "So your next events show beside the clock.", granted: calendar == .fullAccess) {
-                        Task { @MainActor in
-                            _ = try? await EKEventStore().requestFullAccessToEvents()
-                            withAnimation(.spring(duration: 0.4, bounce: 0.3)) { calendar = EKEventStore.authorizationStatus(for: .event) }
-                        }
-                    }
-                }
-                if model.needsBluetooth {
-                    PermissionCard(symbol: "airpodspro", tint: .blue, title: "Bluetooth", detail: "So Islet can show the battery of your AirPods.", granted: bluetooth == .allowedAlways) {
-                        _ = BluetoothAccessories.battery(forName: "")
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { MainActor.assumeIsolated { refresh() } }
-                    }
-                }
-                if !model.needsAccessibility && !model.needsCalendar && !model.needsBluetooth {
-                    Label { Text("Nothing to allow: your modules need no permission.", bundle: .module) } icon: { Image(systemName: "checkmark.seal.fill").foregroundStyle(.green) }
-                        .font(.system(size: 14, weight: .medium))
-                        .padding(.top, 20)
-                }
-            }
-            .frame(width: 460)
-            if waiting && !trusted {
-                Text("Turn Islet on in the list that just opened, then come back here.", bundle: .module)
-                    .font(.system(size: 12.5))
-                    .foregroundStyle(.white.opacity(0.55))
-                    .transition(.opacity)
-            }
-            Text("Islet never asks for Screen Recording, Full Disk Access or Input Monitoring.", bundle: .module)
-                .font(.system(size: 11.5))
-                .foregroundStyle(.white.opacity(0.35))
-        }
-        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in refresh() }
-        .onReceive(DistributedNotificationCenter.default().publisher(for: NSNotification.Name("com.apple.accessibility.api"))) { _ in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { MainActor.assumeIsolated { refresh() } }
-        }
-    }
-
-    private func refresh() {
-        withAnimation(.spring(duration: 0.4, bounce: 0.3)) {
-            trusted = MediaKeyTap.isTrusted
-            calendar = EKEventStore.authorizationStatus(for: .event)
-            bluetooth = CBCentralManager.authorization
-        }
-    }
-}
-
-private struct PermissionCard: View {
-    let symbol: String
-    let tint: Color
-    let title: LocalizedStringKey
-    let detail: LocalizedStringKey
-    let granted: Bool
-    var action: LocalizedStringKey = "Allow"
-    let allow: () -> Void
-
-    var body: some View {
-        HStack(spacing: 14) {
-            Image(systemName: symbol)
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(.white)
-                .frame(width: 40, height: 40)
-                .background(RoundedRectangle(cornerRadius: 11, style: .continuous).fill(tint.gradient))
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title, bundle: .module).font(.system(size: 14, weight: .semibold))
-                Text(detail, bundle: .module).font(.system(size: 12.5)).foregroundStyle(.white.opacity(0.55))
-                    .lineLimit(2)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            Spacer()
-            if granted {
-                Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 22))
-                    .foregroundStyle(.green)
-                    .transition(.scale.combined(with: .opacity))
-            } else {
-                Button(action: allow) { Text(action, bundle: .module) }
-                    .buttonStyle(CoralButton())
-            }
-        }
-        .padding(14)
-        .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(Color.white.opacity(0.05)))
-    }
-}
-
-private struct DevelopersStep: View {
-    @State private var cliInstalled = FileManager.default.fileExists(atPath: CommandLineInstaller.linkURL.path)
-    /// The AI agents set up on this Mac, found when the step appears.
-    @State private var found: [CodingAgent] = CodingAgent.allCases.filter { CommandLineInstaller.isInstalled($0) }
-    @State private var connected = false
-
-    private var foundNames: String {
-        ListFormatter.localizedString(byJoining: found.map(\.name))
-    }
-
-    var body: some View {
-        VStack(spacing: 22) {
-            StepHeader(title: "For developers", subtitle: "Optional. Scripts can show their progress in the notch, and your AI agents can ask for permission there.")
-            VStack(spacing: 10) {
-                PermissionCard(symbol: "terminal.fill", tint: .gray, title: "The islet command", detail: "Installs islet in ~/.local/bin.", granted: cliInstalled, action: "Install") {
-                    _ = CommandLineInstaller.install()
-                    withAnimation(.spring(duration: 0.4, bounce: 0.3)) { cliInstalled = FileManager.default.fileExists(atPath: CommandLineInstaller.linkURL.path) }
-                }
-                if found.isEmpty {
-                    PermissionCard(symbol: "sparkle", tint: Color(red: 0.89, green: 0.28, blue: 0.18), title: "AI agents", detail: "Claude Code, Codex, Gemini CLI, Cursor and GitHub Copilot connect in Settings once installed.", granted: false, action: "Later") {}
-                        .disabled(true)
-                } else {
-                    PermissionCard(symbol: "sparkle", tint: Color(red: 0.89, green: 0.28, blue: 0.18), title: "AI agents", detail: "Found on this Mac: \(foundNames). Adds Islet’s hooks to each, with a backup.", granted: connected, action: "Connect") {
-                        for agent in found where !CommandLineInstaller.isConnected(agent) { _ = CommandLineInstaller.connect(agent) }
-                        withAnimation(.spring(duration: 0.4, bounce: 0.3)) { connected = found.allSatisfy { CommandLineInstaller.isConnected($0) } }
-                    }
-                }
-            }
-            .frame(width: 460)
-            .onAppear { connected = !found.isEmpty && found.allSatisfy { CommandLineInstaller.isConnected($0) } }
-            Text("Islet never signs in to any AI service. It only hears the hooks your agents call on your Mac.", bundle: .module)
-                .font(.system(size: 11.5))
-                .foregroundStyle(.white.opacity(0.35))
-        }
     }
 }
 

@@ -43,6 +43,12 @@ Each release's section is what Islet's update window and the GitHub release show
 - **Permissions**: one pane says what each permission is for and which feature needs it.
 - **Shortcuts and gestures**: every way to open and drive the island, in one place.
 - **Language**: Islet follows the language of your Mac, or the one you pick in Settings, General.
+- **A welcome made for your Mac**: Islet looks at what the Mac has and starts from there: the song playing with its
+  cover, the music apps, the headphones connected, the battery, the AI apps and coding agents with their logos (connect
+  each agent in one click), your next event once you allow the calendars. Each feature starts on when the Mac has what
+  it needs, and a permission is asked on the line that needs it, its result shown at once. Then your island, with the
+  pages your choices make, plays on your own wallpaper with what is really happening, and an example of an agent asking
+  for permission.
 - **A first hello in every language**: on first launch the island says hello in your language, then in others, from
   Japanese to Arabic, each word giving way to the next in a soft blur, and back to yours. The welcome window is born
   out of the island, and at the end goes back into the notch while the island says "Let's go". With Reduce Motion,
