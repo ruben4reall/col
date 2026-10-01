@@ -232,6 +232,9 @@ Bugs and ideas go to [issues](https://github.com/ruben4reall/islet/issues); pull
 [CONTRIBUTING.md](CONTRIBUTING.md) gives the workflow and the promises every change keeps (light, native, the rules
 tested in `IsletCore`), and [SECURITY.md](SECURITY.md) how to report a vulnerability privately.
 
+Islet follows the language of your Mac. Its translations were made by AI, not by native speakers: if a word sounds
+wrong in your language, please [fix it](CONTRIBUTING.md#translations).
+
 ## License
 
 MIT. See [LICENSE](LICENSE).

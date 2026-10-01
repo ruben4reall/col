@@ -2,6 +2,17 @@
 
 Each release's section is what Islet's update window and the GitHub release show. Dates are in ISO format.
 
+## 2.0.0 (unreleased)
+
+- **New settings**: a bigger window that opens below the island instead of under it, grouped panes with a search
+  field, and headers that stay put while the settings scroll beneath them. Appearance and Pages show your own island,
+  drawn by Islet itself on your wallpaper with what it shows right now, and every change of size or glass also plays
+  on the notch. While the settings are open, Islet has a Dock icon and menus, so ⌘Tab, copy and paste work as anywhere.
+- **AI apps**: the AI tools Islet works with get a pane of their own, with each app's own icon.
+- **Permissions**: one pane says what each permission is for and which feature needs it.
+- **Shortcuts and gestures**: every way to open and drive the island, in one place.
+- **Language**: Islet follows the language of your Mac, or the one you pick in Settings, General.
+
 ## 1.2.0 (2026-09-28)
 
 - **GitHub Copilot in VS Code**, contributed by [@BonnetAdam](https://github.com/BonnetAdam): Copilot's agent sessions
