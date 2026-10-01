@@ -122,18 +122,7 @@ private struct BreathingDots: View {
     let size: CGFloat
 
     var body: some View {
-        HStack(spacing: size * 0.35) {
-            ForEach(0..<3) { index in
-                Circle()
-                    .fill(.white.opacity(active ? 0.9 : 0.35))
-                    .frame(width: size * 0.42, height: size * 0.42)
-                    .phaseAnimator(active ? [false, true] : [false]) { dot, phase in
-                        dot.scaleEffect(phase ? 1.25 : 0.8)
-                    } animation: { _ in
-                        .easeInOut(duration: 0.7).delay(Double(index) * 0.18)
-                    }
-            }
-        }
-        .frame(height: size * 1.2)
+        PulsingDots(color: .white, dot: size * 0.42, spacing: size * 0.35, motion: .swell, active: active)
+            .frame(height: size * 1.2)
     }
 }

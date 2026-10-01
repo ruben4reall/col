@@ -200,10 +200,7 @@ private struct ServerRow: View {
             Spacer(minLength: 0)
             if status?.generating == true, !compact {
                 // Dots that type, as in Messages: short enough to leave the model's name its room.
-                Image(systemName: "ellipsis")
-                    .font(.system(size: 11, weight: .bold))
-                    .symbolEffect(.variableColor.iterative, isActive: true)
-                    .foregroundStyle(.black)
+                PulsingDots(color: .black, dot: 3.5, spacing: 2.5)
                     .frame(width: 26, height: 18)
                     .background(Capsule().fill(Color(red: 0.2, green: 0.84, blue: 0.4)))
                     .accessibilityLabel(Text("Generating", bundle: .module))
