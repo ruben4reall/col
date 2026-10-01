@@ -33,6 +33,12 @@ final class SettingsWindow: NSObject, NSWindowDelegate {
             if scroll > 0 {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { Self.scrollPane(in: window, by: scroll) }
             }
+            // `-IsletSettingsClose 5` closes the window after five seconds, as its close button would, for measuring
+            // what the settings leave behind.
+            let close = UserDefaults.standard.double(forKey: "IsletSettingsClose")
+            if close > 0 {
+                DispatchQueue.main.asyncAfter(deadline: .now() + close) { [weak window] in window?.performClose(nil) }
+            }
         }
     }
 
@@ -74,6 +80,7 @@ final class SettingsWindow: NSObject, NSWindowDelegate {
         if let window {
             UserDefaults.standard.set(NSStringFromSize(window.frame.size), forKey: "settingsWindowSize")
             WindowPresence.shared.remove(window)
+            window.emptyWhenClosed()
         }
         window = nil
         DesktopPicture.forgetImages()

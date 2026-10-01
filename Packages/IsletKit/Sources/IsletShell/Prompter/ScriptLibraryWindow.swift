@@ -41,6 +41,7 @@ final class ScriptLibraryWindow: NSObject, NSWindowDelegate {
         if let window {
             UserDefaults.standard.set(NSStringFromSize(window.frame.size), forKey: "scriptLibraryWindowSize")
             WindowPresence.shared.remove(window)
+            window.emptyWhenClosed()
         }
         PrompterCenter.shared.store.flush()
         window = nil

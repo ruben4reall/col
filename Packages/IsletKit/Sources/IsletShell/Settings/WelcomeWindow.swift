@@ -58,6 +58,7 @@ final class WelcomeWindow: NSObject, NSWindowDelegate {
 
     func windowWillClose(_ notification: Notification) {
         UserDefaults.standard.set(true, forKey: Self.key)
+        window?.emptyWhenClosed()
         window = nil
         model = nil
     }
