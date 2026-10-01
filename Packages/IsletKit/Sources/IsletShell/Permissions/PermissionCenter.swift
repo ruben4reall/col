@@ -3,6 +3,7 @@ import AVFoundation
 import CoreBluetooth
 import EventKit
 import Observation
+import Speech
 import SwiftUI
 
 /// Every permission Islet can ask for, in one place: what it is for, which feature needs it, whether it is granted,
@@ -13,7 +14,7 @@ final class PermissionCenter {
     static let shared = PermissionCenter()
 
     enum Permission: String, CaseIterable, Identifiable {
-        case accessibility, calendars, bluetooth, camera
+        case accessibility, calendars, bluetooth, camera, microphone, speech
         var id: String { rawValue }
 
         var title: LocalizedStringResource {
@@ -22,6 +23,8 @@ final class PermissionCenter {
             case .calendars: LocalizedStringResource("Calendars", bundle: .settings)
             case .bluetooth: LocalizedStringResource("Bluetooth", bundle: .settings)
             case .camera: LocalizedStringResource("Camera", bundle: .settings)
+            case .microphone: LocalizedStringResource("Microphone", bundle: .settings)
+            case .speech: LocalizedStringResource("Speech Recognition", bundle: .settings)
             }
         }
 
@@ -32,6 +35,8 @@ final class PermissionCenter {
             case .calendars: LocalizedStringResource("Shows your next events beside the clock. Without it, the agenda stays empty.", bundle: .settings)
             case .bluetooth: LocalizedStringResource("Reads the battery of your AirPods and other headphones. Without it, the card shows no battery.", bundle: .settings)
             case .camera: LocalizedStringResource("Used only while the mirror is open. Seeing that another app uses the camera needs no permission.", bundle: .settings)
+            case .microphone: LocalizedStringResource("Lets the prompter roll while you speak and wait when you stop. The sound stays on your Mac and is never recorded.", bundle: .settings)
+            case .speech: LocalizedStringResource("Lets Voice Follow keep your place word by word. Recognition runs on your Mac.", bundle: .settings)
             }
         }
 
@@ -42,6 +47,7 @@ final class PermissionCenter {
             case .calendars: LocalizedStringResource("Agenda", bundle: .settings)
             case .bluetooth: LocalizedStringResource("AirPods and speakers", bundle: .settings)
             case .camera: LocalizedStringResource("Mirror", bundle: .settings)
+            case .microphone, .speech: LocalizedStringResource("Prompter", bundle: .settings)
             }
         }
 
@@ -51,6 +57,8 @@ final class PermissionCenter {
             case .calendars: "calendar"
             case .bluetooth: "airpodspro"
             case .camera: "camera.fill"
+            case .microphone: "mic.fill"
+            case .speech: "waveform"
             }
         }
 
@@ -60,6 +68,8 @@ final class PermissionCenter {
             case .calendars: .red
             case .bluetooth: .blue
             case .camera: .gray
+            case .microphone: .orange
+            case .speech: .purple
             }
         }
 
@@ -70,6 +80,8 @@ final class PermissionCenter {
             case .calendars: "Privacy_Calendars"
             case .bluetooth: "Privacy_Bluetooth"
             case .camera: "Privacy_Camera"
+            case .microphone: "Privacy_Microphone"
+            case .speech: "Privacy_SpeechRecognition"
             }
         }
     }
@@ -78,6 +90,8 @@ final class PermissionCenter {
     private(set) var calendars = EKEventStore.authorizationStatus(for: .event)
     private(set) var bluetooth = CBCentralManager.authorization
     private(set) var camera = AVCaptureDevice.authorizationStatus(for: .video)
+    private(set) var microphone = AVCaptureDevice.authorizationStatus(for: .audio)
+    private(set) var speech = SFSpeechRecognizer.authorizationStatus()
     /// Accessibility was asked for and the list in System Settings is open: say what to do there.
     private(set) var awaitingAccessibility = false
 
@@ -99,6 +113,8 @@ final class PermissionCenter {
         case .calendars: calendars == .fullAccess
         case .bluetooth: bluetooth == .allowedAlways
         case .camera: camera == .authorized
+        case .microphone: microphone == .authorized
+        case .speech: speech == .authorized
         }
     }
 
@@ -109,6 +125,8 @@ final class PermissionCenter {
         case .calendars: calendars == .notDetermined
         case .bluetooth: bluetooth == .notDetermined
         case .camera: camera == .notDetermined
+        case .microphone: microphone == .notDetermined
+        case .speech: speech == .notDetermined
         }
     }
 
@@ -118,6 +136,8 @@ final class PermissionCenter {
             calendars = EKEventStore.authorizationStatus(for: .event)
             bluetooth = CBCentralManager.authorization
             camera = AVCaptureDevice.authorizationStatus(for: .video)
+            microphone = AVCaptureDevice.authorizationStatus(for: .audio)
+            speech = SFSpeechRecognizer.authorizationStatus()
             if accessibility { awaitingAccessibility = false }
         }
     }
@@ -148,6 +168,15 @@ final class PermissionCenter {
             Task { @MainActor in
                 _ = await AVCaptureDevice.requestAccess(for: .video)
                 refresh()
+            }
+        case .microphone:
+            Task { @MainActor in
+                _ = await AVCaptureDevice.requestAccess(for: .audio)
+                refresh()
+            }
+        case .speech:
+            SFSpeechRecognizer.requestAuthorization { _ in
+                DispatchQueue.main.async { MainActor.assumeIsolated { self.refresh() } }
             }
         }
     }

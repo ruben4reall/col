@@ -120,7 +120,7 @@ final class ControlAPI {
         let action = url.host ?? ""
         switch action {
         case "settings":
-            SettingsWindow.shared.show(query["pane"].flatMap(SettingsPane.init(rawValue:)) ?? .general)
+            SettingsWindow.shared.show(query["pane"].flatMap(SettingsPane.init(link:)) ?? .general)
             return
         case "welcome":
             WelcomeWindow.shared.show()

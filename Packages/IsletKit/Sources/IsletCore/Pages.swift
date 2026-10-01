@@ -2,12 +2,12 @@ import Foundation
 
 /// What a page of the open island can hold.
 public enum WidgetKind: String, Codable, CaseIterable, Sendable {
-    case music, clock, agenda, shelf, clipboard, tools, system
+    case music, clock, agenda, prompter, shelf, clipboard, tools, system
 
     /// The widths the widget can be drawn at: half a page beside another widget, or the whole page.
     public var widths: Set<WidgetWidth> {
         switch self {
-        case .music, .agenda: [.half, .full]
+        case .music, .agenda, .prompter: [.half, .full]
         case .clock: [.half]
         case .shelf, .clipboard, .tools, .system: [.full]
         }
@@ -85,9 +85,11 @@ public struct PageDeck: Codable, Equatable, Sendable {
 
     public static let homeID = "home"
 
-    /// The pages Islet starts with: the player beside the agenda (the clock while nothing plays), then the tools.
+    /// The pages Islet starts with: the player beside the agenda (the clock while nothing plays), the prompter, then
+    /// the tools.
     public static let standard = PageDeck(pages: [
         PageLayout(id: homeID, symbol: "house.fill", stacks: [WidgetStack([.music, .clock]), WidgetStack([.agenda])]),
+        PageLayout(id: "prompter", stacks: [WidgetStack([.prompter])]),
         PageLayout(id: "shelf", stacks: [WidgetStack([.shelf])]),
         PageLayout(id: "clipboard", stacks: [WidgetStack([.clipboard])]),
         PageLayout(id: "tools", stacks: [WidgetStack([.tools])]),
@@ -96,7 +98,7 @@ public struct PageDeck: Codable, Equatable, Sendable {
 
     /// The pages of Islet 1, which kept a list of the optional pages turned on, in order.
     public static func migrating(enabledPages: [String]) -> PageDeck {
-        let optional: [String: WidgetKind] = ["shelf": .shelf, "clipboard": .clipboard, "tools": .tools, "system": .system]
+        let optional: [String: WidgetKind] = ["prompter": .prompter, "shelf": .shelf, "clipboard": .clipboard, "tools": .tools, "system": .system]
         var pages = [standard.pages[0]]
         for key in enabledPages {
             guard let kind = optional[key], !pages.contains(where: { $0.id == key }) else { continue }

@@ -16,6 +16,7 @@ Everything Islet reads, writes or runs, and why.
 | `~/Library/Preferences/ch.rubencatalao.islet.plist` | Settings, the shelf's file bookmarks, pinned clipboard text | Always |
 | `~/Library/Application Support/Islet/islet.sock` | The local socket scripts and agents talk to: mode 0600 in a 0700 folder, so only your user can connect. It never listens on the network | While Islet runs |
 | `~/Library/Application Support/Islet/Extensions/` | Your extensions, one folder each | When you add one |
+| `~/Library/Application Support/Islet/Scripts/` | The prompter's scripts, one Markdown file each, saved as you type. The first time, the scripts of Souffleur (the prompter's former app) are copied in from `~/Library/Application Support/Souffleur/Scripts/`, which is left as it was | When you use the prompter |
 | `~/.local/bin/islet` | A link to the `islet` command inside the app | When you install the command |
 | `~/.claude/settings.json`, `~/.codex/hooks.json`, `~/.gemini/settings.json`, `~/.cursor/hooks.json`, `~/.copilot/hooks/islet.json` | Islet's hooks, added next to yours; the previous file is kept as `<file>.islet-backup` | When you connect that agent; disconnecting removes them |
 
@@ -33,13 +34,18 @@ Copies that password managers mark as concealed or transient are skipped.
 - The update check: Sparkle reads `https://getislet.vercel.app/appcast.xml` once a day, and downloads new versions
   from GitHub. Updates are signed with Islet's EdDSA key and verified before they are opened. Sparkle's system profile
   is off. You can turn automatic checks off in Settings, About.
+- The prompter's phone remote, off until you turn it on in Settings, Prompter: a small web server on your local
+  network (port 7575 to 7579) that only answers a phone carrying the pairing code of the QR code you scanned. It
+  stops when you turn the remote off. Nothing goes to the internet.
 - Nothing else. No account, no telemetry, no analytics, no crash reports.
 
 ### Permissions
 
 Each one only if a module you chose needs it: Accessibility (the volume and brightness keys, and measuring the menu
 bar), Calendars and Reminders (the agenda), Bluetooth (headphone battery and model), Camera (only while the mirror
-is open). The colour picker uses the system's own sampler, which asks for nothing.
+is open), Microphone (the prompter's voice modes, while a take runs: the sound is analysed on your Mac and never
+recorded), Speech Recognition (the prompter's Voice Follow, on your Mac only), Local Network (the prompter's phone
+remote). The colour picker uses the system's own sampler, which asks for nothing.
 
 ### Login item
 

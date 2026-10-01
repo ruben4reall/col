@@ -35,6 +35,10 @@ your scripts and your AI agents.
 - **Now playing.** Apple Music, Spotify, YouTube in your browser and any app that shows in Control Center, with the
   cover, a scrubber, the controls and the audio output. A cover and a live equalizer sit beside the camera while you
   work; swipe the closed island to skip a track.
+- **A prompter in the notch.** Your script comes out of the notch right under the camera, at the pace of your voice:
+  it waits when you stop talking (Voice Pace), follows your words one by one (Voice Follow), rolls at a steady pace, or
+  moves only when you move it. Recognition runs on your Mac, and the prompter stays out of screenshots, recordings and
+  calls. Drive it with shortcuts, a presentation clicker or your phone. It was Souffleur, now part of Islet.
 - **AirPods, by model.** Islet reads the model your headphones report (AirPods, AirPods Pro, AirPods Max, Beats) and
   shows each earbud and the case, or the headphones' single battery.
 - **AI agents.** Claude Code, Codex, Gemini CLI, Cursor and GitHub Copilot in VS Code show in the notch while they
@@ -53,8 +57,9 @@ your scripts and your AI agents.
 - **Liquid Glass.** On macOS 26 the open island stays black where it meets the notch and melts into glass toward its
   lower edge: Liquid (a clear pane that bends the desktop behind it), Transparent, Tinted or all Black, your choice,
   as for macOS's own glass.
-- **Yours to shape.** Turn off any page you never use, reorder the others, choose the size and the speed. A short
-  welcome asks only for the permissions the modules you picked need.
+- **Yours to shape.** Compose each page of the open island from widgets, one across it or two side by side, add pages,
+  reorder them, choose what the closed island shows first, the size and the speed. A short welcome asks only for the
+  permissions the modules you picked need.
 
 <p align="center">
   <img src="docs/images/agent.webp" alt="A Claude Code permission request in the island: git push origin main, with Allow and Deny" width="400">

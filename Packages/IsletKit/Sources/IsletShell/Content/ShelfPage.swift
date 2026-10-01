@@ -129,7 +129,7 @@ private struct AirDropButton: View {
                 if let icon = NSSharingService(named: .sendViaAirDrop)?.image {
                     Image(nsImage: icon).resizable().frame(width: 30, height: 30)
                 }
-                Text("AirDrop")
+                Text(verbatim: "AirDrop")
                     .font(.system(size: 10.5, weight: .semibold))
                     .foregroundStyle(.white)
             }

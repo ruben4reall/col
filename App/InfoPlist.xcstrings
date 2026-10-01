@@ -49,6 +49,38 @@
         }
       }
     },
+    "NSLocalNetworkUsageDescription": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The prompter's remote lets your phone, on the same network, play, pause and move the script."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La télécommande du prompteur permet à votre téléphone, sur le même réseau, de lancer, mettre en pause et déplacer le script."
+          }
+        }
+      }
+    },
+    "NSMicrophoneUsageDescription": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The prompter listens to your voice to roll the script as you speak. The sound never leaves your Mac and is never recorded."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le prompteur écoute votre voix pour faire défiler le script quand vous parlez. Le son ne quitte jamais votre Mac et n’est jamais enregistré."
+          }
+        }
+      }
+    },
     "NSRemindersFullAccessUsageDescription": {
       "localizations": {
         "en": {
@@ -61,6 +93,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Islet affiche les rappels du jour à côté de votre agenda."
+          }
+        }
+      }
+    },
+    "NSSpeechRecognitionUsageDescription": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In Voice Follow, the prompter recognizes your words on your Mac to keep your place in the script."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En suivi de la voix, le prompteur reconnaît vos mots sur votre Mac pour garder votre place dans le script."
           }
         }
       }

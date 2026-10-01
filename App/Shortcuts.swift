@@ -1,4 +1,5 @@
 import AppIntents
+import IsletPrompter
 import IsletShell
 
 /// Shortcuts actions: the same things the `islet` command does, without a terminal.
@@ -82,9 +83,54 @@ struct OpenIslandIntent: AppIntent {
     }
 }
 
+struct PromptTextIntent: AppIntent {
+    static let title: LocalizedStringResource = "Prompt Text"
+    static let description = IntentDescription("Rolls a text out of the notch in the prompter.")
+
+    @Parameter(title: "Text") var text: String
+
+    @MainActor
+    func perform() async throws -> some IntentResult {
+        PrompterCenter.shared.prompt(text: text)
+        return .result()
+    }
+}
+
+struct PromptSelectedIntent: AppIntent {
+    static let title: LocalizedStringResource = "Prompt the Selected Script"
+    static let description = IntentDescription("Rolls the script selected in the prompter's library.")
+
+    @MainActor
+    func perform() async throws -> some IntentResult {
+        PrompterCenter.shared.promptSelected()
+        return .result()
+    }
+}
+
+struct TogglePrompterIntent: AppIntent {
+    static let title: LocalizedStringResource = "Play or Pause the Prompter"
+
+    @MainActor
+    func perform() async throws -> some IntentResult {
+        PrompterCenter.shared.playPause()
+        return .result()
+    }
+}
+
+struct ClosePrompterIntent: AppIntent {
+    static let title: LocalizedStringResource = "Close the Prompter"
+
+    @MainActor
+    func perform() async throws -> some IntentResult {
+        PrompterCenter.shared.prompter.stop()
+        return .result()
+    }
+}
+
 struct IsletShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
         AppShortcut(intent: StartTimerIntent(), phrases: ["Start a timer in \(.applicationName)"], shortTitle: "Timer", systemImageName: "timer")
         AppShortcut(intent: OpenIslandIntent(), phrases: ["Open \(.applicationName)"], shortTitle: "Open the Island", systemImageName: "rectangle.topthird.inset.filled")
+        AppShortcut(intent: PromptSelectedIntent(), phrases: ["Start the prompter in \(.applicationName)"], shortTitle: "Prompter", systemImageName: "text.aligncenter")
     }
 }

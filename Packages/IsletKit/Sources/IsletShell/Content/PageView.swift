@@ -8,6 +8,7 @@ extension WidgetKind {
         case .music: LocalizedStringResource("Music", bundle: bundle)
         case .clock: LocalizedStringResource("Clock", bundle: bundle)
         case .agenda: LocalizedStringResource("Agenda", bundle: bundle)
+        case .prompter: LocalizedStringResource("Prompter", bundle: bundle)
         case .shelf: LocalizedStringResource("Shelf", bundle: bundle)
         case .clipboard: LocalizedStringResource("Clipboard", bundle: bundle)
         case .tools: LocalizedStringResource("Tools", bundle: bundle)
@@ -21,6 +22,7 @@ extension WidgetKind {
         case .music: LocalizedStringResource("The player, while something plays", bundle: bundle)
         case .clock: LocalizedStringResource("The time and the date", bundle: bundle)
         case .agenda: LocalizedStringResource("Your next events and today’s reminders", bundle: bundle)
+        case .prompter: LocalizedStringResource("Your script under the camera, at the pace of your voice", bundle: bundle)
         case .shelf: LocalizedStringResource("Files dropped on the notch, AirDrop", bundle: bundle)
         case .clipboard: LocalizedStringResource("Your recent copies", bundle: bundle)
         case .tools: LocalizedStringResource("Timer, colour picker, mirror", bundle: bundle)
@@ -33,6 +35,7 @@ extension WidgetKind {
         case .music: "music.note"
         case .clock: "clock.fill"
         case .agenda: "calendar"
+        case .prompter: "text.aligncenter"
         case .shelf: "tray.full.fill"
         case .clipboard: "doc.on.clipboard.fill"
         case .tools: "square.grid.2x2.fill"
@@ -45,6 +48,7 @@ extension WidgetKind {
         case .music: .pink
         case .clock: .gray
         case .agenda: .red
+        case .prompter: Theme.coral.color
         case .shelf: .blue
         case .clipboard: .orange
         case .tools: Theme.coral.color
@@ -93,7 +97,7 @@ enum WidgetAvailability {
     static func hasContent(_ kind: WidgetKind, services: IslandServices) -> Bool {
         switch kind {
         case .music: services.media.hasPlayer
-        case .clock, .agenda, .shelf, .clipboard, .tools, .system: true
+        case .clock, .agenda, .prompter, .shelf, .clipboard, .tools, .system: true
         }
     }
 }
@@ -116,6 +120,8 @@ struct WidgetView: View {
             ClockView()
         case .agenda:
             AgendaView(calendar: services.calendar)
+        case .prompter:
+            PrompterWidget(center: .shared, width: width)
         case .shelf:
             ShelfPage(shelf: services.shelf)
         case .clipboard:

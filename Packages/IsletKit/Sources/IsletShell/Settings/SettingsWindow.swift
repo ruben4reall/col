@@ -15,8 +15,6 @@ final class SettingsWindow: NSObject, NSWindowDelegate {
 
     static let preferredSize = NSSize(width: 960, height: 680)
     static let minimumSize = NSSize(width: 820, height: 560)
-    /// Air between the bottom of the open island and the top of the window.
-    static let gapBelowIsland: CGFloat = 24
 
     func show(_ pane: SettingsPane? = nil) {
         if let pane { model.pane = pane }
@@ -55,25 +53,11 @@ final class SettingsWindow: NSObject, NSWindowDelegate {
         return window
     }
 
-    /// Below the open island with some air, centred on the notch, on the island's screen. The size is the last one
-    /// the user gave the window, shortened if the screen has no room for it.
     private func place(_ window: NSWindow) {
-        guard let anchor = IslandController.shared?.windowAnchor ?? WindowAnchor.main else {
-            window.center()
-            return
-        }
-        let visible = anchor.screen.visibleFrame
-        var size = UserDefaults.standard.string(forKey: "settingsWindowSize").map(NSSizeFromString) ?? Self.preferredSize
-        if size.width < Self.minimumSize.width || size.height < Self.minimumSize.height { size = Self.preferredSize }
         // `-IsletSettingsHeight 900` opens it taller, for screenshots that show a whole pane.
         let forced = UserDefaults.standard.double(forKey: "IsletSettingsHeight")
-        if forced > 0 { size.height = forced }
-        let top = min(visible.maxY, anchor.islandBottom - Self.gapBelowIsland)
-        size.height = max(min(size.height, top - visible.minY - 16), min(Self.minimumSize.height, visible.height - 16))
-        size.width = min(size.width, visible.width - 32)
-        let x = min(max(anchor.centerX - size.width / 2, visible.minX + 16), visible.maxX - size.width - 16)
-        let y = max(top - size.height, visible.minY + 8)
-        window.setFrame(NSRect(x: x.rounded(), y: y.rounded(), width: size.width, height: size.height), display: false)
+        WindowPlacement.belowIsland(window, preferred: Self.preferredSize, minimum: Self.minimumSize, sizeKey: "settingsWindowSize",
+                                    forcedHeight: forced > 0 ? forced : nil)
     }
 
     private static func scrollPane(in window: NSWindow, by distance: CGFloat) {
@@ -92,21 +76,7 @@ final class SettingsWindow: NSObject, NSWindowDelegate {
             WindowPresence.shared.remove(window)
         }
         window = nil
-    }
-}
-
-/// Where windows that open from the island go: the island's screen, the bottom of the open island and the middle of
-/// the notch, in screen coordinates.
-struct WindowAnchor {
-    let screen: NSScreen
-    let islandBottom: CGFloat
-    let centerX: CGFloat
-
-    /// Without a running island: the main screen, as if an island of standard size hung from its top.
-    @MainActor static var main: WindowAnchor? {
-        guard let screen = NSScreen.main else { return nil }
-        let open = IslandSize.standard.open
-        return WindowAnchor(screen: screen, islandBottom: screen.frame.maxY - 32 - open.content, centerX: screen.frame.midX)
+        DesktopPicture.forgetImages()
     }
 }
 
@@ -120,7 +90,7 @@ final class SettingsModel {
 /// The panes, in the order of the sidebar.
 enum SettingsPane: String, CaseIterable, Identifiable {
     case general, appearance, pages, activities
-    case aiApps
+    case prompter, aiApps
     case permissions, shortcuts, developers, about
     var id: String { rawValue }
 
@@ -141,7 +111,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
     var group: Group {
         switch self {
         case .general, .appearance, .pages, .activities: .island
-        case .aiApps: .modules
+        case .prompter, .aiApps: .modules
         case .permissions, .shortcuts, .developers, .about: .app
         }
     }
@@ -152,6 +122,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .appearance: LocalizedStringResource("Appearance", bundle: .settings)
         case .pages: LocalizedStringResource("Pages", bundle: .settings)
         case .activities: LocalizedStringResource("Live activities", bundle: .settings)
+        case .prompter: LocalizedStringResource("Prompter", bundle: .settings)
         case .aiApps: LocalizedStringResource("AI apps", bundle: .settings)
         case .permissions: LocalizedStringResource("Permissions", bundle: .settings)
         case .shortcuts: LocalizedStringResource("Shortcuts and gestures", bundle: .settings)
@@ -166,6 +137,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .appearance: LocalizedStringResource("Size, glass and motion, shown on your own screen.", bundle: .settings)
         case .pages: LocalizedStringResource("What the open island shows, page by page.", bundle: .settings)
         case .activities: LocalizedStringResource("What the closed island shows beside the camera.", bundle: .settings)
+        case .prompter: LocalizedStringResource("Your script under the camera, at the pace of your voice.", bundle: .settings)
         case .aiApps: LocalizedStringResource("Your AI apps in the notch: their sessions, their requests, their state.", bundle: .settings)
         case .permissions: LocalizedStringResource("What Islet may use, and for what.", bundle: .settings)
         case .shortcuts: LocalizedStringResource("Every way to open and drive the island.", bundle: .settings)
@@ -180,6 +152,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .appearance: "paintbrush.pointed.fill"
         case .pages: "rectangle.split.3x1.fill"
         case .activities: "dot.radiowaves.left.and.right"
+        case .prompter: "text.aligncenter"
         case .aiApps: "sparkles"
         case .permissions: "hand.raised.fill"
         case .shortcuts: "command"
@@ -194,6 +167,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .appearance: Theme.coral.color
         case .pages: .orange
         case .activities: .purple
+        case .prompter: Color(red: 0.89, green: 0.28, blue: 0.18)
         case .aiApps: Color(red: 0.36, green: 0.42, blue: 1)
         case .permissions: .blue
         case .shortcuts: Color(red: 0.42, green: 0.45, blue: 0.5)
@@ -213,6 +187,8 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .activities: ["Music beside the camera", "Announce new tracks", "Replace the volume and brightness displays",
                            "Headphones and speakers", "Battery card for headphones", "Charging and low battery",
                            "Microphone and camera in use", "Downloads in progress", "Show on the Lock Screen"]
+        case .prompter: ["Scripts", "Voice Pace", "Voice Follow", "Auto Scroll", "Manual", "Stage light", "Phone remote",
+                         "Presentation remotes and foot pedals", "Hide from screen sharing and recordings", "Teleprompter"]
         case .aiApps: ["Claude Code", "Codex", "Gemini CLI", "Cursor", "GitHub Copilot (VS Code)", "Connect", "Allow", "Deny"]
         case .permissions: ["Accessibility", "Calendars", "Bluetooth", "Camera", "Downloads"]
         case .shortcuts: ["Keyboard", "Gestures", "Swipe", "Click", "Trackpad", "Right-click"]
@@ -220,6 +196,17 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .about: ["Version", "Website", "Source code on GitHub", "Report a problem", "Quit Islet", "Network"]
         }
         return terms.map { LocalizedStringResource($0, bundle: .settings) }
+    }
+
+    /// The pane a link names. Islet 1's names still lead somewhere: its Island pane is Appearance now.
+    init?(link: String) {
+        if let pane = SettingsPane(rawValue: link) {
+            self = pane
+        } else if link == "island" {
+            self = .appearance
+        } else {
+            return nil
+        }
     }
 
     /// True when the pane, or one of its settings, matches what was typed; accents and case do not count.
@@ -300,6 +287,7 @@ struct SettingsView: View {
         case .appearance: AppearancePane()
         case .pages: PagesPane()
         case .activities: LiveActivitiesPane()
+        case .prompter: PrompterPane()
         case .aiApps: AIAppsPane()
         case .permissions: PermissionsPane()
         case .shortcuts: ShortcutsPane()
@@ -336,7 +324,7 @@ private struct SettingsSearchField: View {
         .background(RoundedRectangle(cornerRadius: 8, style: .continuous).fill(Color.primary.opacity(0.07)))
         .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).strokeBorder(focused ? Color.accentColor.opacity(0.6) : .clear, lineWidth: 1.5))
         .background {
-            Button("") { focused = true }
+            Button(String()) { focused = true }
                 .keyboardShortcut("f", modifiers: .command)
                 .hidden()
         }

@@ -32,6 +32,8 @@ targets:
     dependencies:
       - package: IsletKit
         product: IsletShell
+      - package: IsletKit
+        product: IsletPrompter
       - package: Sparkle
       # The `islet` command, in Contents/Helpers: next to the app's executable it would collide with "Islet",
       # since the disk ignores case.
@@ -49,12 +51,13 @@ targets:
         codeSign: true
         copy:
           destination: frameworks
-    # The hardened runtime blocks the camera and calendars unless the app declares them: the mirror, the agenda and
-    # reminders.
+    # The hardened runtime blocks the camera, the microphone and calendars unless the app declares them: the mirror,
+    # the prompter's voice modes, the agenda and reminders.
     entitlements:
       path: App/Islet.entitlements
       properties:
         com.apple.security.device.camera: true
+        com.apple.security.device.audio-input: true
         com.apple.security.personal-information.calendars: true
     info:
       path: App/Info.plist
@@ -79,9 +82,27 @@ targets:
         NSCameraUsageDescription: Islet uses the camera only when you open its mirror.
         NSBluetoothAlwaysUsageDescription: Islet reads the battery of your AirPods and other headphones.
         NSRemindersFullAccessUsageDescription: Islet shows the reminders due today beside your agenda.
+        NSMicrophoneUsageDescription: The prompter listens to your voice to roll the script as you speak. The sound never leaves your Mac and is never recorded.
+        NSSpeechRecognitionUsageDescription: In Voice Follow, the prompter recognizes your words on your Mac to keep your place in the script.
+        NSLocalNetworkUsageDescription: The prompter's remote lets your phone, on the same network, play, pause and move the script.
         CFBundleURLTypes:
           - CFBundleURLName: ch.rubencatalao.islet
             CFBundleURLSchemes: [islet]
+          # The links of Souffleur, the prompter's former app, so shortcuts made for it keep working.
+          - CFBundleURLName: ch.rubencatalao.islet.souffleur
+            CFBundleURLSchemes: [souffleur]
+        # Documents the prompter can read a script from: opened with Islet, they join its library.
+        CFBundleDocumentTypes:
+          - CFBundleTypeName: Script
+            CFBundleTypeRole: Viewer
+            LSHandlerRank: Alternate
+            LSItemContentTypes:
+              - public.plain-text
+              - net.daringfireball.markdown
+              - public.rtf
+              - org.openxmlformats.wordprocessingml.document
+              - org.openxmlformats.presentationml.presentation
+              - com.adobe.pdf
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: ch.rubencatalao.islet
