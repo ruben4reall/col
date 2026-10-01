@@ -22,7 +22,7 @@ struct ShelfPage: View {
                 .overlay {
                     if shelf.isTargeted {
                         RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous)
-                            .strokeBorder(Theme.coral.color, style: StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
+                            .strokeBorder(Theme.accent, style: StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
                     }
                 }
                 VStack(spacing: 8) {
@@ -48,7 +48,7 @@ private struct DropHint: View {
         VStack(spacing: 7) {
             Image(systemName: "tray.and.arrow.down.fill")
                 .font(.system(size: 22, weight: .medium))
-                .foregroundStyle(isTargeted ? Theme.coral.color : Theme.secondaryText)
+                .foregroundStyle(isTargeted ? Theme.accent : Theme.secondaryText)
                 .symbolEffect(.bounce, value: isTargeted)
             Text("Drop files on the notch", bundle: .module)
                 .font(.system(size: 13, weight: .semibold))
@@ -60,7 +60,7 @@ private struct DropHint: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(
             RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous)
-                .strokeBorder(isTargeted ? Theme.coral.color : Color.white.opacity(0.14), style: StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
+                .strokeBorder(isTargeted ? Theme.accent : Color.white.opacity(0.14), style: StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
         )
         .animation(.easeOut(duration: 0.2), value: isTargeted)
     }

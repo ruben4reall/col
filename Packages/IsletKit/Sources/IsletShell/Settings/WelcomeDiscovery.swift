@@ -211,7 +211,7 @@ private struct FeatureRow: View {
                 .labelsHidden()
                 .toggleStyle(.switch)
                 .controlSize(.small)
-                .tint(Theme.coral.color)
+                .tint(Theme.accent)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
@@ -355,7 +355,7 @@ private struct Ask: View {
                 .foregroundStyle(.white)
                 .padding(.horizontal, 10)
                 .frame(height: 22)
-                .background(Capsule().fill(Theme.coral.color.opacity(0.85)))
+                .background(Capsule().fill(Theme.accent.opacity(0.85)))
         }
         .buttonStyle(.plain)
         .padding(.top, 4)

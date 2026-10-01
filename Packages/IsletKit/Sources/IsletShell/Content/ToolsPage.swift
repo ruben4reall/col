@@ -32,7 +32,7 @@ private struct AwakeCard: View {
             VStack(spacing: 8) {
                 Image(systemName: awake.isOn ? "cup.and.saucer.fill" : "cup.and.saucer")
                     .font(.system(size: 20, weight: .medium))
-                    .foregroundStyle(awake.isOn ? Theme.coral.color : Theme.secondaryText)
+                    .foregroundStyle(awake.isOn ? Theme.accent : Theme.secondaryText)
                     .contentTransition(.symbolEffect(.replace))
                     .symbolEffect(.bounce, value: awake.isOn)
                 Text(awake.isOn ? "Awake" : "Keep awake", bundle: .module)
@@ -43,8 +43,8 @@ private struct AwakeCard: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(
                 RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous)
-                    .fill(awake.isOn ? Theme.coral.color.opacity(0.14) : Theme.fill)
-                    .strokeBorder(awake.isOn ? Theme.coral.color.opacity(0.4) : .clear, lineWidth: 1)
+                    .fill(awake.isOn ? Theme.accent.opacity(0.14) : Theme.fill)
+                    .strokeBorder(awake.isOn ? Theme.accent.opacity(0.4) : .clear, lineWidth: 1)
             )
             .contentShape(Rectangle())
         }
@@ -156,7 +156,7 @@ private struct ColorCard: View {
                 if let color = picker.colors.first {
                     Text(ColorPickerModel.hex(of: color))
                         .font(.system(size: 11, weight: .semibold, design: .monospaced))
-                        .foregroundStyle(picker.copied == color ? Theme.coral.color : .white.opacity(0.85))
+                        .foregroundStyle(picker.copied == color ? Theme.accent : .white.opacity(0.85))
                 } else {
                     Text("Pick a colour", bundle: .module)
                         .font(.system(size: 11, weight: .medium))

@@ -55,7 +55,7 @@ private struct ClipRow: View {
                 } else if entry.pinned {
                     Image(systemName: "pin.fill")
                         .font(.system(size: 9.5, weight: .bold))
-                        .foregroundStyle(Theme.coral.color)
+                        .foregroundStyle(Theme.accent)
                         .rotationEffect(.degrees(45))
                 }
                 Text(preview)
@@ -66,7 +66,7 @@ private struct ClipRow: View {
                 if copied {
                     Image(systemName: "checkmark")
                         .font(.system(size: 11, weight: .bold))
-                        .foregroundStyle(Theme.coral.color)
+                        .foregroundStyle(Theme.accent)
                         .transition(.scale.combined(with: .opacity))
                 } else if hovering {
                     HStack(spacing: 10) {

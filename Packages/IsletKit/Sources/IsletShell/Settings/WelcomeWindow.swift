@@ -290,7 +290,8 @@ final class WelcomeModel {
             case .music, .lyrics: Color(red: 0.98, green: 0.26, blue: 0.4)
             case .headphones, .shelf: .blue
             case .ai: Color(red: 0.45, green: 0.5, blue: 1)
-            case .agents, .prompter: Theme.coral.color
+            case .agents: .purple
+            case .prompter: .orange
             case .agenda: .red
             case .hud: .gray
             case .battery: .green
@@ -411,7 +412,7 @@ struct WelcomeView: View {
         }
         .frame(width: 640, height: 560)
         .preferredColorScheme(.dark)
-        .tint(Theme.coral.color)
+        .tint(Theme.accent)
     }
 }
 
@@ -434,7 +435,7 @@ private struct Footer: View {
             HStack(spacing: 7) {
                 ForEach(WelcomeModel.Step.allCases, id: \.rawValue) { step in
                     Capsule()
-                        .fill(step == model.step ? Theme.coral.color : Color.white.opacity(0.2))
+                        .fill(step == model.step ? Theme.accent : Color.white.opacity(0.2))
                         .frame(width: step == model.step ? 20 : 7, height: 7)
                 }
             }
@@ -455,7 +456,7 @@ private struct Footer: View {
             } label: {
                 Text(model.step == .ready ? "Start using Islet" : "Continue", bundle: .module)
             }
-            .buttonStyle(CoralButton())
+            .buttonStyle(AccentButton())
             .keyboardShortcut(.defaultAction)
         }
         .padding(.horizontal, 32)
@@ -463,7 +464,7 @@ private struct Footer: View {
     }
 }
 
-struct CoralButton: ButtonStyle {
+struct AccentButton: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.system(size: 13.5, weight: .semibold))
@@ -471,8 +472,8 @@ struct CoralButton: ButtonStyle {
             .padding(.horizontal, 20)
             .frame(height: 34)
             .background(
-                Capsule().fill(LinearGradient(colors: [Color(red: 1, green: 0.55, blue: 0.42), Color(red: 0.89, green: 0.28, blue: 0.18)], startPoint: .top, endPoint: .bottom))
-                    .shadow(color: Color(red: 1, green: 0.42, blue: 0.27).opacity(0.5), radius: 12, y: 4)
+                Capsule().fill(Theme.accent.gradient)
+                    .shadow(color: Theme.accent.opacity(0.35), radius: 10, y: 3)
             )
             .scaleEffect(configuration.isPressed ? 0.96 : 1)
             .animation(.spring(duration: 0.25, bounce: 0.4), value: configuration.isPressed)
@@ -490,14 +491,16 @@ struct QuietButton: ButtonStyle {
     }
 }
 
-/// A slow coral glow drifting behind the steps, animated by Core Animation so the window costs nothing while idle.
+/// A slow glow in the Mac's accent drifting behind the steps, animated by Core Animation so the window costs nothing
+/// while idle.
 private struct GlowBackground: NSViewRepresentable {
     func makeNSView(context: Context) -> NSView {
         let view = NSView()
         view.wantsLayer = true
         let glow = CAGradientLayer()
         glow.type = .radial
-        glow.colors = [NSColor(srgbRed: 1, green: 0.42, blue: 0.27, alpha: 0.32).cgColor, NSColor(srgbRed: 1, green: 0.42, blue: 0.27, alpha: 0).cgColor]
+        let accent = NSColor(Theme.accent).usingColorSpace(.sRGB) ?? .systemBlue
+        glow.colors = [accent.withAlphaComponent(0.28).cgColor, accent.withAlphaComponent(0).cgColor]
         glow.startPoint = CGPoint(x: 0.5, y: 0.5)
         glow.endPoint = CGPoint(x: 1, y: 1)
         glow.frame = CGRect(x: -80, y: 260, width: 800, height: 520)
@@ -592,10 +595,10 @@ private struct ReadyStep: View {
     var body: some View {
         VStack(spacing: 24) {
             ZStack {
-                Circle().fill(Theme.coral.color.opacity(0.15)).frame(width: 110, height: 110).scaleEffect(shown ? 1 : 0.4)
+                Circle().fill(Theme.accent.opacity(0.15)).frame(width: 110, height: 110).scaleEffect(shown ? 1 : 0.4)
                 Image(systemName: "checkmark")
                     .font(.system(size: 44, weight: .bold))
-                    .foregroundStyle(Theme.coral.color)
+                    .foregroundStyle(Theme.accent)
                     .symbolEffect(.bounce, value: shown)
             }
             StepHeader(title: "You’re all set", subtitle: "Look up: the island lives in your notch. Right-click it anytime for settings.")
@@ -662,8 +665,7 @@ struct GreetingView: View {
             ZStack {
                 Text(verbatim: ready ? "" : words[index])
                     .font(.system(size: 52, weight: .bold, design: .rounded))
-                    .foregroundStyle(LinearGradient(colors: [Color(red: 1, green: 0.85, blue: 0.76), Color(red: 1, green: 0.48, blue: 0.35)],
-                                                    startPoint: .top, endPoint: .bottom))
+                    .foregroundStyle(LinearGradient(colors: [.white, Color(white: 0.78)], startPoint: .top, endPoint: .bottom))
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
                     .id(index)
@@ -672,8 +674,7 @@ struct GreetingView: View {
                 if ready {
                     Text("Let’s go", bundle: .module)
                         .font(.system(size: 52, weight: .bold, design: .rounded))
-                        .foregroundStyle(LinearGradient(colors: [Color(red: 1, green: 0.85, blue: 0.76), Color(red: 1, green: 0.48, blue: 0.35)],
-                                                        startPoint: .top, endPoint: .bottom))
+                        .foregroundStyle(LinearGradient(colors: [.white, Color(white: 0.78)], startPoint: .top, endPoint: .bottom))
                         .transition(still ? AnyTransition.opacity : AnyTransition(.blurReplace))
                 }
             }

@@ -56,7 +56,7 @@ struct GeneralPane: View {
                     Text("Improve a Translation…", bundle: .module)
                 }
                 if languagePending {
-                    IconRow(symbol: "arrow.clockwise", tint: Theme.coral.color, title: Text("Islet speaks the new language after a restart.", bundle: .module)) {
+                    IconRow(symbol: "arrow.clockwise", tint: Theme.accent, title: Text("Islet speaks the new language after a restart.", bundle: .module)) {
                         Button { AppLanguage.relaunch() } label: { Text("Restart Islet", bundle: .module) }
                     }
                 }
@@ -76,7 +76,7 @@ struct GeneralPane: View {
             if let checker = Updates.checker {
                 Section {
                     if let pending = checker.pendingUpdateVersion {
-                        IconRow(symbol: "arrow.down.circle.fill", tint: Theme.coral.color, title: Text("Islet \(pending) is available", bundle: .module)) {
+                        IconRow(symbol: "arrow.down.circle.fill", tint: Theme.accent, title: Text("Islet \(pending) is available", bundle: .module)) {
                             Button { checker.checkForUpdates() } label: { Text("Install…", bundle: .module) }
                         }
                     }

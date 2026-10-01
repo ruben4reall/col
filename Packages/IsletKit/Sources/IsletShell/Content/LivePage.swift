@@ -52,7 +52,7 @@ private struct EmptyLive: View {
         VStack(spacing: 6) {
             Image(systemName: "dot.radiowaves.left.and.right")
                 .font(.system(size: 22, weight: .medium))
-                .foregroundStyle(Theme.coral.color)
+                .foregroundStyle(Theme.accent)
             Text("Nothing running", bundle: .module)
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundStyle(.white)

@@ -103,7 +103,7 @@ struct PrompterWidget: View {
     }
 }
 
-/// The prompter's mark: lines of text under a camera, on Islet's coral.
+/// The prompter's mark: lines of text under a camera, on the Mac's accent.
 private struct ScriptGlyph: View {
     let size: CGFloat
 
@@ -114,9 +114,9 @@ private struct ScriptGlyph: View {
             .frame(width: size, height: size)
             .background(
                 RoundedRectangle(cornerRadius: size * 0.27, style: .continuous)
-                    .fill(LinearGradient(colors: [Color(red: 1, green: 0.55, blue: 0.42), Color(red: 0.89, green: 0.28, blue: 0.18)], startPoint: .top, endPoint: .bottom))
+                    .fill(Theme.accent.gradient)
             )
-            .shadow(color: Theme.coral.color.opacity(0.35), radius: size * 0.2, y: size * 0.06)
+            .shadow(color: Theme.accent.opacity(0.35), radius: size * 0.2, y: size * 0.06)
     }
 }
 
@@ -136,11 +136,11 @@ private struct PromptButton: View {
                 .frame(width: size, height: size)
                 .background(
                     Circle()
-                        .fill(LinearGradient(colors: [Color(red: 1, green: 0.55, blue: 0.42), Color(red: 0.89, green: 0.28, blue: 0.18)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                        .fill(Theme.accent.gradient)
                         .brightness(hovering ? 0.06 : 0)
                 )
                 .overlay(Circle().strokeBorder(.white.opacity(0.22), lineWidth: 1))
-                .shadow(color: Theme.coral.color.opacity(0.45), radius: 12, y: 4)
+                .shadow(color: Theme.accent.opacity(0.45), radius: 12, y: 4)
         }
         .buttonStyle(PressableStyle())
         .opacity(isEnabled ? 1 : 0.4)
@@ -269,7 +269,7 @@ private struct TakeView: View {
                     .foregroundStyle(Theme.secondaryText)
             }
             ProgressView(value: min(max(state.progress, 0), 1))
-                .tint(Theme.coral.color)
+                .tint(Theme.accent)
             HStack(spacing: compact ? 6 : 10) {
                 ControlButton(symbol: state.isRolling ? "pause.fill" : "play.fill", size: 16) { center.prompter.toggle() }
                 ControlButton(symbol: "backward.end.fill", size: 14) { center.prompter.restart() }

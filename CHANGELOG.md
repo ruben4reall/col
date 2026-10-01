@@ -43,6 +43,9 @@ Each release's section is what Islet's update window and the GitHub release show
 - **Permissions**: one pane says what each permission is for and which feature needs it.
 - **Shortcuts and gestures**: every way to open and drive the island, in one place.
 - **Language**: Islet follows the language of your Mac, or the one you pick in Settings, General.
+- **Your Mac's accent colour**: buttons, switches, selections and what is on take the accent colour chosen in System
+  Settings, Appearance, as in Apple's apps, instead of Islet's coral. Settings panes keep fixed colours, as in System
+  Settings. The prompter's stage light follows the accent too, unless you pick another.
 - **A welcome made for your Mac**: Islet looks at what the Mac has and starts from there: the song playing with its
   cover, the music apps, the headphones connected, the battery, the AI apps and coding agents with their logos (connect
   each agent in one click), your next event once you allow the calendars. Each feature starts on when the Mac has what

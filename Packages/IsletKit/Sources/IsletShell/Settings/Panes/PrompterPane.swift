@@ -27,7 +27,7 @@ struct PrompterPane: View {
     @AppStorage(PrompterPreferences.Key.countdown) private var countdown = true
     @AppStorage(PrompterPreferences.Key.showsTimer) private var showsTimer = true
     @AppStorage(PrompterPreferences.Key.hiddenFromCapture) private var hiddenFromCapture = true
-    @AppStorage(PrompterPreferences.Key.stageLight) private var light = StageLight.coral.rawValue
+    @AppStorage(PrompterPreferences.Key.stageLight) private var light = StageLight.accent.rawValue
     @AppStorage(PrompterPreferences.Key.hotKeys) private var hotKeys = true
     @AppStorage(PrompterPreferences.Key.clickerKeys) private var clickerKeys = true
     @AppStorage(PrompterPreferences.Key.remoteEnabled) private var remoteEnabled = false
@@ -36,7 +36,7 @@ struct PrompterPane: View {
     var body: some View {
         PaneScaffold(pane: .prompter) {
             Section {
-                IconRow(symbol: "doc.text.fill", tint: Theme.coral.color, title: Text("Scripts", bundle: .module),
+                IconRow(symbol: "doc.text.fill", tint: Theme.accent, title: Text("Scripts", bundle: .module),
                         detail: Text("\(center.store.documents.count) in your library. Drop a text, a Word document, a PDF or a presentation on it.", bundle: .module)) {
                     HStack(spacing: 8) {
                         Button { center.prompt(text: ScriptStore.welcomeScript, title: String(localized: "Prompter", bundle: .module)) } label: {
@@ -50,14 +50,14 @@ struct PrompterPane: View {
                 ForEach(ScrollMode.allCases) { option in
                     Button { mode = option.rawValue } label: {
                         HStack(spacing: 12) {
-                            IconTile(symbol: option.symbol, tint: mode == option.rawValue ? Theme.coral.color : .gray)
+                            IconTile(symbol: option.symbol, tint: mode == option.rawValue ? Theme.accent : .gray)
                             VStack(alignment: .leading, spacing: 1) {
                                 Text(verbatim: option.title).foregroundStyle(.primary)
                                 Text(verbatim: option.subtitle).font(.callout).foregroundStyle(.secondary)
                             }
                             Spacer()
                             if mode == option.rawValue {
-                                Image(systemName: "checkmark").foregroundStyle(Theme.coral.color).fontWeight(.bold)
+                                Image(systemName: "checkmark").foregroundStyle(Theme.accent).fontWeight(.bold)
                             }
                         }
                         .contentShape(Rectangle())
@@ -251,7 +251,7 @@ private struct RemoteCard: View {
                          ? String(localized: "No phone connected", bundle: .module)
                          : String(localized: "\(center.remote.connectedCount) connected", bundle: .module))
                         .font(.callout)
-                        .foregroundStyle(center.remote.connectedCount == 0 ? Color.secondary : Theme.coral.color)
+                        .foregroundStyle(center.remote.connectedCount == 0 ? Color.secondary : Theme.accent)
                     Button {
                         PrompterPreferences.renewRemoteToken()
                         center.remote.stop()
