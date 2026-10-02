@@ -245,6 +245,35 @@ func entry(for agent: Agent, _ event: (name: String, matcher: Bool, timeout: Int
     }
 }
 
+/// Keeps a copy of an agent's settings beside them, readable by its owner only, whatever the umask: the settings can
+/// hold keys and tokens, and the folder they sit in is often open to the Mac's other accounts. The copy is written
+/// whole under another name, then put in place, so it is never readable by others for a moment either.
+func backUp(_ data: Data, of url: URL) {
+    // Islet left its own copy beside the settings, readable by others: it is closed to them too.
+    let legacy = url.appendingPathExtension("islet-backup").path
+    var status = stat()
+    if lstat(legacy, &status) == 0, status.st_mode & S_IFMT == S_IFREG, status.st_mode & 0o077 != 0 {
+        chmod(legacy, status.st_mode & 0o700)
+    }
+    let backup = url.appendingPathExtension("col-backup").path
+    let partial = backup + ".\(getpid())"
+    unlink(partial)
+    let file = open(partial, O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW | O_CLOEXEC, 0o600)
+    guard file >= 0 else { return }
+    let written = data.withUnsafeBytes { buffer -> Bool in
+        var offset = 0
+        while offset < buffer.count {
+            let count = write(file, buffer.baseAddress! + offset, buffer.count - offset)
+            if count < 0, errno == EINTR { continue }
+            guard count > 0 else { return false }
+            offset += count
+        }
+        return true
+    }
+    close(file)
+    if !written || rename(partial, backup) != 0 { unlink(partial) }
+}
+
 /// Adds or removes Col's hooks in an agent's settings, keeping everything else and a backup of the file.
 func editSettings(_ agent: Agent, path: String?, install: Bool) throws -> String {
     let url = URL(fileURLWithPath: ((path ?? agent.settings) as NSString).expandingTildeInPath)
@@ -254,7 +283,7 @@ func editSettings(_ agent: Agent, path: String?, install: Bool) throws -> String
             throw ClientError.failed("\(url.path) is not valid JSON; left untouched")
         }
         settings = parsed
-        try? data.write(to: url.appendingPathExtension("col-backup"))
+        backUp(data, of: url)
     } else if !install {
         return "\(agent.name): nothing to remove."
     }
