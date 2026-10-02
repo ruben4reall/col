@@ -40,14 +40,31 @@ printf '%s\n' "$NOTES" > "$UPDATES/Col-$VERSION.md"
 } > dist/release-notes.md
 
 # 3. The appcast: the new item on top, every older item kept (generate_appcast keeps only three unless told otherwise).
+#    Written to a draft first: the appcast changes only once the new item is signed and no older item went missing.
 GENERATE_APPCAST=$(find .build/spm/artifacts -type f -name generate_appcast -perm -u+x 2>/dev/null | head -1)
 [ -n "$GENERATE_APPCAST" ] || fail "Sparkle's tools are missing from .build/spm: build with scripts/release.sh first"
 # The key: the file exported next to the repository (gitignored) when present, otherwise the login keychain.
 if [ -f .env.sparkle-private-key ]; then KEY=(--ed-key-file .env.sparkle-private-key); else KEY=(--account "$ACCOUNT"); fi
-"$GENERATE_APPCAST" "${KEY[@]}" --download-url-prefix "$PREFIX" --link "$SITE_URL" \
+DRAFT=.build/release-appcast.xml
+cp "$APPCAST" "$DRAFT"
+OUTPUT=$("$GENERATE_APPCAST" "${KEY[@]}" --download-url-prefix "$PREFIX" --link "$SITE_URL" \
   --full-release-notes-url "$REPO_URL/releases" --embed-release-notes --maximum-deltas 0 --maximum-versions 0 \
-  -o "$APPCAST" "$UPDATES"
-grep -q "sparkle:edSignature" "$APPCAST" || fail "$APPCAST has no EdDSA signature"
+  -o "$DRAFT" "$UPDATES" 2>&1) \
+  || { printf '%s\n' "$OUTPUT" >&2; fail "generate_appcast failed; $APPCAST is unchanged"; }
+printf '%s\n' "$OUTPUT"
+# A key that does not match the app's is only a warning to generate_appcast, which then leaves the new item unsigned,
+# and every copy of Col would refuse that update.
+if grep -qiE "warning|does not match" <<< "$OUTPUT"; then
+  fail "generate_appcast warned (above); $APPCAST is unchanged"
+fi
+# The new item's own enclosure carries the signature: the older items always do, whatever happened to it.
+ITEM=$(grep -F "url=\"${PREFIX}Col-$VERSION.dmg\"" "$DRAFT" || true)
+[ -n "$ITEM" ] || fail "the appcast has no item for Col-$VERSION.dmg; $APPCAST is unchanged"
+grep -Eq 'sparkle:edSignature="[^"]+"' <<< "$ITEM" \
+  || fail "the $VERSION item has no EdDSA signature; $APPCAST is unchanged"
+[ "$(grep -c '<item>' "$DRAFT")" -ge "$(grep -c '<item>' "$APPCAST")" ] \
+  || fail "older items went missing; $APPCAST is unchanged"
+mv "$DRAFT" "$APPCAST"
 
 # 4. The cask for the tap (ruben4reall/homebrew-tap). It took over from the islet cask: the tap's cask_renames.json
 #    maps "islet" to "col" and has no Casks/islet.rb any more, so `brew upgrade --cask --greedy col` moves Islet's
