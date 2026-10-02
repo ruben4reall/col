@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://getislet.vercel.app/sitemap.xml
+Sitemap: https://getcol.vercel.app/sitemap.xml
