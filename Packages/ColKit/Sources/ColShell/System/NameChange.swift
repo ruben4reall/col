@@ -13,11 +13,7 @@ public enum NameChange {
     /// (CFFIXED_USER_HOME); then nothing is remembered, so the real move still happens later.
     private static var forced: Bool { UserDefaults.standard.bool(forKey: "ColMigrate") }
 
-    private static var isDevelopmentBuild: Bool {
-        let path = Bundle.main.bundleURL.path
-        return path.contains("/.build/") || path.contains("/DerivedData/")
-            || !(ProcessInfo.processInfo.environment["COL_SOCKET"]?.isEmpty ?? true)
-    }
+    private static var isDevelopmentBuild: Bool { AppLocation.isDevelopmentBuild }
 
     /// Sparkle installs an update where the app was, under its old file name: Islet.app takes its new name, Col.app,
     /// and starts again from there. Returns true when it does, so launching stops here.
@@ -28,7 +24,7 @@ public enum NameChange {
         guard !FileManager.default.fileExists(atPath: renamed.path),
               (try? FileManager.default.moveItem(at: bundle, to: renamed)) != nil
         else { return false }
-        AppLanguage.relaunch(at: renamed)
+        AppLocation.relaunch(at: renamed)
         return true
     }
 

@@ -47,14 +47,7 @@ enum AppLanguage {
     }
 
     /// Quits and opens Col again, in the language now chosen.
-    static func relaunch(at bundle: URL = Bundle.main.bundleURL) {
-        let path = bundle.path
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/bin/sh")
-        // The new Col starts once this one is gone: two would mean two islands on one notch.
-        process.arguments = ["-c", "while /bin/kill -0 \"$1\" 2>/dev/null; do /bin/sleep 0.1; done; /usr/bin/open \"$0\"",
-                             path, String(ProcessInfo.processInfo.processIdentifier)]
-        try? process.run()
-        NSApp.terminate(nil)
+    static func relaunch() {
+        AppLocation.relaunch()
     }
 }

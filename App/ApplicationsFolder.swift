@@ -1,4 +1,5 @@
 import AppKit
+import ColShell
 
 /// Offers, once, to move Col into Applications when it was opened from somewhere else, such as the disk image or
 /// Downloads: login items and updates need it to stay in one place.
@@ -12,7 +13,7 @@ enum ApplicationsFolder {
         let path = bundle.path
         let applications = ["/Applications/", NSHomeDirectory() + "/Applications/"]
         // Development builds live in build folders: never offer to move those.
-        guard !applications.contains(where: path.hasPrefix), !path.contains("/.build/"), !path.contains("/DerivedData/"),
+        guard !applications.contains(where: path.hasPrefix), !AppLocation.isDevelopmentBuild,
               !UserDefaults.standard.bool(forKey: declinedKey)
         else { return false }
 
