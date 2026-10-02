@@ -21,6 +21,16 @@
         }
       }
     },
+    "%@ · %lld wpm · %lld%%": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · %lld mots/min · %lld %%"
+          }
+        }
+      }
+    },
     "%lld words a minute · %lld words · %@": {
       "localizations": {
         "en": {
@@ -131,6 +141,16 @@
         }
       }
     },
+    "Choose a script in Col.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisissez un script dans Col."
+          }
+        }
+      }
+    },
     "Clipboard": {
       "localizations": {
         "fr": {
@@ -147,6 +167,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fermer"
+          }
+        }
+      }
+    },
+    "Col Prompter Remote": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Télécommande du prompteur Col"
+          }
+        }
+      }
+    },
+    "Connecting to your Mac…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connexion à votre Mac…"
           }
         }
       }
@@ -187,6 +227,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Braise"
+          }
+        }
+      }
+    },
+    "Faster": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plus vite"
           }
         }
       }
@@ -471,6 +521,16 @@
         }
       }
     },
+    "Next line": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ligne suivante"
+          }
+        }
+      }
+    },
     "Night": {
       "localizations": {
         "fr": {
@@ -601,6 +661,16 @@
         }
       }
     },
+    "Play or pause": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lecture ou pause"
+          }
+        }
+      }
+    },
     "Play this script (⌘↩, or ⌃⌥⌘P from any app)": {
       "localizations": {
         "fr": {
@@ -621,12 +691,52 @@
         }
       }
     },
+    "Press play to start.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appuyez sur lecture pour commencer."
+          }
+        }
+      }
+    },
+    "Previous line": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ligne précédente"
+          }
+        }
+      }
+    },
     "Prompt": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Lancer"
+          }
+        }
+      }
+    },
+    "Reconnecting to your Mac…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reconnexion à votre Mac…"
+          }
+        }
+      }
+    },
+    "Restart": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recommencer"
           }
         }
       }
@@ -661,6 +771,16 @@
         }
       }
     },
+    "Scan the QR code in Col's settings again.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scannez à nouveau le code QR dans les réglages de Col."
+          }
+        }
+      }
+    },
     "Scrolling": {
       "localizations": {
         "fr": {
@@ -687,6 +807,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Règle la vitesse pour que le script dure exactement ce temps."
+          }
+        }
+      }
+    },
+    "Slide %lld": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diapositive %lld"
+          }
+        }
+      }
+    },
+    "Slower": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plus lent"
           }
         }
       }
