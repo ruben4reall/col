@@ -269,10 +269,12 @@ private final class WingSlot {
 
     private func drawText(_ string: String, size: CGSize, tint: RGBA, scale: CGFloat) {
         let text = part(0) { CATextLayer() }
-        text.string = NSAttributedString(string: string, attributes: [
-            .font: TextMetrics.font,
-            .foregroundColor: tint.nsColor,
-        ])
+        // A plain string with the font set on the layer: an attributed string wider than its frame draws nothing at
+        // all, where a plain one truncates. Long lines, a lyric or a title, need the truncation.
+        text.string = string
+        text.font = TextMetrics.font
+        text.fontSize = TextMetrics.font.pointSize
+        text.foregroundColor = tint.cgColor
         text.truncationMode = .end
         text.contentsScale = scale
         text.alignmentMode = .center

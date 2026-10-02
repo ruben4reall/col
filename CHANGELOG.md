@@ -63,6 +63,8 @@ Each release's section is what Col's update window and the GitHub release show. 
   simple fades.
 - **One island**: a second copy of Col, opened from Downloads or from a build folder, hands over to the one already
   running instead of drawing a second island and taking its connection to your agents.
+- **Long lines beside the camera**: a line too long for its wing, a song's title or the lyric being sung, showed
+  nothing at all. It now ends with an ellipsis.
 
 ## 1.2.0 (2026-09-28)
 
