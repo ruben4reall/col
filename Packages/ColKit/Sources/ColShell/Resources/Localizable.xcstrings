@@ -91,6 +91,16 @@
         }
       }
     },
+    "%@: Col does not speak %@ yet.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ : Col ne parle pas encore %@."
+          }
+        }
+      }
+    },
     "%@: plugging in and a low battery show in the notch.": {
       "localizations": {
         "fr": {

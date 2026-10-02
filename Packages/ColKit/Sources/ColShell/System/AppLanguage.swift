@@ -26,8 +26,34 @@ enum AppLanguage {
 
     /// The language the Mac would give Col, ignoring any choice made here.
     static var system: String {
-        let preferred = (UserDefaults(suiteName: UserDefaults.globalDomain)?.stringArray(forKey: key) ?? Locale.preferredLanguages)
-        return Bundle.preferredLocalizations(from: Bundle.main.localizations.filter { $0 != "Base" }, forPreferences: preferred).first ?? "en"
+        Bundle.preferredLocalizations(from: Bundle.main.localizations.filter { $0 != "Base" }, forPreferences: macLanguages).first ?? "en"
+    }
+
+    /// The Mac's first language, even one Col is not translated into ("de-CH").
+    static var mac: String {
+        macLanguages.first ?? current
+    }
+
+    /// The Mac's languages, from its global settings: Col's own choice, kept in its defaults, would come first in
+    /// `Locale.preferredLanguages`.
+    private static var macLanguages: [String] {
+        UserDefaults.standard.persistentDomain(forName: UserDefaults.globalDomain)?[key] as? [String] ?? Locale.preferredLanguages
+    }
+
+    /// Where the language Col speaks comes from: a choice made in Col, the Mac's own, or the closest one Col has when
+    /// it does not speak the Mac's yet.
+    enum Origin: Equatable {
+        case chosen, mac, untranslated(mac: String)
+    }
+
+    nonisolated static func origin(current: String, chosen: String?, mac: String) -> Origin {
+        if chosen != nil { return .chosen }
+        return languageCode(current) == languageCode(mac) ? .mac : .untranslated(mac: languageCode(mac))
+    }
+
+    /// The language alone, without its region or script: "de" for "de-CH", "zh" for "zh-Hans-CN".
+    nonisolated static func languageCode(_ identifier: String) -> String {
+        Locale(identifier: identifier).language.languageCode?.identifier ?? identifier
     }
 
     /// A language's name in itself: "English", "Français", "日本語".

@@ -124,10 +124,13 @@ private struct LanguageRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Language", bundle: .module).font(.system(size: 13.5, weight: .semibold))
                 Group {
-                    if AppLanguage.chosen == nil {
-                        Text("\(AppLanguage.name(for: current)), like your Mac.", bundle: .module)
-                    } else {
+                    switch AppLanguage.origin(current: current, chosen: AppLanguage.chosen, mac: AppLanguage.mac) {
+                    case .chosen:
                         Text("\(AppLanguage.name(for: current)), chosen in Col.", bundle: .module)
+                    case .mac:
+                        Text("\(AppLanguage.name(for: current)), like your Mac.", bundle: .module)
+                    case .untranslated(let mac):
+                        Text("\(AppLanguage.name(for: current)): Col does not speak \(AppLanguage.name(for: mac)) yet.", bundle: .module)
                     }
                 }
                 .font(.system(size: 12))
