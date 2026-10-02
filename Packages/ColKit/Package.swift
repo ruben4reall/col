@@ -19,5 +19,6 @@ let package = Package(
         .target(name: "ColShell", dependencies: ["ColCore", "ColPrompter"], resources: [.process("Resources")]),
         .testTarget(name: "ColCoreTests", dependencies: ["ColCore"]),
         .testTarget(name: "ColShellTests", dependencies: ["ColCore", "ColShell"]),
+        .testTarget(name: "ColPrompterTests", dependencies: ["ColCore", "ColPrompter"]),
     ]
 )
