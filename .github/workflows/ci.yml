@@ -7,13 +7,13 @@ jobs:
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v5
-      - name: Test IsletKit
-        run: swift test --package-path Packages/IsletKit
+      - name: Test ColKit
+        run: swift test --package-path Packages/ColKit
   app:
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v5
       - name: Install XcodeGen
         run: brew install xcodegen
-      - name: Build Islet.app (ad hoc signature)
+      - name: Build Col.app (ad hoc signature)
         run: scripts/build.sh Debug

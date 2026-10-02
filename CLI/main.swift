@@ -1,11 +1,11 @@
-// islet: pushes live activities to Islet, and connects coding agents to it.
+// colctl: pushes live activities to Col, and connects coding agents to it.
 //
-// Talks HTTP over Islet's Unix socket, so it only reaches the Islet of the user running it.
+// Talks HTTP over Col's Unix socket, so it only reaches the Col of the user running it.
 
 import Foundation
 
 let usage = """
-usage: islet <command> [options]
+usage: colctl <command> [options]
 
   push <id> [--title T] [--subtitle S] [--symbol SF_SYMBOL] [--tint COLOR]
             [--progress 0..1 | N%] [--text T] [--priority ambient|standard|alert] [--ttl SECONDS]
@@ -13,7 +13,7 @@ usage: islet <command> [options]
   done <id> [--text T]  mark an activity done: a check mark, then it leaves
   remove <id>           take an activity away
   list                  list the activities pushed by programs
-  status                check that Islet is running
+  status                check that Col is running
 
   hooks install [--agent AGENT] [--settings PATH]
                         connect a coding agent to the notch; AGENT is claude (default),
@@ -25,15 +25,15 @@ usage: islet <command> [options]
                         report any other agent or script (Aider, OpenCode...) to the notch
 
 Colours: white, green, orange, red, blue, purple, yellow, pink, teal, gray, or #RRGGBB.
-Example: islet push build --title Build --symbol hammer.fill --tint orange --progress 40%
+Example: colctl push build --title Build --symbol hammer.fill --tint orange --progress 40%
 """
 
 // MARK: Socket
 
 func socketPath() -> String {
-    if let path = ProcessInfo.processInfo.environment["ISLET_SOCKET"], !path.isEmpty { return path }
+    if let path = ProcessInfo.processInfo.environment["COL_SOCKET"], !path.isEmpty { return path }
     return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-        .appendingPathComponent("Islet/islet.sock").path
+        .appendingPathComponent("Col/col.sock").path
 }
 
 enum ClientError: Error {
@@ -61,7 +61,7 @@ func request(_ method: String, _ path: String, body: Data? = nil, timeout: Int =
     setsockopt(fd, SOL_SOCKET, SO_NOSIGPIPE, &noSigPipe, socklen_t(MemoryLayout<Int32>.size))
 
     let payload = body ?? Data()
-    var message = Data("\(method) \(path) HTTP/1.1\r\nHost: islet\r\nContent-Type: application/json\r\nContent-Length: \(payload.count)\r\nConnection: close\r\n\r\n".utf8)
+    var message = Data("\(method) \(path) HTTP/1.1\r\nHost: col\r\nContent-Type: application/json\r\nContent-Length: \(payload.count)\r\nConnection: close\r\n\r\n".utf8)
     message.append(payload)
     let sent = message.withUnsafeBytes { send(fd, $0.baseAddress, $0.count, 0) }
     guard sent == message.count else { throw ClientError.notRunning }
@@ -76,7 +76,7 @@ func request(_ method: String, _ path: String, body: Data? = nil, timeout: Int =
     guard let split = response.range(of: Data("\r\n\r\n".utf8)),
           let head = String(data: response[..<split.lowerBound], encoding: .utf8),
           let status = head.split(separator: " ").dropFirst().first.flatMap({ Int($0) })
-    else { throw ClientError.failed("no answer from Islet") }
+    else { throw ClientError.failed("no answer from Col") }
     return (status, Data(response[split.upperBound...]))
 }
 
@@ -85,7 +85,7 @@ func json(_ object: Any) -> Data {
 }
 
 func fail(_ message: String) -> Never {
-    FileHandle.standardError.write(Data("islet: \(message)\n".utf8))
+    FileHandle.standardError.write(Data("colctl: \(message)\n".utf8))
     exit(1)
 }
 
@@ -94,11 +94,11 @@ func run(_ method: String, _ path: String, body: Data? = nil) -> Data {
         let (status, data) = try request(method, path, body: body)
         guard status == 200 else {
             let reason = (try? JSONSerialization.jsonObject(with: data) as? [String: Any])?["error"] as? String
-            fail(reason ?? "Islet answered \(status)")
+            fail(reason ?? "Col answered \(status)")
         }
         return data
     } catch ClientError.notRunning {
-        fail("Islet is not running")
+        fail("Col is not running")
     } catch {
         fail("\(error)")
     }
@@ -125,7 +125,7 @@ func percentOrFraction(_ value: String) -> Double? {
 
 // MARK: Hooks
 
-/// The coding agents Islet connects to, where each keeps its hooks, and the events Islet follows.
+/// The coding agents Col connects to, where each keeps its hooks, and the events Col follows.
 struct Agent {
     enum Format { case claude, gemini, cursor, vscode }
 
@@ -155,7 +155,7 @@ struct Agent {
             ("sessionStart", false, 5), ("beforeSubmitPrompt", false, 5), ("postToolUse", false, 5),
             ("afterShellExecution", false, 5), ("afterFileEdit", false, 5), ("stop", false, 5), ("sessionEnd", false, 2),
         ]),
-        Agent(id: "copilot", name: "GitHub Copilot (VS Code)", settings: "~/.copilot/hooks/islet.json", format: .vscode, events: [
+        Agent(id: "copilot", name: "GitHub Copilot (VS Code)", settings: "~/.copilot/hooks/col.json", format: .vscode, events: [
             ("SessionStart", false, 5), ("UserPromptSubmit", false, 5), ("PreToolUse", false, 5),
             ("PostToolUse", false, 5), ("Stop", false, 5),
         ]),
@@ -163,10 +163,10 @@ struct Agent {
 
     static func named(_ id: String) -> Agent? { all.first { $0.id == id } }
 
-    var command: String { id == "claude" ? "\"$HOME/.local/bin/islet\" hook" : "\"$HOME/.local/bin/islet\" hook --agent \(id)" }
+    var command: String { id == "claude" ? "\"$HOME/.local/bin/colctl\" hook" : "\"$HOME/.local/bin/colctl\" hook --agent \(id)" }
 }
 
-/// Forwards one hook event. Never gets in the agent's way: when Islet is not running, or anything goes wrong, it
+/// Forwards one hook event. Never gets in the agent's way: when Col is not running, or anything goes wrong, it
 /// answers what "carry on as usual" means for that agent and exits 0.
 func hook(_ agent: Agent) -> Never {
     let input = FileHandle.standardInput.readDataToEndOfFile()
@@ -192,25 +192,41 @@ func hook(_ agent: Agent) -> Never {
     else { carryOn() }
     // Claude Code and Codex read the same answer.
     var verdict: [String: Any] = ["behavior": decision]
-    if decision == "deny" { verdict["message"] = "Denied from Islet." }
+    if decision == "deny" { verdict["message"] = "Denied from Col." }
     let output = ["hookSpecificOutput": ["hookEventName": "PermissionRequest", "decision": verdict]]
     FileHandle.standardOutput.write(json(output))
     exit(0)
 }
 
-func linkPath() -> String { NSHomeDirectory() + "/.local/bin/islet" }
+func linkPath() -> String { NSHomeDirectory() + "/.local/bin/colctl" }
 
-func callsIslet(_ command: Any?) -> Bool {
+/// The command's name before Islet became Col: hooks installed then call it, and its link now leads here too.
+func legacyLinkPath() -> String { NSHomeDirectory() + "/.local/bin/islet" }
+
+/// Whether a hook's command is this one, under its name or Islet's.
+func callsCol(_ command: Any?) -> Bool {
     guard let command = command as? String else { return false }
-    return command.contains("islet\" hook") || command.hasSuffix("islet hook") || command.contains("islet hook --agent")
+    return ["colctl", "islet"].contains { name in
+        command.contains("\(name)\" hook") || command.hasSuffix("\(name) hook") || command.contains("\(name) hook --agent")
+    }
 }
 
-/// True for an entry Islet wrote: a matcher group holding Islet's command, or Cursor's plain command entry.
-func isIsletHook(_ entry: Any) -> Bool {
+/// The file Islet wrote Copilot's hooks to. VS Code reads every file of the folder, so it goes aside once Col writes
+/// its own, else each event would come twice.
+func setAsideLegacyCopilotHooks() {
+    let legacy = ("~/.copilot/hooks/islet.json" as NSString).expandingTildeInPath
+    guard let text = try? String(contentsOfFile: legacy, encoding: .utf8), text.contains(".local/bin/islet") else { return }
+    let aside = legacy + ".col-backup"
+    try? FileManager.default.removeItem(atPath: aside)
+    try? FileManager.default.moveItem(atPath: legacy, toPath: aside)
+}
+
+/// True for an entry Col wrote: a matcher group holding Col's command, or Cursor's plain command entry.
+func isColHook(_ entry: Any) -> Bool {
     guard let entry = entry as? [String: Any] else { return false }
-    if callsIslet(entry["command"]) { return true }
+    if callsCol(entry["command"]) { return true }
     guard let hooks = entry["hooks"] as? [[String: Any]] else { return false }
-    return hooks.contains { callsIslet($0["command"]) }
+    return hooks.contains { callsCol($0["command"]) }
 }
 
 func entry(for agent: Agent, _ event: (name: String, matcher: Bool, timeout: Int)) -> [String: Any] {
@@ -221,7 +237,7 @@ func entry(for agent: Agent, _ event: (name: String, matcher: Bool, timeout: Int
         return group
     case .gemini:
         // Gemini CLI counts timeouts in milliseconds and expects a matcher on every group.
-        return ["matcher": "*", "hooks": [["name": "islet", "type": "command", "command": agent.command, "timeout": event.timeout * 1000]]]
+        return ["matcher": "*", "hooks": [["name": "col", "type": "command", "command": agent.command, "timeout": event.timeout * 1000]]]
     case .cursor:
         return ["command": agent.command]
     case .vscode:
@@ -229,7 +245,7 @@ func entry(for agent: Agent, _ event: (name: String, matcher: Bool, timeout: Int
     }
 }
 
-/// Adds or removes Islet's hooks in an agent's settings, keeping everything else and a backup of the file.
+/// Adds or removes Col's hooks in an agent's settings, keeping everything else and a backup of the file.
 func editSettings(_ agent: Agent, path: String?, install: Bool) throws -> String {
     let url = URL(fileURLWithPath: ((path ?? agent.settings) as NSString).expandingTildeInPath)
     var settings: [String: Any] = [:]
@@ -238,22 +254,28 @@ func editSettings(_ agent: Agent, path: String?, install: Bool) throws -> String
             throw ClientError.failed("\(url.path) is not valid JSON; left untouched")
         }
         settings = parsed
-        try? data.write(to: url.appendingPathExtension("islet-backup"))
+        try? data.write(to: url.appendingPathExtension("col-backup"))
     } else if !install {
         return "\(agent.name): nothing to remove."
     }
     var hooks = settings["hooks"] as? [String: Any] ?? [:]
     for event in agent.events {
-        var groups = (hooks[event.name] as? [Any] ?? []).filter { !isIsletHook($0) }
+        var groups = (hooks[event.name] as? [Any] ?? []).filter { !isColHook($0) }
         if install { groups.append(entry(for: agent, event)) }
         hooks[event.name] = groups.isEmpty ? nil : groups
     }
     settings["hooks"] = hooks.isEmpty ? nil : hooks
     if agent.format == .cursor, install { settings["version"] = settings["version"] ?? 1 }
 
+    if agent.id == "copilot" { setAsideLegacyCopilotHooks() }
     if install {
         // The hooks call the command through ~/.local/bin, so moving the app never breaks them.
         let tool = URL(fileURLWithPath: CommandLine.arguments[0]).resolvingSymlinksInPath()
+        // Islet's link, which older hooks call, leads to this command too.
+        if (try? FileManager.default.destinationOfSymbolicLink(atPath: legacyLinkPath())) != nil {
+            try? FileManager.default.removeItem(atPath: legacyLinkPath())
+            try? FileManager.default.createSymbolicLink(atPath: legacyLinkPath(), withDestinationPath: tool.path)
+        }
         let link = linkPath()
         if let destination = try? FileManager.default.destinationOfSymbolicLink(atPath: link) {
             let parent = URL(fileURLWithPath: link).deletingLastPathComponent()
@@ -274,17 +296,21 @@ func editSettings(_ agent: Agent, path: String?, install: Bool) throws -> String
     } catch {
         throw ClientError.failed("could not write \(url.path): \(error.localizedDescription)")
     }
-    guard install else { return "\(agent.name): Islet's hooks removed from \(url.path)." }
-    var message = "\(agent.name): hooks installed in \(url.path). New sessions report to Islet."
-    if agent.id == "codex" { message += " Codex asks you to review new hooks once: run /hooks in Codex and trust Islet's." }
+    guard install else { return "\(agent.name): Col's hooks removed from \(url.path)." }
+    var message = "\(agent.name): hooks installed in \(url.path). New sessions report to Col."
+    if agent.id == "codex" { message += " Codex asks you to review new hooks once: run /hooks in Codex and trust Col's." }
     return message
 }
 
-/// Whether an agent's settings call Islet.
+/// Whether an agent's settings call Col.
 func isConnected(_ agent: Agent) -> Bool {
     let url = URL(fileURLWithPath: (agent.settings as NSString).expandingTildeInPath)
-    guard let text = try? String(contentsOf: url, encoding: .utf8) else { return false }
-    return text.contains("islet\\\" hook") || text.contains("islet\" hook") || text.contains("islet hook")
+    var paths = [url.path]
+    if agent.id == "copilot" { paths.append(("~/.copilot/hooks/islet.json" as NSString).expandingTildeInPath) }
+    return paths.contains { path in
+        guard let text = try? String(contentsOfFile: path, encoding: .utf8) else { return false }
+        return ["colctl", "islet"].contains { text.contains("\($0)\\\" hook") || text.contains("\($0)\" hook") || text.contains("\($0) hook") }
+    }
 }
 
 // MARK: Commands
@@ -335,7 +361,7 @@ case "list":
 case "status":
     let data = run("GET", "/v1/status")
     let info = (try? JSONSerialization.jsonObject(with: data) as? [String: Any]) ?? [:]
-    print("Islet \(info["version"] ?? "") is running: \(info["activities"] ?? 0) activities, \(info["agents"] ?? 0) agent sessions.")
+    print("Col \(info["version"] ?? "") is running: \(info["activities"] ?? 0) activities, \(info["agents"] ?? 0) agent sessions.")
 
 case "agent":
     let rest = Array(arguments.dropFirst())
@@ -351,7 +377,7 @@ case "agent":
     }
     var event: [String: Any] = ["hook_event_name": state, "agent_name": rest[0], "session_id": values["session"] ?? rest[0].lowercased()]
     if let message = values["message"] { event["message"] = message }
-    // Agents call this from their own hooks: never fail loudly when Islet is closed.
+    // Agents call this from their own hooks: never fail loudly when Col is closed.
     _ = try? request("POST", "/v1/agents/events", body: json(event), timeout: 3)
 
 case "hook":
@@ -377,7 +403,7 @@ case "hooks":
             do {
                 print(try editSettings(agent, path: agents.count == 1 ? values["settings"] : nil, install: action == "install"))
             } catch ClientError.failed(let reason) {
-                FileHandle.standardError.write(Data("islet: \(reason)\n".utf8))
+                FileHandle.standardError.write(Data("colctl: \(reason)\n".utf8))
                 failed = true
             }
         }
@@ -394,7 +420,7 @@ case "help", "--help", "-h":
     print(usage)
 
 default:
-    fail("unknown command \(command). Run `islet help`.")
+    fail("unknown command \(command). Run `colctl help`.")
 }
 
 func isInstalled(_ agent: Agent) -> Bool {

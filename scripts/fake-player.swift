@@ -1,4 +1,4 @@
-// scripts/fake-player.swift: publishes a silent track as "now playing", to work on Islet's media features without
+// scripts/fake-player.swift: publishes a silent track as "now playing", to work on Col's media features without
 // playing sound. Usage: swift scripts/fake-player.swift [title] [artist] [seconds] [artwork image]
 import AppKit
 import AVFoundation
@@ -6,7 +6,7 @@ import MediaPlayer
 
 let arguments = CommandLine.arguments
 let title = arguments.count > 1 ? arguments[1] : "Midnight City"
-let artist = arguments.count > 2 ? arguments[2] : "Islet Test Band"
+let artist = arguments.count > 2 ? arguments[2] : "Col Test Band"
 let length = arguments.count > 3 ? Double(arguments[3]) ?? 60 : 60
 
 // Silent audio keeps the process an active player.
@@ -32,7 +32,7 @@ func publish() {
     center.nowPlayingInfo = [
         MPMediaItemPropertyTitle: title,
         MPMediaItemPropertyArtist: artist,
-        MPMediaItemPropertyAlbumTitle: ProcessInfo.processInfo.environment["ALBUM"] ?? "Islet Sessions",
+        MPMediaItemPropertyAlbumTitle: ProcessInfo.processInfo.environment["ALBUM"] ?? "Col Sessions",
         MPMediaItemPropertyPlaybackDuration: length,
         MPNowPlayingInfoPropertyElapsedPlaybackTime: elapsed,
         MPNowPlayingInfoPropertyPlaybackRate: playing ? 1.0 : 0.0,

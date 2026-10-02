@@ -1,0 +1,92 @@
+import Foundation
+import ColCore
+import Testing
+@testable import ColShell
+
+@Suite struct AgentCenterTests {
+    @MainActor
+    @Test func copilotRevealsVSCodeBeforeTerminal() {
+        let center = AgentCenter()
+        center.receive(HookEvent(sessionID: "copilot-session", event: "SessionStart", agent: .copilot)) { _ in }
+
+        let session = center.sessions[0]
+        let candidates = AgentCenter.revealCandidates(for: session)
+        #expect(candidates.prefix(2) == ["com.microsoft.VSCode", "com.microsoft.VSCodeInsiders"])
+        #expect(candidates.firstIndex(of: "com.apple.Terminal")! > 1)
+    }
+
+    @MainActor
+    @Test func concurrentPermissionsStayIndependentAndEndClosesSession() {
+        let center = AgentCenter()
+        let responses = DecisionRecorder()
+        let first = permission("Bash", command: "colctl hooks status")
+        let second = permission("Bash", command: "swift test")
+
+        center.receive(first) { responses.record(first.toolSummary!, decision: $0) }
+        center.receive(second) { responses.record(second.toolSummary!, decision: $0) }
+
+        #expect(center.pending.count == 2)
+        let requests = center.pending.values.sorted { $0.summary < $1.summary }
+        let approved = requests[0]
+        let leftWaiting = requests[1]
+        center.decide(approved.id, .allow)
+
+        #expect(responses.value(for: approved.summary) == .allow)
+        #expect(center.pending.count == 1)
+        #expect(center.pending[leftWaiting.id] != nil)
+
+        center.receive(HookEvent(sessionID: "same-session", event: "SessionEnd", agent: .claude)) {
+            responses.record("session-end", decision: $0)
+        }
+
+        #expect(responses.value(for: leftWaiting.summary) == .ask)
+        #expect(responses.value(for: "session-end") == .ask)
+        #expect(center.pending.isEmpty)
+        #expect(center.sessions.isEmpty)
+    }
+
+    @MainActor
+    @Test func aToolThatRanClearsOnlyItsOwnRequest() {
+        let center = AgentCenter()
+        let responses = DecisionRecorder()
+        let push = permission("Bash", command: "git push")
+        let test = permission("Bash", command: "swift test")
+        center.receive(push) { responses.record("push", decision: $0) }
+        center.receive(test) { responses.record("test", decision: $0) }
+        #expect(center.pending.count == 2)
+
+        // Answered in the terminal: the command runs, and its card leaves the island.
+        var ran = push
+        ran.event = "PostToolUse"
+        center.receive(ran) { _ in }
+
+        #expect(responses.value(for: "push") == .ask)
+        #expect(responses.value(for: "test") == nil)
+        #expect(center.pending.count == 1)
+        #expect(center.pending.values.first?.summary == test.toolSummary)
+    }
+
+    private func permission(_ toolName: String, command: String) -> HookEvent {
+        HookEvent(
+            sessionID: "same-session", event: "PermissionRequest", cwd: "/tmp/col-test",
+            toolName: toolName, toolInput: ["command": .string(command)], agent: .claude
+        )
+    }
+}
+
+private final class DecisionRecorder: @unchecked Sendable {
+    private let lock = NSLock()
+    private var decisions: [String: AgentCenter.Decision] = [:]
+
+    func record(_ key: String, decision: AgentCenter.Decision) {
+        lock.lock()
+        defer { lock.unlock() }
+        decisions[key] = decision
+    }
+
+    func value(for key: String) -> AgentCenter.Decision? {
+        lock.lock()
+        defer { lock.unlock() }
+        return decisions[key]
+    }
+}

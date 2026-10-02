@@ -1,5 +1,5 @@
-// brand/scripts/glow-icon.swift: draws the Islet icon, a slab of black glass with an island-shaped window lit in
-// coral from within. Usage: swift glow-icon.swift <capsule|notch> <out.png> [size]
+// brand/scripts/glow-icon.swift: draws the Col icon, a slab of black glass with an island-shaped window lit in
+// Apple blue from within. Usage: swift glow-icon.swift <capsule|notch> <out.png> [size]
 import AppKit
 
 let args = CommandLine.arguments
@@ -55,15 +55,15 @@ if variant == "notch" {
     window = CGPath(roundedRect: r, cornerWidth: 130, cornerHeight: 130, transform: nil)
     lightTop = r.maxY; lightBottom = r.minY
 }
-// Coral light spilling onto the black glass below the window.
-ctx.drawRadialGradient(g([c(0xFF6A45, 0.42), c(0xFF6A45, 0)], [0, 1]), startCenter: CGPoint(x: 512, y: lightBottom - 10), startRadius: 0, endCenter: CGPoint(x: 512, y: lightBottom - 10), endRadius: 330, options: [])
+// Blue light spilling onto the black glass below the window.
+ctx.drawRadialGradient(g([c(0x2F8BFF, 0.42), c(0x2F8BFF, 0)], [0, 1]), startCenter: CGPoint(x: 512, y: lightBottom - 10), startRadius: 0, endCenter: CGPoint(x: 512, y: lightBottom - 10), endRadius: 330, options: [])
 
-// Inside the window: coral light rising from the bottom, deep red at the top.
+// Inside the window: blue light rising from the bottom, deep navy at the top.
 ctx.saveGState(); ctx.addPath(window); ctx.clip()
-ctx.drawLinearGradient(g([c(0x2A0704), c(0x9E2A17), c(0xF2583A), c(0xFF9C78), c(0xFFE6D6)], [0, 0.3, 0.62, 0.88, 1]),
+ctx.drawLinearGradient(g([c(0x020B24), c(0x0A3A9C), c(0x1677F2), c(0x6CB4FF), c(0xE4F2FF)], [0, 0.3, 0.62, 0.88, 1]),
                        start: CGPoint(x: 512, y: lightTop), end: CGPoint(x: 512, y: lightBottom), options: [])
 // A brighter core low in the window, where the light comes from.
-ctx.drawRadialGradient(g([c(0xFFF1E8, 0.55), c(0xFFF1E8, 0)], [0, 1]), startCenter: CGPoint(x: 512, y: lightBottom), startRadius: 0, endCenter: CGPoint(x: 512, y: lightBottom), endRadius: 260, options: [])
+ctx.drawRadialGradient(g([c(0xEEF6FF, 0.55), c(0xEEF6FF, 0)], [0, 1]), startCenter: CGPoint(x: 512, y: lightBottom), startRadius: 0, endCenter: CGPoint(x: 512, y: lightBottom), endRadius: 260, options: [])
 // Inner shadow: the window is recessed into the glass.
 ctx.setShadow(offset: CGSize(width: 0, height: -16), blur: 34, color: c(0x000000, 0.75))
 let frame = CGMutablePath(); frame.addRect(body.insetBy(dx: -200, dy: -200)); frame.addPath(window)
@@ -71,7 +71,7 @@ ctx.addPath(frame); ctx.setFillColor(c(0x000000)); ctx.fillPath(using: .evenOdd)
 ctx.restoreGState()
 // A thin lit rim along the lower edge of the window.
 ctx.saveGState(); ctx.addPath(window); ctx.setLineWidth(5); ctx.replacePathWithStrokedPath(); ctx.clip()
-ctx.drawLinearGradient(g([c(0xFFFFFF, 0), c(0xFFD9C6, 0.2), c(0xFFE8DC, 0.95)], [0, 0.6, 1]), start: CGPoint(x: 512, y: lightTop), end: CGPoint(x: 512, y: lightBottom), options: [])
+ctx.drawLinearGradient(g([c(0xFFFFFF, 0), c(0xCFE4FF, 0.2), c(0xE3F0FF, 0.95)], [0, 0.6, 1]), start: CGPoint(x: 512, y: lightTop), end: CGPoint(x: 512, y: lightBottom), options: [])
 ctx.restoreGState()
 
 // Edge of the slab: a fine highlight on the top rim, like polished glass.

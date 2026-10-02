@@ -1,4 +1,4 @@
-// swift scripts/compose-site.swift <desktop.png> <shots folder>: the website's figures, each a real capture of Islet
+// swift scripts/compose-site.swift <desktop.png> <shots folder>: the website's figures, each a real capture of Col
 // (from scripts/capture-site.sh) laid on the top of a real macOS desktop, both at 2x.
 // Output: <shots folder>/figures/<name>.png, converted to WebP by the caller for the README. The website lays the
 // captures on the desktop itself, with CSS.

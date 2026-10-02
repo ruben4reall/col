@@ -1,13 +1,13 @@
 #!/bin/bash
-# scripts/release.sh [--check]: builds Islet for distribution and packs it in a branded disk image (the light
-# installer background, Islet on the left, Applications on the right), then hands over to scripts/finish-release.sh.
+# scripts/release.sh [--check]: builds Col for distribution and packs it in a branded disk image (the light
+# installer background, Col on the left, Applications on the right), then hands over to scripts/finish-release.sh.
 #
 # Two ways to sign:
-# - Developer ID, notarized (what people download): set ISLET_TEAM_ID to your Apple team, be signed in to Xcode with
+# - Developer ID, notarized (what people download): set COL_TEAM_ID to your Apple team, be signed in to Xcode with
 #   the team's Account Holder (Xcode signs with a cloud-managed Developer ID certificate), and give notarytool an App
 #   Store Connect API key through NOTARY_KEY_ID, NOTARY_ISSUER_ID and NOTARY_KEY_PATH (the .p8 file). The app, then
 #   the disk image, are notarized and stapled. None of these values belongs in this repository.
-# - Ad hoc (anyone, no Apple account): leave ISLET_TEAM_ID unset. For local testing only: macOS asks to confirm the
+# - Ad hoc (anyone, no Apple account): leave COL_TEAM_ID unset. For local testing only: macOS asks to confirm the
 #   first opening, the hardened runtime is off (library validation cannot load Sparkle into ad hoc code), and nothing
 #   is prepared for publication.
 #
@@ -15,12 +15,12 @@
 # NOTARIZE_LATER=1 (Developer ID) submits the disk image without waiting; once Apple accepts it, run
 #                  scripts/finish-release.sh <version>.
 #
-# Output: dist/Islet-<version>.dmg and, with a team, dist/build-commit.txt (the commit it was built from).
+# Output: dist/Col-<version>.dmg and, with a team, dist/build-commit.txt (the commit it was built from).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 MODE="${1:-build}"
 VERSION=$(grep -m1 'MARKETING_VERSION:' project.yml | awk '{print $2}' | tr -d '"')
-TEAM="${ISLET_TEAM_ID:-}"
+TEAM="${COL_TEAM_ID:-${ISLET_TEAM_ID:-}}"
 APPCAST=site/appcast.xml
 WORK=.build/release-work
 SPM=.build/spm
@@ -44,9 +44,9 @@ case "$MODE" in
   --check)
     if [ -n "$TEAM" ]; then
       notary history >/dev/null 2>&1 || fail "Apple refused the App Store Connect key (notarytool history)"
-      echo "Checks passed: Islet $VERSION, Developer ID team $TEAM, notarization key accepted."
+      echo "Checks passed: Col $VERSION, Developer ID team $TEAM, notarization key accepted."
     else
-      echo "Checks passed: Islet $VERSION, ad hoc."
+      echo "Checks passed: Col $VERSION, ad hoc."
     fi
     exit 0 ;;
   build) ;;
@@ -79,7 +79,7 @@ check_signed() {   # check_signed <app>: all code inside is signed by the team, 
     echo "  signed: ${file#"$1"/}"
     count=$((count + 1))
   done < <(find "$1" -type f \( -perm -u+x -o -name '*.dylib' \) -print0)
-  [ "$count" -ge 4 ] || fail "expected Islet, its command, its media bridge and Sparkle's helpers, found $count"
+  [ "$count" -ge 4 ] || fail "expected Col, its command, its media bridge and Sparkle's helpers, found $count"
   codesign --verify --deep --strict "$1"
 }
 
@@ -88,10 +88,10 @@ xcodegen generate --quiet
 
 # 1. The app.
 if [ -n "$TEAM" ]; then
-  echo "Developer ID build of Islet $VERSION for team $TEAM"
+  echo "Developer ID build of Col $VERSION for team $TEAM"
   git rev-parse HEAD > dist/build-commit.txt
-  xcodebuild -project Islet.xcodeproj -scheme Islet -configuration Release -destination 'generic/platform=macOS' \
-    -archivePath "$WORK/Islet.xcarchive" -derivedDataPath "$WORK/dd" -clonedSourcePackagesDirPath "$SPM" \
+  xcodebuild -project Col.xcodeproj -scheme Col -configuration Release -destination 'generic/platform=macOS' \
+    -archivePath "$WORK/Col.xcarchive" -derivedDataPath "$WORK/dd" -clonedSourcePackagesDirPath "$SPM" \
     -allowProvisioningUpdates CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM="$TEAM" CODE_SIGN_IDENTITY="Apple Development" \
     archive > "$WORK/archive.log" 2>&1 || { grep -E "error:" "$WORK/archive.log" | head -20 >&2; tail -n 30 "$WORK/archive.log" >&2; exit 1; }
   cat > "$WORK/export.plist" <<PLIST
@@ -105,33 +105,33 @@ if [ -n "$TEAM" ]; then
 </dict></plist>
 PLIST
   # The Developer ID certificate is cloud-managed: the export signs with the account signed in to Xcode.
-  xcodebuild -exportArchive -archivePath "$WORK/Islet.xcarchive" -exportPath "$WORK/export" \
+  xcodebuild -exportArchive -archivePath "$WORK/Col.xcarchive" -exportPath "$WORK/export" \
     -exportOptionsPlist "$WORK/export.plist" -allowProvisioningUpdates > "$WORK/export.log" 2>&1 \
     || { tail -n 30 "$WORK/export.log" >&2; exit 1; }
-  APP="$WORK/export/Islet.app"
+  APP="$WORK/export/Col.app"
   check_signed "$APP"
   ENTITLEMENTS=$(codesign -d --entitlements - --xml "$APP" 2>/dev/null || true)
   [[ "$ENTITLEMENTS" == *"com.apple.security.device.camera"* ]] || fail "the app lost its entitlements (camera, calendars)"
   if [ -z "${NOTARIZE_LATER:-}" ]; then
-    ditto -c -k --keepParent "$APP" "$WORK/Islet.zip"
-    notarize "$WORK/Islet.zip"
+    ditto -c -k --keepParent "$APP" "$WORK/Col.zip"
+    notarize "$WORK/Col.zip"
     xcrun stapler staple "$APP" >/dev/null
     spctl -a -t exec "$APP" || fail "Gatekeeper still rejects the app"
   fi
 else
-  echo "No ISLET_TEAM_ID: ad hoc build of Islet $VERSION, for local testing only."
+  echo "No COL_TEAM_ID: ad hoc build of Col $VERSION, for local testing only."
   # Ad hoc code has no team, and library validation (part of the hardened runtime) only loads frameworks signed by the
   # app's own team: with it on, Sparkle would not load. Published builds keep it (Developer ID, above).
-  xcodebuild -project Islet.xcodeproj -scheme Islet -configuration Release -destination 'generic/platform=macOS' \
+  xcodebuild -project Col.xcodeproj -scheme Col -configuration Release -destination 'generic/platform=macOS' \
     -derivedDataPath "$WORK/dd" -clonedSourcePackagesDirPath "$SPM" ENABLE_HARDENED_RUNTIME=NO build \
     > "$WORK/build.log" 2>&1 || { grep -E "error:" "$WORK/build.log" | head -20 >&2; tail -n 30 "$WORK/build.log" >&2; exit 1; }
-  APP="$WORK/dd/Build/Products/Release/Islet.app"
+  APP="$WORK/dd/Build/Products/Release/Col.app"
   codesign --verify --deep --strict "$APP"
 fi
 
 # 2. A read-write disk image with the background and the volume icon.
 STAGE=$(mktemp -d)
-ditto "$APP" "$STAGE/Islet.app"   # ditto keeps the signature and the stapled ticket intact
+ditto "$APP" "$STAGE/Col.app"   # ditto keeps the signature and the stapled ticket intact
 ln -s /Applications "$STAGE/Applications"
 mkdir -p "$STAGE/.background"
 [ -f brand/installer/dmg-background.png ] || swift scripts/make-dmg-background.swift >/dev/null
@@ -139,8 +139,8 @@ cp brand/installer/dmg-background.png "$STAGE/.background/background.png"
 if [ -f "$APP/Contents/Resources/AppIcon.icns" ]; then
   cp "$APP/Contents/Resources/AppIcon.icns" "$STAGE/.VolumeIcon.icns"
 fi
-RW="dist/Islet-rw.dmg"
-hdiutil create -volname "Islet" -srcfolder "$STAGE" -ov -format UDRW -fs HFS+ "$RW" >/dev/null
+RW="dist/Col-rw.dmg"
+hdiutil create -volname "Col" -srcfolder "$STAGE" -ov -format UDRW -fs HFS+ "$RW" >/dev/null
 rm -rf "$STAGE"
 
 # 3. The layout, by Finder: icon view, positions matching the background, no toolbar. If Finder automation is denied
@@ -162,7 +162,7 @@ on run argv
       set icon size of theViewOptions to 112
       set text size of theViewOptions to 13
       set background picture of theViewOptions to file ".background:background.png"
-      set position of item "Islet.app" of container window to {165, 205}
+      set position of item "Col.app" of container window to {165, 205}
       set position of item "Applications" of container window to {495, 205}
       close
       open
@@ -180,20 +180,20 @@ sync
 hdiutil detach "$MOUNT" -quiet || (sleep 2 && hdiutil detach "$MOUNT" -force -quiet)
 
 # 4. A compressed, read-only image.
-hdiutil convert "$RW" -format UDZO -imagekey zlib-level=9 -o "dist/Islet-$VERSION.dmg" >/dev/null
+hdiutil convert "$RW" -format UDZO -imagekey zlib-level=9 -o "dist/Col-$VERSION.dmg" >/dev/null
 rm -f "$RW"
 if [ -z "$TEAM" ]; then
-  echo "dist/Islet-$VERSION.dmg (ad hoc, for local testing only)"
+  echo "dist/Col-$VERSION.dmg (ad hoc, for local testing only)"
   exit 0
 fi
 
 # 5. Developer ID: the image is notarized (it holds the app, so with NOTARIZE_LATER one submission covers both).
 if [ -n "${NOTARIZE_LATER:-}" ]; then
   log="$WORK/notary-later.log"
-  notary submit "dist/Islet-$VERSION.dmg" --no-wait > "$log" 2>&1 || { cat "$log" >&2; exit 1; }
+  notary submit "dist/Col-$VERSION.dmg" --no-wait > "$log" 2>&1 || { cat "$log" >&2; exit 1; }
   grep -m1 -E '^ *id:' "$log" | awk '{print $2}' > dist/notary-pending.txt
   echo "Submitted. Once Apple accepts it, run: scripts/finish-release.sh $VERSION"
   exit 0
 fi
-notarize "dist/Islet-$VERSION.dmg"
+notarize "dist/Col-$VERSION.dmg"
 exec scripts/finish-release.sh "$VERSION"

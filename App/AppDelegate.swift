@@ -1,15 +1,22 @@
 import AppKit
-import IsletShell
+import ColShell
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var island: IslandController?
     private var updater: SparkleUpdater?
-    /// An Islet already running, a copy from elsewhere say: this one hands it what it was opened with, then leaves.
+    /// A Col already running, a copy from elsewhere say: this one hands it what it was opened with, then leaves.
     private var other: NSRunningApplication?
 
     func applicationWillFinishLaunching(_ notification: Notification) {
-        other = Self.otherIslet()
+        other = Self.otherCol()
+        // An older version still running, Islet 1 at login while Col 2 opens from the download: it makes way.
+        if let running = other, let url = running.bundleURL, let bundle = Bundle(url: url), NameChange.isOlder(bundle, than: .main) {
+            running.terminate()
+            let deadline = Date().addingTimeInterval(3)
+            while !running.isTerminated, Date() < deadline { RunLoop.current.run(until: Date().addingTimeInterval(0.05)) }
+            other = nil
+        }
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -19,7 +26,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { NSApp.terminate(nil) }
             return
         }
-        if ApplicationsFolder.offerToMoveIfNeeded() { return }
+        if NameChange.renameBundleIfNeeded() || ApplicationsFolder.offerToMoveIfNeeded() { return }
+        NameChange.migrateIfNeeded()
         AppMenu.install()
         let updater = SparkleUpdater()
         self.updater = updater
@@ -43,9 +51,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         urls.filter { !$0.isFileURL }.forEach { island?.open($0) }
     }
 
-    /// The Islet already running with this identifier, unless this one was given a socket of its own to run beside it.
-    private static func otherIslet() -> NSRunningApplication? {
-        guard ProcessInfo.processInfo.environment["ISLET_SOCKET"]?.isEmpty ?? true, let identifier = Bundle.main.bundleIdentifier else {
+    /// The Col already running with this identifier, unless this one was given a socket of its own to run beside it.
+    private static func otherCol() -> NSRunningApplication? {
+        guard ProcessInfo.processInfo.environment["COL_SOCKET"]?.isEmpty ?? true, let identifier = Bundle.main.bundleIdentifier else {
             return nil
         }
         let me = ProcessInfo.processInfo.processIdentifier

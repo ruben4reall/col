@@ -1,6 +1,6 @@
 import AppKit
 
-/// Offers, once, to move Islet into Applications when it was opened from somewhere else, such as the disk image or
+/// Offers, once, to move Col into Applications when it was opened from somewhere else, such as the disk image or
 /// Downloads: login items and updates need it to stay in one place.
 @MainActor
 enum ApplicationsFolder {
@@ -17,8 +17,8 @@ enum ApplicationsFolder {
         else { return false }
 
         let alert = NSAlert()
-        alert.messageText = String(localized: "Move Islet to the Applications folder?")
-        alert.informativeText = String(localized: "Islet works best from Applications: it can open at login and update itself there.")
+        alert.messageText = String(localized: "Move Col to the Applications folder?")
+        alert.informativeText = String(localized: "Col works best from Applications: it can open at login and update itself there.")
         alert.addButton(withTitle: String(localized: "Move to Applications"))
         alert.addButton(withTitle: String(localized: "Not Now"))
         alert.icon = NSApp.applicationIconImage
@@ -41,7 +41,7 @@ enum ApplicationsFolder {
         // Open the copy once this process has exited, then quit; the disk image can then be ejected.
         let relaunch = Process()
         relaunch.executableURL = URL(fileURLWithPath: "/bin/sh")
-        // The moved Islet starts once this one is gone.
+        // The moved Col starts once this one is gone.
         relaunch.arguments = ["-c", "while /bin/kill -0 \"$1\" 2>/dev/null; do /bin/sleep 0.1; done; /usr/bin/open \"$0\"",
                               destination.path, String(ProcessInfo.processInfo.processIdentifier)]
         try? relaunch.run()

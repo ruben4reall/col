@@ -1,8 +1,8 @@
 import AppKit
-import IsletShell
+import ColShell
 import Sparkle
 
-/// Islet's only network code: Sparkle reads the update feed on the website and installs EdDSA-signed disk images from
+/// Col's only network code: Sparkle reads the update feed on the website and installs EdDSA-signed disk images from
 /// GitHub Releases. Debug builds never start it, so a development copy is never replaced by a release.
 @MainActor
 final class SparkleUpdater: NSObject, UpdateChecking {
