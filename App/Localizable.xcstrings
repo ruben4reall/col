@@ -21,6 +21,16 @@
         }
       }
     },
+    "Close the Prompter": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fermer le prompteur"
+          }
+        }
+      }
+    },
     "Colour": {
       "localizations": {
         "fr": {
@@ -121,16 +131,6 @@
         }
       }
     },
-    "Open ${applicationName}": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ouvrir ${applicationName}"
-          }
-        }
-      }
-    },
     "Open the Island": {
       "localizations": {
         "fr": {
@@ -141,12 +141,72 @@
         }
       }
     },
+    "Play or Pause the Prompter": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lire ou mettre en pause le prompteur"
+          }
+        }
+      }
+    },
     "Progress": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Progression"
+          }
+        }
+      }
+    },
+    "Prompt Text": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faire défiler un texte"
+          }
+        }
+      }
+    },
+    "Prompt the Selected Script": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faire défiler le script sélectionné"
+          }
+        }
+      }
+    },
+    "Prompter": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prompteur"
+          }
+        }
+      }
+    },
+    "Rolls a text out of the notch in the prompter.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fait défiler un texte depuis l’encoche, dans le prompteur."
+          }
+        }
+      }
+    },
+    "Rolls the script selected in the prompter's library.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fait défiler le script sélectionné dans la bibliothèque du prompteur."
           }
         }
       }
@@ -207,16 +267,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lancer un minuteur dans l’encoche"
-          }
-        }
-      }
-    },
-    "Start a timer in ${applicationName}": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lancer un minuteur dans ${applicationName}"
           }
         }
       }
