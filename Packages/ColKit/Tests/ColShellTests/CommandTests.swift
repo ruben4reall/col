@@ -1,11 +1,13 @@
 import Foundation
 import Testing
 
-/// `colctl`, built once from CLI/main.swift for these tests, or nil when it does not build.
+/// `colctl`, built once from CLI/main.swift for these tests, or nil when it does not build. The same folder each run,
+/// emptied first, so runs do not pile up copies.
 private let colctl: URL? = {
     let source = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
         .appendingPathComponent("../../../../CLI/main.swift").standardizedFileURL
-    let folder = FileManager.default.temporaryDirectory.appendingPathComponent("col-colctl-\(UUID().uuidString)")
+    let folder = FileManager.default.temporaryDirectory.appendingPathComponent("col-colctl-tests")
+    try? FileManager.default.removeItem(at: folder)
     try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
     let tool = folder.appendingPathComponent("colctl")
     let process = Process()
