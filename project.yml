@@ -93,6 +93,11 @@ targets:
         NSMicrophoneUsageDescription: The prompter listens to your voice to roll the script as you speak. The sound never leaves your Mac and is never recorded.
         NSSpeechRecognitionUsageDescription: In Voice Follow, the prompter recognizes your words on your Mac to keep your place in the script.
         NSLocalNetworkUsageDescription: "Col reaches the devices you choose on your network, and only them: your phone for the prompter's remote, and the AI servers you add."
+        # The AI servers are the user's own, often plain http on their network under a name such as mac-studio.lan,
+        # which App Transport Security would refuse. Everything else Col reaches (the update feed, LRCLIB) is https.
+        # Nothing else may sit beside this key: NSAllowsLocalNetworking, for one, would turn it off.
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: true
         CFBundleURLTypes:
           - CFBundleURLName: ch.rubencatalao.islet
             CFBundleURLSchemes: [col, islet]
