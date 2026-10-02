@@ -14,6 +14,8 @@ enum IslandRoute: Hashable {
     case device
     /// Files dragged over the island when no page holds the shelf: the shelf all the same.
     case drop
+    /// Souffleur, the prompter's former app, closed because it is now part of Col; never a tab.
+    case souffleur
 
     var symbol: String {
         switch self {
@@ -22,6 +24,7 @@ enum IslandRoute: Hashable {
         case .greeting: "hand.wave.fill"
         case .device: "airpodspro"
         case .drop: "tray.full.fill"
+        case .souffleur: "text.aligncenter"
         }
     }
 }

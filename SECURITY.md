@@ -35,6 +35,10 @@ Copies that password managers mark as concealed or transient are skipped.
   playing. Since macOS 15.4 only Apple-signed processes may read the now playing information.
 - Your extensions' scripts, on the schedule each one declares, with your user's rights. macOS treats each one as a
   program of its own: it never inherits Col's Accessibility, Microphone, Camera or Calendars permissions.
+- Souffleur, the prompter's former app, when it is open beside Col: Col asks it to quit as it opens (or in the minute
+  after, as when both open at login), the way its own Quit command would, so that the two prompters do not both answer
+  your shortcuts and your phone. It is never forced to quit, and its app, its files and its login item are left as
+  they are.
 
 ### Network
 

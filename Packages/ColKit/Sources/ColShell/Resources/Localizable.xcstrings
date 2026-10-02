@@ -1133,6 +1133,16 @@
         }
       }
     },
+    "Col closed it, so your shortcuts drive only one prompter. Souffleur can go to the Trash.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col l’a fermé pour que vos raccourcis ne pilotent qu’un seul prompteur. Souffleur peut aller à la Corbeille."
+          }
+        }
+      }
+    },
     "Col never asks for Screen Recording, Full Disk Access or Input Monitoring. It sees when another app uses the microphone without listening to it, and listens itself only while the prompter follows your voice.": {
       "localizations": {
         "fr": {
@@ -3559,6 +3569,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Vive"
+          }
+        }
+      }
+    },
+    "Souffleur is now part of Col": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Souffleur fait désormais partie de Col"
           }
         }
       }

@@ -59,6 +59,8 @@ public final class IslandController {
     /// Bumped by every transition, so the end of a superseded one does not shrink the window under a newer one.
     private var generation = 0
     private var observers: [NSObjectProtocol] = []
+    /// Watches for Souffleur opening in the minute after Col did.
+    private var souffleurWatch: NSObjectProtocol?
 
     /// The models the island's content reads, kept to draw a second island in the settings.
     private let services: IslandServices
@@ -212,7 +214,60 @@ public final class IslandController {
                     MainActor.assumeIsolated {
                         if self.navigation.route == .greeting { self.navigation.jumpHome() }
                         self.navigation.greetsReady = false
+                        self.showSouffleurNoteIfDue()
                     }
+                }
+            }
+        }
+    }
+
+    // MARK: Souffleur
+
+    /// Souffleur, the prompter's former app, running beside Col is asked to quit: now, and if it opens in the minute
+    /// that follows, as when both open at login.
+    private func retireSouffleur() {
+        Souffleur.askToQuit()
+        souffleurWatch = NSWorkspace.shared.notificationCenter.addObserver(
+            forName: NSWorkspace.didLaunchApplicationNotification, object: nil, queue: .main
+        ) { [weak self] note in
+            guard (note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication)?.bundleIdentifier == Souffleur.bundleIdentifier
+            else { return }
+            MainActor.assumeIsolated {
+                guard Souffleur.askToQuit() else { return }
+                self?.showSouffleurNoteIfDue()
+            }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 60) { [weak self] in
+            MainActor.assumeIsolated {
+                guard let self, let watch = self.souffleurWatch else { return }
+                NSWorkspace.shared.notificationCenter.removeObserver(watch)
+                self.souffleurWatch = nil
+            }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
+            MainActor.assumeIsolated { self?.showSouffleurNoteIfDue() }
+        }
+    }
+
+    /// The first time Col closes Souffleur, the island says why, once the welcome, which has the island on a first
+    /// launch, is done. Left for the next launch when the welcome was put off.
+    private func showSouffleurNoteIfDue() {
+        guard Souffleur.noteIsDue, WelcomeWindow.hasWelcomed, navigation.route != .greeting else { return }
+        Souffleur.noteShown()
+        showSouffleurNote()
+    }
+
+    /// The island opens on the note for a few seconds, then tucks back in.
+    private func showSouffleurNote() {
+        navigation.jump(to: .souffleur)
+        if machine.state != .expanded { openedByRequest = true }
+        send(.requested)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 7) { [weak self] in
+            MainActor.assumeIsolated {
+                guard let self, self.navigation.route == .souffleur else { return }
+                if !self.machine.pointerInside { self.send(.dismissed) }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    MainActor.assumeIsolated { if self.navigation.route == .souffleur { self.navigation.jumpHome() } }
                 }
             }
         }
@@ -596,6 +651,7 @@ public final class IslandController {
         lockScreen.start()
         if Preferences.showsOnLockScreen { LockScreenSpace.shared?.adopt(panel) }
         if !WelcomeWindow.hasWelcomed { greet() }
+        retireSouffleur()
         // `-ColDemo headphones` (or `max`) plays the headphones card with sample levels, without touching Bluetooth.
         if let demo = UserDefaults.standard.string(forKey: "ColDemo"), demo == "headphones" || demo == "max" {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
@@ -610,7 +666,8 @@ public final class IslandController {
         }
         // Demo content for screenshots, standing in for the user's, which is neither shown nor changed:
         // `-ColDemoShelf <folder>` puts that folder's files on the shelf, `-ColDemo clipboard` shows a few copies
-        // (`-ColDemoImage <png>` for the copied photo), `-ColDemo drop` shows files being dragged over the island.
+        // (`-ColDemoImage <png>` for the copied photo), `-ColDemo drop` shows files being dragged over the island,
+        // `-ColDemo souffleur` the note the island gives the first time it closes Souffleur.
         if let folder = UserDefaults.standard.string(forKey: "ColDemoShelf") {
             shelf.showDemo(folder: URL(fileURLWithPath: folder))
         }
@@ -619,6 +676,10 @@ public final class IslandController {
             clipboard.showDemo(image: UserDefaults.standard.string(forKey: "ColDemoImage").flatMap { try? Data(contentsOf: URL(fileURLWithPath: $0)) })
         case "drop":
             shelf.isTargeted = true
+        case "souffleur":
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
+                MainActor.assumeIsolated { self?.showSouffleurNote() }
+            }
         default:
             break
         }

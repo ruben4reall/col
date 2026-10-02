@@ -27,7 +27,8 @@ Each release's section is what Col's update window and the GitHub release show. 
   calls. While it is out, the island steps aside and comes back after the take. Drive it with ⌃⌥⌘P and its other
   shortcuts, a presentation clicker, your phone, Shortcuts actions or `col://prompter/…` links. If you used
   Souffleur, your scripts and settings carry over, and its `souffleur://` links keep working. Your phone stays paired,
-  and its remote waits until you turn it on in Settings, Prompter.
+  and its remote waits until you turn it on in Settings, Prompter. Souffleur itself, still open beside Col, is asked
+  to quit so that your shortcuts drive only one prompter, and the island says once that it can go to the Trash.
 - **Pages you compose**: each page of the open island holds one widget across it or two side by side, and each place
   can stack several widgets: the island shows the first one that has something to show. Home now puts the player
   beside the song's lyrics, and the clock beside your agenda while nothing plays. Add, rename, reorder and remove
