@@ -1,5 +1,5 @@
-/* The MacBook drawn in the page, in Space Black: CSS 3D planes, a real macOS desktop and real captures of Islet
-   on the display. From the Pli website. site.js opens the lid once the page has loaded. */
+/* The MacBook drawn in the page, in Space Black: CSS 3D planes, a real macOS desktop and real captures of Col
+   on the display. col.js opens the lid as it comes into view. */
 
 @property --lid-angle {
   syntax: '<number>';
@@ -145,7 +145,7 @@
   bottom: calc(var(--u) * 2.4);
   overflow: hidden;
   border-radius: calc(var(--u) * 1.2);
-  background: var(--islet-night);
+  background: #05080A;
 }
 
 .mac-still,

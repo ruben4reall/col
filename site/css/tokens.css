@@ -1,9 +1,0 @@
-:root {
-  --islet-night: #05080A;
-  --islet-coral: #FF7A59;
-  --islet-ember: #E2472D;
-  --islet-peach: #FFC7A8;
-  --islet-glacier: var(--islet-coral);
-  --islet-ease-reveal: cubic-bezier(0.33, 1, 0.68, 1);
-  --islet-ease-spring: cubic-bezier(0.2, 1.25, 0.4, 1);
-}
