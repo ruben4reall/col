@@ -14,6 +14,8 @@ public final class PrompterState {
         case finished
     }
 
+    /// A take is on screen, whatever its phase: from the countdown to its summary.
+    public internal(set) var isActive = false
     public var phase: Phase = .idle
     public var mode: ScrollMode = .voice
     public var title = ""

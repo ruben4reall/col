@@ -9,7 +9,10 @@ public final class PrompterController {
     /// Called whenever what the remote or the menus show may have changed.
     public var onChange: (() -> Void)?
 
-    private var presentation: PrompterPresentation?
+    private var presentation: PrompterPresentation? {
+        // Observed, unlike the presentation: views that show a take or a script switch as the take starts and ends.
+        didSet { state.isActive = presentation != nil }
+    }
     /// Where the take on screen is.
     public private(set) var placement: PrompterPlacement = .notch
     private(set) var script = Script("")
@@ -55,7 +58,7 @@ public final class PrompterController {
         })
     }
 
-    public var isActive: Bool { presentation != nil }
+    public var isActive: Bool { state.isActive }
     public var isRolling: Bool { state.phase == .rolling }
 
     // MARK: Starting and stopping
