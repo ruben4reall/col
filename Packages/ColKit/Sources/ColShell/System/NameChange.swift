@@ -155,31 +155,32 @@ public enum NameChange {
         let old = bin.appendingPathComponent("islet")
         guard (try? files.destinationOfSymbolicLink(atPath: old.path)) != nil, let tool = CommandLineInstaller.bundledTool else { return }
         try? files.removeItem(at: old)
-        try? files.createSymbolicLink(at: old, withDestinationURL: tool)
+        try? files.createSymbolicLink(at: old, withDestinationURL: CommandLineInstaller.linkTarget("islet", tool: tool))
         let new = bin.appendingPathComponent("colctl")
         if (try? files.destinationOfSymbolicLink(atPath: new.path)) == nil, !files.fileExists(atPath: new.path) {
-            try? files.createSymbolicLink(at: new, withDestinationURL: tool)
+            try? files.createSymbolicLink(at: new, withDestinationURL: CommandLineInstaller.linkTarget("colctl", tool: tool))
         }
     }
 
     /// The hooks of every agent call ~/.local/bin/islet or ~/.local/bin/colctl. When the app they lead to is gone
     /// (moved, renamed, replaced by Homebrew, ejected with its disk image) or is a copy that goes away, they lead here
-    /// again. Checked at each launch: two links read, nothing else.
+    /// again. Checked at each launch: two links read, and Homebrew's when it installed this copy.
     private static func repairCommandLinks() {
         guard let tool = CommandLineInstaller.bundledTool else { return }
         let files = FileManager.default
         let bin = files.homeDirectoryForCurrentUser.appendingPathComponent(".local/bin")
         for name in ["islet", "colctl"] {
             let link = bin.appendingPathComponent(name)
-            guard linkNeedsRepair(link, tool: tool) else { continue }
+            let target = CommandLineInstaller.linkTarget(name, tool: tool)
+            guard linkNeedsRepair(link, tool: target) else { continue }
             try? files.removeItem(at: link)
-            try? files.createSymbolicLink(at: link, withDestinationURL: tool)
+            try? files.createSymbolicLink(at: link, withDestinationURL: target)
         }
     }
 
-    /// Whether a link of the command must lead to this copy's `tool` instead: what it leads to is gone, or lies in an
-    /// Islet.app, a translocated copy or a disk image. A link to another working command is left alone, and so is
-    /// anything that is not a link.
+    /// Whether a link of the command must lead to `tool` instead (this copy's command, or Homebrew's link to it): what
+    /// it leads to is gone, or lies in an Islet.app, a translocated copy or a disk image. A link to another working
+    /// command is left alone, and so is anything that is not a link.
     nonisolated static func linkNeedsRepair(_ link: URL, tool: URL) -> Bool {
         guard let destination = try? FileManager.default.destinationOfSymbolicLink(atPath: link.path) else { return false }
         let target = URL(fileURLWithPath: destination, relativeTo: link.deletingLastPathComponent()).standardizedFileURL

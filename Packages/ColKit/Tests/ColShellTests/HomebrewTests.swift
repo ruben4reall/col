@@ -75,6 +75,30 @@ struct HomebrewTests {
         #expect(brew.installed(app))
     }
 
+    @Test func homebrewsCommandLinkFollowsTheApp() throws {
+        let brew = try FakeHomebrew()
+        defer { brew.remove() }
+        let app = try brew.app("Islet.app")
+        let helpers = app.appendingPathComponent("Contents/Helpers")
+        FileManager.default.createFile(atPath: helpers.appendingPathComponent("colctl").path, contents: Data("#!/bin/sh\n".utf8),
+                                       attributes: [.posixPermissions: 0o755])
+        try FileManager.default.createSymbolicLink(atPath: helpers.appendingPathComponent("islet").path, withDestinationPath: "colctl")
+        let bin = brew.prefix.appendingPathComponent("bin")
+        try FileManager.default.createDirectory(at: bin, withIntermediateDirectories: true)
+        try FileManager.default.createSymbolicLink(at: bin.appendingPathComponent("islet"), withDestinationURL: helpers.appendingPathComponent("islet"))
+        #expect(Homebrew.command("islet", into: app, prefixes: [brew.prefix]) == nil, "no cask")
+
+        _ = try brew.room("islet")
+
+        #expect(Homebrew.command("islet", into: app, prefixes: [brew.prefix]) == bin.appendingPathComponent("islet"))
+        // Islet's cask linked only `islet`: `colctl` goes through it until Col's cask links its own.
+        #expect(Homebrew.command("colctl", into: app, prefixes: [brew.prefix]) == bin.appendingPathComponent("islet"))
+        try FileManager.default.createSymbolicLink(at: bin.appendingPathComponent("colctl"), withDestinationURL: helpers.appendingPathComponent("colctl"))
+        #expect(Homebrew.command("colctl", into: app, prefixes: [brew.prefix]) == bin.appendingPathComponent("colctl"))
+        // Another copy of the app is not the one these links lead to.
+        #expect(Homebrew.command("islet", into: try brew.app("Col.app"), prefixes: [brew.prefix]) == nil)
+    }
+
     @Test func aCommandWithoutACaskIsNotHomebrews() throws {
         let brew = try FakeHomebrew()
         defer { brew.remove() }

@@ -36,6 +36,21 @@ enum Homebrew {
         return false
     }
 
+    /// Homebrew's link to the command inside this app, in a prefix where one of these casks is installed: the link of
+    /// that name, else the other one. `brew upgrade` points it at the app that replaces this one, which Col, quit for
+    /// the upgrade and not opened again, could not do for its own links.
+    static func command(_ name: String, into app: URL, prefixes: [URL] = prefixes) -> URL? {
+        let files = FileManager.default
+        let path = canonical(app)
+        for prefix in prefixes where tokens.contains(where: { files.fileExists(atPath: prefix.appendingPathComponent("Caskroom/\($0)").path) }) {
+            for command in [name] + commands.filter({ $0 != name }) {
+                let link = prefix.appendingPathComponent("bin/\(command)")
+                if destination(of: link)?.hasPrefix(path + "/") == true, files.isExecutableFile(atPath: link.path) { return link }
+            }
+        }
+        return nil
+    }
+
     /// Whether the cask's record installs an app of this name: its receipt, or the cask file kept for each version.
     private static func records(_ name: String, in room: URL) -> Bool {
         let quoted = "\"\(name)\""

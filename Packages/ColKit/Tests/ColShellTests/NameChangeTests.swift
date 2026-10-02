@@ -260,6 +260,26 @@ struct NameChangeLinkTests {
         #expect(NameChange.linkNeedsRepair(link, tool: tool))
     }
 
+    @Test func linksIntoHomebrewsIsletAppLeadToHomebrewsLink() throws {
+        let root = try scratch()
+        defer { try? FileManager.default.removeItem(at: root) }
+        let tool = root.appendingPathComponent("Applications/Islet.app/Contents/Helpers/colctl")
+        try executable(at: tool)
+        let brew = root.appendingPathComponent("homebrew/bin/islet")
+        try FileManager.default.createDirectory(at: brew.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try FileManager.default.createSymbolicLink(at: brew, withDestinationURL: tool)
+        let bin = root.appendingPathComponent("bin")
+        try FileManager.default.createDirectory(at: bin, withIntermediateDirectories: true)
+        try FileManager.default.createSymbolicLink(at: bin.appendingPathComponent("islet"), withDestinationURL: tool)
+        try FileManager.default.createSymbolicLink(at: bin.appendingPathComponent("colctl"), withDestinationURL: brew)
+
+        // Into the app Homebrew replaces: it goes through Homebrew's link instead, which follows the new app.
+        #expect(NameChange.linkNeedsRepair(bin.appendingPathComponent("islet"), tool: brew))
+        #expect(!NameChange.linkNeedsRepair(bin.appendingPathComponent("colctl"), tool: brew))
+        // A link through Homebrew's that works is left alone, whichever command this copy offers.
+        #expect(!NameChange.linkNeedsRepair(bin.appendingPathComponent("colctl"), tool: tool))
+    }
+
     @Test func workingLinksAndFilesAreLeftAlone() throws {
         let root = try scratch()
         defer { try? FileManager.default.removeItem(at: root) }

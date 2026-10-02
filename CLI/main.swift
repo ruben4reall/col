@@ -271,16 +271,20 @@ func editSettings(_ agent: Agent, path: String?, install: Bool) throws -> String
     if install {
         // The hooks call the command through ~/.local/bin, so moving the app never breaks them.
         let tool = URL(fileURLWithPath: CommandLine.arguments[0]).resolvingSymlinksInPath()
+        // A link that already leads here, through Homebrew's link for instance, is left as it is.
+        func leadsElsewhere(_ link: String, _ destination: String) -> Bool {
+            let parent = URL(fileURLWithPath: link).deletingLastPathComponent()
+            return URL(fileURLWithPath: destination, relativeTo: parent).resolvingSymlinksInPath().path != tool.path
+        }
         // Islet's link, which older hooks call, leads to this command too.
-        if (try? FileManager.default.destinationOfSymbolicLink(atPath: legacyLinkPath())) != nil {
+        if let destination = try? FileManager.default.destinationOfSymbolicLink(atPath: legacyLinkPath()),
+           leadsElsewhere(legacyLinkPath(), destination) {
             try? FileManager.default.removeItem(atPath: legacyLinkPath())
             try? FileManager.default.createSymbolicLink(atPath: legacyLinkPath(), withDestinationPath: tool.path)
         }
         let link = linkPath()
         if let destination = try? FileManager.default.destinationOfSymbolicLink(atPath: link) {
-            let parent = URL(fileURLWithPath: link).deletingLastPathComponent()
-            let current = URL(fileURLWithPath: destination, relativeTo: parent).resolvingSymlinksInPath()
-            if current.path != tool.path {
+            if leadsElsewhere(link, destination) {
                 try? FileManager.default.removeItem(atPath: link)
                 try? FileManager.default.createSymbolicLink(atPath: link, withDestinationPath: tool.path)
             }
