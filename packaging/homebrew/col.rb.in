@@ -17,6 +17,7 @@ cask "col" do
 
   app "Col.app"
   binary "#{appdir}/Col.app/Contents/Helpers/colctl"
+  binary "#{appdir}/Col.app/Contents/Helpers/islet"
 
   uninstall quit: "ch.rubencatalao.islet"
 

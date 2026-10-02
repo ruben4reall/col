@@ -45,9 +45,12 @@ if [ -f .env.sparkle-private-key ]; then KEY=(--ed-key-file .env.sparkle-private
   --full-release-notes-url "$REPO_URL/releases" --embed-release-notes --maximum-deltas 0 -o "$APPCAST" "$UPDATES"
 grep -q "sparkle:edSignature" "$APPCAST" || fail "$APPCAST has no EdDSA signature"
 
-# 4. The cask for the tap (ruben4reall/homebrew-tap).
+# 4. The cask for the tap (ruben4reall/homebrew-tap). It took over from the islet cask: the tap's cask_renames.json
+#    maps "islet" to "col" and has no Casks/islet.rb any more, so `brew upgrade --cask --greedy col` moves Islet's
+#    Homebrew users to Col.app. The tap's other renames stay as they are.
 mkdir -p dist/homebrew/Casks
 scripts/render-cask.sh "$VERSION" "$SHA" > dist/homebrew/Casks/col.rb
 
 echo "Ready: $DMG, dist/Col.dmg, dist/release-notes.md, $APPCAST, dist/homebrew/Casks/col.rb"
 echo "Publication, on Ruben's go-ahead: the GitHub release v$VERSION with the two disk images, the site, then the tap."
+echo "The tap needs \"islet\": \"col\" in its cask_renames.json and no Casks/islet.rb."
