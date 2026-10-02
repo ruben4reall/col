@@ -14,6 +14,13 @@ enum CommandLineInstaller {
         FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(".local/bin/colctl")
     }
 
+    /// What the command's link of this name in ~/.local/bin leads to: the tool inside the app, or, when Homebrew
+    /// installed this copy and links the command into it, Homebrew's link. `brew upgrade` quits Col and replaces the app
+    /// without opening it again; Homebrew's link follows the new app, so the agents' hooks keep working meanwhile.
+    static func linkTarget(_ name: String, tool: URL) -> URL {
+        Homebrew.command(name, into: Bundle.main.bundleURL) ?? tool
+    }
+
     /// Links ~/.local/bin/colctl to the tool inside the app. Returns a message for the settings window.
     static func install() -> String {
         guard let tool = bundledTool else { return String(localized: "The command is missing from this build.", bundle: .module) }
@@ -23,7 +30,7 @@ enum CommandLineInstaller {
             if (try? link.checkResourceIsReachable()) == true || (try? FileManager.default.destinationOfSymbolicLink(atPath: link.path)) != nil {
                 try FileManager.default.removeItem(at: link)
             }
-            try FileManager.default.createSymbolicLink(at: link, withDestinationURL: tool)
+            try FileManager.default.createSymbolicLink(at: link, withDestinationURL: linkTarget("colctl", tool: tool))
             return String(localized: "Installed in ~/.local/bin. Try `colctl status`.", bundle: .module)
         } catch {
             return error.localizedDescription

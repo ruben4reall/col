@@ -38,10 +38,17 @@ final class ControlServer: @unchecked Sendable {
 
     /// `COL_SOCKET` moves it, so a development build can run beside the installed Col without taking its socket.
     static var socketURL: URL {
-        if let path = ProcessInfo.processInfo.environment["COL_SOCKET"], !path.isEmpty { return URL(fileURLWithPath: path) }
-        return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("Col", isDirectory: true)
-            .appendingPathComponent("col.sock")
+        if let path = customSocket { return URL(fileURLWithPath: path) }
+        return supportFolder.appendingPathComponent("Col", isDirectory: true).appendingPathComponent("col.sock")
+    }
+
+    private static var customSocket: String? {
+        guard let path = ProcessInfo.processInfo.environment["COL_SOCKET"], !path.isEmpty else { return nil }
+        return path
+    }
+
+    private static var supportFolder: URL {
+        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
     }
 
     func start() throws {
@@ -69,6 +76,17 @@ final class ControlServer: @unchecked Sendable {
         source.setEventHandler { [weak self] in self?.accept() }
         source.resume()
         self.source = source
+        if Self.customSocket == nil { Self.answerAsIslet(in: Self.supportFolder) }
+    }
+
+    /// Islet listened on Application Support/Islet/islet.sock, and scripts written for it still call there. Its
+    /// folder, moved into Col's, became a link to Col's (NameChange); there, Islet's socket is a link to this one. An
+    /// Islet folder that is a link elsewhere, of the user's own, is not Col's: nothing is put there.
+    static func answerAsIslet(in support: URL) {
+        guard NameChange.leads(support.appendingPathComponent("Islet"), to: support.appendingPathComponent("Col")) else { return }
+        let socket = support.appendingPathComponent("Col/islet.sock").path
+        unlink(socket)
+        symlink("col.sock", socket)
     }
 
     func stop() {

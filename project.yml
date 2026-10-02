@@ -35,8 +35,8 @@ targets:
       - package: ColKit
         product: ColPrompter
       - package: Sparkle
-      # The `colctl` command, in Contents/Helpers. Hooks installed under Islet call ~/.local/bin/islet, which Col
-      # links to it on its first launch.
+      # The `colctl` command, in Contents/Helpers, with `islet` beside it (below). Hooks installed under Islet call
+      # ~/.local/bin/islet, which Col links to colctl on its first launch.
       - target: ColCommand
         link: false
         embed: true
@@ -51,6 +51,14 @@ targets:
         codeSign: true
         copy:
           destination: frameworks
+    postBuildScripts:
+      # Islet's command was Contents/Helpers/islet: its hooks reach it through ~/.local/bin/islet, and Homebrew's
+      # Islet cask links <prefix>/bin/islet to it. Sparkle installs 2.0 in place, before any of Col's code runs, and
+      # Homebrew keeps the copy it installed as Islet.app: this relative link keeps those commands working. Made
+      # after the command is embedded and before the app is signed.
+      - name: Link the islet command
+        script: ln -sfh colctl "$TARGET_BUILD_DIR/$CONTENTS_FOLDER_PATH/Helpers/islet"
+        basedOnDependencyAnalysis: false
     # The hardened runtime blocks the camera, the microphone and calendars unless the app declares them: the mirror,
     # the prompter's voice modes, the agenda and reminders.
     entitlements:
@@ -85,6 +93,11 @@ targets:
         NSMicrophoneUsageDescription: The prompter listens to your voice to roll the script as you speak. The sound never leaves your Mac and is never recorded.
         NSSpeechRecognitionUsageDescription: In Voice Follow, the prompter recognizes your words on your Mac to keep your place in the script.
         NSLocalNetworkUsageDescription: "Col reaches the devices you choose on your network, and only them: your phone for the prompter's remote, and the AI servers you add."
+        # The AI servers are the user's own, often plain http on their network under a name such as mac-studio.lan,
+        # which App Transport Security would refuse. Everything else Col reaches (the update feed, LRCLIB) is https.
+        # Nothing else may sit beside this key: NSAllowsLocalNetworking, for one, would turn it off.
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: true
         CFBundleURLTypes:
           - CFBundleURLName: ch.rubencatalao.islet
             CFBundleURLSchemes: [col, islet]

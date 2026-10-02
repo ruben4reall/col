@@ -128,6 +128,8 @@ else
   APP="$WORK/dd/Build/Products/Release/Col.app"
   codesign --verify --deep --strict "$APP"
 fi
+# Islet's hooks and Homebrew's Islet cask call Contents/Helpers/islet.
+[ "$(readlink "$APP/Contents/Helpers/islet")" = colctl ] || fail "Contents/Helpers/islet is not a link to colctl"
 
 # 2. A read-write disk image with the background and the volume icon.
 STAGE=$(mktemp -d)

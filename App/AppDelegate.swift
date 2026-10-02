@@ -7,6 +7,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var updater: SparkleUpdater?
     /// A Col already running, a copy from elsewhere say: this one hands it what it was opened with, then leaves.
     private var other: NSRunningApplication?
+    /// Documents and links that opened Col: macOS hands them over before the island exists, so they wait for it.
+    private var pendingURLs: [URL] = []
 
     func applicationWillFinishLaunching(_ notification: Notification) {
         other = Self.otherCol()
@@ -26,7 +28,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { NSApp.terminate(nil) }
             return
         }
-        if NameChange.renameBundleIfNeeded() || ApplicationsFolder.offerToMoveIfNeeded() { return }
+        // Opening again from elsewhere, the app takes along what it was opened with.
+        if NameChange.renameBundleIfNeeded(opening: pendingURLs) || ApplicationsFolder.offerToMoveIfNeeded(opening: pendingURLs) {
+            return
+        }
         NameChange.migrateIfNeeded()
         AppMenu.install()
         let updater = SparkleUpdater()
@@ -35,6 +40,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let island = IslandController()
         island.start()
         self.island = island
+        let pending = pendingURLs
+        pendingURLs = []
+        open(pending)
     }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -46,6 +54,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             NSWorkspace.shared.open(urls, withApplicationAt: bundle, configuration: NSWorkspace.OpenConfiguration())
             return
         }
+        guard island != nil else {
+            pendingURLs += urls
+            return
+        }
+        open(urls)
+    }
+
+    /// Documents join the prompter's library; links go to the island.
+    private func open(_ urls: [URL]) {
         let files = urls.filter(\.isFileURL)
         if !files.isEmpty { island?.importScripts(files) }
         urls.filter { !$0.isFileURL }.forEach { island?.open($0) }
