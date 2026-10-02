@@ -1,4 +1,5 @@
 import AppKit
+import ColCore
 import ServiceManagement
 
 /// Islet became Col with 2.0. On the first launch under the new name, everything takes it without the user noticing:
@@ -68,7 +69,7 @@ public enum NameChange {
             // The socket Islet left, now in Col's folder: nothing answers on it. Col links that name to its own socket.
             let support = files.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("Col")
             try? files.removeItem(at: support.appendingPathComponent("islet.sock"))
-            carrySettings(defaults, decidingLyrics: !forced)
+            carrySettings(defaults, deciding: !forced)
 
             if stable {
                 relinkCommand()
@@ -85,19 +86,26 @@ public enum NameChange {
         if !forced { followLoginItem(defaults, registerAgain: false) }
     }
 
-    /// Islet's settings that changed name, and a choice 2.0 adds that its users never made: lyrics, looked up on
-    /// LRCLIB. Someone coming from Islet never sees the welcome where they are offered, so they stay off until turned
-    /// on in Settings, Music and lyrics; anyone else has them on, as the welcome offers. Decided once: the welcome, or
-    /// the settings, have the last word. A forced move (`-ColMigrate`) leaves that choice alone: its home of its own does
-    /// not redirect the settings, which belong to the Col installed on this Mac.
-    nonisolated static func carrySettings(_ defaults: UserDefaults, decidingLyrics: Bool = true) {
+    /// Islet's settings that changed name, and the choices 2.0 adds that its users never made. Someone coming from Islet
+    /// never sees the welcome where they are offered: lyrics, looked up on LRCLIB, stay off until turned on in Settings,
+    /// Music and lyrics, and the two pages 2.0 brings, the prompter and the AI apps, join their pages after Home. Anyone
+    /// else has lyrics on and the pages the welcome makes, as the welcome offers. Decided once, on the first launch of
+    /// 2.0, which the lyrics setting written then marks: from there the welcome, or the settings, have the last word. A
+    /// forced move (`-ColMigrate`) leaves those choices alone: its home of its own does not redirect the settings, which
+    /// belong to the Col installed on this Mac.
+    nonisolated static func carrySettings(_ defaults: UserDefaults, deciding: Bool = true) {
         let frame = "NSWindow Frame ColFloatingPrompter"
         if defaults.object(forKey: frame) == nil, let old = defaults.object(forKey: "NSWindow Frame IsletFloatingPrompter") {
             defaults.set(old, forKey: frame)
         }
-        if decidingLyrics, defaults.object(forKey: "showsLyrics") == nil {
-            // Set once the welcome has been seen, as Islet set it too (WelcomeWindow).
-            defaults.set(!defaults.bool(forKey: "hasWelcomed"), forKey: "showsLyrics")
+        guard deciding, defaults.object(forKey: "showsLyrics") == nil else { return }
+        // Set once the welcome has been seen, as Islet set it too (WelcomeWindow).
+        let fromIslet = defaults.bool(forKey: "hasWelcomed")
+        defaults.set(!fromIslet, forKey: "showsLyrics")
+        if fromIslet, defaults.object(forKey: "pageDeck") == nil {
+            // Islet's list of pages, or the pages it showed by default when it never saved one (Preferences.pageDeck).
+            let deck = PageDeck.migrating(enabledPages: defaults.stringArray(forKey: "enabledPages"))
+            defaults.set(try? JSONEncoder().encode(deck.validated()), forKey: "pageDeck")
         }
     }
 

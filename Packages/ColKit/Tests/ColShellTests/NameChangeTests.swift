@@ -1,3 +1,4 @@
+import ColCore
 import Foundation
 @testable import ColShell
 import Testing
@@ -60,10 +61,52 @@ struct NameChangeSettingsTests {
         defaults.set(true, forKey: "hasWelcomed")
         defaults.set("0 0 300 200", forKey: "NSWindow Frame IsletFloatingPrompter")
 
-        NameChange.carrySettings(defaults, decidingLyrics: false)
+        NameChange.carrySettings(defaults, deciding: false)
 
         #expect(defaults.object(forKey: "showsLyrics") == nil)
         #expect(defaults.string(forKey: "NSWindow Frame ColFloatingPrompter") == "0 0 300 200")
+    }
+
+    @Test func someoneComingFromIsletFindsThePrompterAndAIPagesOnce() throws {
+        let (defaults, name) = defaults()
+        defer { defaults.removePersistentDomain(forName: name) }
+        defaults.set(true, forKey: "hasWelcomed")
+        defaults.set(["tools", "shelf"], forKey: "enabledPages")
+
+        NameChange.carrySettings(defaults)
+        let data = try #require(defaults.data(forKey: "pageDeck"))
+        var deck = try JSONDecoder().decode(PageDeck.self, from: data)
+        #expect(deck.pages.map(\.id) == [PageDeck.homeID, "prompter", "ai", "tools", "shelf"])
+
+        // The AI page removed in Settings stays removed.
+        deck.remove("ai")
+        defaults.set(try JSONEncoder().encode(deck), forKey: "pageDeck")
+        NameChange.carrySettings(defaults)
+        let kept = try JSONDecoder().decode(PageDeck.self, from: try #require(defaults.data(forKey: "pageDeck")))
+        #expect(kept.pages.map(\.id) == [PageDeck.homeID, "prompter", "tools", "shelf"])
+    }
+
+    @Test func pagesComeFromTheWelcomeForANewUser() {
+        let (defaults, name) = defaults()
+        defer { defaults.removePersistentDomain(forName: name) }
+
+        NameChange.carrySettings(defaults)
+        #expect(defaults.object(forKey: "pageDeck") == nil)
+
+        // The welcome closed with Later on a launch from the disk image: the next launch still leaves the pages alone.
+        defaults.set(true, forKey: "hasWelcomed")
+        NameChange.carrySettings(defaults)
+        #expect(defaults.object(forKey: "pageDeck") == nil)
+    }
+
+    @Test func aForcedMoveLeavesThePagesAlone() {
+        let (defaults, name) = defaults()
+        defer { defaults.removePersistentDomain(forName: name) }
+        defaults.set(true, forKey: "hasWelcomed")
+
+        NameChange.carrySettings(defaults, deciding: false)
+
+        #expect(defaults.object(forKey: "pageDeck") == nil)
     }
 
     @Test func aChoiceAlreadyMadeIsKept() {
@@ -78,6 +121,7 @@ struct NameChangeSettingsTests {
 
         #expect(defaults.object(forKey: "showsLyrics") as? Bool == true)
         #expect(defaults.string(forKey: "NSWindow Frame ColFloatingPrompter") == "new")
+        #expect(defaults.object(forKey: "pageDeck") == nil)
     }
 }
 

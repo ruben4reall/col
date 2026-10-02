@@ -96,11 +96,16 @@ public struct PageDeck: Codable, Equatable, Sendable {
         PageLayout(id: "system", stacks: [WidgetStack([.system])]),
     ])
 
-    /// The pages of Islet 1, which kept a list of the optional pages turned on, in order.
-    public static func migrating(enabledPages: [String]) -> PageDeck {
+    /// The optional pages Islet 1 showed until its list was saved.
+    static let isletPages = ["shelf", "clipboard", "tools", "system"]
+
+    /// The pages of someone coming from Islet 1, which kept a list of the optional pages turned on, in order (nil when
+    /// it never saved one). Home comes first, then the two pages 2.0 brings, the prompter and the AI apps, then Islet's
+    /// own pages as they were.
+    public static func migrating(enabledPages: [String]?) -> PageDeck {
         let optional: [String: WidgetKind] = ["prompter": .prompter, "ai": .ai, "shelf": .shelf, "clipboard": .clipboard, "tools": .tools, "system": .system]
         var pages = [standard.pages[0]]
-        for key in enabledPages {
+        for key in ["prompter", "ai"] + (enabledPages ?? isletPages) {
             guard let kind = optional[key], !pages.contains(where: { $0.id == key }) else { continue }
             pages.append(PageLayout(id: key, stacks: [WidgetStack([kind])]))
         }
