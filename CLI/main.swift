@@ -216,23 +216,45 @@ func ownExecutable() -> URL? {
         .resolvingSymlinksInPath()
 }
 
-/// Points ~/.local/bin/colctl, and Islet's ~/.local/bin/islet when it is there, at this command. A link that already
-/// leads here is left as it is; one that leads elsewhere, or nowhere, leads here again. Nothing is made or removed when
-/// this command's file cannot be found or run: a link to it would only break every hook.
+/// What a link of the command in ~/.local/bin leads to: this command, or, when Homebrew installed Col, Homebrew's link
+/// to it, the one of that name, else the other (Col's cask links `colctl` and `islet`, Islet's linked `islet`).
+/// `brew upgrade` quits Col and replaces the app without opening it again: Homebrew's link follows the new app, so the
+/// hooks keep working meanwhile. The app follows the same rule (Homebrew.command), which this command cannot import.
+func linkTarget(_ name: String, tool: URL) -> URL {
+    let files = FileManager.default
+    for prefix in ["/opt/homebrew", "/usr/local"] where ["islet", "col"].contains(where: { files.fileExists(atPath: "\(prefix)/Caskroom/\($0)") }) {
+        for command in [name] + ["islet", "colctl"].filter({ $0 != name }) {
+            let link = URL(fileURLWithPath: "\(prefix)/bin/\(command)")
+            if (try? files.destinationOfSymbolicLink(atPath: link.path)) != nil, link.resolvingSymlinksInPath().path == tool.path,
+               files.isExecutableFile(atPath: link.path) {
+                return link
+            }
+        }
+    }
+    return tool
+}
+
+/// Points ~/.local/bin/colctl, and Islet's ~/.local/bin/islet when it is there, at this command, through Homebrew's link
+/// when Homebrew installed Col. A link that already leads here is left as it is, unless it goes straight into an
+/// Islet.app that Homebrew replaces with Col.app; one that leads elsewhere, or nowhere, leads here again. Nothing is
+/// made or removed when this command's file cannot be found or run: a link to it would only break every hook.
 func linkCommand() {
     let files = FileManager.default
     guard let tool = ownExecutable(), files.isExecutableFile(atPath: tool.path) else { return }
     // Islet's link, which older hooks call, leads to this command too; it is never made when it is not there.
-    for (link, makes) in [(legacyLinkPath(), false), (linkPath(), true)] {
+    for (name, link, makes) in [("islet", legacyLinkPath(), false), ("colctl", linkPath(), true)] {
+        let target = linkTarget(name, tool: tool)
+        guard files.isExecutableFile(atPath: target.path) else { continue }
         if let destination = try? files.destinationOfSymbolicLink(atPath: link) {
-            let parent = URL(fileURLWithPath: link).deletingLastPathComponent()
-            guard URL(fileURLWithPath: destination, relativeTo: parent).resolvingSymlinksInPath().path != tool.path else { continue }
+            let current = URL(fileURLWithPath: destination, relativeTo: URL(fileURLWithPath: link).deletingLastPathComponent()).standardizedFileURL
+            let intoHomebrewsIslet = target.path != tool.path && current.path != target.path && current.pathComponents.contains("Islet.app")
+            guard current.resolvingSymlinksInPath().path != tool.path || intoHomebrewsIslet else { continue }
             try? files.removeItem(atPath: link)
         } else if !makes || files.fileExists(atPath: link) {
             continue
         }
         try? files.createDirectory(atPath: (link as NSString).deletingLastPathComponent, withIntermediateDirectories: true)
-        try? files.createSymbolicLink(atPath: link, withDestinationPath: tool.path)
+        try? files.createSymbolicLink(atPath: link, withDestinationPath: target.path)
     }
 }
 
