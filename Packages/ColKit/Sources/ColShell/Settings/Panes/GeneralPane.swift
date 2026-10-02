@@ -65,7 +65,7 @@ struct GeneralPane: View {
             }
             Section {
                 IconToggle(symbol: "doc.on.clipboard.fill", tint: .orange, title: "Keep recent copies",
-                           detail: "Kept in memory only, never written to disk. Copies from password managers are skipped.", isOn: $keepsClipboard)
+                           detail: "Kept in memory only, except the copies you pin, which are saved in Col’s settings. Copies from password managers are skipped.", isOn: $keepsClipboard)
                     .onChange(of: keepsClipboard) { Preferences.keepsClipboardHistory = keepsClipboard }
                 IconToggle(symbol: "eye.slash.fill", tint: .indigo, title: "Hide the island from screenshots and recordings",
                            detail: "Useful when you share your screen.", isOn: $hidden)

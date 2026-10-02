@@ -53,8 +53,8 @@ your scripts and your AI agents.
   holds. Ask one a question from the island: the answer comes as it is written, and the question goes to that server
   only.
 - **Volume and brightness.** A quiet gauge in the notch instead of the big square in the middle of the screen.
-- **Files, clipboard, agenda.** A shelf for files with AirDrop, a clipboard history with pins kept in memory only, the
-  next events of your day with a Join button for calls, and today's reminders.
+- **Files, clipboard, agenda.** A shelf for files with AirDrop, a clipboard history kept in memory (only the copies you
+  pin are saved), the next events of your day with a Join button for calls, and today's reminders.
 - **Tools.** A timer that counts down in the wings, a colour picker, a camera mirror, system stats, keep awake,
   downloads.
 - **Privacy at a glance.** The app using your microphone or camera, right where the camera is.
@@ -96,8 +96,8 @@ The cask also links the `colctl` command.
 ### Updates
 
 Col updates itself with [Sparkle](https://sparkle-project.org). The welcome asks whether to keep it up to date;
-you can change your mind in Settings, General, or choose *Check for Updates…* from the island's right-click menu. Every
-update is signed with Col's own key.
+you can change your mind in Settings, General, or choose *Check for Updates…* from the island's right-click menu.
+Every update is signed with Col's own key.
 
 ### Uninstall
 
@@ -162,7 +162,8 @@ Each one only if a module you chose needs it:
     shows the choice; after an update from Islet they stay off until you turn them on.
   - The AI servers you add yourself, and only those. Your questions go only to the server you picked.
   - The prompter's phone remote, which listens on your local network only while you turn it on.
-- The clipboard history lives in memory and skips copies that password managers mark as private.
+- The clipboard history lives in memory and skips copies that password managers mark as private. Only the copies you
+  pin are saved, in Col's settings.
 - Scripts and agents reach Col through a socket in your user folder, mode 0600, which never listens on the network.
 
 [SECURITY.md](SECURITY.md) lists everything Col touches on your Mac.

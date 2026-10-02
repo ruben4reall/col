@@ -2121,12 +2121,12 @@
         }
       }
     },
-    "Kept in memory only, never written to disk. Copies from password managers are skipped.": {
+    "Kept in memory only, except the copies you pin, which are saved in Col’s settings. Copies from password managers are skipped.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Gardées en mémoire seulement, jamais écrites sur le disque. Les copies des gestionnaires de mots de passe sont ignorées."
+            "value": "Gardées en mémoire seulement, sauf les copies épinglées, enregistrées dans les réglages de Col. Les copies des gestionnaires de mots de passe sont ignorées."
           }
         }
       }
@@ -4841,12 +4841,12 @@
         }
       }
     },
-    "What you copied, kept in memory only, never on disk.": {
+    "What you copied, kept in memory only. Only the copies you pin are saved.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ce que vous avez copié, gardé en mémoire seulement, jamais sur le disque."
+            "value": "Ce que vous avez copié, gardé en mémoire seulement. Seules les copies épinglées sont enregistrées."
           }
         }
       }
@@ -5141,12 +5141,12 @@
         }
       }
     },
-    "Your recent copies land here. They stay in memory and never touch the disk.": {
+    "Your recent copies land here. They stay in memory; only the ones you pin are saved.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Vos dernières copies arrivent ici. Elles restent en mémoire et ne touchent jamais le disque."
+            "value": "Vos dernières copies arrivent ici. Elles restent en mémoire ; seules celles que vous épinglez sont enregistrées."
           }
         }
       }

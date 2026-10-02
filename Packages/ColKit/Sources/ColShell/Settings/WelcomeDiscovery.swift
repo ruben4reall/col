@@ -310,7 +310,7 @@ private struct FeatureRow: View {
         case .shelf:
             Text("Drop files on the notch to keep them at hand, and AirDrop them from there.", bundle: .module)
         case .clipboard:
-            Text("What you copied, kept in memory only, never on disk.", bundle: .module)
+            Text("What you copied, kept in memory only. Only the copies you pin are saved.", bundle: .module)
         case .tools:
             Text("A timer in the wings, a colour picker, a mirror and a way to keep the Mac awake.", bundle: .module)
         case .system:
