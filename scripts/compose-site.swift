@@ -35,7 +35,7 @@ func figure(_ shot: String, span: Int = 720, rows: Int = 250, name: String) {
     print("  \(name)")
 }
 
-figure("music-open", name: "open")
+figure("home-open", name: "open")
 figure("agent-request", name: "agent")
 figure("airpods-pro", name: "airpods-pro")
 figure("airpods-max", name: "airpods-max")

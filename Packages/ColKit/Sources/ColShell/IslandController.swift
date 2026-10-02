@@ -610,6 +610,12 @@ public final class IslandController {
         default:
             break
         }
+        // `-ColPrompt "text"` rolls that script in the prompter a moment after launch, for screenshots and films.
+        if let script = UserDefaults.standard.string(forKey: "ColPrompt"), !script.isEmpty {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                PrompterCenter.shared.prompt(text: script, title: UserDefaults.standard.string(forKey: "ColPromptTitle"))
+            }
+        }
         // `-ColWelcome YES` opens the welcome at once, for screenshots and for working on it.
         if UserDefaults.standard.bool(forKey: "ColWelcome") { WelcomeWindow.shared.show() }
         // `-ColSettings island` opens the settings on a pane, for screenshots and for working on them.

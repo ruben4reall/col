@@ -3,7 +3,7 @@
 // overflows its box. Screenshots of every section (and of each demo state) go to site/.shots/.
 // Usage: node tools/audit.mjs [--only desktop|laptop|tablet|phone] [--no-shots] [--path /page] [--wrapped]
 // --wrapped checks the page inside the skeleton a preview host puts around it (light colours on body, img max-width).
-// --url https://getislet.vercel.app checks the published site instead of site/ served locally.
+// --url https://getcol.vercel.app checks the published site instead of site/ served locally.
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
@@ -17,7 +17,7 @@ const SIZES = {
   tablet: { width: 820, height: 1180, deviceScaleFactor: 1, mobile: true },
   phone: { width: 390, height: 844, deviceScaleFactor: 2, mobile: true },
 };
-const SECTIONS = ['top', 'how', 'shelf', 'clipboard', 'features', 'agents', 'airpods', 'app', 'your-mac', 'compare', 'privacy', 'open-source', 'faq', 'download'];
+const SECTIONS = ['top', 'overview', 'music', 'ai', 'prompter', 'everyday', 'design', 'setup', 'light', 'privacy', 'developers', 'open-source', 'faq', 'download'];
 
 const { values } = parseArgs({ options: { only: { type: 'string' }, 'no-shots': { type: 'boolean' }, path: { type: 'string', default: '/' }, wrapped: { type: 'boolean' }, url: { type: 'string' } } });
 const WRAPPED = join(SITE_DIR, 'artifact-check.html');
@@ -41,7 +41,7 @@ const INSPECT = `(() => {
   for (const el of document.querySelectorAll('body *')) {
     const r = el.getBoundingClientRect();
     if (r.width === 0 || getComputedStyle(el).position === 'fixed') continue;
-    if (r.right > innerWidth + 1 && !el.closest('.table-card') && !el.closest('.mac')) wide.push(el.tagName.toLowerCase() + (el.className ? '.' + String(el.className).split(' ')[0] : '') + ' right=' + Math.round(r.right));
+    if (r.right > innerWidth + 1 && !el.closest('.table-card') && !el.closest('.mac') && !el.closest('.chip-row')) wide.push(el.tagName.toLowerCase() + (el.className ? '.' + String(el.className).split(' ')[0] : '') + ' right=' + Math.round(r.right));
     if (['P', 'H1', 'H2', 'H3', 'A', 'BUTTON', 'SPAN', 'LI', 'SUMMARY'].includes(el.tagName) && el.scrollWidth > el.clientWidth + 1 && getComputedStyle(el).overflow !== 'visible' && !el.classList.contains('visually-hidden')) out.push('text clipped: ' + el.tagName + ' ' + el.textContent.trim().slice(0, 40));
   }
   if (wide.length) out.push('past the right edge: ' + [...new Set(wide)].slice(0, 6).join(', '));
@@ -89,15 +89,15 @@ try {
     failures += problems.length;
     if (!values['no-shots']) {
       // Each demo state on the hero, then every section from its top.
-      const states = await page.evaluate(`[...document.querySelectorAll('.demo-chips .chip')].map((c) => c.dataset.state)`);
+      const states = await page.evaluate(`[...document.querySelectorAll('[data-tour-chips] .chip')].map((c) => c.dataset.state)`);
       for (const state of states) {
-        await page.evaluate(`document.querySelector('.demo-chips .chip[data-state="${state}"]').click(); scrollTo(0, 0)`);
+        await page.evaluate(`document.querySelector('[data-tour-chips] .chip[data-state="${state}"]').click(); scrollTo(0, 0)`);
         await sleep(900);
         await page.screenshot(join(SHOTS, `${name}-hero-${state}.png`));
       }
       for (const id of SECTIONS) {
         await page.evaluate(`document.getElementById('${id}').scrollIntoView({ block: 'start', behavior: 'instant' })`);
-        await sleep(350);
+        await sleep(1300);
         await page.screenshot(join(SHOTS, `${name}-${id}.png`));
       }
       await page.evaluate(`scrollTo(0, document.documentElement.scrollHeight)`);
