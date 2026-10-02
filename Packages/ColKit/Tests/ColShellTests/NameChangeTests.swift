@@ -120,6 +120,47 @@ struct NameChangeMoveTests {
         #expect(try files.destinationOfSymbolicLink(atPath: new.appendingPathComponent("latest").path) == "Extensions")
         #expect((try? files.attributesOfItem(atPath: old.path)) == nil)
     }
+
+    @Test func isletsFolderBecomesALinkToCols() throws {
+        let files = FileManager.default
+        let root = try scratch()
+        defer { try? files.removeItem(at: root) }
+        let old = root.appendingPathComponent("Islet"), new = root.appendingPathComponent("Col")
+        try files.createDirectory(at: old.appendingPathComponent("Scripts"), withIntermediateDirectories: true)
+
+        NameChange.moveLeavingLink(old, into: new)
+
+        #expect(try files.destinationOfSymbolicLink(atPath: old.path) == "Col")
+        #expect(files.fileExists(atPath: old.appendingPathComponent("Scripts").path))
+    }
+
+    @Test func noLinkForSomeoneWhoNeverHadIslet() throws {
+        let files = FileManager.default
+        let root = try scratch()
+        defer { try? files.removeItem(at: root) }
+        let old = root.appendingPathComponent("Islet"), new = root.appendingPathComponent("Col")
+        try files.createDirectory(at: new, withIntermediateDirectories: true)
+
+        NameChange.moveLeavingLink(old, into: new)
+
+        #expect((try? files.attributesOfItem(atPath: old.path)) == nil)
+    }
+
+    @Test func aFolderThatCouldNotMoveWholeStaysAFolder() throws {
+        let files = FileManager.default
+        let root = try scratch()
+        defer { try? files.removeItem(at: root) }
+        let old = root.appendingPathComponent("Islet"), new = root.appendingPathComponent("Col")
+        try files.createDirectory(at: old, withIntermediateDirectories: true)
+        try files.createDirectory(at: new, withIntermediateDirectories: true)
+        try "old".write(to: old.appendingPathComponent("notes.md"), atomically: true, encoding: .utf8)
+        try "new".write(to: new.appendingPathComponent("notes.md"), atomically: true, encoding: .utf8)
+
+        NameChange.moveLeavingLink(old, into: new)
+
+        #expect((try? files.destinationOfSymbolicLink(atPath: old.path)) == nil)
+        #expect(try String(contentsOf: old.appendingPathComponent("notes.md"), encoding: .utf8) == "old")
+    }
 }
 
 struct NameChangeLinkTests {
@@ -170,5 +211,34 @@ struct NameChangeLinkTests {
         #expect(!NameChange.linkNeedsRepair(bin.appendingPathComponent("islet"), tool: tool))
         #expect(!NameChange.linkNeedsRepair(bin.appendingPathComponent("script"), tool: tool))
         #expect(!NameChange.linkNeedsRepair(bin.appendingPathComponent("absent"), tool: tool))
+    }
+}
+
+struct IsletSocketTests {
+    @Test func isletsSocketLeadsToColsForSomeoneComingFromIslet() throws {
+        let files = FileManager.default
+        let support = try scratch()
+        defer { try? files.removeItem(at: support) }
+        let col = support.appendingPathComponent("Col")
+        try files.createDirectory(at: col, withIntermediateDirectories: true)
+        try "stale".write(to: col.appendingPathComponent("islet.sock"), atomically: true, encoding: .utf8)
+        try files.createSymbolicLink(atPath: support.appendingPathComponent("Islet").path, withDestinationPath: "Col")
+
+        ControlServer.answerAsIslet(in: support)
+
+        #expect(try files.destinationOfSymbolicLink(atPath: col.appendingPathComponent("islet.sock").path) == "col.sock")
+        #expect(try files.destinationOfSymbolicLink(atPath: support.appendingPathComponent("Islet/islet.sock").path) == "col.sock")
+    }
+
+    @Test func nothingForSomeoneWhoNeverHadIslet() throws {
+        let files = FileManager.default
+        let support = try scratch()
+        defer { try? files.removeItem(at: support) }
+        try files.createDirectory(at: support.appendingPathComponent("Col"), withIntermediateDirectories: true)
+
+        ControlServer.answerAsIslet(in: support)
+
+        #expect((try? files.attributesOfItem(atPath: support.appendingPathComponent("Col/islet.sock").path)) == nil)
+        #expect((try? files.attributesOfItem(atPath: support.appendingPathComponent("Islet").path)) == nil)
     }
 }

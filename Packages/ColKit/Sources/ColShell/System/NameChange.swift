@@ -61,9 +61,13 @@ public enum NameChange {
             let files = FileManager.default
             for directory in [FileManager.SearchPathDirectory.applicationSupportDirectory, .cachesDirectory] {
                 let base = files.urls(for: directory, in: .userDomainMask)[0]
-                move(base.appendingPathComponent(legacy, isDirectory: true), into: base.appendingPathComponent("Col", isDirectory: true))
+                let old = base.appendingPathComponent(legacy, isDirectory: true)
+                // Already the link Col leaves for Islet's scripts: nothing left to move.
+                guard (try? files.destinationOfSymbolicLink(atPath: old.path)) == nil else { continue }
+                let new = base.appendingPathComponent("Col", isDirectory: true)
+                if directory == .applicationSupportDirectory { moveLeavingLink(old, into: new) } else { move(old, into: new) }
             }
-            // The socket Islet left, now in Col's folder: nothing answers on it.
+            // The socket Islet left, now in Col's folder: nothing answers on it. Col links that name to its own socket.
             let support = files.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("Col")
             try? files.removeItem(at: support.appendingPathComponent("islet.sock"))
             carrySettings(defaults)
@@ -116,6 +120,16 @@ public enum NameChange {
         if let left = try? files.contentsOfDirectory(atPath: old.path), left.allSatisfy({ $0 == ".DS_Store" }) {
             try? files.removeItem(at: old)
         }
+    }
+
+    /// Moves Islet's folder, and leaves in its place a link to Col's: scripts written for Islet reach its socket there
+    /// (ControlServer). When some of it stays, both versions of a file being kept, the folder stays as it is.
+    nonisolated static func moveLeavingLink(_ old: URL, into new: URL) {
+        let files = FileManager.default
+        guard (try? files.attributesOfItem(atPath: old.path)) != nil else { return }
+        move(old, into: new)
+        guard (try? files.attributesOfItem(atPath: old.path)) == nil else { return }
+        try? files.createSymbolicLink(atPath: old.path, withDestinationPath: new.lastPathComponent)
     }
 
     /// Hooks installed under Islet call ~/.local/bin/islet: that link now leads to `colctl`, which sits beside it.
