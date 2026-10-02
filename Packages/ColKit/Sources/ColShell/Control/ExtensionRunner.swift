@@ -74,6 +74,8 @@ final class ExtensionRunner {
         process.currentDirectoryURL = Self.folder.appendingPathComponent(item.folder)
         var environment = ProcessInfo.processInfo.environment
         environment["COL_EXTENSION"] = item.folder
+        // The name extensions written for Islet read.
+        environment["ISLET_EXTENSION"] = item.folder
         environment["PATH"] = (environment["PATH"] ?? "") + ":/opt/homebrew/bin:/usr/local/bin:" + NSHomeDirectory() + "/.local/bin"
         process.environment = environment
         let output = Pipe()
