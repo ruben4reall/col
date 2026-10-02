@@ -149,7 +149,8 @@ final class ControlServer: @unchecked Sendable {
 
     private static let maximumBody = 1 << 20
 
-    private static func read(_ client: Int32) -> HTTPRequest? {
+    /// One request off the socket; nil for anything that is not a whole, well-formed request, which is answered 400.
+    static func read(_ client: Int32) -> HTTPRequest? {
         var data = Data()
         var chunk = [UInt8](repeating: 0, count: 16_384)
         var headerEnd: Range<Data.Index>?
@@ -168,7 +169,9 @@ final class ControlServer: @unchecked Sendable {
         for line in lines.dropFirst() {
             let pair = line.split(separator: ":", maxSplits: 1)
             if pair.count == 2, pair[0].lowercased() == "content-length" {
-                length = Int(pair[1].trimmingCharacters(in: .whitespaces)) ?? 0
+                // A length that is not a count of bytes (negative, or not a number) makes the request a bad one.
+                guard let value = Int(pair[1].trimmingCharacters(in: .whitespaces)), value >= 0 else { return nil }
+                length = value
             }
         }
         guard length <= maximumBody else { return nil }
