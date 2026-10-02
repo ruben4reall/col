@@ -104,10 +104,32 @@ public struct HookEvent: Decodable, Sendable, Equatable {
         return "\(label) · \(String(line.trimmingCharacters(in: .whitespaces).prefix(70)))"
     }
 
-    /// The command itself, for a permission request that needs the full picture.
+    /// What a permission request approves, whole: the command for a shell, the file for the tools that read or change
+    /// one, the address for a fetch. Any other tool (one from an MCP server, say), or a known one whose input has
+    /// another shape, gives every argument it was given, so nothing a request carries stays off the card.
     public var toolDetail: String? {
-        guard let input = toolInput else { return nil }
-        return input["command"]?.string ?? input["file_path"]?.string ?? input["absolute_path"]?.string ?? input["url"]?.string
+        guard let input = toolInput, !input.isEmpty else { return nil }
+        for key in targetKeys {
+            if let value = input[key]?.string { return value }
+        }
+        return Self.arguments(input)
+    }
+
+    /// The argument that names what a known tool acts on. Its others only say how: a timeout, a range of lines.
+    private var targetKeys: [String] {
+        guard let toolName else { return [] }
+        if Self.shellTools.contains(toolName) { return ["command"] }
+        return switch toolName {
+        case "Edit", "MultiEdit", "Write", "Read", "write_file", "replace", "read_file": ["file_path", "absolute_path"]
+        case "NotebookEdit": ["notebook_path"]
+        case "WebFetch", "web_fetch": ["url"]
+        default: []
+        }
+    }
+
+    /// Every argument, a line each, in the order of their names: text as it is, anything else as JSON.
+    static func arguments(_ input: [String: JSONValue]) -> String {
+        input.sorted { $0.key < $1.key }.map { "\($0.key): \($0.value.shown)" }.joined(separator: "\n")
     }
 }
 
@@ -155,6 +177,14 @@ public enum JSONValue: Codable, Sendable, Equatable {
     public var array: [JSONValue]? {
         if case .array(let value) = self { return value }
         return nil
+    }
+
+    /// The value written out in full: text as it is, anything else as compact JSON with its keys in order.
+    var shown: String {
+        if case .string(let value) = self { return value }
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
+        return (try? encoder.encode(self)).flatMap { String(data: $0, encoding: .utf8) } ?? "?"
     }
 }
 

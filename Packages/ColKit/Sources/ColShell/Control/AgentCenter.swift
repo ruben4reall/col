@@ -20,7 +20,7 @@ final class AgentCenter {
         var tool: String
         /// What it is for, in a line: the command's first line for a shell, never the agent's description of it.
         var summary: String
-        /// The whole command, file or address Allow would approve, as the card shows it.
+        /// What Allow would approve, whole, as the card shows it: the command, file or address, or every argument.
         var detail: RequestDetail?
         var received: Date
         /// The tool the request is for, to recognise it once the tool has run.
@@ -89,9 +89,11 @@ final class AgentCenter {
         onChange?()
     }
 
-    /// Whether the island may allow a request: its command, file or address fits the card, so it was seen whole.
+    /// Whether the island may allow a request: what it approves fits the card, so it was seen whole. A request with
+    /// input the card does not show is never allowed from it; only one that carries none is.
     static func canAllow(_ request: PendingRequest) -> Bool {
-        request.detail?.fitsCard ?? true
+        guard let detail = request.detail else { return request.toolInput?.isEmpty ?? true }
+        return detail.fitsCard
     }
 
     private func resolve(_ requestID: String, _ decision: Decision, updateBoard: Bool = true) {
