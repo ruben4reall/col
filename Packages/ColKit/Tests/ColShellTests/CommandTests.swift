@@ -61,6 +61,11 @@ private struct FakeHome {
     func remove() { try? FileManager.default.removeItem(at: root) }
 }
 
+/// A file's permission bits.
+private func permissions(of url: URL) throws -> Int {
+    try #require(FileManager.default.attributesOfItem(atPath: url.path)[.posixPermissions] as? Int) & 0o777
+}
+
 /// The line `colctl hooks status` prints for an agent.
 private func status(of agent: String, in output: String) -> String? {
     output.split(separator: "\n").first { $0.hasPrefix(agent) }.map(String.init)
@@ -81,6 +86,10 @@ struct CommandTests {
         let islet = hooks.appendingPathComponent("islet.json")
         let written = try JSONSerialization.data(withJSONObject: settings, options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes])
         try written.write(to: islet)
+        // The copy Islet kept of that file, readable by the Mac's other accounts.
+        let isletCopy = hooks.appendingPathComponent("islet.json.islet-backup")
+        try written.write(to: isletCopy)
+        try FileManager.default.setAttributes([.posixPermissions: 0o644], ofItemAtPath: isletCopy.path)
 
         #expect(status(of: "GitHub Copil", in: try fake.run(tool, ["hooks", "status"]).output) == "GitHub Copil connected")
 
@@ -91,6 +100,8 @@ struct CommandTests {
         #expect(!FileManager.default.fileExists(atPath: islet.path))
         #expect(try Data(contentsOf: hooks.appendingPathComponent("islet.json.col-backup")) == written)
         #expect(!FileManager.default.fileExists(atPath: hooks.appendingPathComponent("col.json").path))
+        #expect(try permissions(of: isletCopy) == 0o600)
+        #expect(try Data(contentsOf: isletCopy) == written)
         #expect(status(of: "GitHub Copil", in: try fake.run(tool, ["hooks", "status"]).output) == "GitHub Copil not connected")
 
         // Nothing is left to remove the second time.
@@ -106,10 +117,14 @@ struct CommandTests {
         try FileManager.default.createDirectory(at: hooks, withIntermediateDirectories: true)
         try Data(#"{"hooks":{"Stop":[{"command":"\"$HOME/.local/bin/islet\" hook --agent copilot","timeout":5,"type":"command"}]}}"#.utf8)
             .write(to: hooks.appendingPathComponent("islet.json"))
+        let isletCopy = hooks.appendingPathComponent("islet.json.islet-backup")
+        try Data("{}".utf8).write(to: isletCopy)
+        try FileManager.default.setAttributes([.posixPermissions: 0o644], ofItemAtPath: isletCopy.path)
 
         let install = try fake.run(tool, ["hooks", "install", "--agent", "copilot"])
         #expect(install.status == 0)
         #expect(install.output.contains("islet.json.col-backup"))
+        #expect(try permissions(of: isletCopy) == 0o600)
         #expect(!FileManager.default.fileExists(atPath: hooks.appendingPathComponent("islet.json").path))
         #expect(try String(contentsOf: hooks.appendingPathComponent("col.json"), encoding: .utf8).contains(".local/bin/colctl\\\" hook --agent copilot"))
         #expect(status(of: "GitHub Copil", in: try fake.run(tool, ["hooks", "status"]).output) == "GitHub Copil connected")

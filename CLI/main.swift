@@ -279,6 +279,8 @@ func legacyCopilotHooksPath() -> String { ("~/.copilot/hooks/islet.json" as NSSt
 /// still call Col. Returns where the file went, or nil when there was none calling Col.
 func setAsideLegacyCopilotHooks() throws -> String? {
     let legacy = legacyCopilotHooksPath()
+    // Islet's copy of that file, readable by others like its other copies (`backUp`).
+    closeToOthers(legacy + ".islet-backup")
     guard let text = try? String(contentsOfFile: legacy, encoding: .utf8), mentionsCol(text) else { return nil }
     let aside = legacy + ".col-backup"
     do {
@@ -319,11 +321,7 @@ func entry(for agent: Agent, _ event: (name: String, matcher: Bool, timeout: Int
 /// whole under another name, then put in place, so it is never readable by others for a moment either.
 func backUp(_ data: Data, of url: URL) {
     // Islet left its own copy beside the settings, readable by others: it is closed to them too.
-    let legacy = url.appendingPathExtension("islet-backup").path
-    var status = stat()
-    if lstat(legacy, &status) == 0, status.st_mode & S_IFMT == S_IFREG, status.st_mode & 0o077 != 0 {
-        fchmodat(AT_FDCWD, legacy, status.st_mode & 0o700, AT_SYMLINK_NOFOLLOW)
-    }
+    closeToOthers(url.appendingPathExtension("islet-backup").path)
     let backup = url.appendingPathExtension("col-backup").path
     let partial = backup + ".\(getpid())"
     unlink(partial)
@@ -341,6 +339,13 @@ func backUp(_ data: Data, of url: URL) {
     }
     close(file)
     if !written || rename(partial, backup) != 0 { unlink(partial) }
+}
+
+/// Keeps a file to its owner when others may read or write it. A link, or anything but a file, stays as it is.
+func closeToOthers(_ path: String) {
+    var status = stat()
+    guard lstat(path, &status) == 0, status.st_mode & S_IFMT == S_IFREG, status.st_mode & 0o077 != 0 else { return }
+    fchmodat(AT_FDCWD, path, status.st_mode & 0o700, AT_SYMLINK_NOFOLLOW)
 }
 
 /// Adds or removes Col's hooks in an agent's settings, keeping everything else and a backup of the file.
