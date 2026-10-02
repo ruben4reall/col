@@ -13,7 +13,8 @@ public enum NameChange {
 
     /// Development builds leave the user's own files alone, unless `-ColMigrate YES` asks, run under a home of its own
     /// (CFFIXED_USER_HOME); then nothing is remembered, so the real move still happens later. That home redirects
-    /// neither /Applications nor the login item, so those are left alone too.
+    /// neither /Applications, nor the login item, nor the settings, so those are left alone too: the only setting
+    /// written is the prompter's window frame, carried as the real move would carry it.
     private static var forced: Bool { UserDefaults.standard.bool(forKey: "ColMigrate") }
 
     private static var isDevelopmentBuild: Bool { AppLocation.isDevelopmentBuild }
@@ -67,7 +68,7 @@ public enum NameChange {
             // The socket Islet left, now in Col's folder: nothing answers on it. Col links that name to its own socket.
             let support = files.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("Col")
             try? files.removeItem(at: support.appendingPathComponent("islet.sock"))
-            carrySettings(defaults)
+            carrySettings(defaults, decidingLyrics: !forced)
 
             if stable {
                 relinkCommand()
@@ -87,13 +88,14 @@ public enum NameChange {
     /// Islet's settings that changed name, and a choice 2.0 adds that its users never made: lyrics, looked up on
     /// LRCLIB. Someone coming from Islet never sees the welcome where they are offered, so they stay off until turned
     /// on in Settings, Music and lyrics; anyone else has them on, as the welcome offers. Decided once: the welcome, or
-    /// the settings, have the last word.
-    nonisolated static func carrySettings(_ defaults: UserDefaults) {
+    /// the settings, have the last word. A forced move (`-ColMigrate`) leaves that choice alone: its home of its own does
+    /// not redirect the settings, which belong to the Col installed on this Mac.
+    nonisolated static func carrySettings(_ defaults: UserDefaults, decidingLyrics: Bool = true) {
         let frame = "NSWindow Frame ColFloatingPrompter"
         if defaults.object(forKey: frame) == nil, let old = defaults.object(forKey: "NSWindow Frame IsletFloatingPrompter") {
             defaults.set(old, forKey: frame)
         }
-        if defaults.object(forKey: "showsLyrics") == nil {
+        if decidingLyrics, defaults.object(forKey: "showsLyrics") == nil {
             // Set once the welcome has been seen, as Islet set it too (WelcomeWindow).
             defaults.set(!defaults.bool(forKey: "hasWelcomed"), forKey: "showsLyrics")
         }

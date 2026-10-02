@@ -54,6 +54,18 @@ struct NameChangeSettingsTests {
         #expect(defaults.object(forKey: "showsLyrics") as? Bool == true)
     }
 
+    @Test func aForcedMoveLeavesLyricsAlone() {
+        let (defaults, name) = defaults()
+        defer { defaults.removePersistentDomain(forName: name) }
+        defaults.set(true, forKey: "hasWelcomed")
+        defaults.set("0 0 300 200", forKey: "NSWindow Frame IsletFloatingPrompter")
+
+        NameChange.carrySettings(defaults, decidingLyrics: false)
+
+        #expect(defaults.object(forKey: "showsLyrics") == nil)
+        #expect(defaults.string(forKey: "NSWindow Frame ColFloatingPrompter") == "0 0 300 200")
+    }
+
     @Test func aChoiceAlreadyMadeIsKept() {
         let (defaults, name) = defaults()
         defer { defaults.removePersistentDomain(forName: name) }
