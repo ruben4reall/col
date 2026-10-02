@@ -35,8 +35,8 @@ targets:
       - package: ColKit
         product: ColPrompter
       - package: Sparkle
-      # The `colctl` command, in Contents/Helpers. Hooks installed under Islet call ~/.local/bin/islet, which Col
-      # links to it on its first launch.
+      # The `colctl` command, in Contents/Helpers, with `islet` beside it (below). Hooks installed under Islet call
+      # ~/.local/bin/islet, which Col links to colctl on its first launch.
       - target: ColCommand
         link: false
         embed: true
@@ -51,6 +51,14 @@ targets:
         codeSign: true
         copy:
           destination: frameworks
+    postBuildScripts:
+      # Islet's command was Contents/Helpers/islet: its hooks reach it through ~/.local/bin/islet, and Homebrew's
+      # Islet cask links <prefix>/bin/islet to it. Sparkle installs 2.0 in place, before any of Col's code runs, and
+      # Homebrew keeps the copy it installed as Islet.app: this relative link keeps those commands working. Made
+      # after the command is embedded and before the app is signed.
+      - name: Link the islet command
+        script: ln -sfh colctl "$TARGET_BUILD_DIR/$CONTENTS_FOLDER_PATH/Helpers/islet"
+        basedOnDependencyAnalysis: false
     # The hardened runtime blocks the camera, the microphone and calendars unless the app declares them: the mirror,
     # the prompter's voice modes, the agenda and reminders.
     entitlements:
