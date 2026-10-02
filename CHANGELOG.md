@@ -45,8 +45,8 @@ Each release's section is what Col's update window and the GitHub release show. 
   while you type, as Spotlight does. Questions go to that server only and the conversation is never written to disk.
 - **Agents show their logo**: Claude Code shows Claude's logo, and Codex, Gemini CLI, Cursor and GitHub Copilot theirs,
   in the closed island, on the Live page, on the AI page and in the settings. The icon of the app installed when there
-  is one, else the brand's own logo, which Col carries. The logo bounces, as in the Dock, while the agent needs you
-  (not with Reduce Motion). Each icon is kept only at the size it shows.
+  is one, else the brand's own logo, which Col carries. When an agent starts waiting for you, its logo hops a few
+  times, as in the Dock, then rests (not with Reduce Motion). Each icon is kept only at the size it shows.
 - **The whole command before you allow it**: when an agent asks to run a command, the Allow card shows it in full, in
   a fixed-width font you can scroll and select, with spaces, tabs and line breaks made visible. A command too long to
   check there cannot be allowed from the island: the card asks you to answer in the terminal.
