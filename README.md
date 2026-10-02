@@ -108,9 +108,11 @@ Every update is signed with Col's own key.
 
 ### Uninstall
 
-In Settings, AI apps, disconnect your AI agents, so their settings files forget Col (or, from a terminal,
-`colctl hooks uninstall --agent all`). Then quit Col from its right-click menu and move it to the Trash. Its settings
-are in `~/Library/Preferences/ch.rubencatalao.islet.plist`. With Homebrew: `brew uninstall --cask --zap col`.
+In Settings, AI apps, disconnect your AI agents, so their settings files forget Col. From a terminal,
+`colctl hooks status` shows the connected ones, and `colctl hooks uninstall --agent <name>` disconnects each of them
+(`claude`, `codex`, `gemini`, `cursor` or `copilot`). Then quit Col from its right-click menu and move it to the Trash.
+Its settings are in `~/Library/Preferences/ch.rubencatalao.islet.plist`. With Homebrew:
+`brew uninstall --cask --zap col`.
 
 ## Connect your AI agents
 
