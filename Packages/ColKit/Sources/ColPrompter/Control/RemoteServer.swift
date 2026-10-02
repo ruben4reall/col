@@ -15,8 +15,12 @@ public final class RemoteServer {
 
     private var listener: NWListener?
     private var subscribers: [UInt64: NWConnection] = [:]
-    /// Connections still sending their request, with when they arrived: a slow or silent one is dropped.
+    /// Connections still sending their request: a slow or silent one is dropped, and one waiting long makes room
+    /// for a newcomer when every slot is taken (`PendingConnections`).
     private var waiting: [UInt64: NWConnection] = [:]
+    private var pending = PendingConnections(
+        limit: RemoteServer.maximumConnections, perHost: RemoteServer.maximumPendingPerAddress
+    )
     /// Connections are known by a number that is never used twice: the address of a connection that has gone can come
     /// back with a new one, and a late timer must not close the newcomer.
     private var lastConnection: UInt64 = 0
@@ -25,7 +29,9 @@ public final class RemoteServer {
     /// A phone or two, and the page loading: more than this at once is not a remote.
     static let maximumConnections = 16
     static let maximumSubscribers = 4
-    static let requestTimeout: TimeInterval = 5
+    /// A phone sends its request at once: an address with more than this many still silent is opening them on purpose.
+    static let maximumPendingPerAddress = 4
+    static let requestTimeout: TimeInterval = 3
     private let queue = DispatchQueue(label: "ch.rubencatalao.islet.prompter-remote")
     static let preferredPorts: [UInt16] = [7575, 7576, 7577, 7578, 7579]
 
@@ -76,6 +82,7 @@ public final class RemoteServer {
         subscribers.removeAll()
         waiting.values.forEach { $0.cancel() }
         waiting.removeAll()
+        pending.removeAll()
         isRunning = false
         port = nil
         onStatusChange?()
@@ -120,26 +127,36 @@ public final class RemoteServer {
     // MARK: Connections
 
     private func accept(_ connection: NWConnection) {
-        // Local network only: a remote peer outside private ranges is refused.
-        if case .hostPort(let host, _) = connection.endpoint, !NetworkAddress.isLocal(host) {
-            connection.cancel()
-            return
-        }
-        guard waiting.count + subscribers.count < Self.maximumConnections else {
-            connection.cancel()
-            return
+        var address = ""
+        if case .hostPort(let host, _) = connection.endpoint {
+            // Local network only: a remote peer outside private ranges is refused.
+            guard NetworkAddress.isLocal(host) else {
+                connection.cancel()
+                return
+            }
+            address = "\(host)"
         }
         lastConnection += 1
         let id = lastConnection
+        // Silent connections never hold a slot against a newcomer: the ones waiting longest make room.
+        guard let leaving = pending.admit(id, from: address, besides: subscribers.count) else {
+            connection.cancel()
+            return
+        }
+        for old in leaving { waiting.removeValue(forKey: old)?.cancel() }
         waiting[id] = connection
         connection.start(queue: queue)
         receive(connection, id: id, buffer: Data())
         // A request has a few seconds to arrive whole.
         DispatchQueue.main.asyncAfter(deadline: .now() + Self.requestTimeout) { [weak self] in
-            MainActor.assumeIsolated {
-                self?.waiting.removeValue(forKey: id)?.cancel()
-            }
+            MainActor.assumeIsolated { self?.release(id) }
         }
+    }
+
+    /// A connection that never sent a whole request goes, and its slot with it.
+    private func release(_ id: UInt64) {
+        pending.remove(id)
+        waiting.removeValue(forKey: id)?.cancel()
     }
 
     private nonisolated func receive(_ connection: NWConnection, id: UInt64, buffer: Data) {
@@ -150,6 +167,7 @@ public final class RemoteServer {
                 Task { @MainActor in self?.respond(to: request, on: connection, id: id) }
             } else if complete || error != nil || buffer.count > 32 * 1024 {
                 connection.cancel()
+                Task { @MainActor in self?.release(id) }
             } else {
                 self?.receive(connection, id: id, buffer: buffer)
             }
@@ -158,6 +176,7 @@ public final class RemoteServer {
 
     private func respond(to request: HTTPRequest, on connection: NWConnection, id: UInt64) {
         guard waiting.removeValue(forKey: id) != nil else { return }
+        pending.remove(id)
         guard RemoteToken.matches(PrompterPreferences.remoteToken, request.query["token"] ?? "") else {
             return send(connection, status: "403 Forbidden", type: "text/plain", body: Data("Scan the QR code in Col's settings again.".utf8))
         }

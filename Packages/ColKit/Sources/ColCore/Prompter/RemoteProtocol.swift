@@ -82,3 +82,71 @@ public struct HTTPRequest: Equatable, Sendable {
         self.headers = headers
     }
 }
+
+/// The phone remote's connections still on their way to a request, and the slots they hold. A slot is never held
+/// against a newcomer: a phone's request follows its connection within moments, so when every slot is taken the
+/// connection waiting longest goes, from the address holding the most, and one address never holds more than a few.
+/// Connections opened and left silent on purpose, from one address or many, can then no longer keep the phone out.
+public struct PendingConnections: Sendable {
+    public struct Entry: Equatable, Sendable {
+        public let id: UInt64
+        public let host: String
+    }
+
+    /// Oldest first.
+    public private(set) var entries: [Entry] = []
+    /// Slots for every connection, those still waiting and those already let in.
+    public let limit: Int
+    /// Slots one address may hold while its requests are on their way.
+    public let perHost: Int
+
+    public init(limit: Int, perHost: Int) {
+        self.limit = limit
+        self.perHost = perHost
+    }
+
+    public var count: Int { entries.count }
+
+    public func contains(_ id: UInt64) -> Bool {
+        entries.contains { $0.id == id }
+    }
+
+    /// Lets a connection from `host` wait for its request, beside `others` connections already let in: returns the
+    /// connections that go to make room for it, or nil when there is none to make, every slot being held by a phone.
+    public mutating func admit(_ id: UInt64, from host: String, besides others: Int) -> [UInt64]? {
+        var leaving: [UInt64] = []
+        // An address past its share makes room from its own connections, never from anyone else's.
+        let own = entries.filter { $0.host == host }
+        if own.count >= perHost, let oldest = own.first {
+            remove(oldest.id)
+            leaving.append(oldest.id)
+        }
+        while entries.count + others >= limit {
+            guard let oldest = oldestOfTheBusiest else { return nil }
+            remove(oldest)
+            leaving.append(oldest)
+        }
+        entries.append(Entry(id: id, host: host))
+        return leaving
+    }
+
+    /// A connection stops waiting: its request came, or it closed or ran out of time. False when it had already gone.
+    @discardableResult
+    public mutating func remove(_ id: UInt64) -> Bool {
+        guard let index = entries.firstIndex(where: { $0.id == id }) else { return false }
+        entries.remove(at: index)
+        return true
+    }
+
+    public mutating func removeAll() {
+        entries.removeAll()
+    }
+
+    /// The connection waiting longest among those of the address holding the most.
+    private var oldestOfTheBusiest: UInt64? {
+        var counts: [String: Int] = [:]
+        for entry in entries { counts[entry.host, default: 0] += 1 }
+        guard let most = counts.values.max() else { return nil }
+        return entries.first { counts[$0.host] == most }?.id
+    }
+}
