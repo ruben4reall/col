@@ -26,7 +26,8 @@ Each release's section is what Col's update window and the GitHub release show. 
   play button, has its own Scripts window and its own pane in Settings, and stays out of screenshots, recordings and
   calls. While it is out, the island steps aside and comes back after the take. Drive it with ⌃⌥⌘P and its other
   shortcuts, a presentation clicker, your phone, Shortcuts actions or `col://prompter/…` links. If you used
-  Souffleur, your scripts and settings carry over, and its `souffleur://` links keep working.
+  Souffleur, your scripts and settings carry over, and its `souffleur://` links keep working. Your phone stays paired,
+  and its remote waits until you turn it on in Settings, Prompter.
 - **Pages you compose**: each page of the open island holds one widget across it or two side by side, and each place
   can stack several widgets: the island shows the first one that has something to show. Home now puts the player
   beside the song's lyrics, and the clock beside your agenda while nothing plays. Add, rename, reorder and remove

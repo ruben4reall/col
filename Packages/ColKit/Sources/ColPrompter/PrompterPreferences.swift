@@ -225,7 +225,9 @@ public enum PrompterPreferences {
         public static let lastSummary = "prompter.lastSummary"
     }
 
-    /// The keys Souffleur, the prompter's former app, kept the same settings under.
+    /// The keys Souffleur, the prompter's former app, kept the same settings under. Whether its phone remote was on is
+    /// not carried: the remote listens on the network only once it is turned on in Col. Its pairing is, so the phone
+    /// that scanned Souffleur's code still drives the prompter then.
     static let souffleurKeys: [String: String] = [
         "scrollMode": Key.mode,
         "placement": Key.placement,
@@ -250,7 +252,6 @@ public enum PrompterPreferences {
         "voiceLanguage": Key.voiceLanguage,
         "hotKeys": Key.hotKeys,
         "clickerKeys": Key.clickerKeys,
-        "remoteEnabled": Key.remoteEnabled,
         "remoteToken": Key.remoteToken,
         "selectedScript": Key.selectedScript,
     ]
@@ -287,7 +288,8 @@ public enum PrompterPreferences {
     }
 
     /// The prompter was an app of its own, Souffleur. The first time Col runs it, the settings made there carry over
-    /// (pace, mode, light, text, shortcuts, the phone remote's pairing), unless the same setting was already made here.
+    /// (pace, mode, light, text, shortcuts, the phone remote's pairing, not whether the remote was on), unless the same
+    /// setting was already made here.
     static func adoptSouffleurSettings() {
         let flag = "prompter.adoptedSouffleurSettings"
         guard !store.bool(forKey: flag) else { return }
