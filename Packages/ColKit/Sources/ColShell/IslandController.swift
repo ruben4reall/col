@@ -409,6 +409,10 @@ public final class IslandController {
     /// only when asked, since they change when apps launch or quit rather than with the frontmost app.
     private func measureMenuBar(statusItems: Bool = false) {
         guard let screen, let layout, layout.notch.isHardware else { freeLeft = nil; freeRight = nil; return }
+        // `-ColMenuBarFree 132` lends each wing that much room whatever the menu bar holds, so screenshots and films do
+        // not depend on the apps of the Mac they are taken on.
+        let lent = UserDefaults.standard.double(forKey: "ColMenuBarFree")
+        if lent > 0 { freeLeft = lent; freeRight = lent; return }
         let notchLeft = screen.frame.minX + layout.notch.centerX - layout.notch.width / 2
         let notchRight = notchLeft + layout.notch.width
         if statusItems || statusItemsEdge == nil {

@@ -81,7 +81,7 @@ run() {
   ("$APP/Contents/MacOS/Col" -AppleLanguages '(en)' -AppleLocale en_US -islandGlass "${GLASS:-liquid}" -pageDeck "<$DECK>" \
     -aiServers "<$SERVERS>" -askModel "studio
 qwen3:8b" -showsLyricsInClosedIsland "${LYRICS_CLOSED:-NO}" -keepsClipboardHistory YES -ColWallpaper "$DESKTOP" \
-    "$@" >/dev/null 2>&1 &)
+    -ColMenuBarFree 132 "$@" >/dev/null 2>&1 &)
   for _ in {1..60}; do curl -s --unix-socket "$COL_SOCKET" http://col/v1/status >/dev/null 2>&1 && break; sleep 0.2; done
 }
 # The demo track, restarted before each capture of the player so every picture shows the same moment of the song.
@@ -99,7 +99,7 @@ backdrop() {
   BACKDROP=$!
   sleep 3
 }
-film() { swift scripts/record-film.swift "$OUT/$1.mov" "$2" "$(pid),$(pgrep -f desktop-backdrop | paste -sd, -)" "$3" 0 "$4" "$5" >/dev/null 2>&1; echo "  $1 (film)"; }
+film() { swift scripts/record-film.swift "$OUT/$1.mov" "$2" "Col,$(pgrep -f desktop-backdrop | paste -sd, -)" "$3" 0 "$4" "$5" >/dev/null 2>&1; echo "  $1 (film)"; }
 
 # Original lyrics, written for these pictures, read from the folder Col prefers to LRCLIB.
 mkdir -p "$(dirname "$LYRICS")"
@@ -108,7 +108,7 @@ cat > "$LYRICS" <<'LRC'
 [00:02.60] We drive into the golden hour
 [00:05.20] Windows down and nowhere to be
 [00:07.80] Into the blue
-[00:10.40] Hold the light a little longer
+[00:10.40] Hold the light
 [00:13.00] Before the city turns to blue
 [00:15.60] Every song sounds like a summer
 [00:18.20] Every road leads back to you
@@ -196,9 +196,11 @@ run -ColOpen YES -ColPage tools; sleep 3; shoot island tools
 player; run -ColOpen YES -islandSize compact; sleep 3; shoot island size-compact
 player; run -ColOpen YES -islandSize large; sleep 3; shoot island size-large
 # The prompter, rolling out of the notch: a picture, then a film.
+# The prompter keeps out of screenshots and waits for a voice: for the pictures it shows itself and rolls on its own.
+PROMPTER=(-prompter.hiddenFromCapture NO -prompter.scrollMode auto)
 SCRIPT="Good morning, everyone. Today we are introducing Col, the notch, made useful. It lives right under your camera, so your eyes stay on the people you talk to. Your script rolls at the pace of your voice, and waits whenever you stop. Nobody watching ever sees it: it stays out of your screenshots, your recordings and your calls."
-run -ColPrompt "$SCRIPT" -ColPromptTitle "Launch video"; sleep 3.2; shoot prompter prompter
-run -ColPrompt "$SCRIPT" -ColPromptTitle "Launch video"; film prompter 9 476 560 210
+run -ColPrompt "$SCRIPT" -ColPromptTitle "Launch video" "${PROMPTER[@]}"; sleep 4.5; shoot prompter prompter
+run -ColPrompt "$SCRIPT" -ColPromptTitle "Launch video" "${PROMPTER[@]}"; film prompter 11 476 560 210
 # The lyrics following the song, the island open on Home.
 player; run -ColOpen YES; film lyrics 11 432 648 228
 # The four kinds of glass, over the lake and its rocks (the desktop raised by 440 points), where the glass has
@@ -265,7 +267,7 @@ SWIFT
   cwebp -quiet -q 86 "$TMP/poster.png" -o "$3"
 }
 poster site/assets/film/lyrics.mp4 0.2 site/assets/film/lyrics.webp
-poster site/assets/film/prompter.mp4 2.5 site/assets/film/prompter.webp
+poster site/assets/film/prompter.mp4 6 site/assets/film/prompter.webp
 # The pieces of macOS the scenes move around: the arrow cursor and the brief as it sits on a desktop.
 cp "$TMP/cursor-arrow.png" site/assets/macos/cursor-arrow.png
 cp "$TMP/brief-icon.png" site/assets/macos/brief-icon.png
