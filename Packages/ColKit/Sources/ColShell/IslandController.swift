@@ -61,6 +61,8 @@ public final class IslandController {
     private var observers: [NSObjectProtocol] = []
     /// Watches for Souffleur opening in the minute after Col did.
     private var souffleurWatch: NSObjectProtocol?
+    /// The Souffleurs Col asked to quit, watched in that minute until they have.
+    private var souffleurExits: [NSKeyValueObservation] = []
 
     /// The models the island's content reads, kept to draw a second island in the settings.
     private let services: IslandServices
@@ -226,24 +228,43 @@ public final class IslandController {
     /// Souffleur, the prompter's former app, running beside Col is asked to quit: now, and if it opens in the minute
     /// that follows, as when both open at login.
     private func retireSouffleur() {
-        Souffleur.askToQuit()
+        askSouffleurToQuit()
         souffleurWatch = NSWorkspace.shared.notificationCenter.addObserver(
             forName: NSWorkspace.didLaunchApplicationNotification, object: nil, queue: .main
         ) { [weak self] note in
             guard (note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication)?.bundleIdentifier == Souffleur.bundleIdentifier
             else { return }
-            MainActor.assumeIsolated {
-                guard Souffleur.askToQuit() else { return }
-                self?.showSouffleurNoteIfDue()
-            }
+            MainActor.assumeIsolated { self?.askSouffleurToQuit() }
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 60) { [weak self] in
             MainActor.assumeIsolated {
-                guard let self, let watch = self.souffleurWatch else { return }
-                NSWorkspace.shared.notificationCenter.removeObserver(watch)
+                guard let self else { return }
+                if let watch = self.souffleurWatch { NSWorkspace.shared.notificationCenter.removeObserver(watch) }
                 self.souffleurWatch = nil
+                self.souffleurExits.forEach { $0.invalidate() }
+                self.souffleurExits = []
             }
         }
+        // A note left due by an earlier launch, whose welcome was put off.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
+            MainActor.assumeIsolated { self?.showSouffleurNoteIfDue() }
+        }
+    }
+
+    /// Asks each Souffleur running to quit, and watches those the request reached: asking is not closing, and the
+    /// island says Col closed it only once it has quit.
+    private func askSouffleurToQuit() {
+        for app in Souffleur.askToQuit() {
+            souffleurExits.append(app.observe(\.isTerminated, options: [.initial, .new]) { @Sendable [weak self] _, change in
+                guard change.newValue == true else { return }
+                DispatchQueue.main.async { MainActor.assumeIsolated { self?.souffleurQuit() } }
+            })
+        }
+    }
+
+    /// A Souffleur Col asked to quit has quit: the island says why, the first time.
+    private func souffleurQuit() {
+        Souffleur.didQuit()
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
             MainActor.assumeIsolated { self?.showSouffleurNoteIfDue() }
         }
