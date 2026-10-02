@@ -23,6 +23,52 @@ struct NameChangeTests {
     }
 }
 
+struct NameChangeSettingsTests {
+    private func defaults() -> (UserDefaults, String) {
+        let name = "col-tests-\(UUID().uuidString)"
+        return (UserDefaults(suiteName: name)!, name)
+    }
+
+    @Test func lyricsStayOffForSomeoneComingFromIslet() {
+        let (defaults, name) = defaults()
+        defer { defaults.removePersistentDomain(forName: name) }
+        defaults.set(true, forKey: "hasWelcomed")
+        defaults.set("0 0 300 200", forKey: "NSWindow Frame IsletFloatingPrompter")
+
+        NameChange.carrySettings(defaults)
+
+        #expect(defaults.object(forKey: "showsLyrics") as? Bool == false)
+        #expect(defaults.string(forKey: "NSWindow Frame ColFloatingPrompter") == "0 0 300 200")
+    }
+
+    @Test func lyricsAreOnForANewUserAndDecidedOnce() {
+        let (defaults, name) = defaults()
+        defer { defaults.removePersistentDomain(forName: name) }
+
+        NameChange.carrySettings(defaults)
+        #expect(defaults.object(forKey: "showsLyrics") as? Bool == true)
+
+        // Later the welcome is closed before its lyrics question: the choice already made stands.
+        defaults.set(true, forKey: "hasWelcomed")
+        NameChange.carrySettings(defaults)
+        #expect(defaults.object(forKey: "showsLyrics") as? Bool == true)
+    }
+
+    @Test func aChoiceAlreadyMadeIsKept() {
+        let (defaults, name) = defaults()
+        defer { defaults.removePersistentDomain(forName: name) }
+        defaults.set(true, forKey: "hasWelcomed")
+        defaults.set(true, forKey: "showsLyrics")
+        defaults.set("new", forKey: "NSWindow Frame ColFloatingPrompter")
+        defaults.set("old", forKey: "NSWindow Frame IsletFloatingPrompter")
+
+        NameChange.carrySettings(defaults)
+
+        #expect(defaults.object(forKey: "showsLyrics") as? Bool == true)
+        #expect(defaults.string(forKey: "NSWindow Frame ColFloatingPrompter") == "new")
+    }
+}
+
 struct NameChangeMoveTests {
     @Test func foldersMergeWithoutReplacingAnything() throws {
         let files = FileManager.default

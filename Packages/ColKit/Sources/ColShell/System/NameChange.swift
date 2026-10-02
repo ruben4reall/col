@@ -83,11 +83,18 @@ public enum NameChange {
         if !forced { followLoginItem(defaults, registerAgain: false) }
     }
 
-    /// Islet's settings that changed name.
+    /// Islet's settings that changed name, and a choice 2.0 adds that its users never made: lyrics, looked up on
+    /// LRCLIB. Someone coming from Islet never sees the welcome where they are offered, so they stay off until turned
+    /// on in Settings, Music and lyrics; anyone else has them on, as the welcome offers. Decided once: the welcome, or
+    /// the settings, have the last word.
     nonisolated static func carrySettings(_ defaults: UserDefaults) {
         let frame = "NSWindow Frame ColFloatingPrompter"
         if defaults.object(forKey: frame) == nil, let old = defaults.object(forKey: "NSWindow Frame IsletFloatingPrompter") {
             defaults.set(old, forKey: frame)
+        }
+        if defaults.object(forKey: "showsLyrics") == nil {
+            // Set once the welcome has been seen, as Islet set it too (WelcomeWindow).
+            defaults.set(!defaults.bool(forKey: "hasWelcomed"), forKey: "showsLyrics")
         }
     }
 
