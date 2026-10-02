@@ -8,8 +8,8 @@ struct ControlBar: View {
 
     var body: some View {
         HStack(spacing: 4) {
-            button("arrow.counterclockwise", help: "Restart", size: 12) { state.actions.restart() }
-            button("minus", help: "Slower", size: 12) { state.actions.slower() }
+            button("arrow.counterclockwise", help: String(localized: "Restart", bundle: .module), size: 12) { state.actions.restart() }
+            button("minus", help: String(localized: "Slower", bundle: .module), size: 12) { state.actions.slower() }
                 .disabled(state.mode == .voice || state.mode == .manual)
             Button(action: { state.actions.toggle() }) {
                 Image(systemName: state.isRolling ? "pause.fill" : "play.fill")
@@ -20,10 +20,10 @@ struct ControlBar: View {
                     .contentTransition(.symbolEffect(.replace))
             }
             .buttonStyle(.plain)
-            .help(state.isRolling ? "Pause" : "Play")
-            button("plus", help: "Faster", size: 12) { state.actions.faster() }
+            .help(state.isRolling ? String(localized: "Pause", bundle: .module) : String(localized: "Play", bundle: .module))
+            button("plus", help: String(localized: "Faster", bundle: .module), size: 12) { state.actions.faster() }
                 .disabled(state.mode == .voice || state.mode == .manual)
-            button("xmark", help: "Close", size: 11) { state.actions.close() }
+            button("xmark", help: String(localized: "Close", bundle: .module), size: 11) { state.actions.close() }
         }
         .padding(4)
         .background(Capsule().fill(Color(white: 0.13).opacity(0.94)))

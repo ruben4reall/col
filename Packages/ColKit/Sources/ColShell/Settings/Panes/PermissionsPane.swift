@@ -35,7 +35,8 @@ struct PermissionsPane: View {
                         Text("Turn Col on in the list that just opened, then come back here.", bundle: .module)
                             .foregroundStyle(.orange)
                     }
-                    Text("Col never asks for Screen Recording, Full Disk Access or Input Monitoring. It sees that the microphone is in use without ever listening to it.", bundle: .module)
+                    Text("Reminders are asked the first time you choose Show reminders too on the agenda. Local Network is asked by macOS the first time Col reaches a device on your network: your phone for the prompter’s remote, or an AI server you added.", bundle: .module)
+                    Text("Col never asks for Screen Recording, Full Disk Access or Input Monitoring. It sees when another app uses the microphone without listening to it, and listens itself only while the prompter follows your voice.", bundle: .module)
                 }
             }
             Section {

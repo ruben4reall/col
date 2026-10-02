@@ -201,7 +201,8 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .prompter: ["Scripts", "Voice Pace", "Voice Follow", "Auto Scroll", "Manual", "Stage light", "Phone remote",
                          "Presentation remotes and foot pedals", "Hide from screen sharing and recordings", "Teleprompter"]
         case .aiApps: ["Claude Code", "Codex", "Gemini CLI", "Cursor", "GitHub Copilot (VS Code)", "Connect", "Allow", "Deny"]
-        case .permissions: ["Accessibility", "Calendars", "Bluetooth", "Camera", "Downloads"]
+        case .permissions: ["Accessibility", "Calendars", "Reminders", "Bluetooth", "Camera", "Microphone", "Speech Recognition",
+                            "Local Network", "Downloads"]
         case .shortcuts: ["Keyboard", "Gestures", "Swipe", "Click", "Trackpad", "Right-click"]
         case .developers: ["The colctl command", "API reference", "Extensions", "Writing an extension"]
         case .about: ["Version", "Website", "Source code on GitHub", "Report a problem", "Quit Col", "Network"]

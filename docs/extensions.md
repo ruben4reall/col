@@ -21,9 +21,11 @@ The command prints an activity as JSON, with the fields of [`colctl push`](api.m
 ```
 
 Printing nothing clears the extension's activity. The command can also call `colctl push` itself, for activities that
-change between runs. `COL_EXTENSION` holds the folder name, and `PATH` includes Homebrew and `~/.local/bin`.
+change between runs. `COL_EXTENSION` holds the folder name (so does `ISLET_EXTENSION`, for extensions written for
+Islet), and `PATH` includes Homebrew and `~/.local/bin`.
 
 Extensions are scripts you install yourself and run with your permissions, like any script. Read one before you add
-it. Turn them on and off in Col's settings.
+it. They do not inherit Col's own privacy permissions (Accessibility, Microphone, Camera, Calendars): macOS treats
+each one as a program of its own. Turn them on and off in Col's settings.
 
 Examples: [`examples/extensions`](../examples/extensions).

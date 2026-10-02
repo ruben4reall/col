@@ -3,10 +3,60 @@
   "strings": {
     "%@ answers, with %lld models.": {
       "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ answers, with %#@models@."
+          },
+          "substitutions": {
+            "models": {
+              "argNum": 2,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg model"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg models"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ répond, avec %lld modèles."
+            "value": "%1$@ répond, avec %#@models@."
+          },
+          "substitutions": {
+            "models": {
+              "argNum": 2,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg modèle"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg modèles"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -91,6 +141,16 @@
         }
       }
     },
+    "%@: Col does not speak %@ yet.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ : Col ne parle pas encore %@."
+          }
+        }
+      }
+    },
     "%@: plugging in and a low battery show in the notch.": {
       "localizations": {
         "fr": {
@@ -113,20 +173,40 @@
     },
     "%lld agent sessions": {
       "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld sessions d’agents"
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld agent session"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld agent sessions"
+                }
+              }
+            }
           }
-        }
-      }
-    },
-    "%lld at work": {
-      "localizations": {
+        },
         "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld au travail"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld session d’agent"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld sessions d’agents"
+                }
+              }
+            }
           }
         }
       }
@@ -134,9 +214,21 @@
     "%lld connected": {
       "localizations": {
         "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld connecté(s)"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld connecté"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld connectés"
+                }
+              }
+            }
           }
         }
       }
@@ -163,20 +255,80 @@
     },
     "%lld models, none loaded": {
       "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld model, none loaded"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld models, none loaded"
+                }
+              }
+            }
+          }
+        },
         "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld modèles, aucun en mémoire"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld modèle, aucun en mémoire"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld modèles, aucun en mémoire"
+                }
+              }
+            }
           }
         }
       }
     },
     "%lld words": {
       "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld word"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld words"
+                }
+              }
+            }
+          }
+        },
         "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld mots"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld mot"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld mots"
+                }
+              }
+            }
           }
         }
       }
@@ -211,16 +363,6 @@
         }
       }
     },
-    "A couple of permissions": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Deux ou trois autorisations"
-          }
-        }
-      }
-    },
     "A dot beside the camera while an app uses the microphone or the camera.": {
       "localizations": {
         "fr": {
@@ -251,16 +393,6 @@
         }
       }
     },
-    "A shortcut that works in every app.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Un raccourci qui marche dans toutes les apps."
-          }
-        }
-      }
-    },
     "A sign beside the camera while one works, and the island opens when one needs you.": {
       "localizations": {
         "fr": {
@@ -281,32 +413,12 @@
         }
       }
     },
-    "AI agents": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Agents IA"
-          }
-        }
-      }
-    },
     "AI apps": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Apps IA"
-          }
-        }
-      }
-    },
-    "AI apps and activities from scripts": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Apps IA et activités des scripts"
           }
         }
       }
@@ -451,16 +563,6 @@
         }
       }
     },
-    "Agents and activities from scripts": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Agents et activités envoyées par les scripts"
-          }
-        }
-      }
-    },
     "Agents and anything you push with the colctl command show up here.": {
       "localizations": {
         "fr": {
@@ -567,16 +669,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aussi dans Col"
-          }
-        }
-      }
-    },
-    "Always": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Toujours"
           }
         }
       }
@@ -931,42 +1023,12 @@
         }
       }
     },
-    "Choose what the island shows": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Choisissez ce que l’île affiche"
-          }
-        }
-      }
-    },
     "Claude Code": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Claude Code"
-          }
-        }
-      }
-    },
-    "Claude Code, Codex, Gemini CLI, Cursor and GitHub Copilot connect in Settings once installed.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Claude Code, Codex, Gemini CLI, Cursor et GitHub Copilot se connectent dans les Réglages une fois installés."
-          }
-        }
-      }
-    },
-    "Claude Code, Codex, Gemini CLI, Cursor and GitHub Copilot sessions, and the permission requests of Claude Code and Codex.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Les sessions Claude Code, Codex, Gemini CLI, Cursor et GitHub Copilot, et les demandes d’autorisation de Claude Code et Codex."
           }
         }
       }
@@ -1071,22 +1133,22 @@
         }
       }
     },
+    "Col never asks for Screen Recording, Full Disk Access or Input Monitoring. It sees when another app uses the microphone without listening to it, and listens itself only while the prompter follows your voice.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col ne demande jamais l’Enregistrement de l’écran, l’Accès complet au disque ni la Surveillance de l’entrée. Il voit quand une autre app utilise le micro sans l’écouter, et n’écoute lui-même que pendant que le prompteur suit votre voix."
+          }
+        }
+      }
+    },
     "Colors": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Couleurs"
-          }
-        }
-      }
-    },
-    "Command line": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ligne de commande"
           }
         }
       }
@@ -1117,16 +1179,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Connecté"
-          }
-        }
-      }
-    },
-    "Connected through their hooks": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reliées par leurs crochets"
           }
         }
       }
@@ -1257,16 +1309,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Refuser"
-          }
-        }
-      }
-    },
-    "Developer": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Développeur"
           }
         }
       }
@@ -1441,42 +1483,12 @@
         }
       }
     },
-    "Essentials": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Essentiel"
-          }
-        }
-      }
-    },
     "Every way to open and drive the island.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Toutes les façons d’ouvrir et de piloter l’île."
-          }
-        }
-      }
-    },
-    "Everything": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tout"
-          }
-        }
-      }
-    },
-    "Experimental. Takes effect the next time Col opens.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Expérimental. Prend effet à la prochaine ouverture de Col."
           }
         }
       }
@@ -1541,32 +1553,12 @@
         }
       }
     },
-    "For developers": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pour les développeurs"
-          }
-        }
-      }
-    },
     "For videos and calls: your text comes out of the notch, right under the camera, at the pace of your voice.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Pour vos vidéos et vos appels : votre texte sort de l’encoche, juste sous la caméra, au rythme de votre voix."
-          }
-        }
-      }
-    },
-    "Found on this Mac: %@. Adds Col’s hooks to each, with a backup.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Trouvés sur ce Mac : %@. Ajoute les hooks de Col à chacun, avec une sauvegarde."
           }
         }
       }
@@ -1611,32 +1603,12 @@
         }
       }
     },
-    "Get started": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "C’est parti"
-          }
-        }
-      }
-    },
     "GitHub Copilot (VS Code)": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "GitHub Copilot (VS Code)"
-          }
-        }
-      }
-    },
-    "Grant…": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Autoriser…"
           }
         }
       }
@@ -1741,26 +1713,6 @@
         }
       }
     },
-    "Home and Live are always there. Turned-off pages leave the island entirely, tab included.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Accueil et En direct sont toujours là. Une page désactivée quitte complètement l’île, onglet compris."
-          }
-        }
-      }
-    },
-    "Home is always first. Live sits on the right of the camera while something runs. Turned-off pages leave the island entirely, tab included.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "L’accueil vient toujours en premier. En direct s’affiche à droite de la caméra quand quelque chose tourne. Une page coupée quitte l’île entièrement, onglet compris."
-          }
-        }
-      }
-    },
     "Hover the notch whenever you need Col.": {
       "localizations": {
         "fr": {
@@ -1851,42 +1803,12 @@
         }
       }
     },
-    "Installs `colctl` in ~/.local/bin to push activities from any script.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Installe `colctl` dans ~/.local/bin pour envoyer des activités depuis n’importe quel script."
-          }
-        }
-      }
-    },
-    "Installs colctl in ~/.local/bin.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Installe colctl dans ~/.local/bin."
-          }
-        }
-      }
-    },
     "Install…": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Installer…"
-          }
-        }
-      }
-    },
-    "Island": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Île"
           }
         }
       }
@@ -1921,62 +1843,12 @@
         }
       }
     },
-    "Col follows the language of your Mac. Its translations were made by AI: if a word sounds wrong, you can fix it.": {
+    "Col follows the language of your Mac. If a word sounds wrong, you can fix it.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Col suit la langue de votre Mac. Ses traductions ont été faites par IA : si un mot sonne faux, vous pouvez le corriger."
-          }
-        }
-      }
-    },
-    "Col goes online only to check for its own updates, on the Col website. No account, no analytics: what it shows stays on your Mac.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Col ne va en ligne que pour chercher ses propres mises à jour, sur le site de Col. Pas de compte, pas de statistiques : ce qu’il affiche reste sur votre Mac."
-          }
-        }
-      }
-    },
-    "Col never asks for Screen Recording, Full Disk Access or Input Monitoring.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Col ne demande jamais l’Enregistrement de l’écran, l’Accès complet au disque ni la Surveillance de l’entrée."
-          }
-        }
-      }
-    },
-    "Col never asks for Screen Recording, Full Disk Access or Input Monitoring. It sees that the microphone is in use without ever listening to it.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Col ne demande jamais l’Enregistrement de l’écran, l’Accès complet au disque ni la Surveillance de l’entrée. Il voit que le micro est utilisé sans jamais l’écouter."
-          }
-        }
-      }
-    },
-    "Col never signs in to any AI service. It only hears the hooks your agents call on your Mac.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Col ne se connecte à aucun service d’IA. Il entend seulement les hooks que vos agents appellent sur votre Mac."
-          }
-        }
-      }
-    },
-    "Col never signs in to any AI service: it only hears the hooks each agent calls on your Mac. VS Code keeps Copilot permissions according to each session's mode. ChatGPT for macOS has no activity hooks; other agents and scripts can report with colctl agent.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Col ne se connecte à aucun service d’IA : il reçoit seulement les hooks des agents sur votre Mac. VS Code applique le mode d’autorisation propre à chaque session Copilot. ChatGPT pour macOS ne propose pas de hooks d’activité ; les autres agents et scripts peuvent envoyer leur état avec colctl agent."
+            "value": "Col suit la langue de votre Mac. Si un mot sonne faux, vous pouvez le corriger."
           }
         }
       }
@@ -1986,7 +1858,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Col ne se connecte à aucun service d’IA : il entend seulement les crochets que chaque app appelle sur votre Mac. Relier une app ajoute les crochets de Col à ses réglages et garde une copie de sauvegarde à côté. VS Code garde les autorisations de Copilot selon le mode de chaque session ; les autres apps et vos scripts peuvent se signaler avec colctl agent."
+            "value": "Col ne se connecte à aucun service d’IA : il entend seulement les hooks que chaque app appelle sur votre Mac. Relier une app ajoute les hooks de Col à ses réglages et garde une copie de sauvegarde à côté. VS Code garde les autorisations de Copilot selon le mode de chaque session ; les autres apps et vos scripts peuvent se signaler avec colctl agent."
           }
         }
       }
@@ -2007,16 +1879,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Col parle la nouvelle langue après un redémarrage."
-          }
-        }
-      }
-    },
-    "Col stays out of the Dock and the menu bar.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Col reste hors du Dock et de la barre des menus."
           }
         }
       }
@@ -2111,22 +1973,12 @@
         }
       }
     },
-    "Keep recent copies in memory": {
+    "Kept in memory only, except the copies you pin, which are saved in Col’s settings. Copies from password managers are skipped.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Garder les dernières copies en mémoire"
-          }
-        }
-      }
-    },
-    "Kept in memory only, never written to disk. Copies from password managers are skipped.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gardées en mémoire seulement, jamais écrites sur le disque. Les copies des gestionnaires de mots de passe sont ignorées."
+            "value": "Gardées en mémoire seulement, sauf les copies épinglées, enregistrées dans les réglages de Col. Les copies des gestionnaires de mots de passe sont ignorées."
           }
         }
       }
@@ -2317,6 +2169,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Activités en direct"
+          }
+        }
+      }
+    },
+    "Local Network": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réseau local"
           }
         }
       }
@@ -2531,16 +2393,6 @@
         }
       }
     },
-    "Music, clock and agenda": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Musique, heure et agenda"
-          }
-        }
-      }
-    },
     "Name": {
       "localizations": {
         "fr": {
@@ -2557,16 +2409,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nécessite l’Accessibilité."
-          }
-        }
-      }
-    },
-    "Needs the Accessibility permission to take over the keys.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nécessite l’autorisation Accessibilité pour prendre en charge les touches."
           }
         }
       }
@@ -2741,16 +2583,6 @@
         }
       }
     },
-    "Nothing to allow: your modules need no permission.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rien à autoriser : vos modules n’ont besoin d’aucune autorisation."
-          }
-        }
-      }
-    },
     "Now, until %@": {
       "localizations": {
         "fr": {
@@ -2797,16 +2629,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Une seule case"
-          }
-        }
-      }
-    },
-    "Only for the modules you chose. Everything else works without asking.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Seulement pour les modules choisis. Tout le reste marche sans rien demander."
           }
         }
       }
@@ -2861,16 +2683,6 @@
         }
       }
     },
-    "Open at login": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ouvrir à la connexion"
-          }
-        }
-      }
-    },
     "Open or close the island": {
       "localizations": {
         "fr": {
@@ -2897,16 +2709,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ouvrir le dossier"
-          }
-        }
-      }
-    },
-    "Open the island with ⌃⌥⌘I": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ouvrir l’île avec ⌃⌥⌘I"
           }
         }
       }
@@ -2951,16 +2753,6 @@
         }
       }
     },
-    "Optional. Scripts can show their progress in the notch, and your AI agents can ask for permission there.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Facultatif. Les scripts peuvent afficher leur progression dans l’encoche, et vos agents IA y demander l’autorisation."
-          }
-        }
-      }
-    },
     "Output": {
       "localizations": {
         "fr": {
@@ -2997,16 +2789,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Coller"
-          }
-        }
-      }
-    },
-    "Permission": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Autorisation"
           }
         }
       }
@@ -3161,16 +2943,6 @@
         }
       }
     },
-    "Push live activities from scripts, and connect Claude Code.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Envoyez des activités depuis vos scripts, et connectez Claude Code."
-          }
-        }
-      }
-    },
     "Put a .lrc file named “Artist - Title.lrc” in this folder: Col prefers it to LRCLIB.": {
       "localizations": {
         "fr": {
@@ -3261,6 +3033,26 @@
         }
       }
     },
+    "Reminders": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rappels"
+          }
+        }
+      }
+    },
+    "Reminders are asked the first time you choose Show reminders too on the agenda. Local Network is asked by macOS the first time Col reaches a device on your network: your phone for the prompter’s remote, or an AI server you added.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les rappels sont demandés la première fois que vous choisissez Afficher aussi les rappels dans l’agenda. Le réseau local est demandé par macOS la première fois que Col joint un appareil de votre réseau : votre téléphone pour la télécommande du prompteur, ou un serveur d’IA que vous avez ajouté."
+          }
+        }
+      }
+    },
     "Remote": {
       "localizations": {
         "fr": {
@@ -3317,16 +3109,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Posez le pointeur sur l’encoche"
-          }
-        }
-      }
-    },
-    "Rest the pointer on the notch to open the island. Swipe down with two fingers to open it, up to close it.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Posez le pointeur sur l’encoche pour ouvrir l’île. Balayez vers le bas avec deux doigts pour l’ouvrir, vers le haut pour la fermer."
           }
         }
       }
@@ -3551,16 +3333,6 @@
         }
       }
     },
-    "Sessions in the notch; you answer permission requests in the agent.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Les sessions dans l’encoche ; les demandes d’autorisation se règlent dans l’agent."
-          }
-        }
-      }
-    },
     "Sessions in the notch; you answer permission requests in the app.": {
       "localizations": {
         "fr": {
@@ -3637,36 +3409,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tout afficher"
-          }
-        }
-      }
-    },
-    "Show Col’s display instead of the system’s. Needs Accessibility.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Afficher celui de Col à la place de celui du système. Nécessite l’Accessibilité."
-          }
-        }
-      }
-    },
-    "Show charging and low battery": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Afficher la charge et la batterie faible"
-          }
-        }
-      }
-    },
-    "Show headphones and speakers as they connect": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Afficher les écouteurs et haut-parleurs qui se connectent"
           }
         }
       }
@@ -3761,16 +3503,6 @@
         }
       }
     },
-    "Show which app uses the microphone or camera": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Afficher quelle app utilise le micro ou la caméra"
-          }
-        }
-      }
-    },
     "Shows your next events beside the clock. Without it, the agenda stays empty.": {
       "localizations": {
         "fr": {
@@ -3831,36 +3563,6 @@
         }
       }
     },
-    "So Col can show the battery of your AirPods.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pour que Col affiche la batterie de vos AirPods."
-          }
-        }
-      }
-    },
-    "So Col can take over the volume and brightness keys.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pour que Col prenne en charge les touches volume et luminosité."
-          }
-        }
-      }
-    },
-    "So your next events show beside the clock.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pour afficher vos prochains événements à côté de l’heure."
-          }
-        }
-      }
-    },
     "Source code on GitHub": {
       "localizations": {
         "fr": {
@@ -3907,16 +3609,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Standard"
-          }
-        }
-      }
-    },
-    "Start": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Commencer"
           }
         }
       }
@@ -4131,16 +3823,6 @@
         }
       }
     },
-    "The check for Col’s own updates, on the Col website, and, when lyrics are on, the title, artist, album and length of the song you play, sent to LRCLIB. No account, no analytics: everything else stays on your Mac.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La recherche des mises à jour de Col, sur le site de Col, et, quand les paroles sont activées, le titre, l’artiste, l’album et la durée du morceau joué, envoyés à LRCLIB. Pas de compte, pas de statistiques : tout le reste reste sur votre Mac."
-          }
-        }
-      }
-    },
     "The closed island shows the highest one in this list. Volume, brightness, alerts and requests always come first.": {
       "localizations": {
         "fr": {
@@ -4231,16 +3913,6 @@
         }
       }
     },
-    "The notch of your Mac becomes a living island: music, volume, battery, files, timers and your coding agents, right where you already look.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "L’encoche de votre Mac devient une île vivante : musique, volume, batterie, fichiers, minuteurs et vos agents de code, là où vous regardez déjà."
-          }
-        }
-      }
-    },
     "The notch, made useful.": {
       "localizations": {
         "fr": {
@@ -4301,16 +3973,6 @@
         }
       }
     },
-    "The tabs at the top left of the open island follow the order below. Swipe sideways on the island to turn the pages.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Les onglets en haut à gauche de l’île ouverte suivent l’ordre ci-dessous. Balayez sur le côté sur l’île pour tourner les pages."
-          }
-        }
-      }
-    },
     "The tabs of the open island, in this order. Live joins them on the right of the camera while something runs.": {
       "localizations": {
         "fr": {
@@ -4337,6 +3999,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Le titre s’affiche un instant au début d’un morceau."
+          }
+        }
+      }
+    },
+    "The update check, once a day, on the Col website; you can turn it off in General. While lyrics are on, the title, artist, album and length of the song you play, sent to LRCLIB. The AI servers you add, and your questions only to the one you pick. The prompter’s phone remote, on your local network, only while you turn it on. Nothing else: no account, no analytics.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La recherche de mises à jour, une fois par jour, sur le site de Col ; vous pouvez la couper dans Général. Quand les paroles sont activées, le titre, l’artiste, l’album et la durée du morceau joué, envoyés à LRCLIB. Les serveurs d’IA que vous ajoutez, et vos questions seulement à celui que vous choisissez. La télécommande du prompteur, sur votre réseau local, seulement quand vous l’activez. Rien d’autre : pas de compte, pas de statistiques."
           }
         }
       }
@@ -4581,26 +4253,6 @@
         }
       }
     },
-    "Updates are signed and come from the Col website. Col makes no other network request.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Les mises à jour sont signées et viennent du site de Col. Col ne fait aucune autre requête réseau."
-          }
-        }
-      }
-    },
-    "Updates only": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Seulement les mises à jour"
-          }
-        }
-      }
-    },
     "Used only while the mirror is open. Seeing that another app uses the camera needs no permission.": {
       "localizations": {
         "fr": {
@@ -4637,16 +4289,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Version %@"
-          }
-        }
-      }
-    },
-    "Version %@. MIT License.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Version %@. Licence MIT."
           }
         }
       }
@@ -4711,32 +4353,12 @@
         }
       }
     },
-    "Volume and brightness keys": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Touches volume et luminosité"
-          }
-        }
-      }
-    },
     "Volume, alerts and requests still show.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Le volume, les alertes et les demandes s’affichent quand même."
-          }
-        }
-      }
-    },
-    "Volume, brightness and requests always come first; music waits behind everything else. Timers and activities pushed by scripts always show.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Le volume, la luminosité et les demandes passent toujours en premier ; la musique attend derrière tout le reste. Les minuteurs et les activités envoyées par des scripts s’affichent toujours."
           }
         }
       }
@@ -4757,16 +4379,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Site web"
-          }
-        }
-      }
-    },
-    "Welcome to Col": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bienvenue dans Col"
           }
         }
       }
@@ -4821,12 +4433,12 @@
         }
       }
     },
-    "What you copied, kept in memory only, never on disk.": {
+    "What you copied, kept in memory only. Only the copies you pin are saved.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ce que vous avez copié, gardé en mémoire seulement, jamais sur le disque."
+            "value": "Ce que vous avez copié, gardé en mémoire seulement. Seules les copies épinglées sont enregistrées."
           }
         }
       }
@@ -4941,16 +4553,6 @@
         }
       }
     },
-    "You can change all of this later in Settings.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vous pourrez tout changer plus tard dans les Réglages."
-          }
-        }
-      }
-    },
     "Your AI": {
       "localizations": {
         "fr": {
@@ -5041,16 +4643,6 @@
         }
       }
     },
-    "Your next events beside the clock.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vos prochains événements à côté de l’heure."
-          }
-        }
-      }
-    },
     "Your next events, right here.": {
       "localizations": {
         "fr": {
@@ -5121,12 +4713,12 @@
         }
       }
     },
-    "Your recent copies land here. They stay in memory and never touch the disk.": {
+    "Your recent copies land here. They stay in memory; only the ones you pin are saved.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Vos dernières copies arrivent ici. Elles restent en mémoire et ne touchent jamais le disque."
+            "value": "Vos dernières copies arrivent ici. Elles restent en mémoire ; seules celles que vous épinglez sont enregistrées."
           }
         }
       }

@@ -253,7 +253,6 @@ public enum PrompterPreferences {
         "remoteEnabled": Key.remoteEnabled,
         "remoteToken": Key.remoteToken,
         "selectedScript": Key.selectedScript,
-        "lastSummary": Key.lastSummary,
     ]
 
     nonisolated(unsafe) public static let defaults: [String: Any] = [
@@ -298,6 +297,21 @@ public enum PrompterPreferences {
         for (old, new) in souffleurKeys where own[new] == nil {
             if let value = souffleur[old] { store.set(value, forKey: new) }
         }
+        // Souffleur wrote its last take in English: it carries over in Col's language.
+        if own[Key.lastSummary] == nil, let summary = (souffleur["lastSummary"] as? String).flatMap(lastTake(fromSouffleur:)) {
+            store.set(summary, forKey: Key.lastSummary)
+        }
+    }
+
+    /// Souffleur's summary of the last take, "1:23 · 140 wpm · 92%", written again in Col's language, or nil when it
+    /// reads otherwise.
+    static func lastTake(fromSouffleur summary: String) -> String? {
+        let parts = summary.components(separatedBy: " · ")
+        guard parts.count == 3, !parts[0].isEmpty, parts[0].allSatisfy({ $0.isASCII && ($0.isNumber || $0 == ":") }),
+              parts[1].hasSuffix(" wpm"), parts[2].hasSuffix("%"),
+              let wordsPerMinute = Int(parts[1].dropLast(4)), let coverage = Int(parts[2].dropLast()) else { return nil }
+        let clock = parts[0]
+        return String(localized: "\(clock) · \(wordsPerMinute) wpm · \(coverage)%", bundle: .module)
     }
 
     private static var store: UserDefaults { .standard }

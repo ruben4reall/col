@@ -15,6 +15,17 @@ struct WelcomeTests {
         #expect(japanese.first == "こんにちは" && japanese.last == "こんにちは")
         // A language Col has no hello for starts in English.
         #expect(GreetingView.sequence(for: "eu").first == "Hello")
+        // A language Col is not translated into still has its own hello.
+        #expect(GreetingView.sequence(for: "de-CH").first == "Hallo")
+    }
+
+    @Test func theWelcomeSaysWhereTheLanguageComesFrom() {
+        #expect(AppLanguage.origin(current: "fr", chosen: nil, mac: "fr-CH") == .mac)
+        #expect(AppLanguage.origin(current: "en", chosen: "en", mac: "fr-CH") == .chosen)
+        // A German Mac: Col speaks English, and says it does not speak German yet.
+        #expect(AppLanguage.origin(current: "en", chosen: nil, mac: "de-CH") == .untranslated(mac: "de"))
+        #expect(AppLanguage.origin(current: "en", chosen: nil, mac: "en-GB") == .mac)
+        #expect(AppLanguage.languageCode("zh-Hans-CN") == "zh")
     }
 
     @Test func featuresStartOnFromWhatTheMacHas() {

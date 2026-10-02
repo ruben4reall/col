@@ -124,10 +124,13 @@ private struct LanguageRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Language", bundle: .module).font(.system(size: 13.5, weight: .semibold))
                 Group {
-                    if AppLanguage.chosen == nil {
-                        Text("\(AppLanguage.name(for: current)), like your Mac.", bundle: .module)
-                    } else {
+                    switch AppLanguage.origin(current: current, chosen: AppLanguage.chosen, mac: AppLanguage.mac) {
+                    case .chosen:
                         Text("\(AppLanguage.name(for: current)), chosen in Col.", bundle: .module)
+                    case .mac:
+                        Text("\(AppLanguage.name(for: current)), like your Mac.", bundle: .module)
+                    case .untranslated(let mac):
+                        Text("\(AppLanguage.name(for: current)): Col does not speak \(AppLanguage.name(for: mac)) yet.", bundle: .module)
                     }
                 }
                 .font(.system(size: 12))
@@ -310,7 +313,7 @@ private struct FeatureRow: View {
         case .shelf:
             Text("Drop files on the notch to keep them at hand, and AirDrop them from there.", bundle: .module)
         case .clipboard:
-            Text("What you copied, kept in memory only, never on disk.", bundle: .module)
+            Text("What you copied, kept in memory only. Only the copies you pin are saved.", bundle: .module)
         case .tools:
             Text("A timer in the wings, a colour picker, a mirror and a way to keep the Mac awake.", bundle: .module)
         case .system:

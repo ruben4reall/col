@@ -15,7 +15,7 @@ struct ClipboardPage: View {
                 Text("Nothing copied yet", bundle: .module)
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(.white)
-                Text("Your recent copies land here. They stay in memory and never touch the disk.", bundle: .module)
+                Text("Your recent copies land here. They stay in memory; only the ones you pin are saved.", bundle: .module)
                     .font(.system(size: 11.5))
                     .foregroundStyle(Theme.secondaryText)
                     .multilineTextAlignment(.center)

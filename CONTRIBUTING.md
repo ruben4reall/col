@@ -31,11 +31,20 @@ Col follows the language of the Mac, and Settings > General > Language picks ano
 made by AI, not by native speakers: some words will sound wrong, and fixing them is one of the most useful
 contributions there is.
 
-- The strings live in `Packages/ColKit/Sources/ColShell/Resources/Localizable.xcstrings` (open it in Xcode, or edit
-  the JSON). Change the wording of your language, keep the placeholders (`%@`, `%lld`) and the tone: short, plain,
-  friendly, no jargon.
+- The strings live in five catalogs (open them in Xcode, or edit the JSON):
+  - `Packages/ColKit/Sources/ColShell/Resources/Localizable.xcstrings`: the island, its pages, the settings and the
+    welcome.
+  - `Packages/ColKit/Sources/ColPrompter/Resources/Localizable.xcstrings`: the prompter, its Scripts window and the
+    phone remote's page.
+  - `App/Localizable.xcstrings`: the Shortcuts actions and the app's own alerts.
+  - `App/AppShortcuts.xcstrings`: the phrases that start Col's App Shortcuts; keep `${applicationName}` as it is.
+  - `App/InfoPlist.xcstrings`: what macOS says when it asks for a permission.
+
+  Change the wording of your language and keep the tone: short, plain, friendly, no jargon. Keep every placeholder
+  as it is (`%@`, `%lld`, `%1$@`, and `%%` for a percent sign). In strings that count, also keep the `%#@name@` and
+  `%arg` markers, and give each plural form (`one`, `other`, and any other your language uses) its own wording.
 - One pull request per language is easiest to review. Say in it that you speak the language natively.
-- A new language is welcome too: add it to `CFBundleLocalizations` in `project.yml` and fill the catalog.
+- A new language is welcome too: add it to `CFBundleLocalizations` in `project.yml` and fill every catalog.
 
 ## Where things live
 

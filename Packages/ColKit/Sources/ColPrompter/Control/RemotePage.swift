@@ -1,15 +1,42 @@
-/// The page the phone remote opens: one file, no external resources, served by `RemoteServer`.
+import Foundation
+
+/// The page the phone remote opens: one file, no external resources, served by `RemoteServer` in the language Col
+/// speaks.
 enum RemotePage {
-    static let html = """
+    /// The page's words, translated with the rest of the prompter.
+    struct Words: Encodable {
+        var title = String(localized: "Col Prompter Remote", bundle: .module)
+        var connecting = String(localized: "Connecting to your Mac…", bundle: .module)
+        var reconnecting = String(localized: "Reconnecting to your Mac…", bundle: .module)
+        var previousLine = String(localized: "Previous line", bundle: .module)
+        var playOrPause = String(localized: "Play or pause", bundle: .module)
+        var nextLine = String(localized: "Next line", bundle: .module)
+        var slower = String(localized: "Slower", bundle: .module)
+        var restart = String(localized: "Restart", bundle: .module)
+        var faster = String(localized: "Faster", bundle: .module)
+        var pressPlay = String(localized: "Press play to start.", bundle: .module)
+        var chooseScript = String(localized: "Choose a script in Col.", bundle: .module)
+        /// "%lld wpm", as the catalog has it: the page puts the pace in place of %lld.
+        var pace = String(localized: "%lld wpm", bundle: .module)
+    }
+
+    static var html: String {
+        html(words: Words(), language: Bundle.module.preferredLocalizations.first ?? "en")
+    }
+
+    static func html(words: Words, language: String) -> String {
+        // In the script, as JSON: its slashes are escaped, so no word can close the <script> element.
+        let script = (try? JSONEncoder().encode(words)).flatMap { String(data: $0, encoding: .utf8) } ?? "{}"
+        return """
     <!doctype html>
-    <html lang="en">
+    <html lang="\(escape(language))">
     <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
     <meta name="theme-color" content="#08080a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="icon" href="data:,">
-    <title>Col Prompter Remote</title>
+    <title>\(escape(words.title))</title>
     <style>
     :root { --accent: #9d84ff; --fuchsia: #ff5ac8; --ink: #f7f7fa; --dim: rgba(235,235,245,.55); --faint: rgba(235,235,245,.28); --well: rgba(255,255,255,.08); }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -46,22 +73,23 @@ enum RemotePage {
         <div class="brand"><span class="dot" id="dot"></span>Col</div>
         <div class="title" id="title"></div>
       </header>
-      <div class="line empty" id="line">Connecting to your Mac…</div>
+      <div class="line empty" id="line">\(escape(words.connecting))</div>
       <div>
         <div class="meta"><span id="left">0%</span><span id="pace"></span><span id="remaining"></span></div>
         <div class="bar"><i id="progress"></i></div>
       </div>
       <div class="controls">
-        <button data-action="back" aria-label="Previous line"><svg viewBox="0 0 24 24"><path d="M15.4 5.4 14 4l-8 8 8 8 1.4-1.4L8.8 12z"/></svg></button>
-        <button class="play" data-action="toggle" aria-label="Play or pause" id="play"><svg viewBox="0 0 24 24" id="playIcon"><path d="M8 5v14l11-7z"/></svg></button>
-        <button data-action="forward" aria-label="Next line"><svg viewBox="0 0 24 24"><path d="M8.6 5.4 10 4l8 8-8 8-1.4-1.4 6.6-6.6z"/></svg></button>
-        <button data-action="slower" aria-label="Slower">Slower</button>
-        <button data-action="restart" aria-label="Restart"><svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg></button>
-        <button data-action="faster" aria-label="Faster">Faster</button>
+        <button data-action="back" aria-label="\(escape(words.previousLine))"><svg viewBox="0 0 24 24"><path d="M15.4 5.4 14 4l-8 8 8 8 1.4-1.4L8.8 12z"/></svg></button>
+        <button class="play" data-action="toggle" aria-label="\(escape(words.playOrPause))" id="play"><svg viewBox="0 0 24 24" id="playIcon"><path d="M8 5v14l11-7z"/></svg></button>
+        <button data-action="forward" aria-label="\(escape(words.nextLine))"><svg viewBox="0 0 24 24"><path d="M8.6 5.4 10 4l8 8-8 8-1.4-1.4 6.6-6.6z"/></svg></button>
+        <button data-action="slower">\(escape(words.slower))</button>
+        <button data-action="restart" aria-label="\(escape(words.restart))"><svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg></button>
+        <button data-action="faster">\(escape(words.faster))</button>
       </div>
     </main>
-    <div class="offline" id="offline">Reconnecting to your Mac…</div>
+    <div class="offline" id="offline">\(escape(words.reconnecting))</div>
     <script>
+    const T = \(script);
     const token = new URLSearchParams(location.search).get("token") || "";
     const $ = id => document.getElementById(id);
     const clock = s => { s = Math.max(0, Math.round(s)); const m = Math.floor(s / 60); return m + ":" + String(s % 60).padStart(2, "0"); };
@@ -70,11 +98,11 @@ enum RemotePage {
       $("title").textContent = s.title || "";
       // Nothing open on the Mac: the play button below opens the selected script.
       const idle = !s.isActive, line = $("line");
-      line.textContent = idle ? (s.title ? "Press play to start." : "Choose a script in Col.") : s.line;
+      line.textContent = idle ? (s.title ? T.pressPlay : T.chooseScript) : s.line;
       line.classList.toggle("empty", idle || !s.line);
       $("progress").style.width = (idle ? 0 : s.progress * 100).toFixed(1) + "%";
       $("left").textContent = idle ? "" : Math.round(s.progress * 100) + "%";
-      $("pace").textContent = !idle && s.wordsPerMinute ? Math.round(s.wordsPerMinute) + " wpm" : "";
+      $("pace").textContent = !idle && s.wordsPerMinute ? T.pace.replace(/%[0-9$]*lld/, Math.round(s.wordsPerMinute)) : "";
       $("remaining").textContent = idle ? "" : "−" + clock(s.remaining);
       $("playIcon").innerHTML = s.isRolling ? pause : play;
       $("dot").classList.toggle("live", s.isRolling);
@@ -94,4 +122,12 @@ enum RemotePage {
     </body>
     </html>
     """
+    }
+
+    /// Text set in the page's markup, with the characters HTML gives a meaning to written as entities.
+    static func escape(_ text: String) -> String {
+        text.replacingOccurrences(of: "&", with: "&amp;").replacingOccurrences(of: "<", with: "&lt;")
+            .replacingOccurrences(of: ">", with: "&gt;").replacingOccurrences(of: "\"", with: "&quot;")
+            .replacingOccurrences(of: "'", with: "&#39;")
+    }
 }

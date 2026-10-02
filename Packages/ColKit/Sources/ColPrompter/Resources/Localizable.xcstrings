@@ -21,12 +21,72 @@
         }
       }
     },
-    "%lld words a minute · %lld words · %@": {
+    "%@ · %lld wpm · %lld%%": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld mots par minute · %lld mots · %@"
+            "value": "%@ · %lld mots/min · %lld %%"
+          }
+        }
+      }
+    },
+    "%lld words a minute · %lld words · %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld words a minute · %#@words@ · %3$@"
+          },
+          "substitutions": {
+            "words": {
+              "argNum": 2,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg word"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg words"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld mots par minute · %#@words@ · %3$@"
+          },
+          "substitutions": {
+            "words": {
+              "argNum": 2,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg mot"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg mots"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -81,6 +141,16 @@
         }
       }
     },
+    "Choose a script in Col.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisissez un script dans Col."
+          }
+        }
+      }
+    },
     "Clipboard": {
       "localizations": {
         "fr": {
@@ -97,6 +167,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fermer"
+          }
+        }
+      }
+    },
+    "Col Prompter Remote": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Télécommande du prompteur Col"
+          }
+        }
+      }
+    },
+    "Connecting to your Mac…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connexion à votre Mac…"
           }
         }
       }
@@ -141,6 +231,16 @@
         }
       }
     },
+    "Faster": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plus vite"
+          }
+        }
+      }
+    },
     "Fit in": {
       "localizations": {
         "fr": {
@@ -173,10 +273,40 @@
     },
     "Follows your words · %lld words": {
       "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Follows your words · %lld word"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Follows your words · %lld words"
+                }
+              }
+            }
+          }
+        },
         "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Suit vos mots · %lld mots"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Suit vos mots · %lld mot"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Suit vos mots · %lld mots"
+                }
+              }
+            }
           }
         }
       }
@@ -323,10 +453,40 @@
     },
     "Moves only when you move it · %lld words": {
       "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Moves only when you move it · %lld word"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Moves only when you move it · %lld words"
+                }
+              }
+            }
+          }
+        },
         "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Avance seulement quand vous le faites avancer · %lld mots"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Avance seulement quand vous le faites avancer · %lld mot"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Avance seulement quand vous le faites avancer · %lld mots"
+                }
+              }
+            }
           }
         }
       }
@@ -357,6 +517,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nouveau script (⌘N)"
+          }
+        }
+      }
+    },
+    "Next line": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ligne suivante"
           }
         }
       }
@@ -491,6 +661,16 @@
         }
       }
     },
+    "Play or pause": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lecture ou pause"
+          }
+        }
+      }
+    },
     "Play this script (⌘↩, or ⌃⌥⌘P from any app)": {
       "localizations": {
         "fr": {
@@ -511,12 +691,52 @@
         }
       }
     },
+    "Press play to start.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appuyez sur lecture pour commencer."
+          }
+        }
+      }
+    },
+    "Previous line": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ligne précédente"
+          }
+        }
+      }
+    },
     "Prompt": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Lancer"
+          }
+        }
+      }
+    },
+    "Reconnecting to your Mac…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reconnexion à votre Mac…"
+          }
+        }
+      }
+    },
+    "Restart": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recommencer"
           }
         }
       }
@@ -551,6 +771,16 @@
         }
       }
     },
+    "Scan the QR code in Col's settings again.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scannez à nouveau le code QR dans les réglages de Col."
+          }
+        }
+      }
+    },
     "Scrolling": {
       "localizations": {
         "fr": {
@@ -577,6 +807,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Règle la vitesse pour que le script dure exactement ce temps."
+          }
+        }
+      }
+    },
+    "Slide %lld": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diapositive %lld"
+          }
+        }
+      }
+    },
+    "Slower": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plus lent"
           }
         }
       }

@@ -56,7 +56,7 @@ public enum ScriptImporter {
             let xml = try run("/usr/bin/unzip", ["-p", url.path, page])
             let paragraphs = NotesParser.paragraphs(in: Data(xml.utf8)).filter { !$0.isEmpty }
             guard !paragraphs.isEmpty else { continue }
-            sections.append("# Slide \(number(in: page))\n" + paragraphs.joined(separator: "\n"))
+            sections.append("# " + String(localized: "Slide \(number(in: page))", bundle: .module) + "\n" + paragraphs.joined(separator: "\n"))
         }
         return sections.joined(separator: "\n\n")
     }

@@ -178,7 +178,8 @@ public final class RemoteServer {
         guard waiting.removeValue(forKey: id) != nil else { return }
         pending.remove(id)
         guard RemoteToken.matches(PrompterPreferences.remoteToken, request.query["token"] ?? "") else {
-            return send(connection, status: "403 Forbidden", type: "text/plain", body: Data("Scan the QR code in Col's settings again.".utf8))
+            let again = String(localized: "Scan the QR code in Col's settings again.", bundle: .module)
+            return send(connection, status: "403 Forbidden", type: "text/plain; charset=utf-8", body: Data(again.utf8))
         }
         switch request.path {
         case "/":

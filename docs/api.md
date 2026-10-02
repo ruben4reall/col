@@ -20,7 +20,7 @@ colctl list
 colctl status
 colctl agent <name> <working|waiting|done|idle|end> [--message M] [--session S]
 colctl hook [--agent AGENT]      # the hook itself, reads the agent's event on stdin
-colctl hooks install [--agent claude|codex|gemini|cursor|all] [--settings PATH]
+colctl hooks install [--agent claude|codex|gemini|cursor|copilot|all] [--settings PATH]
 colctl hooks uninstall [--agent AGENT] [--settings PATH]
 colctl hooks status
 ```
@@ -69,7 +69,7 @@ With curl:
 
 ```sh
 curl --unix-socket "$HOME/Library/Application Support/Col/col.sock" \
-  -X POST http://colctl/v1/activities \
+  -X POST http://col/v1/activities \
   -d '{"id":"deploy","title":"Deploy","progress":0.6,"tint":"teal"}'
 ```
 
@@ -79,8 +79,8 @@ curl --unix-socket "$HOME/Library/Application Support/Col/col.sock" \
 col://push?id=tea&title=Tea&symbol=cup.and.saucer.fill&ttl=240
 col://done?id=tea
 col://remove?id=tea
-col://settings?pane=developers   # general, appearance, pages, activities, prompter, aiApps, permissions,
-                                   # shortcuts, developers, about
+col://settings?pane=developers   # general, appearance, pages, activities, music, prompter, aiApps,
+                                   # permissions, shortcuts, developers, about
 col://welcome                    # the welcome tour
 ```
 
@@ -104,21 +104,23 @@ Close the Prompter.
 ## Agents
 
 `POST /v1/agents/events` takes the JSON an agent writes on a hook's stdin, unchanged. `?agent=` says which agent
-wrote it: `claude` (the default), `codex`, `gemini` or `cursor`. Col translates each agent's events into the same
-states:
+wrote it: `claude` (the default), `codex`, `gemini`, `cursor` or `copilot`. Col translates each agent's events into
+the same states:
 
-| State | Claude Code, Codex | Gemini CLI | Cursor |
-|---|---|---|---|
-| Started | `SessionStart` | `SessionStart` | `sessionStart` |
-| Working | `UserPromptSubmit`, `PreToolUse`, `PostToolUse` | `BeforeAgent`, `BeforeTool`, `AfterTool` | `beforeSubmitPrompt`, `postToolUse`, `afterShellExecution`, `afterFileEdit` |
-| Waiting for you | `PermissionRequest`, `Notification` | `Notification` (`ToolPermission`) | |
-| Done | `Stop` | `AfterAgent` | `stop` |
-| Ended | `SessionEnd` | `SessionEnd` | `sessionEnd` |
+| State | Claude Code, Codex | Gemini CLI | Cursor | GitHub Copilot in VS Code |
+|---|---|---|---|---|
+| Started | `SessionStart` | `SessionStart` | `sessionStart` | `SessionStart` |
+| Working | `UserPromptSubmit`, `PreToolUse`, `PostToolUse` | `BeforeAgent`, `BeforeTool`, `AfterTool` | `beforeSubmitPrompt`, `postToolUse`, `afterShellExecution`, `afterFileEdit` | `UserPromptSubmit`, `PreToolUse`, `PostToolUse` |
+| Waiting for you | `PermissionRequest`, `Notification` | `Notification` (`ToolPermission`) | | |
+| Done | `Stop` | `AfterAgent` | `stop` | `Stop` |
+| Ended | `SessionEnd` | `SessionEnd` | `sessionEnd` | |
 
 For a Claude Code or Codex `PermissionRequest`, the request waits until the user answers from the island, for up to
 90 seconds. The answer is `allow`, `deny`, or `ask`, which means "let the agent ask in the terminal". `colctl hook`
 turns it into the hook output both agents read. For Gemini CLI and Cursor, `colctl hook` always answers the neutral
-output they expect (`{}`, or `{"continue": true}` before a Cursor prompt), so their own behaviour never changes.
+output they expect (`{}`, or `{"continue": true}` before a Cursor prompt), so their own behaviour never changes. Copilot
+only reports: VS Code applies each session's own permission mode, and sends no event when a chat ends, so a Copilot
+session leaves the island once its Done has shown.
 
 ### Other agents
 
