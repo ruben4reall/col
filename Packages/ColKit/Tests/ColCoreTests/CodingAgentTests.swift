@@ -142,13 +142,36 @@ struct AgentIconTests {
         #expect(ModelServerKind.llamaCpp.icon.bundleIdentifiers.isEmpty && ModelServerKind.llamaCpp.icon.mark == nil)
     }
 
-    @Test func theWingShowsTheAgentsIconBouncingWhileItWaits() throws {
+    @Test func theAgentsIconHopsOnceForEachNewWait() throws {
+        let icon = CodingAgent.gemini.icon
         var board = AgentBoard()
         board.apply(HookEvent(sessionID: "s", event: "UserPromptSubmit", cwd: "/x/col", agent: .gemini), at: now)
         let working = try #require(board.activity(now: now, tint: .white))
-        #expect(working.compact.leading == .appIcon(CodingAgent.gemini.icon, bouncing: false))
-        board.apply(HookEvent(sessionID: "s", event: "PermissionRequest", cwd: "/x/col", toolName: "Bash", agent: .gemini), at: now)
-        let waiting = try #require(board.activity(now: now, tint: .white))
-        #expect(waiting.compact.leading == .appIcon(CodingAgent.gemini.icon, bouncing: true))
+        #expect(working.compact.leading == .appIcon(icon, attention: nil))
+
+        let asked = now.addingTimeInterval(5)
+        board.apply(HookEvent(sessionID: "s", event: "PermissionRequest", cwd: "/x/col", toolName: "Bash", agent: .gemini), at: asked)
+        let waiting = try #require(board.activity(now: asked, tint: .white))
+        #expect(waiting.compact.leading == .appIcon(icon, attention: asked))
+
+        // The same wait told again, and the minutes it lasts, keep its moment: the icon does not hop for it twice.
+        let later = asked.addingTimeInterval(90)
+        board.apply(HookEvent(sessionID: "s", event: "Notification", cwd: "/x/col", notificationType: "permission_prompt",
+                              message: "Gemini needs your permission", agent: .gemini), at: later)
+        #expect(board.activity(now: later.addingTimeInterval(3600), tint: .white)?.compact.leading == .appIcon(icon, attention: asked))
+
+        // Another session that starts to wait is a new request.
+        let second = later.addingTimeInterval(30)
+        board.apply(HookEvent(sessionID: "t", event: "PermissionRequest", cwd: "/x/site", toolName: "Bash", agent: .gemini), at: second)
+        #expect(board.activity(now: second, tint: .white)?.compact.leading == .appIcon(icon, attention: second))
+
+        // A session idle at its prompt waits from the moment it is told so.
+        board.forget("s")
+        board.forget("t")
+        board.apply(HookEvent(sessionID: "u", event: "Stop", cwd: "/x/col", agent: .gemini), at: second)
+        board.settle(now: second.addingTimeInterval(6))
+        let idle = second.addingTimeInterval(60)
+        board.apply(HookEvent(sessionID: "u", event: "Notification", cwd: "/x/col", notificationType: "idle_prompt", agent: .gemini), at: idle)
+        #expect(board.activity(now: idle, tint: .white)?.compact.leading == .appIcon(icon, attention: idle))
     }
 }
