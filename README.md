@@ -177,7 +177,7 @@ Each one only if a module you chose needs it:
 
 ## Light on your Mac
 
-| | Col | Alcove | boring.notch | Atoll |
+| | Col | Notch app A | Notch app B | Notch app C |
 |---|---|---|---|---|
 | Memory at rest | **15 MB** | 56 MB | 71 MB | 106 MB |
 | Processor at rest | **0.004 %** | 0.01 % | 3.9 % | 6.8 % |
