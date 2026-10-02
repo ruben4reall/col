@@ -39,13 +39,14 @@ printf '%s\n' "$NOTES" > "$UPDATES/Col-$VERSION.md"
   printf 'Col is not affiliated with Apple.\n'
 } > dist/release-notes.md
 
-# 3. The appcast: the new item on top, older items kept.
+# 3. The appcast: the new item on top, every older item kept (generate_appcast keeps only three unless told otherwise).
 GENERATE_APPCAST=$(find .build/spm/artifacts -type f -name generate_appcast -perm -u+x 2>/dev/null | head -1)
 [ -n "$GENERATE_APPCAST" ] || fail "Sparkle's tools are missing from .build/spm: build with scripts/release.sh first"
 # The key: the file exported next to the repository (gitignored) when present, otherwise the login keychain.
 if [ -f .env.sparkle-private-key ]; then KEY=(--ed-key-file .env.sparkle-private-key); else KEY=(--account "$ACCOUNT"); fi
 "$GENERATE_APPCAST" "${KEY[@]}" --download-url-prefix "$PREFIX" --link "$SITE_URL" \
-  --full-release-notes-url "$REPO_URL/releases" --embed-release-notes --maximum-deltas 0 -o "$APPCAST" "$UPDATES"
+  --full-release-notes-url "$REPO_URL/releases" --embed-release-notes --maximum-deltas 0 --maximum-versions 0 \
+  -o "$APPCAST" "$UPDATES"
 grep -q "sparkle:edSignature" "$APPCAST" || fail "$APPCAST has no EdDSA signature"
 
 # 4. The cask for the tap (ruben4reall/homebrew-tap). It took over from the islet cask: the tap's cask_renames.json
