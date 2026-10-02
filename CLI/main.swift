@@ -203,6 +203,39 @@ func linkPath() -> String { NSHomeDirectory() + "/.local/bin/colctl" }
 /// The command's name before Islet became Col: hooks installed then call it, and its link now leads here too.
 func legacyLinkPath() -> String { NSHomeDirectory() + "/.local/bin/islet" }
 
+/// This command's own file, links resolved. Not argv[0]: a shell that finds the command on the PATH passes only the
+/// name it was typed with, which would be read as a file of the current folder.
+func ownExecutable() -> URL? {
+    var size = UInt32(MAXPATHLEN)
+    var buffer = [CChar](repeating: 0, count: Int(size))
+    if _NSGetExecutablePath(&buffer, &size) != 0 {
+        buffer = [CChar](repeating: 0, count: Int(size))
+        guard _NSGetExecutablePath(&buffer, &size) == 0 else { return nil }
+    }
+    return buffer.withUnsafeBufferPointer { URL(fileURLWithFileSystemRepresentation: $0.baseAddress!, isDirectory: false, relativeTo: nil) }
+        .resolvingSymlinksInPath()
+}
+
+/// Points ~/.local/bin/colctl, and Islet's ~/.local/bin/islet when it is there, at this command. A link that already
+/// leads here is left as it is; one that leads elsewhere, or nowhere, leads here again. Nothing is made or removed when
+/// this command's file cannot be found or run: a link to it would only break every hook.
+func linkCommand() {
+    let files = FileManager.default
+    guard let tool = ownExecutable(), files.isExecutableFile(atPath: tool.path) else { return }
+    // Islet's link, which older hooks call, leads to this command too; it is never made when it is not there.
+    for (link, makes) in [(legacyLinkPath(), false), (linkPath(), true)] {
+        if let destination = try? files.destinationOfSymbolicLink(atPath: link) {
+            let parent = URL(fileURLWithPath: link).deletingLastPathComponent()
+            guard URL(fileURLWithPath: destination, relativeTo: parent).resolvingSymlinksInPath().path != tool.path else { continue }
+            try? files.removeItem(atPath: link)
+        } else if !makes || files.fileExists(atPath: link) {
+            continue
+        }
+        try? files.createDirectory(atPath: (link as NSString).deletingLastPathComponent, withIntermediateDirectories: true)
+        try? files.createSymbolicLink(atPath: link, withDestinationPath: tool.path)
+    }
+}
+
 /// Whether a hook's command is this one, under its name or Islet's.
 func callsCol(_ command: Any?) -> Bool {
     guard let command = command as? String else { return false }
@@ -314,31 +347,8 @@ func editSettings(_ agent: Agent, path: String?, install: Bool) throws -> String
     settings["hooks"] = hooks.isEmpty ? nil : hooks
     if agent.format == .cursor, install { settings["version"] = settings["version"] ?? 1 }
 
-    if install {
-        // The hooks call the command through ~/.local/bin, so moving the app never breaks them.
-        let tool = URL(fileURLWithPath: CommandLine.arguments[0]).resolvingSymlinksInPath()
-        // A link that already leads here, through Homebrew's link for instance, is left as it is.
-        func leadsElsewhere(_ link: String, _ destination: String) -> Bool {
-            let parent = URL(fileURLWithPath: link).deletingLastPathComponent()
-            return URL(fileURLWithPath: destination, relativeTo: parent).resolvingSymlinksInPath().path != tool.path
-        }
-        // Islet's link, which older hooks call, leads to this command too.
-        if let destination = try? FileManager.default.destinationOfSymbolicLink(atPath: legacyLinkPath()),
-           leadsElsewhere(legacyLinkPath(), destination) {
-            try? FileManager.default.removeItem(atPath: legacyLinkPath())
-            try? FileManager.default.createSymbolicLink(atPath: legacyLinkPath(), withDestinationPath: tool.path)
-        }
-        let link = linkPath()
-        if let destination = try? FileManager.default.destinationOfSymbolicLink(atPath: link) {
-            if leadsElsewhere(link, destination) {
-                try? FileManager.default.removeItem(atPath: link)
-                try? FileManager.default.createSymbolicLink(atPath: link, withDestinationPath: tool.path)
-            }
-        } else if !FileManager.default.fileExists(atPath: link) {
-            try? FileManager.default.createDirectory(atPath: (link as NSString).deletingLastPathComponent, withIntermediateDirectories: true)
-            try? FileManager.default.createSymbolicLink(atPath: link, withDestinationPath: tool.path)
-        }
-    }
+    // The hooks call the command through ~/.local/bin, so moving the app never breaks them.
+    if install { linkCommand() }
     do {
         try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
         let data = try JSONSerialization.data(withJSONObject: settings, options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes])

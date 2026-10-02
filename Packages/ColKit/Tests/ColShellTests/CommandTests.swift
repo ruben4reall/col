@@ -115,4 +115,28 @@ struct CommandTests {
         #expect(try fake.run(tool, ["hooks", "uninstall", "--agent", "copilot"]).status == 0)
         #expect(status(of: "GitHub Copil", in: try fake.run(tool, ["hooks", "status"]).output) == "GitHub Copil not connected")
     }
+
+    /// Typed in a terminal, the command is found on the PATH and only knows the name it was typed with: its links still
+    /// lead to its own file, never to one of that name in the current folder.
+    @Test func typedInATerminalTheCommandLinksToItself() throws {
+        let built = try #require(colctl)
+        let fake = try FakeHome()
+        defer { fake.remove() }
+        let tool = fake.root.appendingPathComponent("Applications/Col.app/Contents/Helpers/colctl")
+        try FileManager.default.createDirectory(at: tool.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try FileManager.default.copyItem(at: built, to: tool)
+        let colctl = fake.bin.appendingPathComponent("colctl")
+        let islet = fake.bin.appendingPathComponent("islet")
+        // The link Col made, and Islet's, which led into the app before it took its new name.
+        try FileManager.default.createSymbolicLink(at: colctl, withDestinationURL: tool)
+        try FileManager.default.createSymbolicLink(atPath: islet.path, withDestinationPath: fake.root.path + "/Applications/Islet.app/Contents/Helpers/islet")
+
+        let install = try fake.run(tool, ["hooks", "install", "--agent", "claude"], typed: true)
+
+        #expect(install.status == 0)
+        #expect(try FileManager.default.destinationOfSymbolicLink(atPath: colctl.path) == tool.path)
+        #expect(islet.resolvingSymlinksInPath().path == tool.path)
+        #expect(FileManager.default.isExecutableFile(atPath: islet.path))
+        #expect(try String(contentsOf: fake.home.appendingPathComponent(".claude/settings.json"), encoding: .utf8).contains(".local/bin/colctl\\\" hook"))
+    }
 }
