@@ -4451,12 +4451,12 @@
         }
       }
     },
-    "Too long to check here: answer in the terminal.": {
+    "Too long to check here": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Trop long pour le vérifier ici : répondez dans le terminal."
+            "value": "Trop long pour le vérifier ici"
           }
         }
       }

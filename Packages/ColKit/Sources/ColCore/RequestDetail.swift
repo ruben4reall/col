@@ -12,8 +12,9 @@ public struct RequestDetail: Equatable, Sendable {
     /// terminal.
     public let fitsCard: Bool
 
-    /// Characters on a line of the card's monospaced text, in the smallest island.
-    public static let columns = 54
+    /// Characters on a line of the card's monospaced text in the smallest island: 11-point SF Mono advances 6.8
+    /// points, and the compact island's card has 360 points for it (PermissionCardLayout).
+    public static let columns = 52
     /// Lines the card shows before it would have to scroll.
     public static let lines = 3
 

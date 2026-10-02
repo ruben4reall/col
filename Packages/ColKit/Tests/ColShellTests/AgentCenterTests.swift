@@ -1,4 +1,4 @@
-import Foundation
+import AppKit
 import ColCore
 import Testing
 @testable import ColShell
@@ -137,6 +137,23 @@ import Testing
         #expect(AgentCenter.canAllow(request))
         request.toolInput = nil
         #expect(AgentCenter.canAllow(request))
+    }
+
+    @Test func aLineOfTheCommandFitsTheSmallestIsland() {
+        let advance = NSFont.monospacedSystemFont(ofSize: PermissionCardLayout.fontSize, weight: .regular).maximumAdvancement.width
+        let room = PermissionCardLayout.textWidth(in: .compact)
+        #expect(CGFloat(RequestDetail.columns) * advance <= room)
+        #expect(CGFloat(RequestDetail.columns + 1) * advance > room)
+    }
+
+    @Test func theButtonsStayInSightOnThePage() {
+        func page(_ size: IslandSize) -> CGFloat { size.open.content - Theme.inset.top - Theme.inset.bottom }
+        // A request that can be allowed, with all its lines, in the island's usual size.
+        #expect(PermissionCardLayout.buttonsBottom(lines: RequestDetail.lines) <= page(.standard))
+        // One too long to check here, in any size.
+        for size in IslandSize.allCases {
+            #expect(PermissionCardLayout.buttonsBottom(lines: PermissionCardLayout.scrollingLines) <= page(size))
+        }
     }
 
     private func permission(_ toolName: String, command: String) -> HookEvent {
