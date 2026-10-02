@@ -4023,12 +4023,12 @@
         }
       }
     },
-    "The update check, once a day, on the Col website; you can turn it off in General. While lyrics are on, the title, artist, album and length of the song you play, sent to LRCLIB. The AI servers you add, and your questions only to the one you pick. The prompter’s phone remote, on your local network, only while you turn it on. Nothing else: no account, no analytics.": {
+    "The update check, once a day, on the Col website; you can turn it off in General. While lyrics are on, the title, artist, album and length of the song you play, sent to LRCLIB. The AI servers you add, and your questions only to the one you pick; Ollama or LM Studio installed on this Mac, asked on this Mac only. The prompter’s phone remote, on your local network, only while you turn it on. Nothing else: no account, no analytics.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "La recherche de mises à jour, une fois par jour, sur le site de Col ; vous pouvez la couper dans Général. Quand les paroles sont activées, le titre, l’artiste, l’album et la durée du morceau joué, envoyés à LRCLIB. Les serveurs d’IA que vous ajoutez, et vos questions seulement à celui que vous choisissez. La télécommande du prompteur, sur votre réseau local, seulement quand vous l’activez. Rien d’autre : pas de compte, pas de statistiques."
+            "value": "La recherche de mises à jour, une fois par jour, sur le site de Col ; vous pouvez la couper dans Général. Quand les paroles sont activées, le titre, l’artiste, l’album et la durée du morceau joué, envoyés à LRCLIB. Les serveurs d’IA que vous ajoutez, et vos questions seulement à celui que vous choisissez ; Ollama ou LM Studio installés sur ce Mac, interrogés sur ce Mac seulement. La télécommande du prompteur, sur votre réseau local, seulement quand vous l’activez. Rien d’autre : pas de compte, pas de statistiques."
           }
         }
       }

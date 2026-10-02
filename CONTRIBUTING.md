@@ -8,8 +8,9 @@ Thank you for helping. A few principles keep Col what it is.
   animations that run in the render server over per-frame work in the app. Measure with `scripts/bench.sh <pid>`
   before and after a change that could cost memory or processor time.
 - **Native.** AppKit and Core Animation for the island, SwiftUI for its content. No web views.
-- **Private.** No network calls beyond the update check, the lyrics lookups (which can be turned off) and what the user
-  adds and turns on, no analytics. Anything sensitive stays in memory.
+- **Private.** No network calls beyond the update check, the lyrics lookups (which can be turned off), what the user
+  adds and turns on, and the Ollama or LM Studio installed on the Mac, asked on the Mac only (localhost). No
+  analytics. Anything sensitive stays in memory.
   [SECURITY.md](SECURITY.md) lists everything Col touches: keep it true.
 - **Tested rules.** Behaviour that can be expressed without AppKit belongs in `ColCore`, with tests.
 - **Clean-room.** Col is MIT licensed. Do not copy code from projects under other licences, including GPL notch apps.

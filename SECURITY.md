@@ -50,12 +50,12 @@ Copies that password managers mark as concealed or transient are skipped.
   `~/Library/Caches/Col/Lyrics/`; your own `.lrc` files in `~/Library/Application Support/Col/Lyrics/` are read
   first and never sent anywhere. Lyrics are on in a new install, where the welcome shows the choice; after an update
   from Islet they stay off until you turn them on.
-- The AI servers you add in Settings, AI apps, and the Ollama or LM Studio of this Mac when they are installed:
-  Col asks them every few seconds, only while their page or the settings show them, for their models
-  (`/api/tags`, `/api/ps`, `/api/v0/models`, `/v1/models`, `/slots`). A token you give is kept in your Keychain and
-  sent only to that server. Col reaches each server at the address you typed, over https or plain http: model servers
-  on a home network often speak only http, so App Transport Security allows it. Over http, what you send, a token
-  included, crosses your network unencrypted.
+- The AI servers you add in Settings, AI apps, and the Ollama or LM Studio installed on this Mac, which Col asks on
+  this Mac only (`localhost`, ports 11434 and 1234): Col asks them every few seconds, only while their page or the
+  settings show them, for their models (`/api/tags`, `/api/ps`, `/api/v0/models`, `/v1/models`, `/slots`). A token
+  you give is kept in your Keychain and sent only to that server. Col reaches each server at the address you typed,
+  over https or plain http: model servers on a home network often speak only http, so App Transport Security allows
+  it. Over http, what you send, a token included, crosses your network unencrypted.
 - A question you ask from the AI page goes to the server and model you picked, and nowhere else, with the conversation
   so far (the last twenty messages at most). The conversation stays in memory until you start a new one or quit Col;
   it is never written to disk.

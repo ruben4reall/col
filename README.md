@@ -170,7 +170,8 @@ Each one only if a module you chose needs it:
   - [LRCLIB](https://lrclib.net), an open lyrics database, while lyrics are on (Settings, Music and lyrics). Only the
     title, artist, album and length of the song that plays are sent. Lyrics are on in a new install, where the welcome
     shows the choice; after an update from Islet they stay off until you turn them on.
-  - The AI servers you add yourself, and only those. Your questions go only to the server you picked.
+  - The AI servers you add yourself, and the Ollama or LM Studio installed on this Mac, which Col asks on this Mac
+    only (localhost). Your questions go only to the server you picked.
   - The prompter's phone remote, which listens on your local network only while you turn it on.
 - The clipboard history lives in memory and skips copies that password managers mark as private. Only the copies you
   pin are saved, in Col's settings.

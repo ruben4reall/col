@@ -21,7 +21,7 @@ struct AboutPane: View {
             }
             Section {
                 IconRow(symbol: "network", tint: .blue, title: Text("What goes online", bundle: .module),
-                        detail: Text("The update check, once a day, on the Col website; you can turn it off in General. While lyrics are on, the title, artist, album and length of the song you play, sent to LRCLIB. The AI servers you add, and your questions only to the one you pick. The prompter’s phone remote, on your local network, only while you turn it on. Nothing else: no account, no analytics.", bundle: .module)) {
+                        detail: Text("The update check, once a day, on the Col website; you can turn it off in General. While lyrics are on, the title, artist, album and length of the song you play, sent to LRCLIB. The AI servers you add, and your questions only to the one you pick; Ollama or LM Studio installed on this Mac, asked on this Mac only. The prompter’s phone remote, on your local network, only while you turn it on. Nothing else: no account, no analytics.", bundle: .module)) {
                     EmptyView()
                 }
             } header: {
