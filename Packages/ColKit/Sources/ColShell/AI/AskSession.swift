@@ -155,4 +155,23 @@ final class AskSession {
         }
         return (shown.trimmingCharacters(in: .whitespacesAndNewlines), false)
     }
+
+    /// An answer's Markdown, read for emphasis, code and links. The model writes it, and what it writes can be steered
+    /// by text pasted into a question or by whoever runs the server: only a link to a web page stays a link. One to a
+    /// file, a share, another app or one of Col's own actions shows as its words alone, with nothing to click.
+    nonisolated static func markdown(_ text: String) -> AttributedString {
+        var markdown = (try? AttributedString(markdown: text, options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)))
+            ?? AttributedString(text)
+        let unsafe = markdown.runs.compactMap { run -> Range<AttributedString.Index>? in
+            guard let link = run.link, !opensOnTheWeb(link) else { return nil }
+            return run.range
+        }
+        for range in unsafe { markdown[range].link = nil }
+        return markdown
+    }
+
+    /// Whether a link from an answer may be opened: a web page only.
+    nonisolated static func opensOnTheWeb(_ url: URL) -> Bool {
+        ["http", "https"].contains(url.scheme?.lowercased() ?? "")
+    }
 }

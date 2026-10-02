@@ -136,12 +136,14 @@ private struct Answer: View {
         let shown = AskSession.shown(text)
         VStack(alignment: .leading, spacing: 6) {
             if !shown.text.isEmpty {
-                Text(Self.markdown(shown.text))
+                Text(AskSession.markdown(shown.text))
                     .font(.system(size: 13))
                     .foregroundStyle(.white)
                     .lineSpacing(2)
                     .textSelection(.enabled)
                     .padding(.trailing, 64)
+                    // The links left in an answer go to the web, and only there.
+                    .environment(\.openURL, OpenURLAction { AskSession.opensOnTheWeb($0) ? .systemAction : .discarded })
             }
             if streaming, shown.thinking || shown.text.isEmpty {
                 HStack(spacing: 6) {
@@ -152,10 +154,6 @@ private struct Answer: View {
                 .foregroundStyle(Theme.secondaryText)
             }
         }
-    }
-
-    private static func markdown(_ text: String) -> AttributedString {
-        (try? AttributedString(markdown: text, options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace))) ?? AttributedString(text)
     }
 }
 
