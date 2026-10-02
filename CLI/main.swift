@@ -211,14 +211,28 @@ func callsCol(_ command: Any?) -> Bool {
     }
 }
 
-/// The file Islet wrote Copilot's hooks to. VS Code reads every file of the folder, so it goes aside once Col writes
-/// its own, else each event would come twice.
-func setAsideLegacyCopilotHooks() {
-    let legacy = ("~/.copilot/hooks/islet.json" as NSString).expandingTildeInPath
-    guard let text = try? String(contentsOfFile: legacy, encoding: .utf8), text.contains(".local/bin/islet") else { return }
+/// Whether a settings file, read as text, calls this command, under its name or Islet's.
+func mentionsCol(_ text: String) -> Bool {
+    ["colctl", "islet"].contains { text.contains("\($0)\\\" hook") || text.contains("\($0)\" hook") || text.contains("\($0) hook") }
+}
+
+/// The file Islet wrote Copilot's hooks to, which still calls Col through ~/.local/bin/islet.
+func legacyCopilotHooksPath() -> String { ("~/.copilot/hooks/islet.json" as NSString).expandingTildeInPath }
+
+/// Sets aside the file Islet wrote Copilot's hooks to, as `islet.json.col-backup`. VS Code reads every file of the
+/// folder: once Col writes its own, each event would come twice, and once Copilot is disconnected, Islet's hooks would
+/// still call Col. Returns where the file went, or nil when there was none calling Col.
+func setAsideLegacyCopilotHooks() throws -> String? {
+    let legacy = legacyCopilotHooksPath()
+    guard let text = try? String(contentsOfFile: legacy, encoding: .utf8), mentionsCol(text) else { return nil }
     let aside = legacy + ".col-backup"
-    try? FileManager.default.removeItem(atPath: aside)
-    try? FileManager.default.moveItem(atPath: legacy, toPath: aside)
+    do {
+        if (try? FileManager.default.attributesOfItem(atPath: aside)) != nil { try FileManager.default.removeItem(atPath: aside) }
+        try FileManager.default.moveItem(atPath: legacy, toPath: aside)
+    } catch {
+        throw ClientError.failed("could not set aside \(legacy): \(error.localizedDescription)")
+    }
+    return aside
 }
 
 /// True for an entry Col wrote: a matcher group holding Col's command, or Cursor's plain command entry.
@@ -285,6 +299,10 @@ func editSettings(_ agent: Agent, path: String?, install: Bool) throws -> String
         settings = parsed
         backUp(data, of: url)
     } else if !install {
+        // Copilot connected under Islet has no file of Col's yet: its hooks are all in Islet's.
+        if agent.id == "copilot", let aside = try setAsideLegacyCopilotHooks() {
+            return "\(agent.name): Col's hooks removed. Islet's \(legacyCopilotHooksPath()) is kept as \(aside)."
+        }
         return "\(agent.name): nothing to remove."
     }
     var hooks = settings["hooks"] as? [String: Any] ?? [:]
@@ -296,7 +314,6 @@ func editSettings(_ agent: Agent, path: String?, install: Bool) throws -> String
     settings["hooks"] = hooks.isEmpty ? nil : hooks
     if agent.format == .cursor, install { settings["version"] = settings["version"] ?? 1 }
 
-    if agent.id == "copilot" { setAsideLegacyCopilotHooks() }
     if install {
         // The hooks call the command through ~/.local/bin, so moving the app never breaks them.
         let tool = URL(fileURLWithPath: CommandLine.arguments[0]).resolvingSymlinksInPath()
@@ -329,9 +346,13 @@ func editSettings(_ agent: Agent, path: String?, install: Bool) throws -> String
     } catch {
         throw ClientError.failed("could not write \(url.path): \(error.localizedDescription)")
     }
-    guard install else { return "\(agent.name): Col's hooks removed from \(url.path)." }
-    var message = "\(agent.name): hooks installed in \(url.path). New sessions report to Col."
-    if agent.id == "codex" { message += " Codex asks you to review new hooks once: run /hooks in Codex and trust Col's." }
+    // Once Col's own file is written, so that Copilot keeps calling Col if that fails.
+    let legacyAside = agent.id == "copilot" ? try setAsideLegacyCopilotHooks() : nil
+    var message = install
+        ? "\(agent.name): hooks installed in \(url.path). New sessions report to Col."
+        : "\(agent.name): Col's hooks removed from \(url.path)."
+    if let legacyAside { message += " Islet's \(legacyCopilotHooksPath()) is kept as \(legacyAside)." }
+    if agent.id == "codex", install { message += " Codex asks you to review new hooks once: run /hooks in Codex and trust Col's." }
     return message
 }
 
@@ -339,10 +360,10 @@ func editSettings(_ agent: Agent, path: String?, install: Bool) throws -> String
 func isConnected(_ agent: Agent) -> Bool {
     let url = URL(fileURLWithPath: (agent.settings as NSString).expandingTildeInPath)
     var paths = [url.path]
-    if agent.id == "copilot" { paths.append(("~/.copilot/hooks/islet.json" as NSString).expandingTildeInPath) }
+    if agent.id == "copilot" { paths.append(legacyCopilotHooksPath()) }
     return paths.contains { path in
         guard let text = try? String(contentsOfFile: path, encoding: .utf8) else { return false }
-        return ["colctl", "islet"].contains { text.contains("\($0)\\\" hook") || text.contains("\($0)\" hook") || text.contains("\($0) hook") }
+        return mentionsCol(text)
     }
 }
 
