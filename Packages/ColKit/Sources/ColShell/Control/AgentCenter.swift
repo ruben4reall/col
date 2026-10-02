@@ -16,8 +16,12 @@ final class AgentCenter {
         var sessionID: String
         var project: String
         var agent: String?
+        /// The tool, as people read its name.
+        var tool: String
+        /// What it is for, in a line: the command's first line for a shell, never the agent's description of it.
         var summary: String
-        var detail: String?
+        /// The whole command, file or address Allow would approve, as the card shows it.
+        var detail: RequestDetail?
         var received: Date
         /// The tool the request is for, to recognise it once the tool has run.
         var toolName: String? = nil
@@ -50,8 +54,9 @@ final class AgentCenter {
                 sessionID: event.sessionID,
                 project: event.project,
                 agent: event.agent?.name,
-                summary: event.toolSummary ?? event.toolName ?? "",
-                detail: event.toolDetail,
+                tool: event.toolLabel ?? "",
+                summary: event.requestSummary ?? "",
+                detail: event.toolDetail.map(RequestDetail.init),
                 received: now,
                 toolName: event.toolName,
                 toolInput: event.toolInput
@@ -78,8 +83,15 @@ final class AgentCenter {
     }
 
     func decide(_ requestID: String, _ decision: Decision) {
-        resolve(requestID, decision)
+        // Allow approves only what the island could show whole; anything longer is answered in the terminal.
+        let allowed = pending[requestID].map(Self.canAllow) ?? false
+        resolve(requestID, decision == .allow && !allowed ? .ask : decision)
         onChange?()
+    }
+
+    /// Whether the island may allow a request: its command, file or address fits the card, so it was seen whole.
+    static func canAllow(_ request: PendingRequest) -> Bool {
+        request.detail?.fitsCard ?? true
     }
 
     private func resolve(_ requestID: String, _ decision: Decision, updateBoard: Bool = true) {

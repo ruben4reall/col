@@ -4451,6 +4451,16 @@
         }
       }
     },
+    "Too long to check here: answer in the terminal.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trop long pour le vérifier ici : répondez dans le terminal."
+          }
+        }
+      }
+    },
     "Tools": {
       "localizations": {
         "fr": {

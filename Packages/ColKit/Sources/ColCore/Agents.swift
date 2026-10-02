@@ -52,6 +52,14 @@ public struct HookEvent: Decodable, Sendable, Equatable {
         "list_directory": "List", "apply_patch": "Patch",
     ]
 
+    /// The tools that run a shell command.
+    static let shellTools: Set<String> = ["Bash", "Shell", "run_shell_command", "shell"]
+
+    /// The tool's name, the way people read it.
+    public var toolLabel: String? {
+        toolName.map { Self.toolLabels[$0] ?? $0 }
+    }
+
     /// A short line saying what the tool is about to do: the command for a shell, the file for edits.
     public var toolSummary: String? {
         guard let toolName else { return nil }
@@ -63,7 +71,7 @@ public struct HookEvent: Decodable, Sendable, Equatable {
             input[key]?.string.map { $0.split(separator: "\n").first.map(String.init) ?? $0 }
         }
         let detail: String? = switch toolName {
-        case "Bash", "Shell", "run_shell_command", "shell":
+        case _ where Self.shellTools.contains(toolName):
             input["description"]?.string ?? firstLine("command")
         case "Edit", "Write", "Read", "NotebookEdit", "MultiEdit":
             file("file_path") ?? file("notebook_path")
@@ -83,6 +91,17 @@ public struct HookEvent: Decodable, Sendable, Equatable {
         let label = Self.toolLabels[toolName] ?? toolName
         guard let detail, !detail.isEmpty else { return label }
         return "\(label) · \(String(detail.prefix(70)))"
+    }
+
+    /// What a permission request is for, in a line, never in the agent's own words. The description an agent gives a
+    /// shell command is its own claim about it and can say anything, so a request names the command itself.
+    public var requestSummary: String? {
+        guard let toolName, Self.shellTools.contains(toolName) else { return toolSummary }
+        let label = toolLabel ?? toolName
+        guard let command = toolInput?["command"]?.string,
+              let line = command.split(separator: "\n").first(where: { !$0.allSatisfy(\.isWhitespace) })
+        else { return label }
+        return "\(label) · \(String(line.trimmingCharacters(in: .whitespaces).prefix(70)))"
     }
 
     /// The command itself, for a permission request that needs the full picture.
@@ -179,7 +198,7 @@ public struct AgentBoard: Sendable, Equatable {
         case "PreToolUse", "PostToolUse", "PostToolUseFailure", "SubagentStart":
             session.state = .working(event.toolSummary ?? current(previous))
         case "PermissionRequest":
-            session.state = .waiting(event.toolSummary)
+            session.state = .waiting(event.requestSummary)
         case "Notification":
             if ["permission_prompt", "idle_prompt", "agent_needs_input", "elicitation_dialog"].contains(event.notificationType ?? "") {
                 // A permission prompt already shown with its details keeps them.

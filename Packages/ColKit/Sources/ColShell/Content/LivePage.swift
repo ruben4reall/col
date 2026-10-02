@@ -8,15 +8,16 @@ struct LivePage: View {
 
     var body: some View {
         let sessions = agents.sessions
-        let requests = agents.pending.values.sorted { $0.received > $1.received }
+        // Oldest first: a request that arrives goes below the others, never under the pointer about to answer one.
+        let requests = agents.pending.values.sorted { ($0.received, $0.id) < ($1.received, $1.id) }
         let sessionsWithRequests = Set(requests.map(\.sessionID))
         if sessions.isEmpty && custom.entries.isEmpty {
             EmptyLive()
         } else {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 8) {
-                    ForEach(requests) { request in
-                        PermissionCard(request: request) { agents.decide(request.id, $0) }
+                    ForEach(Array(requests.enumerated()), id: \.element.id) { position, request in
+                        PermissionCard(request: request, position: position) { agents.decide(request.id, $0) }
                             .transition(.scale(scale: 0.96).combined(with: .opacity))
                     }
                     ForEach(sessions.filter { !sessionsWithRequests.contains($0.id) }) { session in
@@ -65,11 +66,23 @@ private struct EmptyLive: View {
     }
 }
 
+/// A request to answer. The header names the tool; below it, what Allow approves, whole and as it is: the exact
+/// command, file or address, every invisible character shown (RequestDetail). One too long to check here can only be
+/// answered in the terminal, which shows it whole.
 private struct PermissionCard: View {
     let request: AgentCenter.PendingRequest
+    /// Its place among the requests: when it changes, the card has moved under the pointer.
+    let position: Int
     let decide: (AgentCenter.Decision) -> Void
+    /// Allow waits a moment after the card appears or moves, so a click meant for another card never lands on it.
+    @State private var armed = false
+
+    /// A line of the 11-point monospaced text.
+    private static let lineHeight: CGFloat = 13.5
+    private static let box = RoundedRectangle(cornerRadius: 8, style: .continuous)
 
     var body: some View {
+        let canAllow = AgentCenter.canAllow(request)
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 // The agent's own logo, a small hand in its corner: it is asking.
@@ -87,25 +100,33 @@ private struct PermissionCard: View {
                     .font(.system(size: 12.5, weight: .semibold))
                     .foregroundStyle(.white)
                 if let agent = request.agent { AgentTag(name: agent) }
-                Text(request.summary)
+                // With the detail below, the tool's name is enough: the detail says the rest, exactly.
+                Text(request.detail == nil ? request.summary : request.tool)
                     .font(.system(size: 12))
                     .foregroundStyle(Theme.secondaryText)
                     .lineLimit(1)
                 Spacer(minLength: 0)
             }
-            if let detail = request.detail, !detail.isEmpty {
-                Text(detail)
-                    .font(.system(size: 11, design: .monospaced))
-                    .foregroundStyle(.white.opacity(0.8))
-                    .lineLimit(2)
-                    .truncationMode(.middle)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 5)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(RoundedRectangle(cornerRadius: 8, style: .continuous).fill(Color.white.opacity(0.06)))
+            if let detail = request.detail {
+                if detail.fitsCard {
+                    exact(detail)
+                        .background(Self.box.fill(Color.white.opacity(0.06)))
+                } else {
+                    // Still all there, to read or copy, but past what can be checked at a glance.
+                    ScrollView(.vertical) { exact(detail) }
+                        .frame(height: Self.lineHeight * CGFloat(RequestDetail.lines) + 10)
+                        .background(Self.box.fill(Color.white.opacity(0.06)))
+                        .clipShape(Self.box)
+                    Text("Too long to check here: answer in the terminal.", bundle: .module)
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(.orange)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                }
             }
             HStack(spacing: 8) {
-                DecisionButton(title: Text("Allow", bundle: .module), prominent: true) { decide(.allow) }
+                DecisionButton(title: Text("Allow", bundle: .module), prominent: true, enabled: canAllow) { decide(.allow) }
+                    .disabled(!armed)
                 DecisionButton(title: Text("Deny", bundle: .module), prominent: false) { decide(.deny) }
                 Spacer(minLength: 0)
                 Button {
@@ -113,7 +134,7 @@ private struct PermissionCard: View {
                 } label: {
                     Text("Answer in terminal", bundle: .module)
                         .font(.system(size: 11.5, weight: .medium))
-                        .foregroundStyle(Theme.secondaryText)
+                        .foregroundStyle(canAllow ? Theme.secondaryText : .white)
                 }
                 .buttonStyle(PressableStyle())
             }
@@ -124,25 +145,51 @@ private struct PermissionCard: View {
                 .fill(Color.orange.opacity(0.1))
                 .strokeBorder(Color.orange.opacity(0.35), lineWidth: 1)
         )
+        .task(id: Placement(id: request.id, position: position)) {
+            armed = false
+            try? await Task.sleep(for: .milliseconds(600))
+            if !Task.isCancelled { armed = true }
+        }
+    }
+
+    /// The text Allow approves, never cut: no line limit, and as many lines as it needs.
+    private func exact(_ detail: RequestDetail) -> some View {
+        Text(verbatim: detail.shown)
+            .font(.system(size: 11, design: .monospaced))
+            .foregroundStyle(.white.opacity(0.8))
+            .fixedSize(horizontal: false, vertical: true)
+            .textSelection(.enabled)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 5)
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private struct Placement: Equatable {
+        var id: String
+        var position: Int
     }
 }
 
 private struct DecisionButton: View {
     let title: Text
     let prominent: Bool
+    var enabled = true
     let action: () -> Void
     @State private var hovering = false
 
     var body: some View {
+        let lit = hovering && enabled
         Button(action: action) {
             title
                 .font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(prominent ? .black : .white)
                 .padding(.horizontal, 14)
                 .frame(height: 26)
-                .background(Capsule().fill(prominent ? Color.white.opacity(hovering ? 0.85 : 1) : Color.white.opacity(hovering ? 0.2 : 0.13)))
+                .background(Capsule().fill(prominent ? Color.white.opacity(lit ? 0.85 : 1) : Color.white.opacity(lit ? 0.2 : 0.13)))
         }
         .buttonStyle(PressableStyle())
+        .disabled(!enabled)
+        .opacity(enabled ? 1 : 0.35)
         .onHover { hovering = $0 }
     }
 }
