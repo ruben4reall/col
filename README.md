@@ -160,6 +160,7 @@ Each one only if a module you chose needs it:
   recorded.
 - **Speech Recognition**, for the prompter's Voice Follow, on your Mac only.
 - **Local Network**, for the prompter's phone remote and the AI servers you add on another machine.
+- **Downloads folder**, only if you turn on Downloads in progress, to show the files your browser is still writing.
 
 ## Privacy
 
