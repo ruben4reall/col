@@ -61,7 +61,8 @@ Each one only if a module you chose needs it: Accessibility (the volume and brig
 bar), Calendars and Reminders (the agenda), Bluetooth (headphone battery and model), Camera (only while the mirror
 is open), Microphone (the prompter's voice modes, while a take runs: the sound is analysed on your Mac and never
 recorded), Speech Recognition (the prompter's Voice Follow, on your Mac only), Local Network (the prompter's phone
-remote). The colour picker uses the system's own sampler, which asks for nothing.
+remote, and the AI servers you add on another machine). The colour picker uses the system's own sampler, which asks
+for nothing.
 
 ### Login item
 

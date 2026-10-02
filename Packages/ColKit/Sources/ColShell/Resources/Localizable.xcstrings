@@ -1071,6 +1071,16 @@
         }
       }
     },
+    "Col never asks for Screen Recording, Full Disk Access or Input Monitoring. It sees when another app uses the microphone without listening to it, and listens itself only while the prompter follows your voice.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col ne demande jamais l’Enregistrement de l’écran, l’Accès complet au disque ni la Surveillance de l’entrée. Il voit quand une autre app utilise le micro sans l’écouter, et n’écoute lui-même que pendant que le prompteur suit votre voix."
+          }
+        }
+      }
+    },
     "Colors": {
       "localizations": {
         "fr": {
@@ -1951,16 +1961,6 @@
         }
       }
     },
-    "Col never asks for Screen Recording, Full Disk Access or Input Monitoring. It sees that the microphone is in use without ever listening to it.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Col ne demande jamais l’Enregistrement de l’écran, l’Accès complet au disque ni la Surveillance de l’entrée. Il voit que le micro est utilisé sans jamais l’écouter."
-          }
-        }
-      }
-    },
     "Col never signs in to any AI service. It only hears the hooks your agents call on your Mac.": {
       "localizations": {
         "fr": {
@@ -2317,6 +2317,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Activités en direct"
+          }
+        }
+      }
+    },
+    "Local Network": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réseau local"
           }
         }
       }
@@ -3257,6 +3267,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Recharger"
+          }
+        }
+      }
+    },
+    "Reminders": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rappels"
+          }
+        }
+      }
+    },
+    "Reminders are asked the first time you choose Show reminders too on the agenda. Local Network is asked by macOS the first time Col reaches a device on your network: your phone for the prompter’s remote, or an AI server you added.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les rappels sont demandés la première fois que vous choisissez Afficher aussi les rappels dans l’agenda. Le réseau local est demandé par macOS la première fois que Col joint un appareil de votre réseau : votre téléphone pour la télécommande du prompteur, ou un serveur d’IA que vous avez ajouté."
           }
         }
       }

@@ -147,6 +147,10 @@ Each one only if a module you chose needs it:
 - **Calendars and Reminders**, for the agenda.
 - **Bluetooth**, for the battery and the model of your headphones.
 - **Camera**, only while the mirror is open.
+- **Microphone**, for the prompter's voice modes, only while a take runs. The sound is analysed on your Mac and never
+  recorded.
+- **Speech Recognition**, for the prompter's Voice Follow, on your Mac only.
+- **Local Network**, for the prompter's phone remote and the AI servers you add on another machine.
 
 ## Privacy
 
