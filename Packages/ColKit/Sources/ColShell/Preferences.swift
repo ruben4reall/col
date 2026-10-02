@@ -121,18 +121,16 @@ enum Preferences {
         set { defaults.set(newValue.map(\.rawValue), forKey: "activityRanking"); changed() }
     }
 
-    /// The pages of the open island, in tab order. Islet 1 kept a list of its optional pages instead: that list becomes
-    /// the first deck, so an update keeps the island as it was.
+    /// The pages of the open island, in tab order. Islet 1 kept a list of its optional pages instead: the first launch
+    /// of 2.0 makes it the first deck, with the prompter and the AI apps added (NameChange), so an update keeps the
+    /// island as it was. Until a deck is saved, the list reads the same way.
     static var pageDeck: PageDeck {
         get {
             if let data = defaults.data(forKey: "pageDeck"), let deck = try? JSONDecoder().decode(PageDeck.self, from: data) {
                 return deck.validated()
             }
             if let legacy = defaults.stringArray(forKey: "enabledPages") {
-                // Someone who used Souffleur finds the prompter, now part of Col, on the page after Home.
-                let support = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-                let usedSouffleur = FileManager.default.fileExists(atPath: support.appendingPathComponent("Souffleur").path)
-                return PageDeck.migrating(enabledPages: (usedSouffleur ? ["prompter"] : []) + legacy)
+                return PageDeck.migrating(enabledPages: legacy)
             }
             return .standard
         }

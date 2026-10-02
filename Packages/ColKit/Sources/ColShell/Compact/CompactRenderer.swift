@@ -96,6 +96,9 @@ private final class WingSlot {
     let content = CALayer()
     private var parts: [CALayer] = []
     private(set) var item: CompactItem?
+    /// The request the app icon last hopped for. Kept across changes of item, so the island opening and closing, or
+    /// another activity passing over it, never makes it hop again for the same request.
+    private var hoppedFor: Date?
 
     init() {
         container.addSublayer(content)
@@ -163,9 +166,9 @@ private final class WingSlot {
         case .countdown(let ends, let total, let tint):
             content.contents = nil
             drawCountdown(ends: ends, total: total, size: size, tint: tint)
-        case .appIcon(let icon, let bouncing):
+        case .appIcon(let icon, let attention):
             content.contents = nil
-            drawAppIcon(icon, bouncing: bouncing, size: size, scale: scale)
+            drawAppIcon(icon, attention: attention, size: size, scale: scale)
         }
         CATransaction.commit()
     }
@@ -198,8 +201,9 @@ private final class WingSlot {
     // MARK: Items
 
     /// The app's own icon. App icons keep a margin around their tile, so it is drawn a little larger than a symbol to
-    /// look the same size. While the app needs the user it bounces as Dock icons do, low enough to stay in the island.
-    private func drawAppIcon(_ icon: AppIcon, bouncing: Bool, size: CGSize, scale: CGFloat) {
+    /// look the same size. When the app starts to need the user it hops as Dock icons do, low enough to stay in the
+    /// island, then rests: a wait can last all night, and a still icon costs nothing to show.
+    private func drawAppIcon(_ icon: AppIcon, attention: Date?, size: CGSize, scale: CGFloat) {
         let image = part(0) { CALayer() }
         let found = AppIcons.image(for: icon, side: size.height * 1.15, scale: scale)
         let side = found == nil ? size.height : size.height * 1.15
@@ -208,8 +212,14 @@ private final class WingSlot {
         image.contents = found ?? SymbolRenderer.image(icon.symbol, tint: icon.tint, pointSize: size.height * 0.82, scale: scale)
         image.bounds = CGRect(x: 0, y: 0, width: side, height: side)
         image.position = CGPoint(x: size.width / 2, y: size.height / 2)
-        let bounces = bouncing && !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
-        if bounces, image.animation(forKey: "bounce") == nil {
+        guard let attention else {
+            image.removeAnimation(forKey: "bounce")
+            return
+        }
+        // Only a newer request hops: an older one coming back to the top of the board, another session's, does not.
+        guard attention > (hoppedFor ?? .distantPast) else { return }
+        hoppedFor = attention
+        if !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion {
             let bounce = CAKeyframeAnimation(keyPath: "transform.translation.y")
             bounce.values = [0, size.height * 0.2, 0, 0]
             bounce.keyTimes = [0, 0.28, 0.56, 1]
@@ -217,10 +227,8 @@ private final class WingSlot {
                 CAMediaTimingFunction(name: .easeOut), CAMediaTimingFunction(name: .easeIn), CAMediaTimingFunction(name: .linear),
             ]
             bounce.duration = 0.95
-            bounce.repeatCount = .infinity
+            bounce.repeatCount = 3
             image.add(bounce, forKey: "bounce")
-        } else if !bounces {
-            image.removeAnimation(forKey: "bounce")
         }
     }
 

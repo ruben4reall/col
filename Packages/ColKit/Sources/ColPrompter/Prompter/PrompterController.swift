@@ -9,7 +9,10 @@ public final class PrompterController {
     /// Called whenever what the remote or the menus show may have changed.
     public var onChange: (() -> Void)?
 
-    private var presentation: PrompterPresentation?
+    private var presentation: PrompterPresentation? {
+        // Observed, unlike the presentation: views that show a take or a script switch as the take starts and ends.
+        didSet { state.isActive = presentation != nil }
+    }
     /// Where the take on screen is.
     public private(set) var placement: PrompterPlacement = .notch
     private(set) var script = Script("")
@@ -17,6 +20,10 @@ public final class PrompterController {
     private var tracker: VoiceTracker?
     private let listener = Listener()
     private var isListening = false
+    /// Lets go of the microphone once a pause in voice follow has lasted.
+    private var quietPause: Task<Void, Never>?
+    /// How long voice follow keeps its recogniser ready in a pause, so a short one resumes on the next word.
+    private static let pauseListening: Duration = .seconds(20)
     private var recorder: TakeRecorder?
     private var meter = PaceMeter()
     private var clock: Timer?
@@ -55,7 +62,7 @@ public final class PrompterController {
         })
     }
 
-    public var isActive: Bool { presentation != nil }
+    public var isActive: Bool { state.isActive }
     public var isRolling: Bool { state.phase == .rolling }
 
     // MARK: Starting and stopping
@@ -202,13 +209,20 @@ public final class PrompterController {
         }
     }
 
+    /// Stops the text and the clock. Nothing is read in a pause, so nothing needs the microphone: voice pace lets go
+    /// of it at once, voice follow once the pause has lasted.
     public func pause() {
         guard state.phase == .rolling else { return }
         cancelFinishing()
         state.phase = .paused
         if let rollingSince { elapsedBefore += Date().timeIntervalSince(rollingSince) }
         rollingSince = nil
+        stopClock()
+        state.elapsed = elapsedBefore
         presentation?.text.setSpeed(0, eased: true)
+        if isListening {
+            if state.mode == .voice { stopListening(after: Self.pauseListening) } else { stopListening() }
+        }
         updateGlow()
         onChange?()
     }
@@ -217,6 +231,15 @@ public final class PrompterController {
         guard state.phase == .paused else { return }
         state.phase = .rolling
         rollingSince = Date()
+        startClock()
+        // The pause, or a change of mode during it, may have stopped the microphone: it listens again, unless a
+        // failure on show says why it cannot.
+        if isListening {
+            quietPause?.cancel()
+            quietPause = nil
+        } else if state.mode.listens, state.failure == nil, !(state.mode == .voice && demoVoice) {
+            startListening(recognize: state.mode == .voice)
+        }
         if state.mode == .auto { presentation?.text.setSpeed(autoSpeed, eased: true) }
         updateGlow()
         onChange?()
@@ -398,8 +421,10 @@ public final class PrompterController {
     }
 
     private func heard(_ recent: String, final: String?) {
+        // Words said in a pause or in the countdown are not part of the take, nor counted in its summary.
+        guard state.phase == .rolling else { return }
         if let final { recorder?.heard(final) }
-        guard state.phase == .rolling, state.mode == .voice, var tracker else { return }
+        guard state.mode == .voice, var tracker else { return }
         guard tracker.hear(recent) else { return }
         self.tracker = tracker
         let now = Date()
@@ -481,6 +506,8 @@ public final class PrompterController {
     }
 
     private func stopListening() {
+        quietPause?.cancel()
+        quietPause = nil
         demoTask?.cancel()
         demoTask = nil
         guard isListening else { return }
@@ -490,16 +517,27 @@ public final class PrompterController {
         state.isSpeaking = false
     }
 
+    /// Keeps listening for `delay`, then stops, unless the take starts or stops listening again first.
+    private func stopListening(after delay: Duration) {
+        quietPause?.cancel()
+        quietPause = Task { [weak self] in
+            try? await Task.sleep(for: delay)
+            guard let self, !Task.isCancelled, self.state.phase == .paused else { return }
+            self.stopListening()
+        }
+    }
+
     private func handle(_ event: ListenerEvent) {
         guard isListening else { return }
         switch event {
         case .level(let level, let speaking):
+            // Only a rolling take follows the voice: in the countdown and in a pause, the light and the text stay as
+            // they are and nothing is redrawn.
+            guard state.phase == .rolling else { return }
             state.level = level
             state.isSpeaking = speaking
             updateGlow()
-            if state.mode == .pace, state.phase == .rolling {
-                presentation?.text.setSpeed(speaking ? autoSpeed : 0, eased: true)
-            }
+            if state.mode == .pace { presentation?.text.setSpeed(speaking ? autoSpeed : 0, eased: true) }
         case .heard(let recent, let final):
             heard(recent, final: final)
         case .status(let status):
@@ -521,11 +559,14 @@ public final class PrompterController {
 
     // MARK: Time
 
+    /// Ticks only while the take rolls: a pause stops it.
     private func startClock() {
         stopClock()
-        clock = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
+        let clock = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
             MainActor.assumeIsolated { self?.tick() }
         }
+        clock.tolerance = 0.1
+        self.clock = clock
     }
 
     private func stopClock() {

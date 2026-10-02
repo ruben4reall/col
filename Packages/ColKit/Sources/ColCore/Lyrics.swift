@@ -44,6 +44,10 @@ public struct Lyrics: Equatable, Sendable {
     /// A pause longer than this between two lines shows as a pause of its own (three dots that breathe).
     public static let pauseThreshold: TimeInterval = 5
 
+    /// No track lasts a day: a time beyond is a damaged or hostile file, and is not read. Lyrics come from an open
+    /// database anyone can write to, and a time the clock cannot count would stop the app when it is waited for.
+    static let longest: TimeInterval = 24 * 60 * 60
+
     /// Reads LRC: `[mm:ss.xx] text` lines, several timestamps on one line, an `[offset:±ms]` tag, metadata tags
     /// (ignored) and word timing in angle brackets (`<mm:ss.xx> word`). Returns nil when no line is timed.
     public static func parse(lrc: String) -> Lyrics? {
@@ -56,8 +60,9 @@ public struct Lyrics: Equatable, Sendable {
                 let tag = rest[rest.index(after: rest.startIndex)..<close]
                 if let time = timestamp(tag) {
                     times.append(time)
-                } else if tag.lowercased().hasPrefix("offset:"), let value = Double(tag.dropFirst("offset:".count).trimmingCharacters(in: .whitespaces)) {
-                    // A positive offset shows the lyrics sooner.
+                } else if tag.lowercased().hasPrefix("offset:"), let value = Double(tag.dropFirst("offset:".count).trimmingCharacters(in: .whitespaces)),
+                          abs(value) < longest * 1000 {
+                    // A positive offset shows the lyrics sooner, by milliseconds.
                     offset = value / 1000
                 }
                 rest = rest[rest.index(after: close)...]
@@ -106,6 +111,16 @@ public struct Lyrics: Equatable, Sendable {
         return lines.first { $0.time > position }?.time
     }
 
+    /// How long to wait, from a position played at a rate, before the next line shows: a little early, so the line
+    /// arrives with the voice rather than after it. An hour at most, whatever the times say; nil when no line follows,
+    /// or when the wait cannot be told.
+    public func wait(after position: TimeInterval, rate: Double) -> TimeInterval? {
+        guard let next = nextChange(after: position) else { return nil }
+        let wait = (next - position) / max(rate, 0.1) - 0.12
+        guard !wait.isNaN else { return nil }
+        return min(max(wait, 0.05), 60 * 60)
+    }
+
     // MARK: Reading
 
     /// `mm:ss`, `mm:ss.xx` or `mm:ss.xxx`, and `hh:mm:ss.xx` for long tracks.
@@ -116,11 +131,11 @@ public struct Lyrics: Equatable, Sendable {
         for (index, part) in parts.enumerated() {
             let isLast = index == parts.count - 1
             guard let value = isLast ? Double(part.replacingOccurrences(of: ",", with: ".")) : Double(part),
-                  value >= 0, isLast || value == value.rounded()
+                  value.isFinite, value >= 0, isLast || value == value.rounded()
             else { return nil }
             total = total * 60 + value
         }
-        return total
+        return total < longest ? total : nil
     }
 
     /// Takes word timing out of a line: `<00:12.10> Hello <00:12.60> world` reads "Hello world".

@@ -12,7 +12,7 @@ struct PrompterWidget: View {
     @AppStorage(PrompterPreferences.Key.wordsPerMinute) private var pace = Pace.conversational
 
     var body: some View {
-        if center.prompter.isActive {
+        if center.prompter.state.isActive {
             TakeView(center: center, compact: width == .half)
         } else if let script = center.store.selected {
             if width == .full { full(script) } else { half(script) }

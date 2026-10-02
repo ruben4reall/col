@@ -60,6 +60,41 @@ struct LyricsTests {
         #expect(Lyrics.timestamp("01:xx") == nil)
     }
 
+    @Test func timesNoTrackCouldReachAreNotRead() {
+        #expect(Lyrics.timestamp("00:inf") == nil)
+        #expect(Lyrics.timestamp("00:infinity") == nil)
+        #expect(Lyrics.timestamp("00:nan") == nil)
+        #expect(Lyrics.timestamp("00:1e999") == nil)
+        #expect(Lyrics.timestamp("99999999999999999999:00") == nil)
+        #expect(Lyrics.timestamp("24:00:00") == nil)
+        #expect(Lyrics.timestamp("23:59:59") == 86_399)
+    }
+
+    @Test func aDamagedLineOrOffsetLeavesTheOthersFollowable() throws {
+        let lyrics = try #require(Lyrics.parse(lrc: "[00:01.00] a\n[00:inf] b\n[00:1e999] c\n[00:03.00] <00:inf> d"))
+        #expect(lyrics.lines.filter { !$0.isPause }.map(\.text) == ["a", "d"])
+        #expect(lyrics.lines.allSatisfy { $0.time.isFinite && $0.words.allSatisfy { $0.time.isFinite } })
+
+        for offset in ["-1e400", "1e400", "nan", "-99999999999"] {
+            let shifted = try #require(Lyrics.parse(lrc: "[offset:\(offset)]\n[00:01.00] a"))
+            #expect(shifted.lines.first?.time == 1)
+        }
+    }
+
+    @Test func theWaitForTheNextLineIsAlwaysOneTheClockCanCount() {
+        let lyrics = Lyrics(lines: [LyricLine(time: 1, text: "a"), LyricLine(time: 3, text: "b"), LyricLine(time: 1e22, text: "c")], isSynced: true)
+        // A little early, at the rate the track plays.
+        #expect(abs((lyrics.wait(after: 1, rate: 1) ?? 0) - 1.88) < 0.001)
+        #expect(abs((lyrics.wait(after: 1, rate: 2) ?? 0) - 0.88) < 0.001)
+        #expect(lyrics.wait(after: 2.99, rate: 1) == 0.05)
+        // A record cached before times were checked: an hour at most, then the next line is looked for again.
+        #expect(lyrics.wait(after: 3, rate: 1) == 3600)
+        #expect(lyrics.wait(after: 1e22, rate: 1) == nil)
+        #expect(lyrics.wait(after: .nan, rate: 1) == nil)
+        #expect(Lyrics(lines: [LyricLine(time: .infinity, text: "a")], isSynced: true).wait(after: 0, rate: 1) == 3600)
+        #expect(Lyrics(lines: [LyricLine(time: 1, text: "a")], isSynced: true).wait(after: 0, rate: .nan) == nil)
+    }
+
     @Test func plainLyricsAreShownButNeverFollowed() throws {
         let lyrics = try #require(Lyrics.plain("One\nTwo"))
         #expect(!lyrics.isSynced)

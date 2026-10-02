@@ -214,7 +214,8 @@ private struct AddServerSheet: View {
     @State private var address = ""
     @State private var token = ""
     @State private var testing = false
-    @State private var found: (kind: ModelServerKind, models: [String])?
+    /// The server that answered the last test, and the address it answered at.
+    @State private var found: (kind: ModelServerKind, models: [String], address: URL)?
     @State private var failed = false
 
     var body: some View {
@@ -229,7 +230,11 @@ private struct AddServerSheet: View {
             Form {
                 TextField(text: $name, prompt: Text("Studio PC", bundle: .module)) { Text("Name", bundle: .module) }
                 TextField(text: $address, prompt: Text(verbatim: "192.168.1.20:11434")) { Text("Address", bundle: .module) }
-                    .onChange(of: address) { found = nil; failed = false }
+                    .onChange(of: address) { _, typed in
+                        // The test writes the address that answered in full: that is no change of address.
+                        if typed != found?.address.absoluteString { found = nil }
+                        failed = false
+                    }
                 SecureField(text: $token, prompt: Text("Only if the server asks for one", bundle: .module)) { Text("Token", bundle: .module) }
             }
             .formStyle(.grouped)
@@ -258,7 +263,8 @@ private struct AddServerSheet: View {
                 Button { test() } label: { Text("Test", bundle: .module) }
                     .disabled(ModelServer.address(from: address, kind: nil) == nil || testing)
                 Button {
-                    guard let found, let url = ModelServer.address(from: address, kind: found.kind) else { return }
+                    guard let found else { return }
+                    let url = found.address
                     let title = name.trimmingCharacters(in: .whitespaces)
                     add(ModelServer(name: title.isEmpty ? (url.host ?? found.kind.name) : title, kind: found.kind, address: url, usesToken: !token.isEmpty), token)
                     dismiss()
@@ -286,11 +292,15 @@ private struct AddServerSheet: View {
             for url in candidates {
                 if let kind = await ModelServerClient.shared.detect(url, token: secret) {
                     let status = await ModelServerClient.shared.status(of: ModelServer(name: "", kind: kind, address: url, usesToken: secret != nil), token: secret)
+                    // The address was edited while the server answered: the answer is about another one.
+                    guard address == typed else { return }
+                    found = (kind, status.models, url)
+                    // The address in full, with the scheme and the port that answered.
                     address = url.absoluteString
-                    found = (kind, status.models)
                     return
                 }
             }
+            guard address == typed else { return }
             failed = true
         }
     }

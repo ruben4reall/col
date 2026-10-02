@@ -175,9 +175,18 @@ final class PermissionCenter {
                 refresh()
             }
         case .speech:
-            SFSpeechRecognizer.requestAuthorization { _ in
-                DispatchQueue.main.async { MainActor.assumeIsolated { self.refresh() } }
+            Task { @MainActor in
+                _ = await Self.requestSpeechRecognition()
+                refresh()
             }
+        }
+    }
+
+    /// Speech answers on a queue of its own. Asked from here, outside the main actor, its answer is not taken for
+    /// main-actor code: Swift 6 would stop the app the moment it arrived.
+    private nonisolated static func requestSpeechRecognition() async -> SFSpeechRecognizerAuthorizationStatus {
+        await withCheckedContinuation { continuation in
+            SFSpeechRecognizer.requestAuthorization { @Sendable status in continuation.resume(returning: status) }
         }
     }
 

@@ -4,7 +4,8 @@ import ColCore
 
 /// Finds the lyrics of a track: a `.lrc` file of the user's first, then LRCLIB, an open database of lyrics that needs
 /// no account. Only the title, the artist, the album and the length of the track are sent. Answers are kept on disk,
-/// misses for a week, so a track is looked up once.
+/// misses for a week, so a track is looked up once. Nothing is kept in memory: the lyrics on show live in
+/// `LyricsModel`, and a track played again is read back from the disk, once per change of track.
 actor LyricsService {
     static let shared = LyricsService()
 
@@ -17,7 +18,6 @@ actor LyricsService {
     }
 
     private let session: URLSession
-    private var memory: [String: Answer] = [:]
     /// LRCLIB asks clients to slow down with a 429 and a Retry-After: nothing is asked before this moment.
     private var quietUntil: Date?
 
@@ -45,11 +45,7 @@ actor LyricsService {
     func lyrics(for query: LyricsQuery) async -> Answer {
         if let local = Self.userLyrics(for: query) { return .found(local) }
         let key = query.cacheKey
-        if let answer = memory[key] { return answer }
-        if let answer = Self.cached(key) {
-            memory[key] = answer
-            return answer
-        }
+        if let answer = Self.cached(key) { return answer }
         if let quietUntil, quietUntil > Date() { return .unavailable }
         let (answer, record) = await fetch(query)
         // `-ColDebug YES` tells what each lookup found.
@@ -62,10 +58,7 @@ actor LyricsService {
             }
             FileHandle.standardError.write(Data("lyrics: \(query.mainArtist) - \(query.cleanTitle): \(summary)\n".utf8))
         }
-        if answer != .unavailable {
-            memory[key] = answer
-            Self.store(record, for: key)
-        }
+        if answer != .unavailable { Self.store(record, for: key) }
         return answer
     }
 

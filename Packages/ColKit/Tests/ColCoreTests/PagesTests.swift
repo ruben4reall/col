@@ -16,8 +16,19 @@ struct PagesTests {
 
     @Test func islet1PagesBecomePagesInTheSameOrder() {
         let deck = PageDeck.migrating(enabledPages: ["tools", "shelf", "unknown", "tools"])
-        #expect(deck.pages.map(\.id) == [PageDeck.homeID, "tools", "shelf"])
-        #expect(deck.pages[1].stacks == [WidgetStack([.tools])])
+        // The prompter and the AI apps, new in 2.0, come right after Home.
+        #expect(deck.pages.map(\.id) == [PageDeck.homeID, "prompter", "ai", "tools", "shelf"])
+        #expect(deck.pages[1].stacks == [WidgetStack([.prompter])])
+        #expect(deck.pages[2].stacks == [WidgetStack([.ai])])
+        #expect(deck.pages[3].stacks == [WidgetStack([.tools])])
+        #expect(deck.validated() == deck)
+    }
+
+    @Test func islet1WithoutASavedListKeepsItsDefaultPages() {
+        let deck = PageDeck.migrating(enabledPages: nil)
+        #expect(deck.pages.map(\.id) == [PageDeck.homeID, "prompter", "ai", "shelf", "clipboard", "tools", "system"])
+        // Every page turned off in Islet: Home, and what 2.0 brings.
+        #expect(PageDeck.migrating(enabledPages: []).pages.map(\.id) == [PageDeck.homeID, "prompter", "ai"])
     }
 
     @Test func validationDropsWhatAPlaceCannotHold() {

@@ -439,7 +439,15 @@ public final class IslandController {
                 self?.refreshActivity()
             }
         }
-        if Preferences.displayChoice == "main", Self.notchScreen() != screen { screensChanged() }
+        if Preferences.displayChoice == "main", Self.notchScreen() != screen {
+            screensChanged()
+        } else {
+            followFullScreen()
+        }
+    }
+
+    /// Steps aside while an app covers the island's screen in full screen, when the settings ask, and comes back after.
+    private func followFullScreen() {
         let active = Preferences.hidesInFullScreen && isFullScreen()
         guard active != fullScreenActive else { return }
         fullScreenActive = active
@@ -772,7 +780,8 @@ public final class IslandController {
         islandView.setGlass(Preferences.islandGlass)
         resizeWindow(to: layout.windowSize(for: state, wings: effectiveWings))
         islandView.showCompact(shownActivity?.compact.fitted(to: wings), wings: wings)
-        panel.orderFrontRegardless()
+        // Laid out again, the island still leaves the notch to a take, and full screen to the app that has it.
+        updateVisibility()
         measureMenuBar(statusItems: measuringStatusItems)
     }
 
@@ -782,6 +791,8 @@ public final class IslandController {
         islandView.dismissContent()
         islandView.discardContent()
         place()
+        // The island may hang on another screen now: full screen there is what counts.
+        followFullScreen()
     }
 
     /// Resizes the panel around the notch and re-pins the canvas to its top centre, so the island stays put on
