@@ -101,13 +101,13 @@ Every update is signed with Col's own key.
 
 ### Uninstall
 
-In Settings, Developers, disconnect your AI agents, so their settings files forget Col. Then quit Col from its
-right-click menu and move it to the Trash. Its settings are in `~/Library/Preferences/ch.rubencatalao.islet.plist`.
-With Homebrew: `brew uninstall --cask --zap colctl`.
+In Settings, AI apps, disconnect your AI agents, so their settings files forget Col (or, from a terminal,
+`colctl hooks uninstall --agent all`). Then quit Col from its right-click menu and move it to the Trash. Its settings
+are in `~/Library/Preferences/ch.rubencatalao.islet.plist`. With Homebrew: `brew uninstall --cask --zap col`.
 
 ## Connect your AI agents
 
-In Settings, Developers, click Connect next to each agent, or from a terminal:
+In Settings, AI apps, click Connect next to each agent, or from a terminal:
 
 ```sh
 colctl hooks install --agent all      # every agent found on this Mac
@@ -210,7 +210,7 @@ You need Xcode 26 and [XcodeGen](https://github.com/yonaskolb/XcodeGen).
 ```sh
 brew install xcodegen
 git clone https://github.com/ruben4reall/col.git
-cd colctl
+cd col
 swift test --package-path Packages/ColKit   # the island's rules, activities, agents, parsers
 scripts/build.sh                               # prints the path of the Debug app
 open .build/xcode/Build/Products/Debug/Col.app
