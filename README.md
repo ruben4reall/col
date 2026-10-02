@@ -91,7 +91,14 @@ Releases are signed with a Developer ID and notarized by Apple.
 brew install --cask ruben4reall/tap/col
 ```
 
-The cask also links the `colctl` command.
+The cask also links the `colctl` command, and `islet` for the scripts and hooks written for Islet.
+
+Installed Islet with Homebrew? Col updates itself but keeps the name Islet.app, so Homebrew can still upgrade and
+remove it. To get Col.app:
+
+```sh
+brew upgrade --cask --greedy col
+```
 
 ### Updates
 
