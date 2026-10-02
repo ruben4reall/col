@@ -40,8 +40,9 @@ contributions there is.
   - `App/AppShortcuts.xcstrings`: the phrases that start Col's App Shortcuts; keep `${applicationName}` as it is.
   - `App/InfoPlist.xcstrings`: what macOS says when it asks for a permission.
 
-  Change the wording of your language, keep the placeholders (`%@`, `%lld`) and the tone: short, plain, friendly, no
-  jargon.
+  Change the wording of your language and keep the tone: short, plain, friendly, no jargon. Keep every placeholder
+  as it is (`%@`, `%lld`, `%1$@`, and `%%` for a percent sign). In strings that count, also keep the `%#@name@` and
+  `%arg` markers, and give each plural form (`one`, `other`, and any other your language uses) its own wording.
 - One pull request per language is easiest to review. Say in it that you speak the language natively.
 - A new language is welcome too: add it to `CFBundleLocalizations` in `project.yml` and fill every catalog.
 
