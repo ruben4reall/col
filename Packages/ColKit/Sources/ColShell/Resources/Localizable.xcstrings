@@ -3491,12 +3491,12 @@
         }
       }
     },
-    "Scripts, Shortcuts and col:// links all reach the same local API. Nothing listens on the network.": {
+    "Scripts, Shortcuts and col:// links all reach the same local API, which never listens on the network.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Scripts, Raccourcis et liens col:// passent tous par la même API locale. Rien n’écoute sur le réseau."
+            "value": "Scripts, Raccourcis et liens col:// passent tous par la même API locale, qui n’écoute jamais sur le réseau."
           }
         }
       }
