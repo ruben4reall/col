@@ -5,7 +5,8 @@ import Foundation
 /// shows; a command too long to check there is left to the terminal, which shows it whole.
 public struct RequestDetail: Equatable, Sendable {
     /// The text to show: each line break marked ⏎, tabs ⇥, runs of spaces as ␣ (counted past three), control
-    /// characters as their symbols, and invisible ones (zero-width, direction marks, unusual spaces) by their code.
+    /// characters as their symbols, and invisible or blank ones (zero-width, joiners, variation selectors, fillers,
+    /// direction marks, unusual spaces) by their code.
     public let shown: String
     /// Whether the card shows it all at once. When it does not, Allow is off and the request is answered in the
     /// terminal.
@@ -56,13 +57,21 @@ public struct RequestDetail: Equatable, Sendable {
         case 0x7F: return "␡"
         default: break
         }
+        let code = "‹U+\(String(format: "%04X", scalar.value))›"
+        // Drawn as nothing, or as a blank: a combining grapheme joiner or a variation selector inside a word, a Hangul
+        // filler or a blank Braille pattern standing for a space.
+        if scalar.properties.isDefaultIgnorableCodePoint || blanks.contains(scalar.value) { return code }
         switch scalar.properties.generalCategory {
-        case .control, .format, .lineSeparator, .paragraphSeparator, .spaceSeparator, .unassigned:
-            return "‹U+\(String(format: "%04X", scalar.value))›"
+        case .control, .format, .lineSeparator, .paragraphSeparator, .spaceSeparator, .privateUse, .unassigned:
+            return code
         default:
             return String(scalar)
         }
     }
+
+    /// Letters and symbols drawn blank: the Hangul fillers (default-ignorable too, named here all the same) and the
+    /// blank Braille pattern.
+    private static let blanks: Set<UInt32> = [0x115F, 0x1160, 0x3164, 0xFFA0, 0x2800]
 
     /// Lines the text takes at `columns` characters, broken at spaces as the card breaks it; a run with no space
     /// wider than a line takes as many as it needs. Wide characters count twice.

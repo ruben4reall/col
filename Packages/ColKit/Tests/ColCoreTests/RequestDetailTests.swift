@@ -83,6 +83,15 @@ import Testing
         #expect(RequestDetail.visible("printf '\u{1B}[2K'") == "printf '␛[2K'")
         #expect(RequestDetail.visible("x\u{7F}\u{85}") == "x␡‹U+0085›")
         #expect(RequestDetail.visible("café ✓ 日本") == "café ✓ 日本")
+        // Drawn as nothing inside a word: a combining grapheme joiner, variation selectors, Khmer's inherent vowels.
+        #expect(RequestDetail.visible("r\u{034F}m -rf ~") == "r‹U+034F›m -rf ~")
+        #expect(RequestDetail.visible("l\u{FE00}s\u{E0100}") == "l‹U+FE00›s‹U+E0100›")
+        #expect(RequestDetail.visible("a\u{17B4}\u{17B5}") == "a‹U+17B4›‹U+17B5›")
+        // Drawn blank, standing for a space: the Hangul fillers and the blank Braille pattern.
+        #expect(RequestDetail.visible("rm\u{3164}x\u{FFA0}\u{115F}\u{1160}") == "rm‹U+3164›x‹U+FFA0›‹U+115F›‹U+1160›")
+        #expect(RequestDetail.visible("cat\u{2800}y") == "cat‹U+2800›y")
+        // A private character looks like whatever a font makes of it.
+        #expect(RequestDetail.visible("x\u{E000}") == "x‹U+E000›")
     }
 
     @Test func aCommandTooLongToCheckIsLeftToTheTerminal() {
