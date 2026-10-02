@@ -253,14 +253,14 @@ public struct AgentBoard: Sendable, Equatable {
     }
 
     /// What the notch shows for all agents together, or nil when none is doing anything worth showing: the icon of the
-    /// agent at the top, bouncing while it waits for the user, and beside it what it does.
+    /// agent at the top, which hops as it starts to wait for the user, and beside it what it does.
     public func activity(now: Date, tint: RGBA) -> Activity? {
         let active = ordered.filter { $0.state != .idle }
         guard let top = active.first else { return nil }
         let count = active.count
-        var waiting = false
-        if case .waiting = top.state { waiting = true }
-        let leading: CompactItem = .appIcon(CodingAgent.icon(for: top.agent), bouncing: waiting)
+        var attention: Date?
+        if case .waiting = top.state { attention = top.since }
+        let leading: CompactItem = .appIcon(CodingAgent.icon(for: top.agent), attention: attention)
         switch top.state {
         case .waiting:
             return Activity(

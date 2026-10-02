@@ -9,24 +9,69 @@ import ImageIO
 /// permission prompt.
 @MainActor
 enum DesktopPicture {
-    /// Decoded pictures, kept while a window shows them.
-    private static var cache: [URL: CGImage] = [:]
+    /// The decoded picture, shared by the stages that show it and freed when the last one lets go: decoded at the
+    /// screen's size, it weighs 20 to 60 MB.
+    private static var kept = Kept()
 
-    static func forgetImages() {
-        cache.removeAll()
-    }
-
-    /// The wallpaper of `screen`, decoded at most at the screen's own resolution.
-    static func image(for screen: NSScreen, dark: Bool) -> CGImage? {
+    /// The wallpaper of `screen`, decoded at most at the screen's own resolution, kept until `holder` lets go of it.
+    static func image(for screen: NSScreen, dark: Bool, holder: AnyObject) -> CGImage? {
         let pixels = Int(max(screen.frame.width, screen.frame.height) * screen.backingScaleFactor)
         for url in candidates(for: screen) {
-            if let image = cache[url] { return image }
+            let key = Kept.Key(url: url, pixels: pixels, dark: dark)
+            if let image = kept.image(for: key, holder: ObjectIdentifier(holder)) { return image }
             if let image = decode(url, maxPixels: pixels, dark: dark) {
-                cache[url] = image
+                kept.keep(image, for: key, holder: ObjectIdentifier(holder))
                 return image
             }
         }
         return nil
+    }
+
+    /// `holder` no longer shows the wallpaper. When it was the last, the picture is freed on the next turn of the main
+    /// loop, so a stage that takes over from another in the same pass, as a pane changes, finds it still decoded.
+    static func letGo(_ holder: AnyObject) {
+        guard kept.letGo(ObjectIdentifier(holder)) else { return }
+        DispatchQueue.main.async {
+            MainActor.assumeIsolated { kept.forgetUnlessHeld() }
+        }
+    }
+
+    /// One decoded picture at a time, since every stage shows the same screen, and who holds it.
+    struct Kept {
+        struct Key: Equatable {
+            var url: URL
+            var pixels: Int
+            var dark: Bool
+        }
+
+        private(set) var key: Key?
+        private(set) var image: CGImage?
+        private(set) var holders: Set<ObjectIdentifier> = []
+
+        /// The picture for `key` if it is the one kept, now held by `holder` as well.
+        mutating func image(for key: Key, holder: ObjectIdentifier) -> CGImage? {
+            guard key == self.key, let image else { return nil }
+            holders.insert(holder)
+            return image
+        }
+
+        /// Keeps a new picture in place of the last one, which the stages still showing it hold on their own.
+        mutating func keep(_ image: CGImage, for key: Key, holder: ObjectIdentifier) {
+            self.key = key
+            self.image = image
+            holders.insert(holder)
+        }
+
+        /// True when `holder` was the last.
+        mutating func letGo(_ holder: ObjectIdentifier) -> Bool {
+            holders.remove(holder) != nil && holders.isEmpty
+        }
+
+        mutating func forgetUnlessHeld() {
+            guard holders.isEmpty else { return }
+            key = nil
+            image = nil
+        }
     }
 
     /// Where to look, best first.

@@ -41,8 +41,9 @@ public enum CompactItem: Equatable, Sendable {
     case spinner(tint: RGBA)
     /// A ring that empties until `ends`, animated by the render server rather than by ticks.
     case countdown(ends: Date, total: TimeInterval, tint: RGBA)
-    /// The icon of the app behind the activity. While the app needs the user it bounces, as in the Dock.
-    case appIcon(AppIcon, bouncing: Bool = false)
+    /// The icon of the app behind the activity. `attention` is when the app began to need the user: the icon hops a
+    /// few times, as in the Dock, then rests, and hops again only for a later request.
+    case appIcon(AppIcon, attention: Date? = nil)
 }
 
 public struct CompactPresentation: Equatable, Sendable {

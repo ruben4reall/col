@@ -83,7 +83,6 @@ final class SettingsWindow: NSObject, NSWindowDelegate {
             window.emptyWhenClosed()
         }
         window = nil
-        DesktopPicture.forgetImages()
     }
 }
 

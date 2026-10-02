@@ -115,17 +115,22 @@ final class IslandStageView: NSView {
         }
     }
 
-    /// Stops the timers and lets go of the island's content.
+    /// Stops the timers and lets go of the island's content and of the wallpaper.
     func tearDown() {
         hoverTimer?.cancel()
         exitTimer?.cancel()
         island?.dismissContent()
         island?.discardContent()
+        letGoOfWallpaper()
     }
 
     override func viewDidMoveToWindow() {
         super.viewDidMoveToWindow()
-        guard window != nil else { return }
+        guard window != nil else {
+            // Out of its window, the stage shows nothing: the decoded wallpaper is freed once no stage shows it.
+            letGoOfWallpaper()
+            return
+        }
         configure()
         loadWallpaper()
         if opensOnAppear, !opened {
@@ -188,10 +193,20 @@ final class IslandStageView: NSView {
     // MARK: The wallpaper
 
     private func loadWallpaper() {
-        guard wallpaperImage == nil, let screen = IslandController.shared?.screenForPreview ?? NSScreen.main else { return }
+        guard wallpaperImage == nil, window != nil, let screen = IslandController.shared?.screenForPreview ?? NSScreen.main else { return }
         let dark = effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-        wallpaperImage = DesktopPicture.image(for: screen, dark: dark)
+        wallpaperImage = DesktopPicture.image(for: screen, dark: dark, holder: self)
         cropWallpaper()
+    }
+
+    /// Drops the picture and the crop on screen, which shares its pixels.
+    private func letGoOfWallpaper() {
+        wallpaperImage = nil
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        wallpaper.contents = nil
+        CATransaction.commit()
+        DesktopPicture.letGo(self)
     }
 
     /// The part of the wallpaper that sits around the notch on the real screen, at the stage's scale. macOS fills the

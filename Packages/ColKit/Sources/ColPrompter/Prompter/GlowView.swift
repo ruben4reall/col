@@ -60,10 +60,12 @@ final class GlowView: NSView {
     /// The outline the light is seen through; the presentation morphs it with the prompter.
     var outline: CAShapeLayer { clip }
 
-    /// How bright the light is: 0 is off, 1 the resting light, up to `ceiling` with a loud voice. Eased.
+    /// How bright the light is: 0 is off, 1 the resting light, up to `ceiling` with a loud voice. Eased. A light
+    /// already at that brightness, or on its way to it, is left alone: a steady light gives the window nothing to draw.
     func setIntensity(_ value: CGFloat, duration: CFTimeInterval = 0.25) {
         guard let layer else { return }
         let target = isOff ? 0 : Float(max(0, min(Self.ceiling, value)) / Self.ceiling)
+        if duration > 0, layer.opacity == target { return }
         let fade = CABasicAnimation(keyPath: "opacity")
         fade.fromValue = layer.presentation()?.opacity ?? layer.opacity
         fade.toValue = target
