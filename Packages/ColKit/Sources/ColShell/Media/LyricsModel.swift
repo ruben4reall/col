@@ -126,10 +126,7 @@ final class LyricsModel {
             current = index
             onLineChange?()
         }
-        guard watchers > 0, playing.isPlaying, let next = lyrics.nextChange(after: position) else { return }
-        let rate = max(playing.rate, 0.1)
-        // A little early, so the line arrives with the voice rather than after it.
-        let delay = max(0.05, (next - position) / rate - 0.12)
+        guard watchers > 0, playing.isPlaying, let delay = lyrics.wait(after: position, rate: playing.rate) else { return }
         tick = Task { @MainActor [weak self] in
             try? await Task.sleep(for: .seconds(delay))
             guard !Task.isCancelled else { return }
