@@ -1,9 +1,9 @@
 #!/bin/bash
 # scripts/finish-release.sh <version>: turns the notarized dist/Col-<version>.dmg into everything a release
-# publishes, and publishes nothing: the stapled image and its stable copy dist/Col.dmg, its SHA-256, the release
-# notes (from CHANGELOG.md), the Homebrew cask and the new appcast item, EdDSA-signed with the key in the login keychain (account
-# "islet"; macOS asks once to let generate_appcast use it). scripts/release.sh runs it; after NOTARIZE_LATER, run it
-# yourself.
+# publishes, and publishes nothing: the stapled image and its stable copies dist/Col.dmg and dist/Islet.dmg (for the
+# links made before 2.0), its SHA-256, the release notes (from CHANGELOG.md), the Homebrew cask and the new appcast item,
+# EdDSA-signed with the key in the login keychain (account "islet"; macOS asks once to let generate_appcast use it).
+# scripts/release.sh runs it; after NOTARIZE_LATER, run it yourself.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 VERSION="${1:?usage: scripts/finish-release.sh <version>}"
@@ -21,6 +21,9 @@ xcrun stapler staple "$DMG" >/dev/null || fail "Apple has not accepted $DMG yet"
 xcrun stapler validate "$DMG" >/dev/null || fail "$DMG carries no valid ticket"
 hdiutil verify "$DMG" >/dev/null 2>&1 || fail "$DMG does not verify"
 cp "$DMG" dist/Col.dmg
+# Islet's README, website and posts link to .../releases/latest/download/Islet.dmg, which GitHub follows to the renamed
+# repository's latest release: each release carries the same image under that name too, so those links download Col.
+cp "$DMG" dist/Islet.dmg
 SHA=$(shasum -a 256 "$DMG" | awk '{print $1}')
 echo "$SHA  Col-$VERSION.dmg" > "dist/Col-$VERSION.dmg.sha256"
 
@@ -51,6 +54,7 @@ grep -q "sparkle:edSignature" "$APPCAST" || fail "$APPCAST has no EdDSA signatur
 mkdir -p dist/homebrew/Casks
 scripts/render-cask.sh "$VERSION" "$SHA" > dist/homebrew/Casks/col.rb
 
-echo "Ready: $DMG, dist/Col.dmg, dist/release-notes.md, $APPCAST, dist/homebrew/Casks/col.rb"
-echo "Publication, on Ruben's go-ahead: the GitHub release v$VERSION with the two disk images, the site, then the tap."
+echo "Ready: $DMG, dist/Col.dmg, dist/Islet.dmg (for links made before 2.0), dist/release-notes.md, $APPCAST, dist/homebrew/Casks/col.rb"
+echo "Publication, on Ruben's go-ahead: the GitHub release v$VERSION with the three disk images (Col-$VERSION.dmg, Col.dmg,"
+echo "Islet.dmg), the site right after it, then the tap."
 echo "The tap needs \"islet\": \"col\" in its cask_renames.json and no Casks/islet.rb."
