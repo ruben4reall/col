@@ -1843,12 +1843,12 @@
         }
       }
     },
-    "Col follows the language of your Mac. Its translations were made by AI: if a word sounds wrong, you can fix it.": {
+    "Col follows the language of your Mac. If a word sounds wrong, you can fix it.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Col suit la langue de votre Mac. Ses traductions ont été faites par IA : si un mot sonne faux, vous pouvez le corriger."
+            "value": "Col suit la langue de votre Mac. Si un mot sonne faux, vous pouvez le corriger."
           }
         }
       }

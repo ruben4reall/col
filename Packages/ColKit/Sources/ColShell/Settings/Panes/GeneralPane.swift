@@ -61,7 +61,7 @@ struct GeneralPane: View {
                     }
                 }
             } footer: {
-                Text("Col follows the language of your Mac. Its translations were made by AI: if a word sounds wrong, you can fix it.", bundle: .module)
+                Text("Col follows the language of your Mac. If a word sounds wrong, you can fix it.", bundle: .module)
             }
             Section {
                 IconToggle(symbol: "doc.on.clipboard.fill", tint: .orange, title: "Keep recent copies",
