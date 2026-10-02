@@ -262,11 +262,15 @@ public final class IslandController {
         }
     }
 
-    /// A Souffleur Col asked to quit has quit: the island says why, the first time.
+    /// A Souffleur Col asked to quit has quit. When its phone remote held the first port as Col opened, Col's remote,
+    /// if on, takes that port back, so a page saved on the phone reaches Col. Then the island says why, the first time.
     private func souffleurQuit() {
         Souffleur.didQuit()
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
-            MainActor.assumeIsolated { self?.showSouffleurNoteIfDue() }
+            MainActor.assumeIsolated {
+                PrompterCenter.shared.remote.takeBackFirstPort()
+                self?.showSouffleurNoteIfDue()
+            }
         }
     }
 

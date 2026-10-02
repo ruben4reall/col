@@ -73,6 +73,15 @@ public final class RemoteServer {
         listener.start(queue: queue)
     }
 
+    /// Listens on the first port again when another app held it as the remote started, Souffleur's remote until Col
+    /// had it quit, say. Only while no phone is connected, so none is cut off; when the port is still taken, the remote
+    /// goes back to the next one free.
+    public func takeBackFirstPort() {
+        guard isRunning, let port, port != Self.preferredPorts[0], subscribers.isEmpty, waiting.isEmpty else { return }
+        stop()
+        start()
+    }
+
     public func stop() {
         listener?.cancel()
         listener = nil
