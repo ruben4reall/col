@@ -69,6 +69,7 @@ public enum NameChange {
             // The socket Islet left, now in Col's folder: nothing answers on it. Col links that name to its own socket.
             let support = files.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("Col")
             try? files.removeItem(at: support.appendingPathComponent("islet.sock"))
+            closeIsletBackups(home: files.homeDirectoryForCurrentUser)
             carrySettings(defaults, deciding: !forced)
 
             if stable {
@@ -107,6 +108,24 @@ public enum NameChange {
             let deck = PageDeck.migrating(enabledPages: defaults.stringArray(forKey: "enabledPages"))
             defaults.set(try? JSONEncoder().encode(deck.validated()), forKey: "pageDeck")
         }
+    }
+
+    /// Islet kept a copy of each agent's settings beside them, `<settings>.islet-backup`, readable by the Mac's other
+    /// accounts, while settings can hold keys and tokens. Each copy is closed to them, as `colctl` closes its own when
+    /// it edits the settings again: someone coming from Islet rarely does, since the hooks Islet set up keep working.
+    nonisolated static func closeIsletBackups(home: URL) {
+        let settings = CodingAgent.allCases.map { CommandLineInstaller.settingsURL(for: $0, home: home) }
+            + [home.appendingPathComponent(".copilot/hooks/islet.json")]
+        for url in settings {
+            closeToOthers(url.appendingPathExtension("islet-backup"))
+        }
+    }
+
+    /// Keeps a file to its owner when others may read or write it. A link, or anything but a file, stays as it is.
+    nonisolated static func closeToOthers(_ url: URL) {
+        var status = stat()
+        guard lstat(url.path, &status) == 0, status.st_mode & S_IFMT == S_IFREG, status.st_mode & 0o077 != 0 else { return }
+        _ = fchmodat(AT_FDCWD, url.path, status.st_mode & 0o700, AT_SYMLINK_NOFOLLOW)
     }
 
     /// Islet's folder to Col's. Nothing to do when it is already a link to Col's (the one `moveLeavingLink` leaves, or

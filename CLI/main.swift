@@ -253,7 +253,7 @@ func backUp(_ data: Data, of url: URL) {
     let legacy = url.appendingPathExtension("islet-backup").path
     var status = stat()
     if lstat(legacy, &status) == 0, status.st_mode & S_IFMT == S_IFREG, status.st_mode & 0o077 != 0 {
-        chmod(legacy, status.st_mode & 0o700)
+        fchmodat(AT_FDCWD, legacy, status.st_mode & 0o700, AT_SYMLINK_NOFOLLOW)
     }
     let backup = url.appendingPathExtension("col-backup").path
     let partial = backup + ".\(getpid())"
