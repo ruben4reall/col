@@ -17,10 +17,14 @@ Everything Col reads, writes or runs, and why.
 | `~/Library/Application Support/Col/col.sock` | The local socket scripts and agents talk to: mode 0600 in a 0700 folder, so only your user can connect. It never listens on the network | While Col runs |
 | `~/Library/Application Support/Col/Extensions/` | Your extensions, one folder each | When you add one |
 | `~/Library/Application Support/Col/Scripts/` | The prompter's scripts, one Markdown file each, saved as you type. The first time, the scripts of Souffleur (the prompter's former app) are copied in from `~/Library/Application Support/Souffleur/Scripts/`, which is left as it was | When you use the prompter |
+| `~/Library/Preferences/ch.rubencatalao.souffleur.plist` | Read once: the settings made in Souffleur (pace, mode, light, text, shortcuts, the phone remote's pairing) are copied into Col's, except those already set in Col. The file is left as it was | Once, the first time Col runs |
+| `~/Library/Application Support/com.apple.wallpaper/Store/Index.plist` and the picture it names | Read only: your wallpaper, so the settings previews are drawn on it. A picture in Desktop, Documents, iCloud Drive or on another volume is skipped for the Mac's default wallpaper, so nothing asks for a permission | While a settings pane shows a preview |
+| `~/Downloads` | Read only: the names of the files a browser is still writing, to show their progress | While Downloads in progress is on |
 | `~/.local/bin/colctl` | A link to the `colctl` command inside the app | When you install the command |
 | `~/.local/bin/islet` | The command's name before Islet became Col: hooks installed then still call it, so it now links to `colctl` | Only if Islet had installed it |
-| `~/.claude/settings.json`, `~/.codex/hooks.json`, `~/.gemini/settings.json`, `~/.cursor/hooks.json`, `~/.copilot/hooks/col.json` | Col's hooks, added next to yours; the previous file is kept as `<file>.col-backup` | When you connect that agent; disconnecting removes them |
+| `~/.claude/settings.json`, `~/.codex/hooks.json`, `~/.gemini/settings.json`, `~/.cursor/hooks.json`, `~/.copilot/hooks/col.json` | Col's hooks, added next to yours; the previous file is kept as `<file>.col-backup` | Read to show which agents are connected; written when you connect one, and disconnecting removes them |
 | `~/Library/Application Support/Islet/`, `~/Library/Caches/Islet/` | Where Islet kept the same files: on the first launch of Col they move to Col's folders, and nothing else is changed | Once, when you update from Islet |
+| `Islet.app`, where the update installed it | Renamed Col.app, and an older Islet.app left beside it or in Applications goes to the Trash. A copy installed with Homebrew keeps its name, so `brew` can still upgrade and remove it: `brew upgrade --cask --greedy col` replaces it with Col.app | Once, when you update from Islet |
 
 Clipboard history (except the text you pin) and the pictures you copy stay in memory and are never written to disk.
 Copies that password managers mark as concealed or transient are skipped.
@@ -29,7 +33,8 @@ Copies that password managers mark as concealed or transient are skipped.
 
 - `/usr/bin/perl`, running Col's small media helper (`Contents/Frameworks/libColMediaBridge.dylib`) to read what is
   playing. Since macOS 15.4 only Apple-signed processes may read the now playing information.
-- Your extensions' scripts, on the schedule each one declares, with your user's rights.
+- Your extensions' scripts, on the schedule each one declares, with your user's rights. macOS treats each one as a
+  program of its own: it never inherits Col's Accessibility, Microphone, Camera or Calendars permissions.
 
 ### Network
 
@@ -67,7 +72,7 @@ for nothing.
 ### Login item
 
 When you choose Open at Login, Col registers itself with `SMAppService`. It shows in System Settings, General,
-Login Items.
+Login Items. After an update from Islet, the login item is registered again for Col.app.
 
 ### Private macOS APIs
 
