@@ -61,11 +61,8 @@ public enum NameChange {
             let files = FileManager.default
             for directory in [FileManager.SearchPathDirectory.applicationSupportDirectory, .cachesDirectory] {
                 let base = files.urls(for: directory, in: .userDomainMask)[0]
-                let old = base.appendingPathComponent(legacy, isDirectory: true)
-                // Already the link Col leaves for Islet's scripts: nothing left to move.
-                guard (try? files.destinationOfSymbolicLink(atPath: old.path)) == nil else { continue }
-                let new = base.appendingPathComponent("Col", isDirectory: true)
-                if directory == .applicationSupportDirectory { moveLeavingLink(old, into: new) } else { move(old, into: new) }
+                carryFolder(base.appendingPathComponent(legacy, isDirectory: true), into: base.appendingPathComponent("Col", isDirectory: true),
+                            leavingLink: directory == .applicationSupportDirectory)
             }
             // The socket Islet left, now in Col's folder: nothing answers on it. Col links that name to its own socket.
             let support = files.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("Col")
@@ -100,6 +97,23 @@ public enum NameChange {
             // Set once the welcome has been seen, as Islet set it too (WelcomeWindow).
             defaults.set(!defaults.bool(forKey: "hasWelcomed"), forKey: "showsLyrics")
         }
+    }
+
+    /// Islet's folder to Col's. Nothing to do when it is already a link to Col's (the one `moveLeavingLink` leaves, or
+    /// one of the user's own), or a link that leads nowhere. Any other link, to a folder of the user's elsewhere (a
+    /// synced one, say), moves as a link: Col's folder then leads there, and Islet's to Col's.
+    nonisolated static func carryFolder(_ old: URL, into new: URL, leavingLink: Bool) {
+        if (try? FileManager.default.destinationOfSymbolicLink(atPath: old.path)) != nil {
+            guard !leads(old, to: new), FileManager.default.fileExists(atPath: old.path) else { return }
+        }
+        if leavingLink { moveLeavingLink(old, into: new) } else { move(old, into: new) }
+    }
+
+    /// Whether a link leads to this folder, by its name beside it as the one the move leaves, or by any other way.
+    nonisolated static func leads(_ link: URL, to folder: URL) -> Bool {
+        guard let destination = try? FileManager.default.destinationOfSymbolicLink(atPath: link.path) else { return false }
+        let target = URL(fileURLWithPath: destination, relativeTo: link.deletingLastPathComponent())
+        return target.standardizedFileURL.resolvingSymlinksInPath().path == folder.standardizedFileURL.resolvingSymlinksInPath().path
     }
 
     /// Moves a folder to its new place. When both exist, what the old one holds joins the new one, folder by folder;

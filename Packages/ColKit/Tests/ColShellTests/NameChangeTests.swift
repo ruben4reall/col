@@ -146,6 +146,64 @@ struct NameChangeMoveTests {
         #expect((try? files.attributesOfItem(atPath: old.path)) == nil)
     }
 
+    @Test func aLinkOfTheUsersOwnMovesAsALink() throws {
+        let files = FileManager.default
+        let root = try scratch()
+        defer { try? files.removeItem(at: root) }
+        let synced = root.appendingPathComponent("Synced/Islet")
+        try files.createDirectory(at: synced.appendingPathComponent("Scripts"), withIntermediateDirectories: true)
+        try "mine".write(to: synced.appendingPathComponent("Scripts/talk.md"), atomically: true, encoding: .utf8)
+        let support = root.appendingPathComponent("Support")
+        try files.createDirectory(at: support, withIntermediateDirectories: true)
+        let old = support.appendingPathComponent("Islet"), new = support.appendingPathComponent("Col")
+        try files.createSymbolicLink(at: old, withDestinationURL: synced)
+
+        NameChange.carryFolder(old, into: new, leavingLink: true)
+
+        // Col's folder leads to the user's, which stays where it is; Islet's leads to Col's.
+        #expect(try files.destinationOfSymbolicLink(atPath: new.path) == synced.path)
+        #expect(try files.destinationOfSymbolicLink(atPath: old.path) == "Col")
+        #expect(try String(contentsOf: new.appendingPathComponent("Scripts/talk.md"), encoding: .utf8) == "mine")
+        #expect(try String(contentsOf: synced.appendingPathComponent("Scripts/talk.md"), encoding: .utf8) == "mine")
+
+        // Islet's socket answers there too, and a second run finds nothing left to move.
+        ControlServer.answerAsIslet(in: support)
+        #expect(try files.destinationOfSymbolicLink(atPath: synced.appendingPathComponent("islet.sock").path) == "col.sock")
+        NameChange.carryFolder(old, into: new, leavingLink: true)
+        #expect(try files.destinationOfSymbolicLink(atPath: new.path) == synced.path)
+        #expect(try files.destinationOfSymbolicLink(atPath: old.path) == "Col")
+    }
+
+    @Test func theLinkColLeftIsLeftAlone() throws {
+        let files = FileManager.default
+        let root = try scratch()
+        defer { try? files.removeItem(at: root) }
+        let old = root.appendingPathComponent("Islet"), new = root.appendingPathComponent("Col")
+        try files.createDirectory(at: new, withIntermediateDirectories: true)
+        try "new".write(to: new.appendingPathComponent("notes.md"), atomically: true, encoding: .utf8)
+        try files.createSymbolicLink(atPath: old.path, withDestinationPath: "Col")
+
+        NameChange.carryFolder(old, into: new, leavingLink: true)
+        NameChange.carryFolder(old, into: new, leavingLink: false)
+
+        #expect(try files.destinationOfSymbolicLink(atPath: old.path) == "Col")
+        #expect((try? files.destinationOfSymbolicLink(atPath: new.path)) == nil)
+        #expect(try String(contentsOf: new.appendingPathComponent("notes.md"), encoding: .utf8) == "new")
+    }
+
+    @Test func aLinkThatLeadsNowhereStaysAsItIs() throws {
+        let files = FileManager.default
+        let root = try scratch()
+        defer { try? files.removeItem(at: root) }
+        let old = root.appendingPathComponent("Islet"), new = root.appendingPathComponent("Col")
+        try files.createSymbolicLink(atPath: old.path, withDestinationPath: root.appendingPathComponent("Ejected/Islet").path)
+
+        NameChange.carryFolder(old, into: new, leavingLink: true)
+
+        #expect(try files.destinationOfSymbolicLink(atPath: old.path) == root.appendingPathComponent("Ejected/Islet").path)
+        #expect((try? files.attributesOfItem(atPath: new.path)) == nil)
+    }
+
     @Test func aFolderThatCouldNotMoveWholeStaysAFolder() throws {
         let files = FileManager.default
         let root = try scratch()
@@ -228,6 +286,21 @@ struct IsletSocketTests {
 
         #expect(try files.destinationOfSymbolicLink(atPath: col.appendingPathComponent("islet.sock").path) == "col.sock")
         #expect(try files.destinationOfSymbolicLink(atPath: support.appendingPathComponent("Islet/islet.sock").path) == "col.sock")
+    }
+
+    @Test func nothingInAFolderOfTheUsersOwn() throws {
+        let files = FileManager.default
+        let support = try scratch()
+        defer { try? files.removeItem(at: support) }
+        let elsewhere = support.appendingPathComponent("Synced/Islet")
+        try files.createDirectory(at: elsewhere, withIntermediateDirectories: true)
+        try files.createDirectory(at: support.appendingPathComponent("Col"), withIntermediateDirectories: true)
+        try files.createSymbolicLink(at: support.appendingPathComponent("Islet"), withDestinationURL: elsewhere)
+
+        ControlServer.answerAsIslet(in: support)
+
+        #expect((try? files.attributesOfItem(atPath: support.appendingPathComponent("Col/islet.sock").path)) == nil)
+        #expect((try? files.attributesOfItem(atPath: elsewhere.appendingPathComponent("islet.sock").path)) == nil)
     }
 
     @Test func nothingForSomeoneWhoNeverHadIslet() throws {

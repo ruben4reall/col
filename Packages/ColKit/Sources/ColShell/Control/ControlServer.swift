@@ -80,11 +80,10 @@ final class ControlServer: @unchecked Sendable {
     }
 
     /// Islet listened on Application Support/Islet/islet.sock, and scripts written for it still call there. Its
-    /// folder, moved into Col's, became a link to Col's (NameChange); there, Islet's socket is a link to this one.
+    /// folder, moved into Col's, became a link to Col's (NameChange); there, Islet's socket is a link to this one. An
+    /// Islet folder that is a link elsewhere, of the user's own, is not Col's: nothing is put there.
     static func answerAsIslet(in support: URL) {
-        guard (try? FileManager.default.destinationOfSymbolicLink(atPath: support.appendingPathComponent("Islet").path)) != nil else {
-            return
-        }
+        guard NameChange.leads(support.appendingPathComponent("Islet"), to: support.appendingPathComponent("Col")) else { return }
         let socket = support.appendingPathComponent("Col/islet.sock").path
         unlink(socket)
         symlink("col.sock", socket)
