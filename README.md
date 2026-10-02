@@ -96,7 +96,7 @@ The cask also links the `colctl` command.
 ### Updates
 
 Col updates itself with [Sparkle](https://sparkle-project.org). The welcome asks whether to keep it up to date;
-you can change your mind in Settings, About, or choose *Check for Updates…* from the island's right-click menu. Every
+you can change your mind in Settings, General, or choose *Check for Updates…* from the island's right-click menu. Every
 update is signed with Col's own key.
 
 ### Uninstall
@@ -151,9 +151,15 @@ Each one only if a module you chose needs it:
 ## Privacy
 
 - No account, no telemetry, no analytics, no crash reports.
-- One network connection: the update check, which you can turn off. Sparkle's system profile is off.
+- Col uses the network for these, and nothing else:
+  - The update check, once a day, which you can turn off in Settings, General. Sparkle's system profile is off.
+  - [LRCLIB](https://lrclib.net), an open lyrics database, while lyrics are on (Settings, Music and lyrics). Only the
+    title, artist, album and length of the song that plays are sent. Lyrics are on in a new install, where the welcome
+    shows the choice; after an update from Islet they stay off until you turn them on.
+  - The AI servers you add yourself, and only those. Your questions go only to the server you picked.
+  - The prompter's phone remote, which listens on your local network only while you turn it on.
 - The clipboard history lives in memory and skips copies that password managers mark as private.
-- Scripts and agents reach Col through a socket in your user folder, mode 0600. No network port.
+- Scripts and agents reach Col through a socket in your user folder, mode 0600, which never listens on the network.
 
 [SECURITY.md](SECURITY.md) lists everything Col touches on your Mac.
 

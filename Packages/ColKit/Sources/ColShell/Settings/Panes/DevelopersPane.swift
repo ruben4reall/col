@@ -24,7 +24,7 @@ struct DevelopersPane: View {
             } header: {
                 Text("Programmable notch", bundle: .module)
             } footer: {
-                Text("Scripts, Shortcuts and col:// links all reach the same local API. Nothing listens on the network.", bundle: .module)
+                Text("Scripts, Shortcuts and col:// links all reach the same local API. It never listens on the network.", bundle: .module)
             }
             if let extensions {
                 Section {

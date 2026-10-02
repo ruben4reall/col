@@ -21,7 +21,7 @@ struct AboutPane: View {
             }
             Section {
                 IconRow(symbol: "network", tint: .blue, title: Text("What goes online", bundle: .module),
-                        detail: Text("The check for Col’s own updates, on the Col website, and, when lyrics are on, the title, artist, album and length of the song you play, sent to LRCLIB. No account, no analytics: everything else stays on your Mac.", bundle: .module)) {
+                        detail: Text("The update check, once a day, on the Col website; you can turn it off in General. While lyrics are on, the title, artist, album and length of the song you play, sent to LRCLIB. The AI servers you add, and your questions only to the one you pick. The prompter’s phone remote, on your local network, only while you turn it on. Nothing else: no account, no analytics.", bundle: .module)) {
                     EmptyView()
                 }
             } header: {
