@@ -64,40 +64,28 @@ final class ExtensionRunner {
         NSWorkspace.shared.open(Self.folder)
     }
 
-    /// One run: the command through the shell, in the extension's folder, killed after ten seconds.
+    /// One run: the command through the shell, in the extension's folder, stopped after ten seconds. It runs as a
+    /// process of its own for macOS, without Col's privacy permissions (ExtensionProcess).
     private func run(_ item: Installed) {
         guard !running.contains(item.folder) else { return }
         running.insert(item.folder)
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/bin/sh")
-        process.arguments = ["-c", item.manifest.command]
-        process.currentDirectoryURL = Self.folder.appendingPathComponent(item.folder)
         var environment = ProcessInfo.processInfo.environment
         environment["COL_EXTENSION"] = item.folder
         // The name extensions written for Islet read.
         environment["ISLET_EXTENSION"] = item.folder
         environment["PATH"] = (environment["PATH"] ?? "") + ":/opt/homebrew/bin:/usr/local/bin:" + NSHomeDirectory() + "/.local/bin"
-        process.environment = environment
-        let output = Pipe()
-        process.standardOutput = output
-        process.standardError = FileHandle.nullDevice
         let folder = item.folder
-        process.terminationHandler = { [weak self] finished in
-            let data = output.fileHandleForReading.readDataToEndOfFile()
-            let status = finished.terminationStatus
-            DispatchQueue.main.async {
-                MainActor.assumeIsolated { self?.finished(folder, data: data, status: status) }
-            }
-        }
         do {
-            try process.run()
+            try ExtensionProcess.run(
+                item.manifest.command, in: Self.folder.appendingPathComponent(folder), environment: environment, timeout: 10
+            ) { [weak self] outcome in
+                DispatchQueue.main.async {
+                    MainActor.assumeIsolated { self?.finished(folder, data: outcome.output, status: outcome.status) }
+                }
+            }
         } catch {
             running.remove(folder)
             note(error.localizedDescription, for: folder)
-            return
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
-            if process.isRunning { process.terminate() }
         }
     }
 

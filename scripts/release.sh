@@ -35,7 +35,12 @@ if [ -n "$TEAM" ]; then
   if [ -f "$APPCAST" ] && grep -q -e "<sparkle:version>$VERSION</sparkle:version>" -e "sparkle:version=\"$VERSION\"" "$APPCAST"; then
     fail "$APPCAST already offers $VERSION: raise MARKETING_VERSION"
   fi
-  grep -q "^## $VERSION (" CHANGELOG.md 2>/dev/null || fail "CHANGELOG.md has no '## $VERSION (<date>)' section"
+  # The version's section is dated: a heading such as "## 2.0.0 (unreleased)" must not ship.
+  HEADING=$(grep -m1 -E "^## ${VERSION//./\\.}( |$)" CHANGELOG.md 2>/dev/null || true)
+  DATED='^## [0-9.]+ \(([0-9]{4}-[0-9]{2}-[0-9]{2})\)$'
+  if ! [[ "$HEADING" =~ $DATED ]] || [ "$(date -j -f %Y-%m-%d "${BASH_REMATCH[1]}" +%Y-%m-%d 2>/dev/null)" != "${BASH_REMATCH[1]}" ]; then
+    fail "CHANGELOG.md needs the heading '## $VERSION (YYYY-MM-DD)' with the release date (found: ${HEADING:-none})"
+  fi
   : "${NOTARY_KEY_ID:?set NOTARY_KEY_ID}" "${NOTARY_ISSUER_ID:?set NOTARY_ISSUER_ID}" "${NOTARY_KEY_PATH:?set NOTARY_KEY_PATH}"
   [ -f "$NOTARY_KEY_PATH" ] || fail "NOTARY_KEY_PATH does not name a file"
 fi

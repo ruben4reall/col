@@ -348,6 +348,45 @@ struct NameChangeLinkTests {
     }
 }
 
+struct IsletBackupTests {
+    private func mode(_ url: URL) -> mode_t {
+        var status = stat()
+        lstat(url.path, &status)
+        return status.st_mode & 0o7777
+    }
+
+    @Test func isletsCopiesOfTheSettingsAreClosedToOthers() throws {
+        let files = FileManager.default
+        let home = try scratch()
+        defer { try? files.removeItem(at: home) }
+        let claude = home.appendingPathComponent(".claude/settings.json.islet-backup")
+        let codex = home.appendingPathComponent(".codex/hooks.json.islet-backup")
+        let copilot = home.appendingPathComponent(".copilot/hooks/islet.json.islet-backup")
+        let mine = home.appendingPathComponent(".gemini/settings.json.islet-backup")
+        for (url, permissions) in [(claude, 0o644), (codex, 0o664), (copilot, 0o640), (mine, 0o600)] {
+            try files.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+            files.createFile(atPath: url.path, contents: Data("{}".utf8))
+            chmod(url.path, mode_t(permissions))
+        }
+        // A link in a copy's place, and the file it leads to, stay as they are.
+        let elsewhere = home.appendingPathComponent("shared.json")
+        files.createFile(atPath: elsewhere.path, contents: Data("{}".utf8))
+        chmod(elsewhere.path, 0o644)
+        try files.createDirectory(at: home.appendingPathComponent(".cursor"), withIntermediateDirectories: true)
+        let link = home.appendingPathComponent(".cursor/hooks.json.islet-backup")
+        try files.createSymbolicLink(at: link, withDestinationURL: elsewhere)
+
+        NameChange.closeIsletBackups(home: home)
+
+        #expect(mode(claude) == 0o600)
+        #expect(mode(codex) == 0o600)
+        #expect(mode(copilot) == 0o600)
+        #expect(mode(mine) == 0o600)
+        #expect(mode(elsewhere) == 0o644)
+        #expect(try files.destinationOfSymbolicLink(atPath: link.path) == elsewhere.path)
+    }
+}
+
 struct IsletSocketTests {
     @Test func isletsSocketLeadsToColsForSomeoneComingFromIslet() throws {
         let files = FileManager.default

@@ -3,8 +3,8 @@ import ImageIO
 import ColCore
 import Observation
 
-/// Remembers recent text copies, in memory only: nothing is ever written to disk, and copies that password managers
-/// mark as concealed or transient are skipped.
+/// Remembers recent text copies, in memory only: only the texts the user pins are saved, in the preferences, and copies
+/// that password managers mark as concealed or transient are skipped.
 @MainActor
 @Observable
 final class ClipboardMonitor {

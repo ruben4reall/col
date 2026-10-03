@@ -203,6 +203,61 @@ func linkPath() -> String { NSHomeDirectory() + "/.local/bin/colctl" }
 /// The command's name before Islet became Col: hooks installed then call it, and its link now leads here too.
 func legacyLinkPath() -> String { NSHomeDirectory() + "/.local/bin/islet" }
 
+/// This command's own file, links resolved. Not argv[0]: a shell that finds the command on the PATH passes only the
+/// name it was typed with, which would be read as a file of the current folder.
+func ownExecutable() -> URL? {
+    var size = UInt32(MAXPATHLEN)
+    var buffer = [CChar](repeating: 0, count: Int(size))
+    if _NSGetExecutablePath(&buffer, &size) != 0 {
+        buffer = [CChar](repeating: 0, count: Int(size))
+        guard _NSGetExecutablePath(&buffer, &size) == 0 else { return nil }
+    }
+    return buffer.withUnsafeBufferPointer { URL(fileURLWithFileSystemRepresentation: $0.baseAddress!, isDirectory: false, relativeTo: nil) }
+        .resolvingSymlinksInPath()
+}
+
+/// What a link of the command in ~/.local/bin leads to: this command, or, when Homebrew installed Col, Homebrew's link
+/// to it, the one of that name, else the other (Col's cask links `colctl` and `islet`, Islet's linked `islet`).
+/// `brew upgrade` quits Col and replaces the app without opening it again: Homebrew's link follows the new app, so the
+/// hooks keep working meanwhile. The app follows the same rule (Homebrew.command), which this command cannot import.
+func linkTarget(_ name: String, tool: URL) -> URL {
+    let files = FileManager.default
+    for prefix in ["/opt/homebrew", "/usr/local"] where ["islet", "col"].contains(where: { files.fileExists(atPath: "\(prefix)/Caskroom/\($0)") }) {
+        for command in [name] + ["islet", "colctl"].filter({ $0 != name }) {
+            let link = URL(fileURLWithPath: "\(prefix)/bin/\(command)")
+            if (try? files.destinationOfSymbolicLink(atPath: link.path)) != nil, link.resolvingSymlinksInPath().path == tool.path,
+               files.isExecutableFile(atPath: link.path) {
+                return link
+            }
+        }
+    }
+    return tool
+}
+
+/// Points ~/.local/bin/colctl, and Islet's ~/.local/bin/islet when it is there, at this command, through Homebrew's link
+/// when Homebrew installed Col. A link that already leads here is left as it is, unless it goes straight into an
+/// Islet.app that Homebrew replaces with Col.app; one that leads elsewhere, or nowhere, leads here again. Nothing is
+/// made or removed when this command's file cannot be found or run: a link to it would only break every hook.
+func linkCommand() {
+    let files = FileManager.default
+    guard let tool = ownExecutable(), files.isExecutableFile(atPath: tool.path) else { return }
+    // Islet's link, which older hooks call, leads to this command too; it is never made when it is not there.
+    for (name, link, makes) in [("islet", legacyLinkPath(), false), ("colctl", linkPath(), true)] {
+        let target = linkTarget(name, tool: tool)
+        guard files.isExecutableFile(atPath: target.path) else { continue }
+        if let destination = try? files.destinationOfSymbolicLink(atPath: link) {
+            let current = URL(fileURLWithPath: destination, relativeTo: URL(fileURLWithPath: link).deletingLastPathComponent()).standardizedFileURL
+            let intoHomebrewsIslet = target.path != tool.path && current.path != target.path && current.pathComponents.contains("Islet.app")
+            guard current.resolvingSymlinksInPath().path != tool.path || intoHomebrewsIslet else { continue }
+            try? files.removeItem(atPath: link)
+        } else if !makes || files.fileExists(atPath: link) {
+            continue
+        }
+        try? files.createDirectory(atPath: (link as NSString).deletingLastPathComponent, withIntermediateDirectories: true)
+        try? files.createSymbolicLink(atPath: link, withDestinationPath: target.path)
+    }
+}
+
 /// Whether a hook's command is this one, under its name or Islet's.
 func callsCol(_ command: Any?) -> Bool {
     guard let command = command as? String else { return false }
@@ -211,14 +266,30 @@ func callsCol(_ command: Any?) -> Bool {
     }
 }
 
-/// The file Islet wrote Copilot's hooks to. VS Code reads every file of the folder, so it goes aside once Col writes
-/// its own, else each event would come twice.
-func setAsideLegacyCopilotHooks() {
-    let legacy = ("~/.copilot/hooks/islet.json" as NSString).expandingTildeInPath
-    guard let text = try? String(contentsOfFile: legacy, encoding: .utf8), text.contains(".local/bin/islet") else { return }
+/// Whether a settings file, read as text, calls this command, under its name or Islet's.
+func mentionsCol(_ text: String) -> Bool {
+    ["colctl", "islet"].contains { text.contains("\($0)\\\" hook") || text.contains("\($0)\" hook") || text.contains("\($0) hook") }
+}
+
+/// The file Islet wrote Copilot's hooks to, which still calls Col through ~/.local/bin/islet.
+func legacyCopilotHooksPath() -> String { ("~/.copilot/hooks/islet.json" as NSString).expandingTildeInPath }
+
+/// Sets aside the file Islet wrote Copilot's hooks to, as `islet.json.col-backup`. VS Code reads every file of the
+/// folder: once Col writes its own, each event would come twice, and once Copilot is disconnected, Islet's hooks would
+/// still call Col. Returns where the file went, or nil when there was none calling Col.
+func setAsideLegacyCopilotHooks() throws -> String? {
+    let legacy = legacyCopilotHooksPath()
+    // Islet's copy of that file, readable by others like its other copies (`backUp`).
+    closeToOthers(legacy + ".islet-backup")
+    guard let text = try? String(contentsOfFile: legacy, encoding: .utf8), mentionsCol(text) else { return nil }
     let aside = legacy + ".col-backup"
-    try? FileManager.default.removeItem(atPath: aside)
-    try? FileManager.default.moveItem(atPath: legacy, toPath: aside)
+    do {
+        if (try? FileManager.default.attributesOfItem(atPath: aside)) != nil { try FileManager.default.removeItem(atPath: aside) }
+        try FileManager.default.moveItem(atPath: legacy, toPath: aside)
+    } catch {
+        throw ClientError.failed("could not set aside \(legacy): \(error.localizedDescription)")
+    }
+    return aside
 }
 
 /// True for an entry Col wrote: a matcher group holding Col's command, or Cursor's plain command entry.
@@ -245,6 +316,38 @@ func entry(for agent: Agent, _ event: (name: String, matcher: Bool, timeout: Int
     }
 }
 
+/// Keeps a copy of an agent's settings beside them, readable by its owner only, whatever the umask: the settings can
+/// hold keys and tokens, and the folder they sit in is often open to the Mac's other accounts. The copy is written
+/// whole under another name, then put in place, so it is never readable by others for a moment either.
+func backUp(_ data: Data, of url: URL) {
+    // Islet left its own copy beside the settings, readable by others: it is closed to them too.
+    closeToOthers(url.appendingPathExtension("islet-backup").path)
+    let backup = url.appendingPathExtension("col-backup").path
+    let partial = backup + ".\(getpid())"
+    unlink(partial)
+    let file = open(partial, O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW | O_CLOEXEC, 0o600)
+    guard file >= 0 else { return }
+    let written = data.withUnsafeBytes { buffer -> Bool in
+        var offset = 0
+        while offset < buffer.count {
+            let count = write(file, buffer.baseAddress! + offset, buffer.count - offset)
+            if count < 0, errno == EINTR { continue }
+            guard count > 0 else { return false }
+            offset += count
+        }
+        return true
+    }
+    close(file)
+    if !written || rename(partial, backup) != 0 { unlink(partial) }
+}
+
+/// Keeps a file to its owner when others may read or write it. A link, or anything but a file, stays as it is.
+func closeToOthers(_ path: String) {
+    var status = stat()
+    guard lstat(path, &status) == 0, status.st_mode & S_IFMT == S_IFREG, status.st_mode & 0o077 != 0 else { return }
+    fchmodat(AT_FDCWD, path, status.st_mode & 0o700, AT_SYMLINK_NOFOLLOW)
+}
+
 /// Adds or removes Col's hooks in an agent's settings, keeping everything else and a backup of the file.
 func editSettings(_ agent: Agent, path: String?, install: Bool) throws -> String {
     let url = URL(fileURLWithPath: ((path ?? agent.settings) as NSString).expandingTildeInPath)
@@ -254,8 +357,12 @@ func editSettings(_ agent: Agent, path: String?, install: Bool) throws -> String
             throw ClientError.failed("\(url.path) is not valid JSON; left untouched")
         }
         settings = parsed
-        try? data.write(to: url.appendingPathExtension("col-backup"))
+        backUp(data, of: url)
     } else if !install {
+        // Copilot connected under Islet has no file of Col's yet: its hooks are all in Islet's.
+        if agent.id == "copilot", let aside = try setAsideLegacyCopilotHooks() {
+            return "\(agent.name): Col's hooks removed. Islet's \(legacyCopilotHooksPath()) is kept as \(aside)."
+        }
         return "\(agent.name): nothing to remove."
     }
     var hooks = settings["hooks"] as? [String: Any] ?? [:]
@@ -267,32 +374,8 @@ func editSettings(_ agent: Agent, path: String?, install: Bool) throws -> String
     settings["hooks"] = hooks.isEmpty ? nil : hooks
     if agent.format == .cursor, install { settings["version"] = settings["version"] ?? 1 }
 
-    if agent.id == "copilot" { setAsideLegacyCopilotHooks() }
-    if install {
-        // The hooks call the command through ~/.local/bin, so moving the app never breaks them.
-        let tool = URL(fileURLWithPath: CommandLine.arguments[0]).resolvingSymlinksInPath()
-        // A link that already leads here, through Homebrew's link for instance, is left as it is.
-        func leadsElsewhere(_ link: String, _ destination: String) -> Bool {
-            let parent = URL(fileURLWithPath: link).deletingLastPathComponent()
-            return URL(fileURLWithPath: destination, relativeTo: parent).resolvingSymlinksInPath().path != tool.path
-        }
-        // Islet's link, which older hooks call, leads to this command too.
-        if let destination = try? FileManager.default.destinationOfSymbolicLink(atPath: legacyLinkPath()),
-           leadsElsewhere(legacyLinkPath(), destination) {
-            try? FileManager.default.removeItem(atPath: legacyLinkPath())
-            try? FileManager.default.createSymbolicLink(atPath: legacyLinkPath(), withDestinationPath: tool.path)
-        }
-        let link = linkPath()
-        if let destination = try? FileManager.default.destinationOfSymbolicLink(atPath: link) {
-            if leadsElsewhere(link, destination) {
-                try? FileManager.default.removeItem(atPath: link)
-                try? FileManager.default.createSymbolicLink(atPath: link, withDestinationPath: tool.path)
-            }
-        } else if !FileManager.default.fileExists(atPath: link) {
-            try? FileManager.default.createDirectory(atPath: (link as NSString).deletingLastPathComponent, withIntermediateDirectories: true)
-            try? FileManager.default.createSymbolicLink(atPath: link, withDestinationPath: tool.path)
-        }
-    }
+    // The hooks call the command through ~/.local/bin, so moving the app never breaks them.
+    if install { linkCommand() }
     do {
         try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
         let data = try JSONSerialization.data(withJSONObject: settings, options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes])
@@ -300,9 +383,13 @@ func editSettings(_ agent: Agent, path: String?, install: Bool) throws -> String
     } catch {
         throw ClientError.failed("could not write \(url.path): \(error.localizedDescription)")
     }
-    guard install else { return "\(agent.name): Col's hooks removed from \(url.path)." }
-    var message = "\(agent.name): hooks installed in \(url.path). New sessions report to Col."
-    if agent.id == "codex" { message += " Codex asks you to review new hooks once: run /hooks in Codex and trust Col's." }
+    // Once Col's own file is written, so that Copilot keeps calling Col if that fails.
+    let legacyAside = agent.id == "copilot" ? try setAsideLegacyCopilotHooks() : nil
+    var message = install
+        ? "\(agent.name): hooks installed in \(url.path). New sessions report to Col."
+        : "\(agent.name): Col's hooks removed from \(url.path)."
+    if let legacyAside { message += " Islet's \(legacyCopilotHooksPath()) is kept as \(legacyAside)." }
+    if agent.id == "codex", install { message += " Codex asks you to review new hooks once: run /hooks in Codex and trust Col's." }
     return message
 }
 
@@ -310,10 +397,10 @@ func editSettings(_ agent: Agent, path: String?, install: Bool) throws -> String
 func isConnected(_ agent: Agent) -> Bool {
     let url = URL(fileURLWithPath: (agent.settings as NSString).expandingTildeInPath)
     var paths = [url.path]
-    if agent.id == "copilot" { paths.append(("~/.copilot/hooks/islet.json" as NSString).expandingTildeInPath) }
+    if agent.id == "copilot" { paths.append(legacyCopilotHooksPath()) }
     return paths.contains { path in
         guard let text = try? String(contentsOfFile: path, encoding: .utf8) else { return false }
-        return ["colctl", "islet"].contains { text.contains("\($0)\\\" hook") || text.contains("\($0)\" hook") || text.contains("\($0) hook") }
+        return mentionsCol(text)
     }
 }
 

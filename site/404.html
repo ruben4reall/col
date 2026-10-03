@@ -2,22 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Page not found: Islet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Page not found: Col</title>
   <meta name="robots" content="noindex">
   <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#000000">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/brand/favicon-32.png">
-  <link rel="stylesheet" href="/css/tokens.css">
-  <link rel="stylesheet" href="/css/site.css">
-  <link rel="stylesheet" href="/css/islet.css">
+  <link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/col.css">
+  <style>
+    /* Paths are absolute: this page answers for any missing address, at any depth. */
+    .lost { display: grid; place-items: center; min-height: 100vh; min-height: 100svh; }
+    .lost .icon { width: 90px; height: 90px; margin: 0 auto 28px; }
+  </style>
 </head>
 <body>
-  <main id="main" class="section download">
-    <div class="wrap">
-      <img class="icon" src="/assets/brand/icon-256.png" alt="" width="128" height="128">
-      <h1 class="h2 center-h">Page not found.</h1>
-      <p class="lead center-h">This address does not exist. Everything about Islet is on one page.</p>
-      <div class="actions"><a class="btn btn-primary" href="/">Back to Islet</a></div>
+  <main id="main" class="section download lost">
+    <div class="wrap center">
+      <img class="icon" src="/assets/brand/apple-touch-icon.png" alt="" width="90" height="90">
+      <h1 class="h2">Page not found.</h1>
+      <p class="lead">This address does not exist. Everything about Col, called Islet until 2.0, is on one page.</p>
+      <div class="actions"><a class="btn btn-primary" href="/">Back to Col</a></div>
     </div>
   </main>
 </body>

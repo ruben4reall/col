@@ -639,7 +639,8 @@ struct GreetingView: View {
     let ready: Bool
     @State private var index = 0
     @State private var settled = false
-    private let words = GreetingView.sequence(for: AppLanguage.current)
+    /// The Mac's own language, even one Col is not translated into: a German Mac hears "Hallo".
+    private let words = GreetingView.sequence(for: AppLanguage.chosen ?? AppLanguage.mac)
 
     /// "Hello" by language, written as each says it.
     static let hellos: [(language: String, word: String)] = [

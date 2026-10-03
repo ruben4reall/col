@@ -8,8 +8,9 @@ Thank you for helping. A few principles keep Col what it is.
   animations that run in the render server over per-frame work in the app. Measure with `scripts/bench.sh <pid>`
   before and after a change that could cost memory or processor time.
 - **Native.** AppKit and Core Animation for the island, SwiftUI for its content. No web views.
-- **Private.** No network calls beyond the update check, the lyrics lookups (which can be turned off) and what the user
-  adds and turns on, no analytics. Anything sensitive stays in memory.
+- **Private.** No network calls beyond the update check, the lyrics lookups (which can be turned off), what the user
+  adds and turns on, and the Ollama or LM Studio installed on the Mac, asked on the Mac only (localhost). No
+  analytics. Anything sensitive stays in memory.
   [SECURITY.md](SECURITY.md) lists everything Col touches: keep it true.
 - **Tested rules.** Behaviour that can be expressed without AppKit belongs in `ColCore`, with tests.
 - **Clean-room.** Col is MIT licensed. Do not copy code from projects under other licences, including GPL notch apps.
@@ -31,11 +32,20 @@ Col follows the language of the Mac, and Settings > General > Language picks ano
 made by AI, not by native speakers: some words will sound wrong, and fixing them is one of the most useful
 contributions there is.
 
-- The strings live in `Packages/ColKit/Sources/ColShell/Resources/Localizable.xcstrings` (open it in Xcode, or edit
-  the JSON). Change the wording of your language, keep the placeholders (`%@`, `%lld`) and the tone: short, plain,
-  friendly, no jargon.
+- The strings live in five catalogs (open them in Xcode, or edit the JSON):
+  - `Packages/ColKit/Sources/ColShell/Resources/Localizable.xcstrings`: the island, its pages, the settings and the
+    welcome.
+  - `Packages/ColKit/Sources/ColPrompter/Resources/Localizable.xcstrings`: the prompter, its Scripts window and the
+    phone remote's page.
+  - `App/Localizable.xcstrings`: the Shortcuts actions and the app's own alerts.
+  - `App/AppShortcuts.xcstrings`: the phrases that start Col's App Shortcuts; keep `${applicationName}` as it is.
+  - `App/InfoPlist.xcstrings`: what macOS says when it asks for a permission.
+
+  Change the wording of your language and keep the tone: short, plain, friendly, no jargon. Keep every placeholder
+  as it is (`%@`, `%lld`, `%1$@`, and `%%` for a percent sign). In strings that count, also keep the `%#@name@` and
+  `%arg` markers, and give each plural form (`one`, `other`, and any other your language uses) its own wording.
 - One pull request per language is easiest to review. Say in it that you speak the language natively.
-- A new language is welcome too: add it to `CFBundleLocalizations` in `project.yml` and fill the catalog.
+- A new language is welcome too: add it to `CFBundleLocalizations` in `project.yml` and fill every catalog.
 
 ## Where things live
 

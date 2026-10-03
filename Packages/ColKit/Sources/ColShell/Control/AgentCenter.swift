@@ -16,8 +16,12 @@ final class AgentCenter {
         var sessionID: String
         var project: String
         var agent: String?
+        /// The tool, as people read its name.
+        var tool: String
+        /// What it is for, in a line: the command's first line for a shell, never the agent's description of it.
         var summary: String
-        var detail: String?
+        /// What Allow would approve, whole, as the card shows it: the command, file or address, or every argument.
+        var detail: RequestDetail?
         var received: Date
         /// The tool the request is for, to recognise it once the tool has run.
         var toolName: String? = nil
@@ -50,8 +54,9 @@ final class AgentCenter {
                 sessionID: event.sessionID,
                 project: event.project,
                 agent: event.agent?.name,
-                summary: event.toolSummary ?? event.toolName ?? "",
-                detail: event.toolDetail,
+                tool: event.toolLabel ?? "",
+                summary: event.requestSummary ?? "",
+                detail: event.toolDetail.map(RequestDetail.init),
                 received: now,
                 toolName: event.toolName,
                 toolInput: event.toolInput
@@ -78,8 +83,17 @@ final class AgentCenter {
     }
 
     func decide(_ requestID: String, _ decision: Decision) {
-        resolve(requestID, decision)
+        // Allow approves only what the island could show whole; anything longer is answered in the terminal.
+        let allowed = pending[requestID].map(Self.canAllow) ?? false
+        resolve(requestID, decision == .allow && !allowed ? .ask : decision)
         onChange?()
+    }
+
+    /// Whether the island may allow a request: what it approves fits the card, so it was seen whole. A request with
+    /// input the card does not show is never allowed from it; only one that carries none is.
+    static func canAllow(_ request: PendingRequest) -> Bool {
+        guard let detail = request.detail else { return request.toolInput?.isEmpty ?? true }
+        return detail.fitsCard
     }
 
     private func resolve(_ requestID: String, _ decision: Decision, updateBoard: Bool = true) {

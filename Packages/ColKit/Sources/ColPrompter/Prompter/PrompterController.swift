@@ -296,7 +296,7 @@ public final class PrompterController {
         PrompterPreferences.wordsPerMinute += step
         state.wordsPerMinute = PrompterPreferences.wordsPerMinute
         if state.phase == .rolling, state.mode == .auto { presentation?.text.setSpeed(autoSpeed, eased: true) }
-        flash("\(Int(state.wordsPerMinute)) wpm")
+        flash(String(localized: "\(Int(state.wordsPerMinute)) wpm", bundle: .module))
         onChange?()
     }
 
@@ -474,7 +474,8 @@ public final class PrompterController {
             summary.duration = elapsedBefore
             state.summary = summary
             UserDefaults.standard.set(
-                "\(Pace.clock(summary.duration)) · \(Int(summary.averageWordsPerMinute.rounded())) wpm · \(Int((summary.coverage * 100).rounded()))%",
+                String(localized: "\(Pace.clock(summary.duration)) · \(Int(summary.averageWordsPerMinute.rounded())) wpm · \(Int((summary.coverage * 100).rounded()))%",
+                       bundle: .module),
                 forKey: PrompterPreferences.Key.lastSummary
             )
         }

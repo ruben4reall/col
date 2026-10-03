@@ -8,15 +8,16 @@ struct LivePage: View {
 
     var body: some View {
         let sessions = agents.sessions
-        let requests = agents.pending.values.sorted { $0.received > $1.received }
+        // Oldest first: a request that arrives goes below the others, never under the pointer about to answer one.
+        let requests = agents.pending.values.sorted { ($0.received, $0.id) < ($1.received, $1.id) }
         let sessionsWithRequests = Set(requests.map(\.sessionID))
         if sessions.isEmpty && custom.entries.isEmpty {
             EmptyLive()
         } else {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 8) {
-                    ForEach(requests) { request in
-                        PermissionCard(request: request) { agents.decide(request.id, $0) }
+                    ForEach(Array(requests.enumerated()), id: \.element.id) { position, request in
+                        PermissionCard(request: request, position: position) { agents.decide(request.id, $0) }
                             .transition(.scale(scale: 0.96).combined(with: .opacity))
                     }
                     ForEach(sessions.filter { !sessionsWithRequests.contains($0.id) }) { session in
@@ -65,15 +66,28 @@ private struct EmptyLive: View {
     }
 }
 
+/// A request to answer. The header names the tool; below it, what Allow approves, whole and as it is: the exact
+/// command, file or address, or every argument of any other tool, each invisible character shown (RequestDetail). One
+/// too long to check here says so in place of the tool's name, and can only be answered in the terminal, which shows
+/// it whole.
 private struct PermissionCard: View {
     let request: AgentCenter.PendingRequest
+    /// Its place among the requests: when it changes, the card has moved under the pointer.
+    let position: Int
     let decide: (AgentCenter.Decision) -> Void
+    /// Allow waits a moment after the card appears or moves, so a click meant for another card never lands on it.
+    @State private var armed = false
+
+    private typealias Layout = PermissionCardLayout
+    private static let box = RoundedRectangle(cornerRadius: 8, style: .continuous)
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        let canAllow = AgentCenter.canAllow(request)
+        let tooLong = request.detail.map { !$0.fitsCard } ?? false
+        VStack(alignment: .leading, spacing: Layout.spacing) {
             HStack(spacing: 8) {
                 // The agent's own logo, a small hand in its corner: it is asking.
-                AppIconView(icon: CodingAgent.icon(for: request.agent), size: 22)
+                AppIconView(icon: CodingAgent.icon(for: request.agent), size: Layout.headerHeight)
                     .overlay(alignment: .bottomTrailing) {
                         Image(systemName: "hand.raised.fill")
                             .font(.system(size: 7.5, weight: .bold))
@@ -86,26 +100,39 @@ private struct PermissionCard: View {
                 Text(request.project)
                     .font(.system(size: 12.5, weight: .semibold))
                     .foregroundStyle(.white)
-                if let agent = request.agent { AgentTag(name: agent) }
-                Text(request.summary)
-                    .font(.system(size: 12))
-                    .foregroundStyle(Theme.secondaryText)
                     .lineLimit(1)
+                if let agent = request.agent { AgentTag(name: agent) }
+                if tooLong {
+                    // Still all there below, to read or copy, but past what can be checked at a glance.
+                    Text("Too long to check here", bundle: .module)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundStyle(.orange)
+                        .lineLimit(1)
+                        .layoutPriority(1)
+                } else {
+                    // With the detail below, the tool's name is enough: the detail says the rest, exactly.
+                    Text(request.detail == nil ? request.summary : request.tool)
+                        .font(.system(size: 12))
+                        .foregroundStyle(Theme.secondaryText)
+                        .lineLimit(1)
+                }
                 Spacer(minLength: 0)
             }
-            if let detail = request.detail, !detail.isEmpty {
-                Text(detail)
-                    .font(.system(size: 11, design: .monospaced))
-                    .foregroundStyle(.white.opacity(0.8))
-                    .lineLimit(2)
-                    .truncationMode(.middle)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 5)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(RoundedRectangle(cornerRadius: 8, style: .continuous).fill(Color.white.opacity(0.06)))
+            if let detail = request.detail {
+                if detail.fitsCard {
+                    exact(detail)
+                        .background(Self.box.fill(Color.white.opacity(0.06)))
+                } else {
+                    // A few lines at a time, so that the buttons stay in sight on the page.
+                    ScrollView(.vertical) { exact(detail) }
+                        .frame(height: Layout.textHeight(lines: Layout.scrollingLines))
+                        .background(Self.box.fill(Color.white.opacity(0.06)))
+                        .clipShape(Self.box)
+                }
             }
             HStack(spacing: 8) {
-                DecisionButton(title: Text("Allow", bundle: .module), prominent: true) { decide(.allow) }
+                DecisionButton(title: Text("Allow", bundle: .module), prominent: true, enabled: canAllow) { decide(.allow) }
+                    .disabled(!armed)
                 DecisionButton(title: Text("Deny", bundle: .module), prominent: false) { decide(.deny) }
                 Spacer(minLength: 0)
                 Button {
@@ -113,36 +140,92 @@ private struct PermissionCard: View {
                 } label: {
                     Text("Answer in terminal", bundle: .module)
                         .font(.system(size: 11.5, weight: .medium))
-                        .foregroundStyle(Theme.secondaryText)
+                        .foregroundStyle(canAllow ? Theme.secondaryText : .white)
                 }
                 .buttonStyle(PressableStyle())
             }
         }
-        .padding(12)
+        .padding(Layout.padding)
         .background(
             RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous)
                 .fill(Color.orange.opacity(0.1))
                 .strokeBorder(Color.orange.opacity(0.35), lineWidth: 1)
         )
+        .task(id: Placement(id: request.id, position: position)) {
+            armed = false
+            try? await Task.sleep(for: .milliseconds(600))
+            if !Task.isCancelled { armed = true }
+        }
+    }
+
+    /// The text Allow approves, never cut: no line limit, and as many lines as it needs.
+    private func exact(_ detail: RequestDetail) -> some View {
+        Text(verbatim: detail.shown)
+            .font(.system(size: Layout.fontSize, design: .monospaced))
+            .foregroundStyle(.white.opacity(0.8))
+            .fixedSize(horizontal: false, vertical: true)
+            .textSelection(.enabled)
+            .padding(Layout.textInset)
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private struct Placement: Equatable {
+        var id: String
+        var position: Int
+    }
+}
+
+/// The Allow card's measures, which what it may approve counts on: RequestDetail.columns is what a line of its text
+/// holds in the compact island, and the card keeps its buttons in sight on the page with up to RequestDetail.lines of
+/// it, or `scrollingLines` of one too long to check.
+enum PermissionCardLayout {
+    static let padding = EdgeInsets(top: 10, leading: 12, bottom: 10, trailing: 12)
+    static let spacing: CGFloat = 6
+    static let headerHeight: CGFloat = 22
+    static let buttonHeight: CGFloat = 26
+    /// The command's text: 11-point SF Mono, 14 points a line as SwiftUI sets it, inset in its box.
+    static let fontSize: CGFloat = 11
+    static let lineHeight: CGFloat = 14
+    static let textInset = EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8)
+    /// Lines the box shows of a request too long to check here; the rest scrolls.
+    static let scrollingLines = 2
+
+    static func textHeight(lines: Int) -> CGFloat {
+        CGFloat(lines) * lineHeight + textInset.top + textInset.bottom
+    }
+
+    /// Room for a line of the command's text in an island of this size.
+    static func textWidth(in size: IslandSize) -> CGFloat {
+        size.open.width - Theme.inset.leading - Theme.inset.trailing - padding.leading - padding.trailing
+            - textInset.leading - textInset.trailing
+    }
+
+    /// From the top of the card to the bottom of its buttons, with this many lines of text.
+    static func buttonsBottom(lines: Int) -> CGFloat {
+        padding.top + headerHeight + spacing + textHeight(lines: lines) + spacing + buttonHeight
     }
 }
 
 private struct DecisionButton: View {
     let title: Text
     let prominent: Bool
+    var enabled = true
     let action: () -> Void
     @State private var hovering = false
 
     var body: some View {
+        let lit = hovering && enabled
         Button(action: action) {
             title
                 .font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(prominent ? .black : .white)
                 .padding(.horizontal, 14)
-                .frame(height: 26)
-                .background(Capsule().fill(prominent ? Color.white.opacity(hovering ? 0.85 : 1) : Color.white.opacity(hovering ? 0.2 : 0.13)))
+                .frame(height: PermissionCardLayout.buttonHeight)
+                .background(Capsule().fill(prominent ? Color.white.opacity(lit ? 0.85 : 1) : Color.white.opacity(lit ? 0.2 : 0.13)))
         }
         .buttonStyle(PressableStyle())
+        .disabled(!enabled)
+        .opacity(enabled ? 1 : 0.35)
         .onHover { hovering = $0 }
     }
 }

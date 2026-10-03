@@ -225,7 +225,9 @@ public enum PrompterPreferences {
         public static let lastSummary = "prompter.lastSummary"
     }
 
-    /// The keys Souffleur, the prompter's former app, kept the same settings under.
+    /// The keys Souffleur, the prompter's former app, kept the same settings under. Whether its phone remote was on is
+    /// not carried: the remote listens on the network only once it is turned on in Col. Its pairing is, so the phone
+    /// that scanned Souffleur's code still drives the prompter then.
     static let souffleurKeys: [String: String] = [
         "scrollMode": Key.mode,
         "placement": Key.placement,
@@ -250,10 +252,8 @@ public enum PrompterPreferences {
         "voiceLanguage": Key.voiceLanguage,
         "hotKeys": Key.hotKeys,
         "clickerKeys": Key.clickerKeys,
-        "remoteEnabled": Key.remoteEnabled,
         "remoteToken": Key.remoteToken,
         "selectedScript": Key.selectedScript,
-        "lastSummary": Key.lastSummary,
     ]
 
     nonisolated(unsafe) public static let defaults: [String: Any] = [
@@ -288,7 +288,8 @@ public enum PrompterPreferences {
     }
 
     /// The prompter was an app of its own, Souffleur. The first time Col runs it, the settings made there carry over
-    /// (pace, mode, light, text, shortcuts, the phone remote's pairing), unless the same setting was already made here.
+    /// (pace, mode, light, text, shortcuts, the phone remote's pairing, not whether the remote was on), unless the same
+    /// setting was already made here.
     static func adoptSouffleurSettings() {
         let flag = "prompter.adoptedSouffleurSettings"
         guard !store.bool(forKey: flag) else { return }
@@ -298,6 +299,21 @@ public enum PrompterPreferences {
         for (old, new) in souffleurKeys where own[new] == nil {
             if let value = souffleur[old] { store.set(value, forKey: new) }
         }
+        // Souffleur wrote its last take in English: it carries over in Col's language.
+        if own[Key.lastSummary] == nil, let summary = (souffleur["lastSummary"] as? String).flatMap(lastTake(fromSouffleur:)) {
+            store.set(summary, forKey: Key.lastSummary)
+        }
+    }
+
+    /// Souffleur's summary of the last take, "1:23 · 140 wpm · 92%", written again in Col's language, or nil when it
+    /// reads otherwise.
+    static func lastTake(fromSouffleur summary: String) -> String? {
+        let parts = summary.components(separatedBy: " · ")
+        guard parts.count == 3, !parts[0].isEmpty, parts[0].allSatisfy({ $0.isASCII && ($0.isNumber || $0 == ":") }),
+              parts[1].hasSuffix(" wpm"), parts[2].hasSuffix("%"),
+              let wordsPerMinute = Int(parts[1].dropLast(4)), let coverage = Int(parts[2].dropLast()) else { return nil }
+        let clock = parts[0]
+        return String(localized: "\(clock) · \(wordsPerMinute) wpm · \(coverage)%", bundle: .module)
     }
 
     private static var store: UserDefaults { .standard }

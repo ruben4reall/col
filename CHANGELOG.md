@@ -6,9 +6,10 @@ Each release's section is what Col's update window and the GitHub release show. 
 
 - **Islet is now Col**: the same app under a shorter name. A col is the pass between two peaks, and the notch is one.
   The update takes care of everything: the app takes its new name in Applications, and your settings, permissions,
-  scripts and lyrics stay as they were. `islet://` links, the `islet` command and the hooks your agents already
-  call keep working. The command is now `colctl`, since macOS already has a `col`. The icon and the website now
-  light the notch in macOS blue.
+  pages and extensions stay as they were. `islet://` links, the `islet` command and the hooks your agents already
+  call keep working; in a terminal, the command is now `colctl`, since macOS already has a `col`. If you installed
+  Islet with Homebrew, the app keeps its old name so Homebrew can still upgrade and remove it, and
+  `brew upgrade --cask --greedy col` gives you Col.app. The icon and the website now light the notch in macOS blue.
 - **New settings**: a bigger window that opens below the island instead of under it, grouped panes with a search
   field, and headers that stay put while the settings scroll beneath them. Appearance and Pages show your own island,
   drawn by Col itself on your wallpaper with what it shows right now, and every change of size or glass also plays
@@ -17,18 +18,22 @@ Each release's section is what Col's update window and the GitHub release show. 
   plays (Spotify, Apple Music, Deezer, your browser). Tap a line to jump there; long instrumental passages breathe
   three dots. Optionally, the line being sung in the closed island. Lyrics come from LRCLIB, an open database: only
   the title, the artist, the album and the length of the track are sent, and the answer is kept on your Mac. Your own
-  `.lrc` files take precedence. Settings, Music and lyrics.
+  `.lrc` files take precedence. Settings, Music and lyrics. Lyrics are on in a new install, where the welcome shows
+  the choice; after an update from Islet they stay off until you turn them on.
 - **The prompter, in the notch**: Souffleur joins Col. Your script comes out of the notch right under the camera
   and rolls at the pace of your voice: it waits when you stop talking (Voice Pace), follows your words one by one
   (Voice Follow), rolls at a steady pace, or moves only when you move it. It lives on a page of the island with its
   play button, has its own Scripts window and its own pane in Settings, and stays out of screenshots, recordings and
   calls. While it is out, the island steps aside and comes back after the take. Drive it with ⌃⌥⌘P and its other
   shortcuts, a presentation clicker, your phone, Shortcuts actions or `col://prompter/…` links. If you used
-  Souffleur, your scripts and settings carry over, and its `souffleur://` links keep working.
+  Souffleur, your scripts and settings carry over, and its `souffleur://` links keep working. Your phone stays paired,
+  and its remote waits until you turn it on in Settings, Prompter. Souffleur itself, still open beside Col, is asked
+  to quit so that your shortcuts drive only one prompter, and the island says once that it can go to the Trash.
 - **Pages you compose**: each page of the open island holds one widget across it or two side by side, and each place
   can stack several widgets: the island shows the first one that has something to show. Home now puts the player
-  beside the agenda (the clock while nothing plays). Add, rename, reorder and remove pages in Settings, Pages, where
-  the island shows the page as you edit it. Your pages from Islet 1 carry over.
+  beside the song's lyrics, and the clock beside your agenda while nothing plays. Add, rename, reorder and remove
+  pages in Settings, Pages, where the island shows the page as you edit it. Your pages from Islet 1 carry over, and
+  the AI and prompter pages join them.
 - **What the closed island shows first**: when several things run at once, the order is yours (Settings, Live
   activities). Volume, brightness, alerts and requests still come first.
 - **AI apps, all of them**: Col recognizes the AI apps on your Mac (Claude, ChatGPT, Gemini, Perplexity, Grok Bot,
@@ -42,10 +47,17 @@ Each release's section is what Col's update window and the GitHub release show. 
   while you type, as Spotlight does. Questions go to that server only and the conversation is never written to disk.
 - **Agents show their logo**: Claude Code shows Claude's logo, and Codex, Gemini CLI, Cursor and GitHub Copilot theirs,
   in the closed island, on the Live page, on the AI page and in the settings. The icon of the app installed when there
-  is one, else the brand's own logo, which Col carries. The logo bounces, as in the Dock, while the agent needs you
-  (not with Reduce Motion). Each icon is kept only at the size it shows.
+  is one, else the brand's own logo, which Col carries. When an agent starts waiting for you, its logo hops a few
+  times, as in the Dock, then rests (not with Reduce Motion). Each icon is kept only at the size it shows.
+- **The whole command before you allow it**: when an agent asks to run a command, the Allow card shows it in full, in
+  a fixed-width font you can scroll and select, with spaces, tabs and line breaks made visible. A command too long to
+  check there cannot be allowed from the island: the card asks you to answer in the terminal.
 - **More pages fit**: six tabs fit beside the camera; with more pages, the tabs become dots, as on the iPhone.
-- **Permissions**: one pane says what each permission is for and which feature needs it.
+- **Permissions**: one pane says what each permission is for, which feature needs it, and when Reminders and Local
+  Network are asked.
+- **Extensions keep to their own permissions**: an extension's script no longer inherits Col's Accessibility,
+  Microphone, Camera or Calendars permissions; macOS treats it as a program of its own. Extensions still run on their
+  schedule, as before.
 - **Shortcuts and gestures**: every way to open and drive the island, in one place.
 - **Language**: Col follows the language of your Mac, or the one you pick in Settings, General.
 - **Your Mac's accent colour**: buttons, switches, selections and what is on take the accent colour chosen in System
@@ -57,10 +69,10 @@ Each release's section is what Col's update window and the GitHub release show. 
   it needs, and a permission is asked on the line that needs it, its result shown at once. Then your island, with the
   pages your choices make, plays on your own wallpaper with what is really happening, and an example of an agent asking
   for permission.
-- **A first hello in every language**: on first launch the island says hello in your language, then in others, from
-  Japanese to Arabic, each word giving way to the next in a soft blur, and back to yours. The welcome window is born
-  out of the island, and at the end goes back into the notch while the island says "Let's go". With Reduce Motion,
-  simple fades.
+- **A first hello in every language**: on first launch the island says hello in your Mac's language, even one Col
+  does not speak yet, then in others, from Japanese to Arabic, each word giving way to the next in a soft blur, and
+  back to yours. The welcome window is born out of the island, and at the end goes back into the notch while the
+  island says "Let's go". With Reduce Motion, simple fades.
 - **One island**: a second copy of Col, opened from Downloads or from a build folder, hands over to the one already
   running instead of drawing a second island and taking its connection to your agents.
 - **Long lines beside the camera**: a line too long for its wing, a song's title or the lyric being sung, showed

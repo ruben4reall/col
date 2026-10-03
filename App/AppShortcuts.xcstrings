@@ -1,0 +1,36 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "Open ${applicationName}": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir ${applicationName}"
+          }
+        }
+      }
+    },
+    "Start a timer in ${applicationName}": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lancer un minuteur dans ${applicationName}"
+          }
+        }
+      }
+    },
+    "Start the prompter in ${applicationName}": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lancer le prompteur dans ${applicationName}"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

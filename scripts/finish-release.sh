@@ -1,9 +1,9 @@
 #!/bin/bash
 # scripts/finish-release.sh <version>: turns the notarized dist/Col-<version>.dmg into everything a release
-# publishes, and publishes nothing: the stapled image and its stable copy dist/Col.dmg, its SHA-256, the release
-# notes (from CHANGELOG.md), the Homebrew cask and the new appcast item, EdDSA-signed with the key in the login keychain (account
-# "islet"; macOS asks once to let generate_appcast use it). scripts/release.sh runs it; after NOTARIZE_LATER, run it
-# yourself.
+# publishes, and publishes nothing: the stapled image and its stable copies dist/Col.dmg and dist/Islet.dmg (for the
+# links made before 2.0), its SHA-256, the release notes (from CHANGELOG.md), the Homebrew cask and the new appcast item,
+# EdDSA-signed with the key in the login keychain (account "islet"; macOS asks once to let generate_appcast use it).
+# scripts/release.sh runs it; after NOTARIZE_LATER, run it yourself.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 VERSION="${1:?usage: scripts/finish-release.sh <version>}"
@@ -21,6 +21,9 @@ xcrun stapler staple "$DMG" >/dev/null || fail "Apple has not accepted $DMG yet"
 xcrun stapler validate "$DMG" >/dev/null || fail "$DMG carries no valid ticket"
 hdiutil verify "$DMG" >/dev/null 2>&1 || fail "$DMG does not verify"
 cp "$DMG" dist/Col.dmg
+# Islet's README, website and posts link to .../releases/latest/download/Islet.dmg, which GitHub follows to the renamed
+# repository's latest release: each release carries the same image under that name too, so those links download Col.
+cp "$DMG" dist/Islet.dmg
 SHA=$(shasum -a 256 "$DMG" | awk '{print $1}')
 echo "$SHA  Col-$VERSION.dmg" > "dist/Col-$VERSION.dmg.sha256"
 
@@ -36,18 +39,40 @@ printf '%s\n' "$NOTES" > "$UPDATES/Col-$VERSION.md"
   printf 'Col is not affiliated with Apple.\n'
 } > dist/release-notes.md
 
-# 3. The appcast: the new item on top, older items kept.
+# 3. The appcast: the new item on top, every older item kept (generate_appcast keeps only three unless told otherwise).
+#    Written to a draft first: the appcast changes only once the new item is signed and no older item went missing.
 GENERATE_APPCAST=$(find .build/spm/artifacts -type f -name generate_appcast -perm -u+x 2>/dev/null | head -1)
 [ -n "$GENERATE_APPCAST" ] || fail "Sparkle's tools are missing from .build/spm: build with scripts/release.sh first"
 # The key: the file exported next to the repository (gitignored) when present, otherwise the login keychain.
 if [ -f .env.sparkle-private-key ]; then KEY=(--ed-key-file .env.sparkle-private-key); else KEY=(--account "$ACCOUNT"); fi
-"$GENERATE_APPCAST" "${KEY[@]}" --download-url-prefix "$PREFIX" --link "$SITE_URL" \
-  --full-release-notes-url "$REPO_URL/releases" --embed-release-notes --maximum-deltas 0 -o "$APPCAST" "$UPDATES"
-grep -q "sparkle:edSignature" "$APPCAST" || fail "$APPCAST has no EdDSA signature"
+DRAFT=.build/release-appcast.xml
+cp "$APPCAST" "$DRAFT"
+OUTPUT=$("$GENERATE_APPCAST" "${KEY[@]}" --download-url-prefix "$PREFIX" --link "$SITE_URL" \
+  --full-release-notes-url "$REPO_URL/releases" --embed-release-notes --maximum-deltas 0 --maximum-versions 0 \
+  -o "$DRAFT" "$UPDATES" 2>&1) \
+  || { printf '%s\n' "$OUTPUT" >&2; fail "generate_appcast failed; $APPCAST is unchanged"; }
+printf '%s\n' "$OUTPUT"
+# A key that does not match the app's is only a warning to generate_appcast, which then leaves the new item unsigned,
+# and every copy of Col would refuse that update.
+if grep -qiE "warning|does not match" <<< "$OUTPUT"; then
+  fail "generate_appcast warned (above); $APPCAST is unchanged"
+fi
+# The new item's own enclosure carries the signature: the older items always do, whatever happened to it.
+ITEM=$(grep -F "url=\"${PREFIX}Col-$VERSION.dmg\"" "$DRAFT" || true)
+[ -n "$ITEM" ] || fail "the appcast has no item for Col-$VERSION.dmg; $APPCAST is unchanged"
+grep -Eq 'sparkle:edSignature="[^"]+"' <<< "$ITEM" \
+  || fail "the $VERSION item has no EdDSA signature; $APPCAST is unchanged"
+[ "$(grep -c '<item>' "$DRAFT")" -ge "$(grep -c '<item>' "$APPCAST")" ] \
+  || fail "older items went missing; $APPCAST is unchanged"
+mv "$DRAFT" "$APPCAST"
 
-# 4. The cask for the tap (ruben4reall/homebrew-tap).
+# 4. The cask for the tap (ruben4reall/homebrew-tap). It took over from the islet cask: the tap's cask_renames.json
+#    maps "islet" to "col" and has no Casks/islet.rb any more, so `brew upgrade --cask --greedy col` moves Islet's
+#    Homebrew users to Col.app. The tap's other renames stay as they are.
 mkdir -p dist/homebrew/Casks
 scripts/render-cask.sh "$VERSION" "$SHA" > dist/homebrew/Casks/col.rb
 
-echo "Ready: $DMG, dist/Col.dmg, dist/release-notes.md, $APPCAST, dist/homebrew/Casks/col.rb"
-echo "Publication, on Ruben's go-ahead: the GitHub release v$VERSION with the two disk images, the site, then the tap."
+echo "Ready: $DMG, dist/Col.dmg, dist/Islet.dmg (for links made before 2.0), dist/release-notes.md, $APPCAST, dist/homebrew/Casks/col.rb"
+echo "Publication, on Ruben's go-ahead: the GitHub release v$VERSION with the three disk images (Col-$VERSION.dmg, Col.dmg,"
+echo "Islet.dmg), the site right after it, then the tap."
+echo "The tap needs \"islet\": \"col\" in its cask_renames.json and no Casks/islet.rb."

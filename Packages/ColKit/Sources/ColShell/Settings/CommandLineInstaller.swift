@@ -38,9 +38,8 @@ enum CommandLineInstaller {
     }
 
     /// Where each agent keeps its hooks.
-    static func settingsURL(for agent: CodingAgent) -> URL {
-        let home = FileManager.default.homeDirectoryForCurrentUser
-        return switch agent {
+    nonisolated static func settingsURL(for agent: CodingAgent, home: URL = FileManager.default.homeDirectoryForCurrentUser) -> URL {
+        switch agent {
         case .claude: home.appendingPathComponent(".claude/settings.json")
         case .codex: home.appendingPathComponent(".codex/hooks.json")
         case .gemini: home.appendingPathComponent(".gemini/settings.json")

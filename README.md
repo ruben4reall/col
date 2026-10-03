@@ -53,8 +53,8 @@ your scripts and your AI agents.
   holds. Ask one a question from the island: the answer comes as it is written, and the question goes to that server
   only.
 - **Volume and brightness.** A quiet gauge in the notch instead of the big square in the middle of the screen.
-- **Files, clipboard, agenda.** A shelf for files with AirDrop, a clipboard history with pins kept in memory only, the
-  next events of your day with a Join button for calls, and today's reminders.
+- **Files, clipboard, agenda.** A shelf for files with AirDrop, a clipboard history kept in memory (only the copies you
+  pin are saved), the next events of your day with a Join button for calls, and today's reminders.
 - **Tools.** A timer that counts down in the wings, a colour picker, a camera mirror, system stats, keep awake,
   downloads.
 - **Privacy at a glance.** The app using your microphone or camera, right where the camera is.
@@ -91,23 +91,32 @@ Releases are signed with a Developer ID and notarized by Apple.
 brew install --cask ruben4reall/tap/col
 ```
 
-The cask also links the `colctl` command.
+The cask also links the `colctl` command, and `islet` for the scripts and hooks written for Islet.
+
+Installed Islet with Homebrew? Col updates itself but keeps the name Islet.app, so Homebrew can still upgrade and
+remove it. To get Col.app:
+
+```sh
+brew upgrade --cask --greedy col
+```
 
 ### Updates
 
 Col updates itself with [Sparkle](https://sparkle-project.org). The welcome asks whether to keep it up to date;
-you can change your mind in Settings, About, or choose *Check for Updates…* from the island's right-click menu. Every
-update is signed with Col's own key.
+you can change your mind in Settings, General, or choose *Check for Updates…* from the island's right-click menu.
+Every update is signed with Col's own key.
 
 ### Uninstall
 
-In Settings, Developers, disconnect your AI agents, so their settings files forget Col. Then quit Col from its
-right-click menu and move it to the Trash. Its settings are in `~/Library/Preferences/ch.rubencatalao.islet.plist`.
-With Homebrew: `brew uninstall --cask --zap colctl`.
+In Settings, AI apps, disconnect your AI agents, so their settings files forget Col. From a terminal,
+`colctl hooks status` shows the connected ones, and `colctl hooks uninstall --agent <name>` disconnects each of them
+(`claude`, `codex`, `gemini`, `cursor` or `copilot`). Then quit Col from its right-click menu and move it to the Trash.
+Its settings are in `~/Library/Preferences/ch.rubencatalao.islet.plist`. With Homebrew:
+`brew uninstall --cask --zap col`.
 
 ## Connect your AI agents
 
-In Settings, Developers, click Connect next to each agent, or from a terminal:
+In Settings, AI apps, click Connect next to each agent, or from a terminal:
 
 ```sh
 colctl hooks install --agent all      # every agent found on this Mac
@@ -147,19 +156,32 @@ Each one only if a module you chose needs it:
 - **Calendars and Reminders**, for the agenda.
 - **Bluetooth**, for the battery and the model of your headphones.
 - **Camera**, only while the mirror is open.
+- **Microphone**, for the prompter's voice modes, only while a take runs. The sound is analysed on your Mac and never
+  recorded.
+- **Speech Recognition**, for the prompter's Voice Follow, on your Mac only.
+- **Local Network**, for the prompter's phone remote and the AI servers you add on another machine.
+- **Downloads folder**, only if you turn on Downloads in progress, to show the files your browser is still writing.
 
 ## Privacy
 
 - No account, no telemetry, no analytics, no crash reports.
-- One network connection: the update check, which you can turn off. Sparkle's system profile is off.
-- The clipboard history lives in memory and skips copies that password managers mark as private.
-- Scripts and agents reach Col through a socket in your user folder, mode 0600. No network port.
+- Col uses the network for these, and nothing else:
+  - The update check, once a day, which you can turn off in Settings, General. Sparkle's system profile is off.
+  - [LRCLIB](https://lrclib.net), an open lyrics database, while lyrics are on (Settings, Music and lyrics). Only the
+    title, artist, album and length of the song that plays are sent. Lyrics are on in a new install, where the welcome
+    shows the choice; after an update from Islet they stay off until you turn them on.
+  - The AI servers you add yourself, and the Ollama or LM Studio installed on this Mac, which Col asks on this Mac
+    only (localhost). Your questions go only to the server you picked.
+  - The prompter's phone remote, which listens on your local network only while you turn it on.
+- The clipboard history lives in memory and skips copies that password managers mark as private. Only the copies you
+  pin are saved, in Col's settings.
+- Scripts and agents reach Col through a socket in your user folder, mode 0600, which never listens on the network.
 
 [SECURITY.md](SECURITY.md) lists everything Col touches on your Mac.
 
 ## Light on your Mac
 
-| | Col | Alcove | boring.notch | Atoll |
+| | Col | Notch app A | Notch app B | Notch app C |
 |---|---|---|---|---|
 | Memory at rest | **15 MB** | 56 MB | 71 MB | 106 MB |
 | Processor at rest | **0.004 %** | 0.01 % | 3.9 % | 6.8 % |
@@ -199,7 +221,7 @@ You need Xcode 26 and [XcodeGen](https://github.com/yonaskolb/XcodeGen).
 ```sh
 brew install xcodegen
 git clone https://github.com/ruben4reall/col.git
-cd colctl
+cd col
 swift test --package-path Packages/ColKit   # the island's rules, activities, agents, parsers
 scripts/build.sh                               # prints the path of the Debug app
 open .build/xcode/Build/Products/Debug/Col.app

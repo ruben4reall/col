@@ -17,14 +17,17 @@ cask "col" do
 
   app "Col.app"
   binary "#{appdir}/Col.app/Contents/Helpers/colctl"
+  # The command's name before 2.0: scripts and hooks written for Islet still call it.
+  binary "#{appdir}/Col.app/Contents/Helpers/colctl", target: "islet"
 
   uninstall quit: "ch.rubencatalao.islet"
 
   zap trash: [
     "~/Library/Application Support/Col",
     "~/Library/Application Support/Islet",
-    "~/Library/Caches/Col",
     "~/Library/Caches/ch.rubencatalao.islet",
+    "~/Library/Caches/Col",
+    "~/Library/Caches/Islet",
     "~/Library/HTTPStorages/ch.rubencatalao.islet",
     "~/Library/Preferences/ch.rubencatalao.islet.plist",
   ]

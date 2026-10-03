@@ -18,8 +18,8 @@ Other notch apps, measured the same way on the same Mac in September 2026:
 
 | App | Memory at rest | CPU at rest |
 |---|---|---|
-| Alcove | 56 MB (49 + 6.7 helper) | 0.01 % |
-| boring.notch | 71 MB | 3.9 % |
-| Atoll | 106 MB (peak 203) | 6.8 % |
+| Notch app A | 56 MB (49 + 6.7 helper) | 0.01 % |
+| Notch app B | 71 MB | 3.9 % |
+| Notch app C | 106 MB (peak 203) | 6.8 % |
 
 To reproduce: `scripts/bench.sh <pid> [seconds]`.
