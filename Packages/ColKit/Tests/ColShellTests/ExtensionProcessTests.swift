@@ -55,7 +55,14 @@ import Testing
         #expect(await iterator.next()?.status == 0)
     }
 
+    /// The first process a fresh Mac starts can wait seconds while macOS checks the shell: started once before
+    /// the clock runs, so the timed tests measure Col's timeout and not that check.
+    private func warmUp() async throws {
+        _ = try await run("true")
+    }
+
     @Test func aRunPastItsTimeStopsWithWhatItStarted() async throws {
+        try await warmUp()
         let started = Date()
         // The background sleep keeps the output open: it is stopped too, with the shell, as one group.
         let (outcome, _) = try await run("echo before; sleep 30 & sleep 30", timeout: 0.5)
@@ -65,6 +72,7 @@ import Testing
     }
 
     @Test func aRunThatIgnoresTheEndIsKilled() async throws {
+        try await warmUp()
         let started = Date()
         let (outcome, _) = try await run("trap '' TERM; sleep 30", timeout: 0.3)
         #expect(Date().timeIntervalSince(started) < ExtensionProcess.grace + 3)
