@@ -2,7 +2,7 @@
 
 Each release's section is what Col's update window and the GitHub release show. Dates are in ISO format.
 
-## 2.0.0 (unreleased)
+## 2.0.0 (2026-10-03)
 
 - **Islet is now Col**: the same app under a shorter name. A col is the pass between two peaks, and the notch is one.
   The update takes care of everything: the app takes its new name in Applications, and your settings, permissions,
