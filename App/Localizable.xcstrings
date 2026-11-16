@@ -8,6 +8,60 @@
             "state": "translated",
             "value": "Un nom de couleur, comme orange, ou une valeur hexadécimale."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein Farbname wie orange oder ein Hexwert."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Een kleurnaam, zoals orange, of een hexwaarde."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il nome di un colore, come orange, o un valore esadecimale."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un nombre de color en inglés, como orange, o un valor hexadecimal."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um nome de cor em inglês, como orange, ou um valor hexadecimal."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "orangeのような英語の色名、または16進数の値。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "색상 이름(예: orange) 또는 16진수 값입니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "颜色名称（例如 orange）或十六进制值。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "顏色名稱（例如 orange）或十六進位值。"
+          }
         }
       }
     },
@@ -17,6 +71,60 @@
           "stringUnit": {
             "state": "translated",
             "value": "Un nom de symbole SF, comme hammer.fill."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Name eines SF Symbols, etwa hammer.fill."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De naam van een SF Symbol, zoals hammer.fill."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il nome di un SF Symbol, come hammer.fill."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El nombre de un símbolo SF, como hammer.fill."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O nome de um SF Symbol, como hammer.fill."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hammer.fillのようなSF Symbolsの名前。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SF Symbol 이름입니다(예: hammer.fill)."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SF Symbol 名称，例如 hammer.fill。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SF Symbol 名稱，例如 hammer.fill。"
           }
         }
       }
@@ -28,6 +136,60 @@
             "state": "translated",
             "value": "Fermer le prompteur"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prompter schließen"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sluit de prompter"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chiudi il prompter"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cerrar el teleprompter"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fechar o Teleprompter"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "プロンプターを閉じる"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "프롬프터 닫기"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关闭提词器"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "關閉提詞機"
+          }
         }
       }
     },
@@ -37,6 +199,60 @@
           "stringUnit": {
             "state": "translated",
             "value": "Couleur"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Farbe"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kleur"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Colore"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Color"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cor"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カラー"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "색상"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "颜色"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "顏色"
           }
         }
       }
@@ -48,6 +264,60 @@
             "state": "translated",
             "value": "Terminer ${title} dans l’encoche"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "${title} in der Notch beenden"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beëindig ${title} in de notch"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Termina ${title} nel notch"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terminar ${title} en la muesca"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encerrar ${title} no notch"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ノッチの${title}を終了"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "노치에서 ${title} 종료"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "结束刘海中的 ${title}"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "結束瀏海中的 ${title}"
+          }
         }
       }
     },
@@ -57,6 +327,60 @@
           "stringUnit": {
             "state": "translated",
             "value": "Terminer une activité de l’encoche"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notch-Aktivität beenden"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beëindig notch-activiteit"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Termina attività del notch"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terminar actividad de la muesca"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encerrar Atividade do Notch"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ノッチのアクティビティを終了"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "노치 활동 종료"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "结束刘海活动"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "結束瀏海活動"
           }
         }
       }
@@ -68,6 +392,60 @@
             "state": "translated",
             "value": "De 0 à 1."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Von 0 bis 1."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Van 0 tot 1."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Da 0 a 1."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De 0 a 1."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De 0 a 1."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "0から1まで。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "0에서 1 사이입니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "从 0 到 1。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "從 0 到 1。"
+          }
         }
       }
     },
@@ -77,6 +455,60 @@
           "stringUnit": {
             "state": "translated",
             "value": "Col fonctionne mieux depuis Applications : il peut s’y ouvrir à la connexion et s’y mettre à jour."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col funktioniert am besten im Ordner „Programme“: Dort kann es bei der Anmeldung starten und sich selbst aktualisieren."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col werkt het best vanuit de map Apps: daar kan het openen bij het inloggen en zichzelf bijwerken."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col funziona al meglio dalla cartella Applicazioni: da lì può aprirsi al login e aggiornarsi da solo."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col funciona mejor desde Aplicaciones: allí puede abrirse al iniciar sesión y actualizarse solo."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Col funciona melhor na pasta Aplicativos: lá ele pode abrir ao iniciar a sessão e se atualizar sozinho."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Colはアプリケーションフォルダから使うのが最適です。そこからなら、ログイン時に開いたり、自動でアップデートしたりできます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col은 응용 프로그램 폴더에서 가장 잘 작동합니다. 그곳에서는 로그인 시 열리고 스스로 업데이트할 수 있습니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col 在“应用程序”文件夹中效果最佳：在那里它可以在登录时打开并自动更新。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col 在「應用程式」檔案夾中效果最佳：在那裡它可以在登入時打開並自動更新。"
           }
         }
       }
@@ -88,6 +520,60 @@
             "state": "translated",
             "value": "Marque une activité comme terminée : une coche, puis elle s’en va."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert eine Aktivität als erledigt: ein Häkchen, dann verschwindet sie."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markeert een activiteit als voltooid: een vinkje, daarna verdwijnt ze."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Segna un’attività come completata: un segno di spunta, poi scompare."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marca una actividad como terminada: una marca de verificación y luego desaparece."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marca uma atividade como concluída: aparece uma marca de seleção e depois ela some."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アクティビティを完了にします。チェックマークが表示されたあと、消えます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "활동을 완료로 표시합니다. 체크 표시가 나타난 후 사라집니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "将活动标记为完成：显示勾号，然后消失。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "將活動標示為完成：顯示勾號，然後消失。"
+          }
         }
       }
     },
@@ -97,6 +583,60 @@
           "stringUnit": {
             "state": "translated",
             "value": "Minutes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Minuten"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Minuten"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Minuti"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Minutos"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Minutos"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "분"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分钟"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分鐘"
           }
         }
       }
@@ -108,6 +648,60 @@
             "state": "translated",
             "value": "Déplacer Col dans le dossier Applications ?"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col in den Ordner „Programme“ verschieben?"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col naar de map Apps verplaatsen?"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spostare Col nella cartella Applicazioni?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Mover Col a la carpeta Aplicaciones?"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mover o Col para a pasta Aplicativos?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Colをアプリケーションフォルダに移動しますか？"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col을 응용 프로그램 폴더로 이동하겠습니까?"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "要将 Col 移到“应用程序”文件夹吗？"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "要將 Col 移到「應用程式」檔案夾嗎？"
+          }
         }
       }
     },
@@ -117,6 +711,60 @@
           "stringUnit": {
             "state": "translated",
             "value": "Déplacer dans Applications"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In „Programme“ verschieben"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verplaats naar Apps"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sposta in Applicazioni"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mover a Aplicaciones"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mover para Aplicativos"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アプリケーションフォルダに移動"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "응용 프로그램으로 이동"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "移到“应用程序”"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "移到「應用程式」"
           }
         }
       }
@@ -128,6 +776,60 @@
             "state": "translated",
             "value": "Plus tard"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht jetzt"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niet nu"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non ora"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ahora no"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agora Não"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "今はしない"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "나중에"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "以后"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "現在不要"
+          }
         }
       }
     },
@@ -137,6 +839,60 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ouvrir l’île"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Insel öffnen"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open het eiland"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apri l’isola"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir la isla"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir a Ilha"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アイランドを開く"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아일랜드 열기"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开岛"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打開島"
           }
         }
       }
@@ -148,6 +904,60 @@
             "state": "translated",
             "value": "Lire ou mettre en pause le prompteur"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prompter abspielen oder pausieren"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speel de prompter af of pauzeer"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Riproduci o metti in pausa il prompter"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reproducir o pausar el teleprompter"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reproduzir ou Pausar o Teleprompter"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "プロンプターを再生/一時停止"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "프롬프터 재생 또는 일시 정지"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "播放或暂停提词器"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "播放或暫停提詞機"
+          }
         }
       }
     },
@@ -157,6 +967,60 @@
           "stringUnit": {
             "state": "translated",
             "value": "Progression"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fortschritt"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voortgang"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avanzamento"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Progreso"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Progresso"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "進行状況"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "진행률"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "进度"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "進度"
           }
         }
       }
@@ -168,6 +1032,60 @@
             "state": "translated",
             "value": "Faire défiler un texte"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text laufen lassen"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laat tekst lopen"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fai scorrere un testo"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desplazar un texto"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rolar Texto"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "テキストをプロンプターで表示"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "프롬프터에 텍스트 띄우기"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在提词器中滚动文本"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在提詞機中捲動文字"
+          }
         }
       }
     },
@@ -177,6 +1095,60 @@
           "stringUnit": {
             "state": "translated",
             "value": "Faire défiler le script sélectionné"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ausgewähltes Skript laufen lassen"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laat het geselecteerde script lopen"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fai scorrere lo script selezionato"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desplazar el guion seleccionado"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rolar o Roteiro Selecionado"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選択した原稿をプロンプターで表示"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "선택한 대본을 프롬프터에 띄우기"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在提词器中滚动所选讲稿"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在提詞機中捲動所選講稿"
           }
         }
       }
@@ -188,6 +1160,60 @@
             "state": "translated",
             "value": "Prompteur"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prompter"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prompter"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prompter"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teleprompter"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teleprompter"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "プロンプター"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "프롬프터"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提词器"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提詞機"
+          }
         }
       }
     },
@@ -197,6 +1223,60 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fait défiler un texte depuis l’encoche, dans le prompteur."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lässt einen Text im Prompter aus der Notch laufen."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laat een tekst vanuit de notch in de prompter lopen."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fa scorrere un testo fuori dal notch, nel prompter."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desplaza un texto desde la muesca en el teleprompter."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rola um texto a partir do notch, no teleprompter."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ノッチから出てくるプロンプターで、テキストをスクロールします。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "노치에서 프롬프터로 텍스트를 띄웁니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在提词器中让一段文本从刘海滚动出来。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在提詞機中讓一段文字從瀏海捲動出來。"
           }
         }
       }
@@ -208,6 +1288,60 @@
             "state": "translated",
             "value": "Fait défiler le script sélectionné dans la bibliothèque du prompteur."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lässt das in der Prompter-Bibliothek ausgewählte Skript laufen."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laat het script lopen dat in de bibliotheek van de prompter is geselecteerd."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fa scorrere lo script selezionato nella libreria del prompter."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desplaza el guion seleccionado en la biblioteca del teleprompter."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rola o roteiro selecionado na biblioteca do teleprompter."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "プロンプターのライブラリで選択した原稿をスクロールします。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "프롬프터 보관함에서 선택한 대본을 띄웁니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "滚动在提词器资料库中选择的讲稿。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "捲動在提詞機資料庫中選取的講稿。"
+          }
         }
       }
     },
@@ -217,6 +1351,60 @@
           "stringUnit": {
             "state": "translated",
             "value": "Secondes à l’écran"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sekunden auf dem Bildschirm"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seconden op het scherm"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Secondi sullo schermo"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Segundos en pantalla"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Segundos na tela"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "画面に表示する秒数"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "화면 표시 시간(초)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "屏幕显示秒数"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "螢幕顯示秒數"
           }
         }
       }
@@ -228,6 +1416,60 @@
             "state": "translated",
             "value": "Afficher ${title} dans l’encoche"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "${title} in der Notch anzeigen"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toon ${title} in de notch"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostra ${title} nel notch"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar ${title} en la muesca"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar ${title} no notch"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ノッチに${title}を表示"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "노치에 ${title} 표시"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在刘海中显示 ${title}"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在瀏海中顯示 ${title}"
+          }
         }
       }
     },
@@ -237,6 +1479,60 @@
           "stringUnit": {
             "state": "translated",
             "value": "Afficher dans l’encoche"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In der Notch anzeigen"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toon in de notch"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostra nel notch"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar en la muesca"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar no Notch"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ノッチに表示"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "노치에 표시"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在刘海中显示"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在瀏海中顯示"
           }
         }
       }
@@ -248,6 +1544,60 @@
             "state": "translated",
             "value": "Affiche une activité en direct à côté de la caméra, ou met à jour celle du même nom."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zeigt eine Live-Aktivität neben der Kamera an oder aktualisiert die mit demselben Namen."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toont een live-activiteit naast de camera, of werkt die met dezelfde naam bij."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostra un’attività in tempo reale accanto alla videocamera, o aggiorna quella con lo stesso nome."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Muestra una actividad en directo junto a la cámara, o actualiza la que tiene el mismo nombre."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostra uma atividade ao vivo ao lado da câmera ou atualiza a que tem o mesmo nome."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カメラの横にライブアクティビティを表示するか、同じ名前のアクティビティを更新します。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "카메라 옆에 실시간 현황을 표시하거나 같은 이름의 실시간 현황을 업데이트합니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在摄像头旁显示实时活动，或更新同名的实时活动。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在相機旁顯示即時動態，或更新同名的即時動態。"
+          }
         }
       }
     },
@@ -257,6 +1607,60 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lancer un minuteur de ${minutes} minutes dans l’encoche"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einen ${minutes}-Minuten-Timer in der Notch starten"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start een timer van ${minutes} minuten in de notch"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avvia un timer di ${minutes} minuti nel notch"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iniciar un temporizador de ${minutes} minutos en la muesca"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iniciar um timer de ${minutes} minutos no notch"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ノッチで${minutes}分のタイマーを開始"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "노치에서 ${minutes}분 타이머 시작"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在刘海中启动 ${minutes} 分钟计时器"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在瀏海中啟動 ${minutes} 分鐘計時器"
           }
         }
       }
@@ -268,6 +1672,60 @@
             "state": "translated",
             "value": "Lancer un minuteur dans l’encoche"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notch-Timer starten"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start een notch-timer"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avvia un timer nel notch"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iniciar un temporizador en la muesca"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iniciar um Timer no Notch"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ノッチでタイマーを開始"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "노치 타이머 시작"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "启动刘海计时器"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "啟動瀏海計時器"
+          }
         }
       }
     },
@@ -277,6 +1735,60 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lance un compte à rebours qui vit dans l’encoche."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Startet einen Countdown, der in der Notch läuft."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start een aftelling die in de notch loopt."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avvia un conto alla rovescia che vive nel notch."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inicia una cuenta atrás que vive en la muesca."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inicia uma contagem regressiva que fica no notch."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ノッチに常駐するカウントダウンを開始します。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "노치에 머무르는 카운트다운을 시작합니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "启动一个停留在刘海中的倒计时。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "啟動一個停留在瀏海中的倒數計時。"
           }
         }
       }
@@ -288,6 +1800,60 @@
             "state": "translated",
             "value": "Symbole"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Symbol"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Symbool"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Simbolo"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Símbolo"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Símbolo"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "シンボル"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기호"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "符号"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "符號"
+          }
         }
       }
     },
@@ -297,6 +1863,60 @@
           "stringUnit": {
             "state": "translated",
             "value": "Texte"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tekst"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Testo"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Texto"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Texto"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "テキスト"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "텍스트"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文本"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文字"
           }
         }
       }
@@ -308,6 +1928,60 @@
             "state": "translated",
             "value": "Minuteur"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Timer"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Timer"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Timer"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Temporizador"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Timer"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "タイマー"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "타이머"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "计时器"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "計時器"
+          }
         }
       }
     },
@@ -317,6 +1991,60 @@
           "stringUnit": {
             "state": "translated",
             "value": "Titre"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titel"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titel"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titolo"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Título"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Título"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "タイトル"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "제목"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "标题"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "標題"
           }
         }
       }

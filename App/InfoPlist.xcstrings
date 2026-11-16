@@ -14,6 +14,60 @@
             "state": "translated",
             "value": "Col lit la batterie de vos AirPods et autres écouteurs."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col liest den Batteriestand Ihrer AirPods und anderer Kopfhörer."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col leest het batterijniveau van je AirPods en andere koptelefoons."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col legge la batteria dei tuoi AirPods e di altre cuffie."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col lee la batería de tus AirPods y otros auriculares."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Col lê a bateria dos seus AirPods e de outros fones de ouvido."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Colは、AirPodsやそのほかのヘッドフォンのバッテリー残量を読み取ります。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col이 AirPods 및 기타 헤드폰의 배터리를 읽습니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col 会读取你的 AirPods 和其他耳机的电量。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col 會讀取你的 AirPods 和其他耳機的電量。"
+          }
         }
       }
     },
@@ -29,6 +83,60 @@
           "stringUnit": {
             "state": "translated",
             "value": "Col affiche vos prochains événements dans l’encoche."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col zeigt Ihre nächsten Termine in der Notch."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col toont je volgende activiteiten in de notch."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col mostra i tuoi prossimi eventi nel notch."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col muestra tus próximos eventos en la muesca."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Col mostra seus próximos eventos no notch."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Colは、ノッチに次の予定を表示します。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col이 노치에 다음 이벤트를 표시합니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col 会在刘海中显示你接下来的日程。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col 會在瀏海中顯示你接下來的行程。"
           }
         }
       }
@@ -46,6 +154,60 @@
             "state": "translated",
             "value": "Col n’utilise la caméra que lorsque vous ouvrez son miroir."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col verwendet die Kamera nur, wenn Sie den Spiegel öffnen."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col gebruikt de camera alleen wanneer je de spiegel opent."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col usa la videocamera solo quando apri il suo specchio."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col solo usa la cámara cuando abres su espejo."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Col só usa a câmera quando você abre o espelho."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Colがカメラを使うのは、ミラーを開いたときだけです。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col은 미러 기능을 열 때만 카메라를 사용합니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col 仅在你打开其镜像功能时使用摄像头。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col 僅在你打開其鏡像功能時使用相機。"
+          }
         }
       }
     },
@@ -61,6 +223,60 @@
           "stringUnit": {
             "state": "translated",
             "value": "Col joint les appareils que vous choisissez sur votre réseau, et eux seuls : votre téléphone pour la télécommande du prompteur, et les serveurs d’IA que vous ajoutez."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col erreicht nur die Geräte in Ihrem Netzwerk, die Sie auswählen: Ihr Smartphone als Fernbedienung für den Prompter und die KI-Server, die Sie hinzufügen."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col bereikt alleen de apparaten in je netwerk die jij kiest: je telefoon voor de afstandsbediening van de prompter, en de AI-servers die je toevoegt."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col raggiunge solo i dispositivi della tua rete che scegli tu: il telefono per il telecomando del prompter e i server IA che aggiungi."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col se conecta a los dispositivos que eliges en tu red, y solo a ellos: tu teléfono para el mando del teleprompter y los servidores de IA que añadas."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Col se conecta aos dispositivos que você escolhe na sua rede, e somente a eles: seu celular para o controle remoto do teleprompter e os servidores de IA que você adicionar."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Colは、ネットワーク上であなたが選んだデバイスにだけ接続します。プロンプターのリモコンとして使うスマートフォンと、あなたが追加したAIサーバです。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col은 네트워크에서 사용자가 선택한 기기에만 연결합니다. 프롬프터 리모컨으로 사용하는 휴대폰과 사용자가 추가한 AI 서버입니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col 只连接你在网络上选择的设备：用作提词器遥控器的手机，以及你添加的 AI 服务器。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col 只會連接你在網路上選擇的裝置：用作提詞機遙控器的手機，以及你加入的 AI 伺服器。"
           }
         }
       }
@@ -78,6 +294,60 @@
             "state": "translated",
             "value": "Le prompteur écoute votre voix pour faire défiler le script quand vous parlez. Le son ne quitte jamais votre Mac et n’est jamais enregistré."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Prompter hört auf Ihre Stimme, damit das Skript mitläuft, während Sie sprechen. Der Ton verlässt nie Ihren Mac und wird nie aufgezeichnet."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De prompter luistert naar je stem om het script mee te laten lopen terwijl je spreekt. Het geluid verlaat je Mac nooit en wordt nooit opgenomen."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il prompter ascolta la tua voce per far scorrere lo script mentre parli. L’audio non lascia mai il tuo Mac e non viene mai registrato."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El teleprompter escucha tu voz para desplazar el guion mientras hablas. El sonido nunca sale de tu Mac y nunca se graba."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O teleprompter escuta sua voz para rolar o roteiro enquanto você fala. O som nunca sai do seu Mac e nunca é gravado."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "プロンプターは、話すのに合わせて原稿をスクロールするために声を聞き取ります。音声がMacの外に出ることはなく、録音されることもありません。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "프롬프터가 사용자의 목소리를 듣고 말하는 동안 대본을 넘깁니다. 소리는 Mac 밖으로 나가지 않으며 녹음되지 않습니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提词器会聆听你的声音，在你说话时滚动讲稿。声音不会离开你的 Mac，也不会被录下。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提詞機會聆聽你的聲音，在你說話時捲動講稿。聲音不會離開你的 Mac，也不會被錄下。"
+          }
         }
       }
     },
@@ -93,6 +363,60 @@
           "stringUnit": {
             "state": "translated",
             "value": "Col affiche les rappels du jour à côté de votre agenda."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col zeigt die heute fälligen Erinnerungen neben Ihrer Agenda."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col toont de herinneringen van vandaag naast je agenda."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col mostra i promemoria in scadenza oggi accanto alla tua agenda."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col muestra los recordatorios de hoy junto a tu agenda."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Col mostra os lembretes de hoje ao lado da sua agenda."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Colは、予定の横に今日が期限のリマインダーを表示します。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col이 일정 옆에 오늘 마감인 미리 알림을 표시합니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col 会在日程旁显示今天到期的提醒事项。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col 會在行程旁顯示今天到期的提醒事項。"
           }
         }
       }
@@ -110,6 +434,60 @@
             "state": "translated",
             "value": "En suivi de la voix, le prompteur reconnaît vos mots sur votre Mac pour garder votre place dans le script."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit der Stimmverfolgung erkennt der Prompter Ihre Worte auf Ihrem Mac, damit Sie im Skript an der richtigen Stelle bleiben."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Met Stem volgen herkent de prompter je woorden op je Mac, zodat je je plek in het script niet kwijtraakt."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Con Segui la voce, il prompter riconosce le tue parole sul Mac per non farti perdere il segno nello script."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Con Seguimiento de voz, el teleprompter reconoce tus palabras en tu Mac para no perder tu posición en el guion."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No modo Seguir a Voz, o teleprompter reconhece suas palavras no seu Mac para acompanhar sua posição no roteiro."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "音声追従では、プロンプターがMac上であなたの言葉を認識し、原稿の読んでいる位置を追いかけます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "음성 추적 모드에서 프롬프터는 Mac에서 사용자의 말을 인식하여 대본에서 현재 위치를 유지합니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在“语音跟随”模式下，提词器会在你的 Mac 上识别你说的话，以跟上你在讲稿中的位置。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在「語音跟隨」模式下，提詞機會在你的 Mac 上辨識你說的話，以跟上你在講稿中的位置。"
+          }
         }
       }
     },
@@ -125,6 +503,60 @@
           "stringUnit": {
             "state": "translated",
             "value": "Avec Barres qui suivent le son, les barres à côté de la caméra bougent avec la musique qui joue. Le son est analysé sur votre Mac pendant la lecture, jamais enregistré ni envoyé."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit „Balken, die dem Klang folgen“ bewegen sich die Balken neben der Kamera mit der Musik, die gerade läuft. Der Ton wird während der Wiedergabe auf Ihrem Mac analysiert, nie aufgezeichnet oder gesendet."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Met Balkjes die het geluid volgen bewegen de balkjes naast de camera mee met de muziek die speelt. Het geluid wordt tijdens het afspelen op je Mac geanalyseerd, nooit opgenomen of verstuurd."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Con Barre che seguono il suono, le barre accanto alla videocamera si muovono con la musica in riproduzione. Il suono viene analizzato sul Mac durante la riproduzione, mai registrato né inviato."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Con Barras que siguen el sonido, las barras junto a la cámara se mueven con la música que suena. El sonido se analiza en tu Mac mientras suena, y nunca se graba ni se envía."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Com Barras que seguem o som, as barras ao lado da câmera se movem com a música que está tocando. O som é analisado no seu Mac durante a reprodução, e nunca é gravado nem enviado."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「サウンドに合わせて動くバー」をオンにすると、カメラの横のバーが再生中の音楽に合わせて動きます。音声は再生中にMac上で解析され、録音や送信されることはありません。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "‘소리에 맞춰 움직이는 막대’를 사용하면 카메라 옆의 막대가 재생 중인 음악에 맞춰 움직입니다. 소리는 재생되는 동안 Mac에서 분석되며, 녹음되거나 전송되지 않습니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开“跟随声音的律动条”后，摄像头旁的律动条会随正在播放的音乐律动。声音在播放时于你的 Mac 上分析，绝不会被录下或发送。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開啟「跟隨聲音的律動條」後，相機旁的律動條會隨正在播放的音樂律動。聲音在播放時於你的 Mac 上分析，絕不會被錄下或傳送。"
           }
         }
       }
@@ -142,6 +574,60 @@
             "state": "translated",
             "value": "Col affiche la météo là où vous êtes. Seule une position arrondie à un kilomètre près est envoyée à Open-Meteo."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col zeigt das Wetter an Ihrem Standort. Nur eine auf etwa einen Kilometer gerundete Position wird an Open-Meteo gesendet."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col toont het weer waar je bent. Alleen een tot op ongeveer een kilometer afgeronde positie wordt naar Open-Meteo gestuurd."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col mostra il meteo dove ti trovi. Solo una posizione arrotondata a circa un chilometro viene inviata a Open-Meteo."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col muestra el tiempo donde estás. Solo se envía a Open-Meteo una posición redondeada a aproximadamente un kilómetro."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Col mostra o tempo onde você está. Só uma posição arredondada para cerca de um quilômetro é enviada ao Open-Meteo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Colは現在地の天気を表示します。Open-Meteoに送信されるのは、約1キロメートル単位に丸めた位置だけです。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col이 현재 위치의 날씨를 표시합니다. 약 1km 단위로 반올림한 위치만 Open-Meteo에 전송됩니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col 会显示你所在位置的天气。只有精确到约 1 公里的位置会发送到 Open-Meteo。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col 會顯示你所在位置的天氣。只有精確到約 1 公里的位置會傳送至 Open-Meteo。"
+          }
         }
       }
     },
@@ -158,6 +644,60 @@
             "state": "translated",
             "value": "Col affiche la météo là où vous êtes. Seule une position arrondie à un kilomètre près est envoyée à Open-Meteo."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col zeigt das Wetter an Ihrem Standort. Nur eine auf etwa einen Kilometer gerundete Position wird an Open-Meteo gesendet."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col toont het weer waar je bent. Alleen een tot op ongeveer een kilometer afgeronde positie wordt naar Open-Meteo gestuurd."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col mostra il meteo dove ti trovi. Solo una posizione arrotondata a circa un chilometro viene inviata a Open-Meteo."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col muestra el tiempo donde estás. Solo se envía a Open-Meteo una posición redondeada a aproximadamente un kilómetro."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Col mostra o tempo onde você está. Só uma posição arredondada para cerca de um quilômetro é enviada ao Open-Meteo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Colは現在地の天気を表示します。Open-Meteoに送信されるのは、約1キロメートル単位に丸めた位置だけです。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col이 현재 위치의 날씨를 표시합니다. 약 1km 단위로 반올림한 위치만 Open-Meteo에 전송됩니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col 会显示你所在位置的天气。只有精确到约 1 公里的位置会发送到 Open-Meteo。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col 會顯示你所在位置的天氣。只有精確到約 1 公里的位置會傳送至 Open-Meteo。"
+          }
         }
       }
     },
@@ -173,6 +713,60 @@
           "stringUnit": {
             "state": "translated",
             "value": "Col met au premier plan l’onglet du Terminal ou d’iTerm2 où travaille un agent IA, quand vous cliquez sur sa session dans l’île."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col holt den Tab von Terminal oder iTerm2, in dem ein KI-Agent läuft, in den Vordergrund, wenn Sie auf der Insel auf seine Sitzung klicken."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col haalt het tabblad van Terminal of iTerm2 waarin een AI-agent draait naar voren wanneer je op het eiland op zijn sessie klikt."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col porta in primo piano il pannello di Terminale o iTerm2 in cui lavora un agente IA, quando fai clic sulla sua sessione nell’isola."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col trae al frente la pestaña de Terminal o iTerm2 en la que trabaja un agente de IA cuando haces clic en su sesión en la isla."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Col traz para a frente a aba do Terminal ou do iTerm2 em que um agente de IA está trabalhando, quando você clica na sessão dele na ilha."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アイランドでAIエージェントのセッションをクリックすると、Colはそのエージェントが動作しているターミナルまたはiTerm2のタブを前面に表示します。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아일랜드에서 AI 에이전트의 세션을 클릭하면, Col이 해당 에이전트가 실행 중인 터미널 또는 iTerm2 탭을 앞으로 가져옵니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当你在岛中点按 AI 智能体的会话时，Col 会将该智能体所在的终端或 iTerm2 标签页移到最前面。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "當你在島中按一下 AI 代理的工作階段時，Col 會將該代理所在的終端機或 iTerm2 標籤頁移到最前面。"
           }
         }
       }
