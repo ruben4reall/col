@@ -58,7 +58,7 @@ struct WhatsNewView: View {
     }
 
     private func tile(_ item: Item) -> some View {
-        VStack(spacing: 7) {
+        VStack(spacing: 5) {
             Image(systemName: item.symbol)
                 .font(.system(size: 19, weight: .semibold))
                 .foregroundStyle(item.tint)
@@ -67,8 +67,9 @@ struct WhatsNewView: View {
                 .font(.system(size: 10.5, weight: .semibold))
                 .foregroundStyle(.white)
                 .multilineTextAlignment(.center)
-                .lineLimit(2)
-                .minimumScaleFactor(0.85)
+                // Some languages need three lines for a title: the tile keeps them whole rather than cut them.
+                .lineLimit(3)
+                .minimumScaleFactor(0.8)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.horizontal, 6)
