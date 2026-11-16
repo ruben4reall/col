@@ -183,6 +183,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}
         run: |
+          # Beside each versioned file, a copy under a name that never changes, so a page can link to
+          # https://github.com/ruben4reall/col/releases/latest/download/Col-windows-setup.exe and the like.
+          for file in dist/Col-*-windows-*; do
+            stable="dist/Col-windows-${file##*-windows-}"
+            cp "$file" "$stable"
+          done
+          ls -l dist
           # The release is made by hand for the Mac; wait for it, never create one.
           for attempt in $(seq 1 40); do
             if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
