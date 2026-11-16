@@ -6,7 +6,7 @@
     <SolidColorBrush x:Key="Win.Text" Color="#FFFFFF" />
     <SolidColorBrush x:Key="Win.Text.Secondary" Color="#C5FFFFFF" />
     <SolidColorBrush x:Key="Win.Text.Tertiary" Color="#87FFFFFF" />
-    <SolidColorBrush x:Key="Win.Card" Color="#0DFFFFFF" />
+    <SolidColorBrush x:Key="Win.CardFill" Color="#0DFFFFFF" />
     <SolidColorBrush x:Key="Win.Card.Stroke" Color="#19000000" />
     <SolidColorBrush x:Key="Win.Control" Color="#0FFFFFFF" />
     <SolidColorBrush x:Key="Win.Control.Hover" Color="#15FFFFFF" />
@@ -27,7 +27,7 @@
     <FontFamily x:Key="Win.Icons">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
 
     <Style x:Key="Win.Card" TargetType="Border">
-        <Setter Property="Background" Value="{DynamicResource Win.Card}" />
+        <Setter Property="Background" Value="{DynamicResource Win.CardFill}" />
         <Setter Property="BorderBrush" Value="{DynamicResource Win.Card.Stroke}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="6" />

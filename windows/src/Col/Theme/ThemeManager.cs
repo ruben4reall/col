@@ -29,7 +29,7 @@ internal static class ThemeManager
             Set("Win.Text", 0xFFFFFFFF);
             Set("Win.Text.Secondary", 0xC5FFFFFF);
             Set("Win.Text.Tertiary", 0x87FFFFFF);
-            Set("Win.Card", SupportsMica ? 0x0DFFFFFF : 0xFF2B2B2B);
+            Set("Win.CardFill", SupportsMica ? 0x0DFFFFFF : 0xFF2B2B2B);
             Set("Win.Card.Stroke", 0x19000000);
             Set("Win.Control", 0x0FFFFFFF);
             Set("Win.Control.Hover", 0x15FFFFFF);
@@ -49,7 +49,7 @@ internal static class ThemeManager
             Set("Win.Text", 0xE4000000);
             Set("Win.Text.Secondary", 0x9E000000);
             Set("Win.Text.Tertiary", 0x72000000);
-            Set("Win.Card", SupportsMica ? 0xB3FFFFFF : 0xFFFBFBFB);
+            Set("Win.CardFill", SupportsMica ? 0xB3FFFFFF : 0xFFFBFBFB);
             Set("Win.Card.Stroke", 0x0F000000);
             Set("Win.Control", 0xB3FFFFFF);
             Set("Win.Control.Hover", 0x80F9F9F9);
