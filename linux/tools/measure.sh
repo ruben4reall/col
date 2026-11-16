@@ -14,11 +14,24 @@ here=$(cd "$(dirname "$0")" && pwd)
 run=$(mktemp -d)
 chmod 700 "$run"
 sway_pid=""
+# Whatever happens, the processes started here stop and their folder goes, and the script keeps its own result: a
+# process that already left, or a file a dying one still holds, is not a failure of the check. GTK may start the
+# document portal, which mounts a folder in the runtime directory: it is unmounted first.
 cleanup() {
-    [ -n "$sway_pid" ] && kill "$sway_pid" 2>/dev/null || true
-    rm -rf "$run"
+    status=$?
+    set +e
+    if [ -n "$sway_pid" ]; then
+        kill "$sway_pid" 2>/dev/null
+        wait "$sway_pid" 2>/dev/null
+    fi
+    for tool in fusermount3 fusermount; do
+        command -v "$tool" >/dev/null && "$tool" -uz "$run/doc" 2>/dev/null
+    done
+    rm -rf "$run" 2>/dev/null
+    exit "$status"
 }
 trap cleanup EXIT
+trap 'exit 130' INT TERM
 
 export XDG_RUNTIME_DIR="$run"
 export XDG_CONFIG_HOME="$run/config" XDG_CACHE_HOME="$run/cache" XDG_DATA_HOME="$run/data" HOME="$run/home"
@@ -53,4 +66,5 @@ echo "  memory: RSS $((rss / 1024)) MB, PSS ${pss} kB"
 awk -v a="$cpu0" -v b="$cpu1" -v t="$ticks" -v s="$seconds" 'BEGIN { printf "  processor: %.3f%% (%.2f s over %d s)\n", (b - a) / t / s * 100, (b - a) / t, s }'
 echo "  wake-ups: $((wake1 - wake0)) in ${seconds}s"
 echo "  threads: $threads"
-kill "$pid"
+kill "$pid" 2>/dev/null || true
+wait "$pid" 2>/dev/null || true
