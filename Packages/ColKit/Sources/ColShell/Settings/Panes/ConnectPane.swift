@@ -561,24 +561,12 @@ struct APIWidgetEditor: View {
         reading = true
         readError = nil
         let values = Dictionary(headers.filter { !$0.name.isEmpty }.map { ($0.name, $0.value) }, uniquingKeysWith: { first, _ in first })
-        var probe = definition
-        probe.headers = Array(values.keys)
-        // The answer itself, read as Col's own format would read it, so the mapping can change without reading again.
-        probe.mapping = APIWidget.Mapping()
+        let address = definition.url
         Task { @MainActor in
             defer { reading = false }
             do {
-                guard let url = URL(string: probe.url), probe.isValidURL else { throw WidgetCenter.ReadError.badURL }
-                var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData)
-                request.setValue("application/json", forHTTPHeaderField: "Accept")
-                for (name, value) in values where APIWidget.isValidHeaderName(name) { request.setValue(value, forHTTPHeaderField: name) }
-                let configuration = URLSessionConfiguration.ephemeral
-                configuration.timeoutIntervalForRequest = 15
-                let (data, response) = try await URLSession(configuration: configuration).data(for: request)
-                if let http = response as? HTTPURLResponse, !(200..<300).contains(http.statusCode) {
-                    throw WidgetCenter.ReadError.status(http.statusCode)
-                }
-                guard data.count <= WidgetCenter.maximumAnswer else { throw WidgetCenter.ReadError.tooLarge }
+                // As the island reads it: within limits, and its headers never sent to another host.
+                let data = try await WidgetCenter.fetch(address, headers: values, session: WidgetCenter.makeSession(redirects: .sameOrigin))
                 guard let document = try? JSONDecoder().decode(JSONValue.self, from: data) else { throw APIWidget.Invalid.notJSON }
                 answer = document
                 answerText = Self.pretty(data)

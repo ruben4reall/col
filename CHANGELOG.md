@@ -12,11 +12,11 @@ Each release's section is what Col's update window and the GitHub release show. 
   ready Shortcut, curl and Home Assistant: [docs/connect.md](docs/connect.md).
 - **Widgets**: a new Widgets place for your pages shows small cards with a figure, a bar, a few lines and up to three
   buttons, pushed by `colctl widget set`, the local API, Col Connect or an extension, in one documented format. A
-  widget dims when its figures are old, and can also show beside the camera. A button calls its address only once you
-  have said yes to it.
+  widget dims when its figures are old, and can also show beside the camera. A widget's button calls its address only
+  once you have said yes to it, the host shown on its own.
 - **Widgets from any web address**: in Settings, Connect, give an address that answers JSON, pick what each field
   shows with key paths such as `{data.temp}`, and see the widget as you type. Col reads it at the interval you choose,
-  and only while the widget shows. Tokens for its headers stay in your Keychain.
+  and only while the widget shows. Tokens for its headers stay in your Keychain and never go to another host.
 - **Plans to review**: when Claude Code asks to leave plan mode, the island shows the plan itself, as Markdown you can
   scroll and select, with Approve and Keep Planning.
 - **Questions in the island**: when Claude Code asks you a question, the island shows it with its options. Click one

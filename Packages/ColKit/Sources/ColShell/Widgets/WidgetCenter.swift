@@ -25,6 +25,9 @@ final class WidgetCenter {
         case calling, done, failed
     }
 
+    /// Pushed widgets the place holds at most: a device that keeps pushing new ids is refused once it is full.
+    static let maximumPushed = 32
+
     /// Pushed widgets, in the order they first arrived.
     private(set) var pushed: [Entry] = []
     /// The widgets read from an address, as the user set them up.
@@ -44,15 +47,11 @@ final class WidgetCenter {
     @ObservationIgnored private var saving: Task<Void, Never>?
     /// Where pushed widgets are kept between launches; nil keeps them in memory only, as in tests.
     @ObservationIgnored private let file: URL?
-    /// Reads and button calls: no cookies, no cache, nothing kept.
-    @ObservationIgnored let session: URLSession = {
-        let configuration = URLSessionConfiguration.ephemeral
-        configuration.timeoutIntervalForRequest = 15
-        configuration.httpCookieAcceptPolicy = .never
-        configuration.httpShouldSetCookies = false
-        configuration.urlCache = nil
-        return URLSession(configuration: configuration)
-    }()
+    /// Reads: no cookies, no cache, nothing kept, and a redirect only within the address's own origin, so the headers
+    /// the user gave never reach another host.
+    @ObservationIgnored let session = WidgetCenter.makeSession(redirects: .sameOrigin)
+    /// Button calls: the same, and never redirected.
+    @ObservationIgnored let callSession = WidgetCenter.makeSession(redirects: .none)
 
     static var defaultFile: URL {
         FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
@@ -64,7 +63,9 @@ final class WidgetCenter {
         self.definitions = definitions
         if let file, let data = try? Data(contentsOf: file),
            let saved = try? JSONDecoder().decode([Saved].self, from: data) {
-            pushed = saved.compactMap { item in (try? item.widget.validated()).map { Entry(widget: $0, updated: item.updated) } }
+            pushed = saved.prefix(Self.maximumPushed).compactMap { item in
+                (try? item.widget.validated()).map { Entry(widget: $0, updated: item.updated) }
+            }
         }
     }
 
@@ -75,16 +76,22 @@ final class WidgetCenter {
         }
     }
 
+    /// How many widgets the place shows, without building them.
+    var count: Int { pushed.count + definitions.count }
+
     var hasContent: Bool { !pushed.isEmpty || !definitions.isEmpty }
 
     // MARK: Pushed widgets
 
-    /// Shows or updates a widget, already validated. One that asks for it shows in the closed island too.
-    func set(_ widget: WidgetRequest, now: Date = Date()) {
+    /// Shows or updates a widget, already validated. One that asks for it shows in the closed island too. False when
+    /// the place is full and the widget is a new one.
+    @discardableResult
+    func set(_ widget: WidgetRequest, now: Date = Date()) -> Bool {
         let entry = Entry(widget: widget, updated: now)
         if let index = pushed.firstIndex(where: { $0.id == widget.id }) {
             pushed[index] = entry
         } else {
+            guard pushed.count < Self.maximumPushed else { return false }
             pushed.append(entry)
         }
         if widget.activity == true {
@@ -93,6 +100,7 @@ final class WidgetCenter {
             remove?(widget.activityID)
         }
         save()
+        return true
     }
 
     /// Takes a pushed widget away; false when there was none of that id.
@@ -110,14 +118,16 @@ final class WidgetCenter {
         var updated: Date
     }
 
-    /// Writes the pushed widgets a moment after the last change, readable by the user only.
+    /// Writes the pushed widgets a moment after the last change, readable by the user only. A burst of pushes writes
+    /// once, after it.
     private func save() {
         guard let file else { return }
         saving?.cancel()
-        let saved = pushed.map { Saved(widget: $0.widget, updated: $0.updated) }
-        saving = Task { @MainActor in
+        saving = Task { @MainActor [weak self] in
             try? await Task.sleep(for: .seconds(1))
-            guard !Task.isCancelled, let data = try? JSONEncoder().encode(saved) else { return }
+            guard let self, !Task.isCancelled,
+                  let data = try? JSONEncoder().encode(self.pushed.map { Saved(widget: $0.widget, updated: $0.updated) })
+            else { return }
             try? FileManager.default.createDirectory(at: file.deletingLastPathComponent(), withIntermediateDirectories: true,
                                                      attributes: [.posixPermissions: 0o700])
             try? data.write(to: file, options: [.atomic])
@@ -141,6 +151,11 @@ final class WidgetCenter {
     var isWatched: Bool { watchers > 0 }
 
     func setDefinitions(_ definitions: [APIWidget]) {
+        // A widget removed, or a header it no longer sends, takes its value out of the Keychain.
+        for old in self.definitions {
+            let kept = definitions.first { $0.id == old.id }?.headers ?? []
+            for name in old.headers where !kept.contains(name) { Self.setHeaderValue(nil, name, of: old.id) }
+        }
         self.definitions = definitions
         read = read.filter { id, _ in definitions.contains { $0.id == id } }
         Preferences.apiWidgets = definitions
@@ -198,20 +213,51 @@ final class WidgetCenter {
     /// The most an address may answer: a widget's JSON is small.
     static let maximumAnswer = 1 << 20
 
-    /// Reads an address with the definition's headers (their values from the Keychain), and maps the answer.
+    /// Reads an address with the definition's headers (their values from the Keychain, or `values`), and maps the
+    /// answer.
     static func read(_ definition: APIWidget, session: URLSession, headers values: [String: String]? = nil)
         async throws -> (data: Data, widget: WidgetRequest, missing: [String]) {
-        guard definition.isValidURL, let url = URL(string: definition.url) else { throw ReadError.badURL }
-        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData)
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        var headers: [String: String] = [:]
         for name in definition.headers where APIWidget.isValidHeaderName(name) {
-            if let value = values?[name] ?? headerValue(name, of: definition.id) { request.setValue(value, forHTTPHeaderField: name) }
+            if let value = values?[name] ?? headerValue(name, of: definition.id) { headers[name] = value }
         }
-        let (data, response) = try await session.data(for: request)
-        if let http = response as? HTTPURLResponse, !(200..<300).contains(http.statusCode) { throw ReadError.status(http.statusCode) }
-        guard data.count <= maximumAnswer else { throw ReadError.tooLarge }
+        let data = try await fetch(definition.url, headers: headers, session: session)
         let mapped = try definition.widget(from: data)
         return (data, mapped.widget, mapped.missing)
+    }
+
+    /// One read of an address: a 2xx answer of `maximumAnswer` bytes at most, read as it arrives and dropped past
+    /// that size.
+    static func fetch(_ address: String, headers: [String: String], session: URLSession) async throws -> Data {
+        guard WidgetButton.isCallable(address), let url = URL(string: address) else { throw ReadError.badURL }
+        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData)
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        for (name, value) in headers where APIWidget.isValidHeaderName(name) { request.setValue(value, forHTTPHeaderField: name) }
+        let (bytes, response) = try await session.bytes(for: request)
+        if let http = response as? HTTPURLResponse, !(200..<300).contains(http.statusCode) { throw ReadError.status(http.statusCode) }
+        guard response.expectedContentLength <= Int64(maximumAnswer) else { throw ReadError.tooLarge }
+        var data = Data()
+        for try await byte in bytes {
+            data.append(byte)
+            if data.count > maximumAnswer { throw ReadError.tooLarge }
+        }
+        return data
+    }
+
+    enum Redirects {
+        /// Within the address's own scheme, host and port.
+        case sameOrigin
+        case none
+    }
+
+    static func makeSession(redirects: Redirects) -> URLSession {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.timeoutIntervalForRequest = 15
+        configuration.timeoutIntervalForResource = 30
+        configuration.httpCookieAcceptPolicy = .never
+        configuration.httpShouldSetCookies = false
+        configuration.urlCache = nil
+        return URLSession(configuration: configuration, delegate: RedirectPolicy(redirects), delegateQueue: nil)
     }
 
     static func headerValue(_ name: String, of widget: String) -> String? {
@@ -225,19 +271,21 @@ final class WidgetCenter {
     static func describe(_ error: Error) -> String {
         switch error {
         case ReadError.badURL: String(localized: "The address is not an http or https one.", bundle: .module)
+        case ReadError.status(let code) where (300..<400).contains(code):
+            String(localized: "The address sends Col elsewhere (\(code)): give the address it leads to.", bundle: .module)
         case ReadError.status(let code): String(localized: "The address answered \(code).", bundle: .module)
         case ReadError.tooLarge: String(localized: "The answer is too large for a widget.", bundle: .module)
         case APIWidget.Invalid.notJSON: String(localized: "The answer is not JSON.", bundle: .module)
-        case APIWidget.Invalid.badWidget(let invalid): invalid.message
+        case APIWidget.Invalid.badWidget(let invalid): invalid.localizedMessage
         default: error.localizedDescription
         }
     }
 
     // MARK: Buttons
 
-    /// A button was pressed: its address is called, once the user has said yes to it.
+    /// A button was pressed: its address is called, once the user has said yes to this widget's button calling it.
     func press(_ button: WidgetButton, of widget: String) {
-        if Preferences.confirmedWidgetCalls.contains(button.confirmationKey) {
+        if Preferences.confirmedWidgetCalls.contains(button.confirmationKey(widget: widget)) {
             call(button, of: widget)
         } else {
             confirming = (widget, button)
@@ -247,7 +295,7 @@ final class WidgetCenter {
     func confirm() {
         guard let (widget, button) = confirming else { return }
         confirming = nil
-        Preferences.confirmedWidgetCalls.insert(button.confirmationKey)
+        Preferences.confirmedWidgetCalls.insert(button.confirmationKey(widget: widget))
         call(button, of: widget)
     }
 
@@ -255,7 +303,7 @@ final class WidgetCenter {
         confirming = nil
     }
 
-    static func callKey(_ widget: String, _ button: WidgetButton) -> String { widget + "\n" + button.confirmationKey }
+    static func callKey(_ widget: String, _ button: WidgetButton) -> String { button.confirmationKey(widget: widget) }
 
     private func call(_ button: WidgetButton, of widget: String) {
         guard let valid = button.validated(), let url = URL(string: valid.url) else { return }
@@ -270,14 +318,54 @@ final class WidgetCenter {
         Task { @MainActor [weak self] in
             guard let self else { return }
             let succeeded: Bool
-            if let (_, response) = try? await self.session.data(for: request), let http = response as? HTTPURLResponse {
-                succeeded = (200..<300).contains(http.statusCode)
+            // Not redirected: a 3xx is the answer of the address the user said yes to.
+            if let (_, response) = try? await self.callSession.data(for: request), let http = response as? HTTPURLResponse {
+                succeeded = (200..<400).contains(http.statusCode)
             } else {
                 succeeded = false
             }
             self.calls[key] = succeeded ? .done : .failed
             try? await Task.sleep(for: .seconds(2))
             if self.calls[key] != .calling { self.calls[key] = nil }
+        }
+    }
+}
+
+/// Where a widget's request may be redirected: within its own origin, or nowhere. A redirect refused leaves its 3xx
+/// as the answer.
+final class RedirectPolicy: NSObject, URLSessionTaskDelegate, Sendable {
+    let redirects: WidgetCenter.Redirects
+
+    init(_ redirects: WidgetCenter.Redirects) {
+        self.redirects = redirects
+    }
+
+    /// Same scheme, host and port, the default ports counted.
+    static func sameOrigin(_ a: URL?, _ b: URL?) -> Bool {
+        guard let a, let b, let schemeA = a.scheme?.lowercased(), let schemeB = b.scheme?.lowercased(),
+              let hostA = a.host?.lowercased(), let hostB = b.host?.lowercased()
+        else { return false }
+        func port(_ url: URL, _ scheme: String) -> Int? { url.port ?? (scheme == "https" ? 443 : scheme == "http" ? 80 : nil) }
+        return schemeA == schemeB && hostA == hostB && port(a, schemeA) == port(b, schemeB)
+    }
+
+    func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse,
+                    newRequest request: URLRequest, completionHandler: @escaping @Sendable (URLRequest?) -> Void) {
+        switch redirects {
+        case .none: completionHandler(nil)
+        case .sameOrigin: completionHandler(Self.sameOrigin(task.originalRequest?.url, request.url) ? request : nil)
+        }
+    }
+}
+
+extension WidgetRequest.Invalid {
+    /// The message in the user's language, for the island and the settings. The API answers in English.
+    var localizedMessage: String {
+        switch self {
+        case .missingID: String(localized: "A widget needs an id.", bundle: .module)
+        case .badID: String(localized: "A widget’s id is 1 to 64 letters, digits, dots, dashes or underscores.", bundle: .module)
+        case .badButton(let index): String(localized: "Button \(index + 1) needs a title and an http or https address.", bundle: .module)
+        case .tooManyButtons: String(localized: "A widget has three buttons at most.", bundle: .module)
         }
     }
 }

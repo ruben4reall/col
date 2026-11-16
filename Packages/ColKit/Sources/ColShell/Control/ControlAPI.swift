@@ -63,7 +63,7 @@ final class ControlAPI {
             let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "dev"
             respond(.json([
                 "app": "Col", "version": version, "activities": custom.entries.count, "agents": agents.sessions.count,
-                "widgets": widgets.entries.count, "connect": Preferences.connectEnabled,
+                "widgets": widgets.count, "connect": Preferences.connectEnabled,
             ]))
 
         case ("GET", ["activities"]):
@@ -79,7 +79,7 @@ final class ControlAPI {
         case ("POST", ["activities"]):
             do {
                 let payload = try JSONDecoder().decode(ActivityRequest.self, from: request.body).validated()
-                push(payload)
+                guard push(payload) else { return respond(.error(Self.activitiesFull, status: 409)) }
                 respond(.json(["id": payload.id]))
             } catch {
                 respond(.error("expected an activity with an id", status: 400))
@@ -139,7 +139,9 @@ final class ControlAPI {
         widget.id = id
         do {
             let valid = try widget.validated()
-            widgets.set(valid)
+            guard widgets.set(valid) else {
+                return (409, ["error": "the island holds \(WidgetCenter.maximumPushed) pushed widgets at most: remove one first"])
+            }
             return (200, ["id": valid.id])
         } catch let invalid as WidgetRequest.Invalid {
             return (400, ["error": invalid.message])
@@ -153,12 +155,12 @@ final class ControlAPI {
         switch route {
         case .status:
             let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "dev"
-            return .json(["app": "Col", "version": version, "activities": custom.entries.count, "widgets": widgets.entries.count])
+            return .json(["app": "Col", "version": version, "activities": custom.entries.count, "widgets": widgets.count])
         case .pushActivity:
             guard let payload = try? JSONDecoder().decode(ActivityRequest.self, from: request.body).validated() else {
                 return .error("expected an activity with an id", status: 400)
             }
-            push(payload)
+            guard push(payload) else { return .error(Self.activitiesFull, status: 409) }
             return .json(["id": payload.id])
         case .finishActivity(let id):
             guard finish(id, text: request.query["text"]) else { return .error("no such activity", status: 404) }
@@ -176,9 +178,14 @@ final class ControlAPI {
         }
     }
 
-    func push(_ request: ActivityRequest) {
-        custom.upsert(request)
+    static let activitiesFull = "Col holds \(CustomActivities.maximum) activities pushed by programs at most: remove one, or let one end"
+
+    /// Shows or updates an activity; false when as many run as Col holds and this one is new.
+    @discardableResult
+    func push(_ request: ActivityRequest) -> Bool {
+        guard custom.upsert(request) else { return false }
         post(request.activity(now: Date()))
+        return true
     }
 
     @discardableResult

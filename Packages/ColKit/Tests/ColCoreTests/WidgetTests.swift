@@ -41,7 +41,10 @@ import Testing
     }
 
     @Test func buttonsOnlyCallTheWeb() throws {
-        for address in ["file:///etc/passwd", "javascript:alert(1)", "shortcuts://run-shortcut?name=x", "http://", "ftp://host/x", "/relative"] {
+        for address in ["file:///etc/passwd", "javascript:alert(1)", "shortcuts://run-shortcut?name=x", "http://", "ftp://host/x", "/relative",
+                        // A user part dresses an address up as another one: this one reaches evil.example.
+                        "http://homeassistant.local%3A8123%2Fapi%2Fwebhook%2Flights@evil.example/x", "https://user:pass@host.example/x",
+                        "https://@host.example/x"] {
             let widget = WidgetRequest(id: "a", buttons: [WidgetButton(title: "Go", url: address)])
             #expect(throws: WidgetRequest.Invalid.badButton(0)) { try widget.validated() }
         }
@@ -53,7 +56,9 @@ import Testing
         #expect(throws: WidgetRequest.Invalid.tooManyButtons) { try four.validated() }
         let get = try WidgetRequest(id: "a", buttons: [WidgetButton(title: "Go", url: "https://x.y/hook", method: "get")]).validated()
         #expect(get.buttons?.first?.method == "GET")
-        #expect(get.buttons?.first?.confirmationKey == "GET https://x.y/hook")
+        #expect(get.buttons?.first?.confirmationKey(widget: "ci") == "ci\nGET https://x.y/hook")
+        #expect(get.buttons?.first?.host == "x.y")
+        #expect(WidgetButton(title: "Go", url: "http://homeassistant.local:8123/api").host == "homeassistant.local:8123")
     }
 
     @Test func keepsWhatTheIslandShows() throws {

@@ -16,13 +16,21 @@ final class CustomActivities {
 
     private(set) var entries: [Entry] = []
 
-    func upsert(_ request: ActivityRequest, now: Date = Date()) {
+    /// Activities programs and devices may keep at once: one that keeps pushing new ids is refused past this.
+    static let maximum = 32
+
+    /// Shows or updates an activity. False when as many run as Col holds and this one is new.
+    @discardableResult
+    func upsert(_ request: ActivityRequest, now: Date = Date()) -> Bool {
         let entry = Entry(request: request, expires: request.ttl.map { now.addingTimeInterval($0) }, finished: false, updated: now)
         if let index = entries.firstIndex(where: { $0.id == request.id }) {
             entries[index] = entry
-        } else {
-            entries.insert(entry, at: 0)
+            return true
         }
+        prune(now: now)
+        guard entries.count < Self.maximum else { return false }
+        entries.insert(entry, at: 0)
+        return true
     }
 
     /// Marks an activity done; it lingers a moment with a check mark, then leaves.

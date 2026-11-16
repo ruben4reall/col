@@ -75,6 +75,7 @@ struct WidgetTile: View {
     let entry: WidgetCenter.Entry
     let center: WidgetCenter?
     var wide = false
+    @State private var armed = false
 
     var body: some View {
         // Checked again every half minute while the tile shows, so old figures dim as they age.
@@ -187,9 +188,21 @@ struct WidgetTile: View {
                     WidgetCallButton(button: button, state: center?.calls[WidgetCenter.callKey(entry.id, button)]) {
                         center?.press(button, of: entry.id)
                     }
+                    .disabled(!armed)
                 }
             }
+            // A widget that arrives or changes under the pointer waits a moment before its buttons answer a click.
+            .task(id: ArmedFor(id: entry.id, updated: entry.updated)) {
+                armed = false
+                try? await Task.sleep(for: .milliseconds(600))
+                if !Task.isCancelled { armed = true }
+            }
         }
+    }
+
+    private struct ArmedFor: Equatable {
+        var id: String
+        var updated: Date
     }
 }
 
@@ -229,6 +242,8 @@ private struct CallConfirmation: View {
     let button: WidgetButton
     let confirm: () -> Void
     let cancel: () -> Void
+    /// Call It waits a moment after the question appears, so the click that pressed the button never answers it.
+    @State private var armed = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -241,10 +256,18 @@ private struct CallConfirmation: View {
                     .foregroundStyle(.white)
                     .lineLimit(1)
             }
+            // The host on its own, where a long address cannot hide it, then the whole address.
+            if let host = button.host {
+                Text(verbatim: host)
+                    .font(.system(size: 13, weight: .semibold, design: .monospaced))
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+                    .truncationMode(.head)
+            }
             Text(verbatim: button.resolvedMethod + " " + button.url)
                 .font(.system(size: 11, design: .monospaced))
                 .foregroundStyle(.white.opacity(0.8))
-                .lineLimit(3)
+                .lineLimit(2)
                 .textSelection(.enabled)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
@@ -260,6 +283,8 @@ private struct CallConfirmation: View {
                         .background(Capsule().fill(.white))
                 }
                 .buttonStyle(PressableStyle())
+                .disabled(!armed)
+                .opacity(armed ? 1 : 0.5)
                 Button(action: cancel) {
                     Text("Cancel", bundle: .module)
                         .font(.system(size: 12, weight: .semibold))
@@ -270,7 +295,7 @@ private struct CallConfirmation: View {
                 }
                 .buttonStyle(PressableStyle())
                 Spacer(minLength: 0)
-                Text("Asked once for each address", bundle: .module)
+                Text("Asked once for this button", bundle: .module)
                     .font(.system(size: 11))
                     .foregroundStyle(Theme.tertiaryText)
             }
@@ -282,5 +307,9 @@ private struct CallConfirmation: View {
                 .fill(Color.orange.opacity(0.1))
                 .strokeBorder(Color.orange.opacity(0.35), lineWidth: 1)
         )
+        .task {
+            try? await Task.sleep(for: .milliseconds(600))
+            if !Task.isCancelled { armed = true }
+        }
     }
 }

@@ -48,15 +48,18 @@ One format, wherever it comes from:
 | `activity` | true or false | Also show the widget beside the camera in the closed island: its symbol on the left, its value or progress on the right, until it goes stale |
 
 Text too long is cut to the lengths above. A widget is refused, with a `400` saying why, when its id is not one of the
-characters allowed, when it has more than three buttons, or when a button has no title or an address that is not
-http or https.
+characters allowed, when it has more than three buttons, or when a button has no title, or an address that is not
+http or https or that has a user part (`name@host`). The island holds 32 pushed widgets: a new one past that is
+refused with a `409` until one is removed; updating one already there always works.
 
 ## Buttons
 
 Pressing a button calls its address from your Mac: a `POST` with the body `{"widget": "<id>", "button": "<title>"}`,
-or a `GET`. The first time a button calls an address, the island shows the method and the whole address and asks
-before calling it; once you say yes, that address is called at once from then on. The button shows a check mark when
-the address answers 2xx, a warning otherwise. Buttons never open files, apps or other schemes.
+or a `GET`. The first time a widget's button calls an address, the island shows the host on a line of its own, then
+the method and the whole address, and asks before calling it; once you say yes, that widget's button calls it at once
+from then on. Another widget with the same address asks again. The call is never redirected. The button shows a
+check mark when the address answers 2xx or 3xx, a warning otherwise. Buttons never open files, apps or other schemes,
+and a widget that has just appeared or changed waits a moment before its buttons answer a click.
 
 ## Pushing a widget
 
@@ -101,7 +104,9 @@ Settings, Connect, **Add a Widget from a URL**:
 - **Read**: every 1, 5, 15, 30 or 60 minutes, and only while the widget shows in the island. Nothing is read while
   the island is closed or shows another page.
 - **Headers**: a token or a key, if the address needs one (`Authorization`, `X-Api-Key`). Their values are kept in
-  your Keychain, never in Col's settings.
+  your Keychain, never in Col's settings, and leave it when you remove the widget or the header. A redirect is followed
+  only within the same scheme, host and port, so the headers never reach another host; an answer is read up to 1 MB,
+  for 30 seconds at most.
 - **What the widget shows**: each field is plain text, or a key path of the answer in braces:
 
   | Field | Example |

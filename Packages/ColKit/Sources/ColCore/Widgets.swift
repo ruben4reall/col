@@ -230,14 +230,24 @@ public struct WidgetButton: Codable, Equatable, Hashable, Sendable {
         return WidgetButton(title: String(title.prefix(24)), url: url, method: resolvedMethod, symbol: symbol.map { String($0.prefix(80)) })
     }
 
-    /// Only the web: http or https, with a host. Never a file, a script or another app's scheme.
+    /// Only the web: http or https, with a host, and nothing before it. A user part (`name@host`) is refused: it can
+    /// dress an address up as another one, `http://homeassistant.local%3A8123@elsewhere.example/` reaching
+    /// elsewhere.example. Never a file, a script or another app's scheme.
     public static func isCallable(_ address: String) -> Bool {
         guard let components = URLComponents(string: address), let scheme = components.scheme?.lowercased(),
-              scheme == "http" || scheme == "https", let host = components.host, !host.isEmpty
+              scheme == "http" || scheme == "https", let host = components.host, !host.isEmpty,
+              components.percentEncodedUser == nil, components.percentEncodedPassword == nil
         else { return false }
         return true
     }
 
-    /// What the user says yes to, once: the method and the whole address.
-    public var confirmationKey: String { resolvedMethod + " " + url }
+    /// The host the button calls, as the confirmation names it on its own line.
+    public var host: String? {
+        guard let components = URLComponents(string: url), let host = components.host else { return nil }
+        return components.port.map { "\(host):\($0)" } ?? host
+    }
+
+    /// What the user says yes to, once: this widget's button calling this address with this method. Another widget
+    /// with the same address asks again.
+    public func confirmationKey(widget: String) -> String { widget + "\n" + resolvedMethod + " " + url }
 }

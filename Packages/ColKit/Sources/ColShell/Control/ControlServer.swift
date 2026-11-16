@@ -188,7 +188,7 @@ final class ControlServer: @unchecked Sendable {
     }
 
     private static func write(_ response: HTTPResponse, to client: Int32) {
-        let reason = [200: "OK", 400: "Bad Request", 404: "Not Found", 405: "Method Not Allowed", 503: "Service Unavailable"][response.status] ?? "Status"
+        let reason = [200: "OK", 400: "Bad Request", 404: "Not Found", 405: "Method Not Allowed", 409: "Conflict", 503: "Service Unavailable"][response.status] ?? "Status"
         var message = Data("HTTP/1.1 \(response.status) \(reason)\r\nContent-Type: application/json\r\nContent-Length: \(response.body.count)\r\nConnection: close\r\n\r\n".utf8)
         message.append(response.body)
         message.withUnsafeBytes { buffer in
