@@ -50,6 +50,7 @@ final class AccessoryBatteries {
 
     func stop() {
         pending?.cancel()
+        pending = nil
         interests.values.forEach { IOObjectRelease($0) }
         iterators.forEach { IOObjectRelease($0) }
         interests = [:]
