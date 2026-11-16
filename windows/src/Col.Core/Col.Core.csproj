@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The rules of Col for Windows: geometry, activities, agents, lyrics, the local API. No Windows API here, so the
+       tests run on any system. -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>Col.Core</RootNamespace>
+    <AssemblyName>Col.Core</AssemblyName>
+    <IsAotCompatible>true</IsAotCompatible>
+    <IsTrimmable>true</IsTrimmable>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Col.Tests" />
+  </ItemGroup>
+</Project>
