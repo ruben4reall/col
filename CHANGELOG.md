@@ -2,6 +2,31 @@
 
 Each release's section is what Col's update window and the GitHub release show. Dates are in ISO format.
 
+## 2.4.0 (unreleased)
+
+- **Col Connect**: your iPhone, Home Assistant, a Raspberry Pi or a build machine on your network can now push live
+  activities and widgets into the island. Turn it on in Settings, Connect, pair each device (a QR code for your
+  phone, a token for the others), and it reaches the same routes as `colctl`. Each device has its own token, kept in
+  your Keychain, which you can replace or take back; the list says when each one was last seen. Off until you turn
+  it on, it answers only your local network, and Allow and Deny for your agents never leave the Mac. The guide has a
+  ready Shortcut, curl and Home Assistant: [docs/connect.md](docs/connect.md).
+- **Widgets**: a new Widgets place for your pages shows small cards with a figure, a bar, a few lines and up to three
+  buttons, pushed by `colctl widget set`, the local API, Col Connect or an extension, in one documented format. A
+  widget dims when its figures are old, and can also show beside the camera. A button calls its address only once you
+  have said yes to it.
+- **Widgets from any web address**: in Settings, Connect, give an address that answers JSON, pick what each field
+  shows with key paths such as `{data.temp}`, and see the widget as you type. Col reads it at the interval you choose,
+  and only while the widget shows. Tokens for its headers stay in your Keychain.
+- **Plans to review**: when Claude Code asks to leave plan mode, the island shows the plan itself, as Markdown you can
+  scroll and select, with Approve and Keep Planning.
+- **Questions in the island**: when Claude Code asks you a question, the island shows it with its options. Click one
+  to answer, or answer in the terminal, which comes forward.
+- **Back to the terminal**: click an agent's session in the island and its own tab comes forward in Terminal or
+  iTerm2, or its folder's window in VS Code, Cursor, Windsurf or Zed. macOS asks once to let Col select the tab.
+- **More extensions**: Countdown, Homebrew Outdated, Docker Containers and Website Status join the examples, and
+  `colctl extensions install` checks an extension's manifest and copies it in from a folder or a repository, turned
+  off until you have read it.
+
 ## 2.3.0 (2026-11-16)
 
 - **The weather**: now, today's high and low and the next hours, with the sky drawn by SF Symbols, in a Weather widget
