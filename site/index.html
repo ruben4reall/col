@@ -4,15 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Col: the notch, made useful</title>
-  <meta name="description" content="A free, open source Mac app that turns the MacBook notch into a living island: music and its lyrics, a prompter under your camera, your AI agents and your own models.">
+  <meta name="description" content="A free, open source Mac app that turns the notch into a living island: music and its lyrics, even on the Lock Screen, your AI agents, the weather, your next call and your own widgets. Now on Windows and Linux too.">
   <link rel="canonical" href="https://getcol.vercel.app/">
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#000000">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Col">
   <meta property="og:url" content="https://getcol.vercel.app/">
-  <meta property="og:title" content="Col: the notch, made useful">
-  <meta property="og:description" content="Music and lyrics, a prompter, your AI agents and your own models, in the MacBook notch. Free and open source.">
+  <meta property="og:title" content="Col 3: the notch, made useful">
+  <meta property="og:description" content="Music and lyrics, even on the Lock Screen, your AI agents, the weather and your own widgets, in the MacBook notch. Free and open source, now on Windows and Linux too.">
   <meta property="og:image" content="https://getcol.vercel.app/assets/brand/og.png">
   <meta property="og:image:width" content="1280">
   <meta property="og:image:height" content="640">
@@ -35,33 +35,36 @@
         <a href="#overview">Overview</a>
         <a href="#music">Music</a>
         <a href="#ai">AI</a>
-        <a href="#prompter">Prompter</a>
+        <a href="#everyday">Every day</a>
         <a href="#design">Design</a>
         <a href="#developers">Developers</a>
+        <a href="#everywhere">Windows and Linux</a>
         <a href="#faq">FAQ</a>
       </div>
       <button class="nav-sound" type="button" aria-pressed="true" aria-label="Sound effects" title="Sound effects">
         <svg class="on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5v5h3.5L12 19V5L7.5 9.5H4Z" fill="currentColor"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>
         <svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5v5h3.5L12 19V5L7.5 9.5H4Z" fill="currentColor"/><path d="m16 9.5 5 5M21 9.5l-5 5"/></svg>
       </button>
-      <a class="nav-cta" href="https://github.com/ruben4reall/col/releases/latest/download/Col.dmg" data-sound="open">Download</a>
+      <a class="nav-cta" href="https://github.com/ruben4reall/col/releases/latest/download/Col.dmg" data-sound="open" data-download data-short>Download</a>
     </nav>
   </header>
 
   <main id="main">
     <section class="hero" id="top" aria-labelledby="hero-title">
       <div class="wrap center">
-        <a class="ribbon reveal" href="https://github.com/ruben4reall/col/blob/main/CHANGELOG.md" data-sound="tick"><span><b>New</b>&nbsp; Islet is now Col</span><span>What’s in 2.0</span></a>
+        <a class="ribbon reveal" href="https://github.com/ruben4reall/col/releases/latest" data-sound="tick"><span><b>New</b>&nbsp; Col 3<span class="more">, now on Windows and Linux too</span></span><span>What’s in 3.0</span></a>
         <p class="hero-name reveal" style="--delay:0.05s">Col</p>
         <h1 class="h1 reveal" id="hero-title" style="--delay:0.1s">The notch, made useful.</h1>
-        <p class="lead reveal" style="--delay:0.2s">Your music and its lyrics, a prompter under your camera, your AI agents and your own models, right where you already look.</p>
+        <p class="lead reveal" style="--delay:0.2s">Your music and its lyrics, your AI agents and your own models, the weather and your next call, right where you already look.</p>
       </div>
-      <figure class="lid reveal" style="--delay:0.3s" data-lid-zoom aria-label="The top of a MacBook screen: the menu bar and the notch, where Col shows a song, its lyrics, the open player, a Claude Code request, a local model answering, the prompter and AirPods in turn.">
+      <figure class="lid reveal" style="--delay:0.3s" data-lid-zoom aria-label="The top of a MacBook screen: the menu bar and the notch, where Col shows a song, its lyrics, the open player, a call about to start, the weather, a Claude Code request, a local model answering, the prompter and AirPods in turn.">
         <div class="stage" data-tour>
           <img class="shot" src="assets/island/rest.webp" style="--w:193" alt="">
-          <img class="shot on" data-state="compact" src="assets/island/music-compact.webp" style="--w:273" alt="">
-          <img class="shot" data-state="lyrics" src="assets/island/lyrics-compact.webp" style="--w:461" alt="">
+          <img class="shot on" data-state="compact" src="assets/island/music-compact.webp" style="--w:271" alt="">
+          <img class="shot" data-state="lyrics" src="assets/island/lyrics-compact.webp" style="--w:449" alt="">
           <img class="shot" data-state="open" src="assets/island/home-open.webp" style="--w:588" alt="">
+          <img class="shot" data-state="meeting" src="assets/island/meeting-compact.webp" style="--w:271" alt="">
+          <img class="shot" data-state="weather" src="assets/island/weather.webp" style="--w:588" alt="">
           <img class="shot" data-state="agent" src="assets/island/agent-request.webp" style="--w:588" alt="">
           <img class="shot" data-state="ask" src="assets/island/ask.webp" style="--w:588" alt="">
           <img class="shot" data-state="prompter" src="assets/island/prompter.webp" style="--w:498" alt="">
@@ -72,7 +75,9 @@
         <div class="chip-row reveal"><div class="chips" role="group" aria-label="What the island shows" data-tour-chips>
           <button type="button" class="chip" data-state="compact" aria-pressed="true" data-caption="A song plays: its cover and a live equalizer sit beside the camera, and nowhere else.">Now playing</button>
           <button type="button" class="chip" data-state="lyrics" aria-pressed="false" data-caption="Or the line being sung, right beside the camera.">Lyrics</button>
-          <button type="button" class="chip" data-state="open" aria-pressed="false" data-caption="Hover or click the notch: the player opens, with the lyrics following the song.">Open</button>
+          <button type="button" class="chip" data-state="open" aria-pressed="false" data-caption="Hover or click the notch: the player opens, its lyrics filling word by word as they are sung.">Open</button>
+          <button type="button" class="chip" data-state="meeting" aria-pressed="false" data-caption="A call is about to start: a countdown in its calendar’s colour, then Join.">Next call</button>
+          <button type="button" class="chip" data-state="weather" aria-pressed="false" data-caption="Nothing plays: the clock, and the weather beside it, once you turn it on.">Weather</button>
           <button type="button" class="chip" data-state="agent" aria-pressed="false" data-caption="Claude Code asks to run a command: allow or deny it from the notch.">Claude Code</button>
           <button type="button" class="chip" data-state="ask" aria-pressed="false" data-caption="Ask your own model a question, without leaving what you are doing.">Your AI</button>
           <button type="button" class="chip" data-state="prompter" aria-pressed="false" data-caption="Your script rolls out of the notch, right under the camera.">Prompter</button>
@@ -80,14 +85,14 @@
         </div></div>
         <p class="caption" aria-live="polite" data-tour-caption>A song plays: its cover and a live equalizer sit beside the camera, and nowhere else.</p>
         <div class="actions">
-          <a class="btn btn-primary" href="https://github.com/ruben4reall/col/releases/latest/download/Col.dmg" data-sound="open">Download for Mac</a>
+          <a class="btn btn-primary" href="https://github.com/ruben4reall/col/releases/latest/download/Col.dmg" data-sound="open" data-download>Download for Mac</a>
           <a class="btn btn-ghost" href="https://github.com/ruben4reall/col" data-sound="tick">View on GitHub</a>
         </div>
+        <p class="also" data-download-also>Also for <a href="#everywhere" data-sound="tick">Windows and Linux</a>, in preview.</p>
         <ul class="facts">
           <li>Free and open source</li>
-          <li>Version 2.0</li>
-          <li>macOS 14 or later</li>
-          <li>15 MB of memory at rest</li>
+          <li>Version 3.0</li>
+          <li>macOS 14 or later, macOS 27 included</li>
         </ul>
       </div>
     </section>
@@ -103,14 +108,14 @@
             <div class="frame"><div class="stage" role="img" aria-label="The notch at rest, then with a song beside the camera, then open with the player and the lyrics.">
               <img loading="lazy" decoding="async" class="shot" src="assets/island/rest.webp" style="--w:193" alt="">
               <img loading="lazy" decoding="async" class="shot" data-state="0" src="assets/island/rest.webp" style="--w:193" alt="">
-              <img loading="lazy" decoding="async" class="shot" data-state="1" src="assets/island/music-compact.webp" style="--w:273" alt="">
+              <img loading="lazy" decoding="async" class="shot" data-state="1" src="assets/island/music-compact.webp" style="--w:271" alt="">
               <img loading="lazy" decoding="async" class="shot" data-state="2" src="assets/island/home-open.webp" style="--w:588" alt="">
             </div></div>
           </div>
           <div class="wrap">
             <div class="pin-steps">
               <div class="pin-step now" data-step="0"><span class="label">At rest</span><h3>Exactly the notch.</h3><p>Nothing runs and nothing shows. The menu bar around it keeps every click.</p></div>
-              <div class="pin-step" data-step="1"><span class="label">A glance</span><h3>Two small wings.</h3><p>A song, a timer, an agent at work. The wings grow beside the camera and never cover a menu or an icon.</p></div>
+              <div class="pin-step" data-step="1"><span class="label">A glance</span><h3>Two small wings.</h3><p>A song, a timer, a call about to start. The wings grow beside the camera and never cover a menu or an icon, the » button of macOS 27 included.</p></div>
               <div class="pin-step" data-step="2"><span class="label">Open</span><h3>Everything, one gesture away.</h3><p>Hover or click to open. Swipe down to open, up to close, sideways to change page.</p></div>
             </div>
             <div class="pin-progress" aria-hidden="true"><i class="now"></i><i></i><i></i></div>
@@ -124,27 +129,53 @@
         <div class="center section-head">
           <p class="eyebrow reveal">Music and lyrics</p>
           <h2 class="h2 reveal" id="music-title">Every song,<br>word for word.</h2>
-          <p class="lead reveal">Apple Music, Spotify, Deezer or YouTube in your browser: Col shows what plays, with its cover and its controls, and the lyrics beside it, line by line, the way Apple Music shows them.</p>
+          <p class="lead reveal">Apple Music, Spotify, Deezer or YouTube in your browser: Col shows what plays, with its cover and its controls, and the lyrics beside it, each word lighting up as it is sung.</p>
         </div>
         <div class="film reveal" data-film>
-          <video muted loop playsinline preload="none" poster="assets/film/lyrics.webp" width="1296" height="456" aria-label="Col open below the notch: a song plays and its lyrics follow it, one line after the other.">
+          <video muted loop playsinline preload="none" poster="assets/film/lyrics.webp" width="1296" height="456" aria-label="Col open below the notch: a song plays and its lyrics follow it, each line filling word by word.">
             <source src="assets/film/lyrics.mp4" type="video/mp4">
           </video>
           <button class="film-toggle" type="button" aria-label="Pause the film" data-sound="tick"><svg class="pause" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><rect x="2.5" y="1.5" width="3" height="11" rx="1"/><rect x="8.5" y="1.5" width="3" height="11" rx="1"/></svg><svg class="play" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M3.5 1.8v10.4c0 .6.6.9 1.1.6l8-5.2a.7.7 0 0 0 0-1.2l-8-5.2c-.5-.3-1.1 0-1.1.6Z"/></svg></button>
         </div>
         <p class="fine center">A real recording of Col. The song and its lyrics were written for this page.</p>
         <div class="tiles" style="margin-top:56px">
+          <div class="tile wide reveal">
+            <div class="duo">
+              <div>
+                <p class="tile-kicker">New in Col 3</p>
+                <h3 class="h3">Lyrics on the Lock Screen.</h3>
+                <p>While your Mac is locked and music plays, the words show large under the clock: the line being sung bright and filling as it goes, the ones around it dim, the cover blurred behind them so they read on any wallpaper. The controls stay at the foot, and the password field stays clear.</p>
+              </div>
+              <div class="frame"><div class="stage lake lock-stage" style="--span:1000;--rows:430" role="img" aria-label="The Lock Screen card on a lake: Into the blue, half lit, between the line before and the lines to come, over the blurred cover, with the controls of Golden Hour by Sunset Avenue, the charge and the weather below.">
+                <img loading="lazy" decoding="async" class="centered" src="assets/island/lock-lyrics.webp" style="--w:720" alt="">
+              </div></div>
+            </div>
+          </div>
+          <div class="tile wide reveal">
+            <div class="duo flip">
+              <div>
+                <p class="tile-kicker">New in Col 3</p>
+                <h3 class="h3">And on your desktop.</h3>
+                <p>The line being sung, large, with the next one below it, above your wallpaper and under every window. Clicks go through it, it never takes the focus, and it fades away a few seconds after you pause.</p>
+              </div>
+              <div class="frame"><div class="stage lake desk-stage" style="--span:1512;--rows:542" role="img" aria-label="The lower half of a Mac desktop, a lake and its rocks above the Dock: Every road leads back to you, its first word lit, and the next line smaller below it.">
+                <img loading="lazy" decoding="async" class="placed" src="assets/island/desktop-lyrics.webp" style="--x:287;--y:693;--w:938;--top:440" alt="">
+              </div></div>
+            </div>
+          </div>
           <div class="tile reveal">
-            <p class="tile-kicker">New in 2.0</p>
             <h3 class="h3">Sing along without opening anything.</h3>
-            <p>Turn it on, and the line being sung sits beside the camera while you work.</p>
-            <div class="media"><div class="stage" style="--span:560;--rows:96"><img loading="lazy" decoding="async" class="shot" src="assets/island/lyrics-compact.webp" style="--w:461" alt="The closed island with the cover of the song on the left and the line being sung on the right."></div></div>
+            <p>Turn it on, and the line being sung sits beside the camera while you work. Too long for its wing, it glides across.</p>
+            <div class="media"><div class="stage" style="--span:560;--rows:96"><img loading="lazy" decoding="async" class="shot" src="assets/island/lyrics-compact.webp" style="--w:449" alt="The closed island with the cover of the song on the left and the line being sung on the right."></div></div>
           </div>
           <div class="tile reveal" style="--delay:0.08s">
             <p class="tile-kicker">Private by design</p>
             <h3 class="h3">Lyrics that stay yours.</h3>
             <p>Lyrics come from LRCLIB, an open database written by its users. Col sends it only the title, the artist, the album and the length of the song, once, and keeps the answer on your Mac. Your own <code>.lrc</code> files come first.</p>
           </div>
+          <div class="tile third reveal"><h4>Word by word</h4><p>Lyrics timed word by word fill as they are sung, in the island, on the Lock Screen and on the desktop.</p></div>
+          <div class="tile third reveal" style="--delay:0.06s"><h4>Right on time</h4><p>A little early or late? Move them half a second at a time. Not the right ones? Choose others, or hide them for that song.</p></div>
+          <div class="tile third reveal" style="--delay:0.12s"><h4>Bars that follow the sound</h4><p>If you like, the bars beside the camera move with the music itself. The sound is analysed on your Mac as it plays, never recorded or sent.</p></div>
           <div class="tile wide reveal">
             <div class="duo">
               <div>
@@ -178,7 +209,7 @@
           <div class="stage ask-stage" style="--span:760;--rows:260" data-ask role="group" aria-label="Claude Code asks to run git push origin main. Answer with Allow or Deny.">
             <img loading="lazy" decoding="async" class="shot" src="assets/island/rest.webp" style="--w:193" alt="">
             <img loading="lazy" decoding="async" class="shot on" data-state="request" src="assets/island/agent-request.webp" style="--w:588" alt="In the island, Claude Code asks to run git push origin main, with Allow, Deny and Answer in terminal.">
-            <img loading="lazy" decoding="async" class="shot" data-state="working" src="assets/island/claude-working.webp" style="--w:273" alt="The closed island with Claude Code at work.">
+            <img loading="lazy" decoding="async" class="shot" data-state="working" src="assets/island/claude-working.webp" style="--w:271" alt="The closed island with Claude Code at work.">
             <button class="hotspot" type="button" data-answer="allow" aria-label="Allow"></button>
             <button class="hotspot" type="button" data-answer="deny" aria-label="Deny"></button>
             <div class="toast" role="status" aria-live="polite"><i></i><span></span></div>
@@ -187,6 +218,24 @@
         <p class="hint reveal">Try it: answer Claude Code from the notch.</p>
 
         <div class="tiles" style="margin-top:56px">
+          <div class="tile wide reveal">
+            <div class="duo flip">
+              <div>
+                <p class="tile-kicker">New in Col 3</p>
+                <h3 class="h3">Questions and plans, answered from the island.</h3>
+                <p>When Claude Code asks you a question, its choices are buttons in the island. When it wants to leave plan mode, the plan itself shows, to scroll and select, with Approve and Keep Planning. Click a session, and its own terminal tab comes forward.</p>
+                <div class="chip-row" style="justify-content:flex-start"><div class="chips" role="group" aria-label="Claude Code asks" data-switch="claude">
+                  <button type="button" class="chip" data-state="question" aria-pressed="true">A question</button>
+                  <button type="button" class="chip" data-state="plan" aria-pressed="false">A plan</button>
+                </div></div>
+              </div>
+              <div class="frame"><div class="stage" style="--span:680;--rows:250" data-switch-stage="claude" role="img" aria-label="Claude Code asks whether to ship the Linux packages in this release, with two answers; then its plan, Release notes for Col 3, with Approve and Keep Planning.">
+                <img loading="lazy" decoding="async" class="shot" src="assets/island/rest.webp" style="--w:193" alt="">
+                <img loading="lazy" decoding="async" class="shot on" data-state="question" src="assets/island/agent-question.webp" style="--w:588" alt="">
+                <img loading="lazy" decoding="async" class="shot" data-state="plan" src="assets/island/agent-plan.webp" style="--w:588" alt="">
+              </div></div>
+            </div>
+          </div>
           <div class="tile reveal">
             <h3 class="h3">Every agent at a glance.</h3>
             <p>Claude Code, Codex, Gemini CLI, Cursor and GitHub Copilot, each with its own logo: what it works on, how long, and who is waiting for you.</p>
@@ -195,12 +244,11 @@
           <div class="tile reveal" style="--delay:0.08s">
             <h3 class="h3">Closed, still in the know.</h3>
             <p>The wings show the agent that needs you, its logo hopping like a Dock icon when it starts to wait, and how many are at work.</p>
-            <div class="media"><div class="stage" style="--span:420;--rows:158"><img loading="lazy" decoding="async" class="shot" src="assets/island/agents-compact.webp" style="--w:273" alt="The closed island with an agent's logo on the left and the number of agents at work on the right."></div></div>
+            <div class="media"><div class="stage" style="--span:420;--rows:158"><img loading="lazy" decoding="async" class="shot" src="assets/island/agents-compact.webp" style="--w:271" alt="The closed island with an agent's logo on the left and the number of agents at work on the right."></div></div>
           </div>
           <div class="tile wide reveal">
             <div class="duo">
               <div>
-                <p class="tile-kicker">New in 2.0</p>
                 <h3 class="h3">Ask your own models.</h3>
                 <p>Ollama, LM Studio, llama.cpp or any OpenAI-compatible server, on this Mac or another on your network. See which model is loaded and when it is busy, then ask it a question from the island. Your question goes to your server, and nowhere else.</p>
                 <div class="chip-row" style="justify-content:flex-start"><div class="chips" role="group" aria-label="AI page" data-switch="models">
@@ -217,7 +265,7 @@
           </div>
         </div>
         <div class="agents reveal">
-          <div><b>Claude Code</b><span>Sessions, Allow and Deny</span></div>
+          <div><b>Claude Code</b><span>Sessions, Allow and Deny, questions and plans</span></div>
           <div><b>Codex</b><span>Sessions, Allow and Deny</span></div>
           <div><b>Gemini CLI</b><span>Sessions, and when it waits for you</span></div>
           <div><b>Cursor</b><span>Agent sessions, edits and commands</span></div>
@@ -238,7 +286,7 @@
     <section class="section section-2" id="prompter" aria-labelledby="prompter-title">
       <div class="wrap">
         <div class="center section-head">
-          <p class="eyebrow new reveal">New in 2.0</p>
+          <p class="eyebrow reveal">Prompter</p>
           <h2 class="h2 reveal" id="prompter-title">Read your script.<br>Keep your eyes on them.</h2>
           <p class="lead reveal">Your script comes out of the notch, right under the camera, and rolls at the pace of your voice. It waits when you stop, and nobody else ever sees it.</p>
         </div>
@@ -281,7 +329,7 @@
           <figcaption class="scene-steps"><span data-step="0">Drag a file onto the notch</span><span data-step="1">It waits on the shelf</span><span data-step="2">Drag it out, or AirDrop it</span></figcaption>
         </figure>
         <figure class="frame reveal" style="margin-top:20px">
-          <div class="stage scene" data-scene="clip" role="img" aria-label="Text selected in TextEdit is copied, then found again at the top of the clipboard in the island.">
+          <div class="stage scene" data-scene="clip" role="img" aria-label="Text selected in TextEdit is copied, then found again at the top of the clipboard in the island, under its search field.">
             <img loading="lazy" decoding="async" class="shot" src="assets/island/rest.webp" style="--w:193" alt="">
             <img loading="lazy" decoding="async" class="shot" data-state="clip" src="assets/island/clipboard.webp" style="--w:588" alt="">
             <img loading="lazy" decoding="async" class="window" src="assets/macos/textedit-copy.webp" alt="" style="--x:72;--y:228;--w:520">
@@ -293,20 +341,43 @@
         </figure>
         <div class="tiles" style="margin-top:20px">
           <div class="tile wide reveal">
+            <div class="duo">
+              <div>
+                <p class="tile-kicker">New in Col 3</p>
+                <h3 class="h3">Your Mac at a glance.</h3>
+                <p>Your next call, counted down beside the camera in its calendar’s colour, with Join when it has a link. The weather, from Open-Meteo, once you turn it on. Your keyboard, mouse and game controller, with their battery, and a word when one runs low.</p>
+                <div class="chip-row" style="justify-content:flex-start"><div class="chips" role="group" aria-label="At a glance" data-switch="glance">
+                  <button type="button" class="chip" data-state="meeting" aria-pressed="true">Next call</button>
+                  <button type="button" class="chip" data-state="weather" aria-pressed="false">Weather</button>
+                  <button type="button" class="chip" data-state="devices" aria-pressed="false">Accessories</button>
+                </div></div>
+              </div>
+              <div class="frame"><div class="stage" style="--span:680;--rows:250" data-switch-stage="glance" role="img" aria-label="The Live page with Design review about to start and a Join button; the clock beside the weather in Lausanne, rain and 50 degrees; a keyboard, a mouse and a game controller with their battery beside the clock.">
+                <img loading="lazy" decoding="async" class="shot" src="assets/island/rest.webp" style="--w:193" alt="">
+                <img loading="lazy" decoding="async" class="shot on" data-state="meeting" src="assets/island/meeting-live.webp" style="--w:588" alt="">
+                <img loading="lazy" decoding="async" class="shot" data-state="weather" src="assets/island/weather.webp" style="--w:588" alt="">
+                <img loading="lazy" decoding="async" class="shot" data-state="devices" src="assets/island/devices.webp" style="--w:588" alt="">
+              </div></div>
+            </div>
+          </div>
+          <div class="tile wide reveal">
             <div class="duo flip">
               <div>
                 <h3 class="h3">Tools, one click from anywhere.</h3>
-                <p>A timer that counts down in the wings, an eyedropper for any pixel on screen, a mirror before a call, and a switch that keeps your Mac awake.</p>
+                <p>A timer or a Pomodoro counted down in the wings, an eyedropper for any pixel on screen, a mirror before a call, and a switch that keeps your Mac awake.</p>
               </div>
-              <div class="frame"><div class="stage" style="--span:680;--rows:250"><img loading="lazy" decoding="async" class="shot" src="assets/island/tools.webp" style="--w:588" alt="The Tools page: timer presets, colour picker, mirror and keep awake."></div></div>
+              <div class="frame"><div class="stage" style="--span:680;--rows:250"><img loading="lazy" decoding="async" class="shot" src="assets/island/tools.webp" style="--w:588" alt="The Tools page: a focus session with fifteen minutes left, colour picker, mirror and keep awake."></div></div>
             </div>
           </div>
-          <div class="tile third reveal"><h4>Volume and brightness</h4><p>A quiet gauge in the notch, instead of the big square in the middle of your screen.</p></div>
-          <div class="tile third reveal" style="--delay:0.06s"><h4>Agenda and calls</h4><p>Your next events beside the clock, a Join button for video calls, and what is due today.</p></div>
-          <div class="tile third reveal" style="--delay:0.12s"><h4>Microphone and camera</h4><p>See which app listens or films, right where the camera is. Col itself listens only while the prompter follows your voice, and the sound never leaves your Mac.</p></div>
+          <div class="tile third reveal"><h4>Mute from the island</h4><p>A Mute button while an app listens, and a red microphone beside the camera for as long as it stays muted. <kbd>⌃⌥⌘M</kbd> too, if you like.</p></div>
+          <div class="tile third reveal" style="--delay:0.06s"><h4>Tools for files</h4><p>From the shelf, turn an image into PNG, JPEG or HEIC, halve it, zip files, or copy the text in a picture. Everything runs on your Mac.</p></div>
+          <div class="tile third reveal" style="--delay:0.12s"><h4>Search your copies</h4><p>A search field above the clipboard finds a copy by its words or by the app it came from. Return copies the first match.</p></div>
+          <div class="tile third reveal"><h4>Volume and brightness</h4><p>A quiet gauge in the notch, instead of the big square in the middle of your screen. The keyboard backlight and Caps Lock too.</p></div>
+          <div class="tile third reveal" style="--delay:0.06s"><h4>Microphone and camera</h4><p>See which app listens or films, right where the camera is. Col itself listens only while the prompter follows your voice, and the sound never leaves your Mac.</p></div>
+          <div class="tile third reveal" style="--delay:0.12s"><h4>Agenda</h4><p>Your next events beside the clock, and what is due today.</p></div>
           <div class="tile third reveal"><h4>Battery and charging</h4><p>The charger connects, the level shows beside the camera, then leaves.</p></div>
           <div class="tile third reveal" style="--delay:0.06s"><h4>Downloads</h4><p>Follow files as they arrive, and open them from the notch when they are done.</p></div>
-          <div class="tile third reveal" style="--delay:0.12s"><h4>Every Mac</h4><p>No notch? Col floats just under the menu bar, on built-in and external displays alike.</p></div>
+          <div class="tile third reveal" style="--delay:0.12s"><h4>The graphics processor</h4><p>On the System page, beside the processor, the memory and the disk, measured only while you look.</p></div>
         </div>
       </div>
     </section>
@@ -316,19 +387,39 @@
         <div class="center section-head">
           <p class="eyebrow reveal">Make it yours</p>
           <h2 class="h2 reveal" id="design-title">Your island.<br>Your way.</h2>
-          <p class="lead reveal">Choose what each page shows, how big the island opens, and the glass it is made of. It even takes your Mac’s accent colour.</p>
+          <p class="lead reveal">Choose what each page shows, the shape of the island, how big it opens, and the glass it is made of. It even takes your Mac’s accent colour.</p>
         </div>
         <div class="duo">
-          <img class="window-shot reveal" src="assets/app/settings-pages.webp" width="1920" height="1360" loading="lazy" alt="Col Settings, the Pages pane: the open island shown on the wallpaper, and the pages Home, Prompter, AI, Shelf, Clipboard and Tools with their widgets.">
+          <img class="window-shot reveal" src="assets/app/settings-pages.webp" width="1920" height="1360" loading="lazy" alt="Col Settings, the Pages pane: the open island shown on the wallpaper, and the pages Home, Prompter, AI apps and Shelf with their widgets.">
           <div class="reveal">
-            <p class="tile-kicker">New in 2.0</p>
             <h3 class="h3">Compose your pages.</h3>
-            <p class="lead">Each page holds one widget across, or two side by side, and each place can stack several: the island shows the first one with something to show. Home puts the player beside its lyrics, and the clock beside your agenda while nothing plays.</p>
+            <p class="lead">Each page holds one widget across, or two side by side, and each place can stack several: the island shows the first one with something to show. Home puts the player beside its lyrics, and the clock beside your agenda or the weather while nothing plays.</p>
           </div>
         </div>
         <div class="tiles" style="margin-top:72px">
           <div class="tile wide reveal">
             <div class="duo">
+              <div class="frame"><div class="stage" style="--span:700;--rows:260" data-switch-stage="shape" role="img" aria-label="On a screen without a notch: a small black pill in the menu bar with a song; the pill opened into a card with four round corners; Col's own notch; a capsule below the menu bar.">
+                <img loading="lazy" decoding="async" class="shot on" data-state="pill" src="assets/island/pill-music.webp" style="--w:150" alt="">
+                <img loading="lazy" decoding="async" class="shot" data-state="card" src="assets/island/pill-open.webp" style="--w:560" alt="">
+                <img loading="lazy" decoding="async" class="shot" data-state="notch" src="assets/island/drawn-music.webp" style="--w:268" alt="">
+                <img loading="lazy" decoding="async" class="shot" data-state="below" src="assets/island/below-music.webp" style="--w:258" alt="">
+              </div></div>
+              <div>
+                <p class="tile-kicker">New in Col 3</p>
+                <h3 class="h3">A pill on every screen.</h3>
+                <p>No notch? On an external display or another Mac, the island is a small pill in the menu bar, clear of the top edge, the way the iPhone’s sits in its status bar. It stretches to show what happens and opens into a card. Prefer Col’s own notch, or a capsule below the menu bar? It is your choice.</p>
+                <div class="chip-row" style="justify-content:flex-start"><div class="chips" role="group" aria-label="Shape" data-switch="shape">
+                  <button type="button" class="chip" data-state="pill" aria-pressed="true">Pill</button>
+                  <button type="button" class="chip" data-state="card" aria-pressed="false">Open</button>
+                  <button type="button" class="chip" data-state="notch" aria-pressed="false">Col’s notch</button>
+                  <button type="button" class="chip" data-state="below" aria-pressed="false">Below the menu bar</button>
+                </div></div>
+              </div>
+            </div>
+          </div>
+          <div class="tile wide reveal">
+            <div class="duo flip">
               <div class="frame"><div class="stage lake" style="--span:700;--rows:260" data-switch-stage="glass" role="img" aria-label="The open island over a lake and its rocks, in its four kinds of glass: Liquid, Transparent, Tinted and Black.">
                 <img loading="lazy" decoding="async" class="shot" src="assets/island/rest.webp" style="--w:193" alt="">
                 <img loading="lazy" decoding="async" class="shot on" data-state="liquid" src="assets/island/glass-liquid.webp" style="--w:588" alt="">
@@ -338,7 +429,7 @@
               </div></div>
               <div>
                 <h3 class="h3">Four kinds of glass.</h3>
-                <p>On macOS 26 the open island stays black where it meets the notch and melts into glass below. Liquid bends the desktop like a thick pane; Transparent lets it show through; Tinted frosts it; Black keeps it solid.</p>
+                <p>From macOS 26, the open island stays black where it meets the notch and melts into glass below. Liquid bends the desktop like a thick pane; Transparent lets it show through; Tinted frosts it; Black keeps it solid.</p>
                 <div class="chip-row" style="justify-content:flex-start"><div class="chips" role="group" aria-label="Glass" data-switch="glass">
                   <button type="button" class="chip" data-state="liquid" aria-pressed="true">Liquid</button>
                   <button type="button" class="chip" data-state="transparent" aria-pressed="false">Transparent</button>
@@ -349,7 +440,7 @@
             </div>
           </div>
           <div class="tile wide reveal">
-            <div class="duo flip">
+            <div class="duo">
               <div class="frame"><div class="stage" style="--span:700;--rows:260" data-switch-stage="size" role="img" aria-label="The open island at its three sizes: compact, standard and large.">
                 <img loading="lazy" decoding="async" class="shot" src="assets/island/rest.webp" style="--w:193" alt="">
                 <img loading="lazy" decoding="async" class="shot" data-state="compact" src="assets/island/size-compact.webp" style="--w:548" alt="">
@@ -358,7 +449,7 @@
               </div></div>
               <div>
                 <h3 class="h3">Three sizes.</h3>
-                <p>Compact, standard or large when open, at the speed you like: snappy, standard or relaxed.</p>
+                <p>Compact, standard or large when open, at the speed you like: snappy, standard or relaxed. Closed, its wings reach as far as you let them: narrow, standard or wide, never over a menu or an icon.</p>
                 <div class="chip-row" style="justify-content:flex-start"><div class="chips" role="group" aria-label="Island size" data-switch="size">
                   <button type="button" class="chip" data-state="compact" aria-pressed="false">Compact</button>
                   <button type="button" class="chip" data-state="standard" aria-pressed="true">Standard</button>
@@ -369,19 +460,133 @@
           </div>
         </div>
         <div class="duo flip" style="margin-top:72px">
-          <img class="window-shot reveal" src="assets/app/settings-appearance.webp" width="1920" height="1360" loading="lazy" alt="Col Settings, the Appearance pane: the island drawn on the wallpaper, with its size, glass and motion.">
+          <img class="window-shot reveal" src="assets/app/settings-appearance.webp" width="1920" height="1360" loading="lazy" alt="Col Settings, the Appearance pane: the island drawn on the wallpaper, with its size, glass, motion and shape.">
           <div class="reveal">
             <h3 class="h3">Seen on your own screen.</h3>
-            <p class="lead">Appearance shows your island on your wallpaper, drawn by Col itself with what it shows right now. Every change of size or glass also plays on the notch.</p>
+            <p class="lead">Appearance shows your island on your wallpaper, drawn by Col itself with what it shows right now. Every change of size or glass also plays on the notch. And the island steps aside for the apps you choose, as it does in full screen.</p>
           </div>
         </div>
+      </div>
+    </section>
+
+    <section class="section" id="developers" aria-labelledby="developers-title">
+      <div class="wrap">
+        <div class="center section-head">
+          <p class="eyebrow reveal">Developers</p>
+          <h2 class="h2 reveal" id="developers-title">A notch you can program.</h2>
+          <p class="lead reveal">Show any script’s progress beside the camera with one line. The same local API answers the command line, Shortcuts, links, extensions and, if you allow it, the devices of your network.</p>
+        </div>
+        <div class="duo">
+          <div class="terminal reveal" data-terminal>
+            <div class="terminal-bar"><i></i><i></i><i></i><span>Terminal</span></div>
+            <pre aria-label="colctl push build --title Build --symbol hammer.fill --tint orange --progress 40%"><span class="prompt">~ %</span> <span data-type>colctl push build --title Build --symbol hammer.fill --tint orange --progress 40%</span><span class="caret"></span></pre>
+          </div>
+          <div class="frame reveal" style="--delay:0.08s"><div class="stage" style="--span:520;--rows:150" data-terminal-stage role="img" aria-label="The closed island with a hammer on the left and a progress ring at 40 percent on the right.">
+            <img loading="lazy" decoding="async" class="shot" src="assets/island/rest.webp" style="--w:193" alt="">
+            <img loading="lazy" decoding="async" class="shot" data-state="build" src="assets/island/push-build.webp" style="--w:271" alt="">
+          </div></div>
+        </div>
+        <div class="tiles" style="margin-top:20px">
+          <div class="tile wide reveal">
+            <div class="duo flip">
+              <div>
+                <p class="tile-kicker">New in Col 3</p>
+                <h3 class="h3">Widgets for everything.</h3>
+                <p>A figure, a bar, a few lines and up to three buttons, in one documented format. Push them with <code>colctl widget set</code>, from an extension or from any device of your network, or let Col read a web address that answers JSON, only while the widget shows. A button calls its address only once you have said yes to it.</p>
+              </div>
+              <div class="frame"><div class="stage" style="--span:680;--rows:250" role="img" aria-label="The Widgets place of the island: the living room at 21.5 degrees with a Heat button, and the washing machine with 18 minutes left.">
+                <img loading="lazy" decoding="async" class="shot" src="assets/island/widgets.webp" style="--w:588" alt="">
+              </div></div>
+            </div>
+          </div>
+        </div>
+        <div class="duo" style="margin-top:72px">
+          <img class="window-shot reveal" src="assets/app/settings-connect.webp" width="1920" height="1360" loading="lazy" alt="Col Settings, the Connect pane: Col Connect, off; the widgets Living room, Washing machine and Release build; Add a Widget from a URL; and a switch for connections from outside the network.">
+          <div class="reveal">
+            <p class="tile-kicker">New in Col 3</p>
+            <h3 class="h3">Col Connect.</h3>
+            <p class="lead">Pair your iPhone with a QR code, or Home Assistant, a Raspberry Pi or a build machine with a token: they push activities and widgets into the island over your network. Each device has its own token, kept in your Keychain. Connect is off until you turn it on, and Allow and Deny for your agents never leave your Mac.</p>
+          </div>
+        </div>
+        <div class="code-tiles">
+          <div class="tile reveal"><h4>Links</h4><p>From any app, a browser or a script.</p><code>open "col://push?id=build&amp;progress=0.4"</code></div>
+          <div class="tile reveal" style="--delay:0.06s"><h4>Shortcuts</h4><p>Show an activity, end it, start a timer, open the island, drive the prompter: actions without a terminal.</p><code>Show in the Notch</code></div>
+          <div class="tile reveal" style="--delay:0.12s"><h4>Extensions</h4><p>A folder with a script: whatever it prints shows in the island, on its schedule.</p><code>colctl extensions install &lt;folder&gt;</code></div>
+          <div class="tile reveal"><h4>Widgets</h4><p>A card of its own in the Widgets place, from any script.</p><code>colctl widget set temp --value 21.5 --unit °C</code></div>
+          <div class="tile reveal" style="--delay:0.06s"><h4>Col Connect</h4><p>The same routes, from a device of your network, with its token.</p><code>curl -H "Authorization: Bearer $TOKEN" http://your-mac.local:7580/v1/status</code></div>
+          <div class="tile reveal" style="--delay:0.12s"><h4>Open and close</h4><p>The island itself, from a link, on the page you name.</p><code>open "col://open?page=live"</code></div>
+        </div>
+        <div class="actions">
+          <a class="btn btn-ghost" href="https://github.com/ruben4reall/col/blob/main/docs/api.md" data-sound="tick">API reference</a>
+          <a class="btn btn-ghost" href="https://github.com/ruben4reall/col/blob/main/docs/widgets.md" data-sound="tick">Widgets</a>
+          <a class="btn btn-ghost" href="https://github.com/ruben4reall/col/blob/main/docs/connect.md" data-sound="tick">Col Connect</a>
+          <a class="btn btn-ghost" href="https://github.com/ruben4reall/col/blob/main/docs/extensions.md" data-sound="tick">Writing an extension</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-2" id="everywhere" aria-labelledby="everywhere-title">
+      <div class="wrap">
+        <div class="center section-head">
+          <p class="eyebrow new reveal">New in Col 3</p>
+          <h2 class="h2 reveal" id="everywhere-title">Now on Windows.<br>And on Linux.</h2>
+          <p class="lead reveal">The same island, made natively for each: C# and WPF on Windows, GTK 4 on Linux, no web view inside. Your music and its synced lyrics, Claude Code and Codex with Allow and Deny, the volume, a timer, the clipboard, and the same <code>colctl</code>. Both are previews.</p>
+        </div>
+        <div class="os-tiles">
+          <div class="tile reveal">
+            <p class="tile-kicker">Preview</p>
+            <h3 class="h3">Col for Windows.</h3>
+            <p>A black capsule floats at the top of your screen and comes out when something happens. Windows 10 (version 2004) or Windows 11, x64 or Arm64.</p>
+            <div class="chip-row"><div class="chips" role="group" aria-label="Col for Windows" data-switch="windows">
+              <button type="button" class="chip" data-state="lyrics" aria-pressed="true">Lyrics</button>
+              <button type="button" class="chip" data-state="agent" aria-pressed="false">Claude Code</button>
+              <button type="button" class="chip" data-state="live" aria-pressed="false">Live</button>
+              <button type="button" class="chip" data-state="tools" aria-pressed="false">Tools</button>
+            </div></div>
+            <div class="os-shots" data-switch-stage="windows" role="img" aria-label="Col for Windows over a Windows desktop: Midnight Pass playing with its lyrics; Claude Code asking to run git push origin main with Deny and Allow; the Live page with Codex, Claude Code and a build; the timer and the clipboard.">
+              <img loading="lazy" decoding="async" class="shot on" data-state="lyrics" src="assets/windows/lyrics.webp" width="1440" height="560" alt="">
+              <img loading="lazy" decoding="async" class="shot" data-state="agent" src="assets/windows/agent-permission.webp" width="1440" height="560" alt="">
+              <img loading="lazy" decoding="async" class="shot" data-state="live" src="assets/windows/live.webp" width="1440" height="560" alt="">
+              <img loading="lazy" decoding="async" class="shot" data-state="tools" src="assets/windows/tools.webp" width="1440" height="560" alt="">
+            </div>
+            <div class="os-get">
+              <a class="btn btn-primary" href="https://github.com/ruben4reall/col/releases/latest/download/Col-windows-setup.exe" data-sound="open">Download for Windows</a>
+              <a href="https://github.com/ruben4reall/col/releases/latest/download/Col-windows-x64.zip">Zip, x64</a>
+              <a href="https://github.com/ruben4reall/col/releases/latest/download/Col-windows-arm64.zip">Zip, Arm64</a>
+            </div>
+            <p class="fine">Not signed yet: if Windows SmartScreen stops it, choose More info, then Run anyway.</p>
+          </div>
+          <div class="tile reveal" style="--delay:0.08s">
+            <p class="tile-kicker">Preview</p>
+            <h3 class="h3">Col for Linux.</h3>
+            <p>An island at the top of the screen on KDE Plasma 6, COSMIC, Hyprland, Sway, niri and Wayfire, and on GNOME through XWayland. Ubuntu 24.04, Debian 13, Fedora 40, Arch and later.</p>
+            <div class="chip-row"><div class="chips" role="group" aria-label="Col for Linux" data-switch="linux">
+              <button type="button" class="chip" data-state="lyrics" aria-pressed="true">Lyrics</button>
+              <button type="button" class="chip" data-state="agent" aria-pressed="false">Claude Code</button>
+              <button type="button" class="chip" data-state="tools" aria-pressed="false">Tools</button>
+            </div></div>
+            <div class="os-shots" data-switch-stage="linux" role="img" aria-label="Col for Linux over a blue desktop: Golden Hour playing with its lyrics; Claude Code asking to run git push origin main with Allow, Deny and Answer in terminal; the timer, keep awake and the clipboard.">
+              <img loading="lazy" decoding="async" class="shot on" data-state="lyrics" src="assets/linux/lyrics.webp" width="1520" height="580" alt="">
+              <img loading="lazy" decoding="async" class="shot" data-state="agent" src="assets/linux/agent-permission.webp" width="1520" height="580" alt="">
+              <img loading="lazy" decoding="async" class="shot" data-state="tools" src="assets/linux/tools.webp" width="1520" height="580" alt="">
+            </div>
+            <div class="os-get">
+              <a class="btn btn-primary" href="https://github.com/ruben4reall/col/releases/latest/download/col_amd64.deb" data-sound="open">Download .deb</a>
+              <a href="https://github.com/ruben4reall/col/releases/latest/download/col_arm64.deb">.deb, ARM64</a>
+              <a href="https://github.com/ruben4reall/col/releases/latest/download/Col-linux-x86_64.tar.gz">Tarball, x86-64</a>
+              <a href="https://github.com/ruben4reall/col/releases/latest/download/Col-linux-aarch64.tar.gz">Tarball, ARM64</a>
+            </div>
+            <p class="fine">For Debian and Ubuntu: <code>sudo apt install ./col_amd64.deb</code>. Elsewhere, the tarball’s <code>install.sh</code>.</p>
+          </div>
+        </div>
+        <p class="fine center platform-note">The previews have no pages to compose, shelf, prompter, AI page or extensions yet, and speak English and French. Their pictures were taken by their builds, on GitHub’s Windows machines and on a Linux desktop running Sway.</p>
       </div>
     </section>
 
     <section class="section" id="setup" aria-labelledby="setup-title">
       <div class="wrap">
         <div class="center section-head">
-          <p class="eyebrow new reveal">New in 2.0</p>
+          <p class="eyebrow reveal">Setup</p>
           <h2 class="h2 reveal" id="setup-title">Ready in a minute.<br>Made for your Mac.</h2>
           <p class="lead reveal">Col looks at your Mac first: your music apps, your AI apps, your headphones, your language. Keep what helps you. Each permission is asked on the line that needs it, never all at once.</p>
         </div>
@@ -398,6 +603,29 @@
             <li><button type="button" aria-pressed="false" data-sound="select"><span><b>It teaches the gestures</b>Hover, click, swipe. You try each one on the notch.</span></button></li>
             <li><button type="button" aria-pressed="false" data-sound="select"><span><b>It gets out of the way</b>And says hello from the notch, in your language.</span></button></li>
           </ol>
+        </div>
+        <div class="tiles" style="margin-top:72px">
+          <div class="tile wide reveal">
+            <div class="duo">
+              <div class="frame"><div class="stage" style="--span:680;--rows:250" role="img" aria-label="The island open on What’s new in Col 3: a pill on every Mac, lyrics on the Lock Screen, weather and Pomodoro, Col Connect, on Windows and Linux, and See Everything.">
+                <img loading="lazy" decoding="async" class="shot" src="assets/island/whats-new.webp" style="--w:588" alt="">
+              </div></div>
+              <div>
+                <p class="tile-kicker">Already using Col?</p>
+                <h3 class="h3">It says what is new.</h3>
+                <p>Once after the update, the island opens on what Col 3 brings, then tucks back in. Your settings, your pages and your agents stay as they were.</p>
+              </div>
+            </div>
+          </div>
+          <div class="tile wide reveal">
+            <p class="tile-kicker">New in Col 3</p>
+            <h3 class="h3">In your language.</h3>
+            <p>Col for Mac follows the language of your Mac, or the one you pick in Settings, General.</p>
+            <ul class="languages" aria-label="Languages">
+              <li>English</li><li>Français</li><li>Deutsch</li><li>Nederlands</li><li>Italiano</li><li>Español</li><li>Português (Brasil)</li><li>日本語</li><li>한국어</li><li>简体中文</li><li>繁體中文</li>
+            </ul>
+            <p class="footnote">Every translation was made by AI, not by native speakers. If a word sounds wrong in your language, <a href="https://github.com/ruben4reall/col/blob/main/CONTRIBUTING.md#translations">please help fix it</a>.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -416,10 +644,11 @@
           <div class="stat reveal" style="--delay:0.18s"><p class="num" data-count="100">100<small>%</small></p><h3>Open source</h3><p>Every line, under the MIT License.</p></div>
         </div>
         <div class="tiles" style="margin-top:20px">
-          <div class="tile reveal"><h4>In the notch</h4><p>MacBook Pro 14 and 16 inch (2021 and later), MacBook Air 13 and 15 inch (M2 and later).</p></div>
-          <div class="tile reveal" style="--delay:0.06s"><h4>Floating island</h4><p>Other MacBooks, iMac, Mac mini, Mac Studio, Mac Pro and external displays: just under the menu bar, invisible until something happens.</p></div>
+          <div class="tile third reveal"><h4>In the notch</h4><p>MacBook Pro 14 and 16 inch (2021 and later), MacBook Air 13 and 15 inch (M2 and later).</p></div>
+          <div class="tile third reveal" style="--delay:0.06s"><h4>A pill everywhere else</h4><p>Other MacBooks, iMac, Mac mini, Mac Studio, Mac Pro and external displays: in the menu bar, invisible until something happens if you like.</p></div>
+          <div class="tile third reveal" style="--delay:0.12s"><h4>Windows and Linux</h4><p>In preview: Windows 10 (2004) or 11, and Linux with GTK 4.14 and libadwaita 1.5 or later.</p></div>
         </div>
-        <p class="fine center">macOS 14 Sonoma or later, Apple silicon and Intel. Memory measured on a 14-inch MacBook Pro (M3 Pro), macOS 26.5.</p>
+        <p class="fine center">macOS 14 Sonoma or later, macOS 27 included, Apple silicon and Intel. Memory measured on a 14-inch MacBook Pro (M3 Pro), macOS 26.5.</p>
       </div>
     </section>
 
@@ -430,74 +659,50 @@
           <h2 class="h2 reveal" id="privacy-title">It sits by your camera.<br>It keeps to itself.</h2>
         </div>
         <div class="promises">
-          <div class="promise reveal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.3 7.5 9.5 4.3-1.2 7.5-4.9 7.5-9.5V6L12 3Z"/><path d="m9 12 2 2 4-4"/></svg><h3>No account, no tracking</h3><p>No sign in and no analytics in the app. On its own, Col only checks for updates once a day and looks up the lyrics of the song that plays on LRCLIB, an open database. You can turn both off. Besides the AI servers you add, it asks the Ollama or LM Studio installed on your Mac, on your Mac only.</p></div>
-          <div class="promise reveal" style="--delay:0.06s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg><h3>Kept on your Mac</h3><p>Clipboard history lives in memory, skips passwords and saves only the copies you pin. The camera runs only while the mirror is open. Your voice never leaves your Mac.</p></div>
-          <div class="promise reveal" style="--delay:0.12s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><h3>Open to you only</h3><p>Scripts and agents talk to Col through a file in your user folder that only your account can open, never over the network. The prompter’s phone remote listens on your local network only while you turn it on.</p></div>
+          <div class="promise reveal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.3 7.5 9.5 4.3-1.2 7.5-4.9 7.5-9.5V6L12 3Z"/><path d="m9 12 2 2 4-4"/></svg><h3>No account, no tracking</h3><p>No sign in and no analytics in the app. On its own, Col only checks for updates once a day and looks up the lyrics of the song that plays on LRCLIB, an open database; you can turn both off. The weather asks Open-Meteo for a position rounded to about a kilometre, only once you turn it on. Your questions go to the AI servers you add, and nowhere else.</p></div>
+          <div class="promise reveal" style="--delay:0.06s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg><h3>Kept on your Mac</h3><p>Clipboard history lives in memory, skips passwords and saves only the copies you pin. The camera runs only while the mirror is open. Your voice, and the music the bars follow, are analysed on your Mac and never kept.</p></div>
+          <div class="promise reveal" style="--delay:0.12s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><h3>Open to you only</h3><p>Scripts and agents talk to Col through a file in your user folder that only your account can open. Col Connect, off until you turn it on, answers only the devices you pair on your local network, each with its own token.</p></div>
         </div>
       </div>
     </section>
 
-    <section class="section section-2" id="developers" aria-labelledby="developers-title">
-      <div class="wrap">
-        <div class="center section-head">
-          <p class="eyebrow reveal">Developers</p>
-          <h2 class="h2 reveal" id="developers-title">A notch you can program.</h2>
-          <p class="lead reveal">Show any script’s progress beside the camera with one line. The same local API answers the command line, Shortcuts, links and extensions.</p>
-        </div>
-        <div class="duo">
-          <div class="terminal reveal" data-terminal>
-            <div class="terminal-bar"><i></i><i></i><i></i><span>Terminal</span></div>
-            <pre aria-label="colctl push build --title Build --symbol hammer.fill --tint orange --progress 40%"><span class="prompt">~ %</span> <span data-type>colctl push build --title Build --symbol hammer.fill --tint orange --progress 40%</span><span class="caret"></span></pre>
-          </div>
-          <div class="frame reveal" style="--delay:0.08s"><div class="stage" style="--span:520;--rows:150" data-terminal-stage role="img" aria-label="The closed island with a hammer on the left and a progress ring at 40 percent on the right.">
-            <img loading="lazy" decoding="async" class="shot" src="assets/island/rest.webp" style="--w:193" alt="">
-            <img loading="lazy" decoding="async" class="shot" data-state="build" src="assets/island/push-build.webp" style="--w:273" alt="">
-          </div></div>
-        </div>
-        <div class="code-tiles">
-          <div class="tile reveal"><h4>Links</h4><p>From any app, a browser or a script.</p><code>open "col://push?id=build&amp;progress=0.4"</code></div>
-          <div class="tile reveal" style="--delay:0.06s"><h4>Shortcuts</h4><p>Show an activity, end it, start a timer, open the island, drive the prompter: actions without a terminal.</p><code>Show in the Notch</code></div>
-          <div class="tile reveal" style="--delay:0.12s"><h4>Extensions</h4><p>A folder with a script: whatever it prints shows in the island, on its schedule.</p><code>~/Library/Application Support/Col/Extensions</code></div>
-        </div>
-        <div class="actions">
-          <a class="btn btn-ghost" href="https://github.com/ruben4reall/col/blob/main/docs/api.md" data-sound="tick">API reference</a>
-          <a class="btn btn-ghost" href="https://github.com/ruben4reall/col/blob/main/docs/extensions.md" data-sound="tick">Writing an extension</a>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="open-source" aria-labelledby="oss-title">
+    <section class="section section-2" id="open-source" aria-labelledby="oss-title">
       <div class="wrap center">
         <p class="eyebrow reveal">Open source</p>
         <h2 class="h2 reveal" id="oss-title">Every line is on GitHub.</h2>
-        <p class="lead reveal">Col is MIT licensed: read exactly what runs on your Mac, change it, ship your own. Issues, translations and pull requests are welcome.</p>
+        <p class="lead reveal">Col is MIT licensed: read exactly what runs on your computer, change it, ship your own. Issues, translations and pull requests are welcome.</p>
         <a class="repo reveal" href="https://github.com/ruben4reall/col" data-sound="tick">
           <span class="repo-top"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg><b>ruben4reall / col</b></span>
-          <span class="repo-desc">The notch, made useful. Swift, AppKit and SwiftUI, a local API, and the rules of the island tested on their own.</span>
-          <span class="repo-meta"><span><i></i>Swift</span><span>MIT License</span><span>macOS 14+</span></span>
+          <span class="repo-desc">The notch, made useful. Swift, AppKit and SwiftUI on the Mac, C# and WPF on Windows, Vala and GTK 4 on Linux, one local API, and the rules of the island tested on their own.</span>
+          <span class="repo-meta"><span><i></i>Swift</span><span>MIT License</span><span>macOS 14+, Windows, Linux</span></span>
         </a>
       </div>
     </section>
 
-    <section class="section section-2" id="faq" aria-labelledby="faq-title">
+    <section class="section" id="faq" aria-labelledby="faq-title">
       <div class="wrap-narrow">
         <h2 class="h2 center reveal" id="faq-title">Questions</h2>
         <div class="faq">
-          <details><summary data-sound="tick">Why the new name?</summary><div><p>Islet became Col with version 2.0. A col is the pass between two peaks, and the notch is one: the cut between the two halves of the top of your screen. Three letters, said the same in English and in French.</p></div></details>
-          <details><summary data-sound="tick">I use Islet. What happens?</summary><div><p>Nothing you set up changes. The update renames the app in Applications, and your settings, permissions, pages and extensions stay as they were; the AI and prompter pages join your pages. Lyrics, new in 2.0, stay off until you turn them on in Settings, Music and lyrics. <code>islet://</code> links, the <code>islet</code> command and the hooks your agents already call keep working; in a terminal, the command is now <code>colctl</code>. Installed with Homebrew? The app keeps the name Islet so Homebrew can still upgrade it, and <code>brew upgrade --cask --greedy col</code> gives you Col.app.</p></div></details>
-          <details><summary data-sound="tick">Does my Mac need a notch?</summary><div><p>No. On a MacBook with a notch, Col lives in it. On other Macs and on external displays it floats just under the menu bar, invisible until something happens.</p></div></details>
-          <details><summary data-sound="tick">Will it cover my menu bar icons?</summary><div><p>Never. Col measures where the menus and the icons are on every app switch. The wings shrink to the free space, keep a single wing when an app’s menus reach the notch, and wait in the open island when there is no room at all.</p></div></details>
-          <details><summary data-sound="tick">Which permissions does it ask for?</summary><div><p>Only those the modules you keep need, each on the line that needs it: Accessibility for the volume and brightness keys, Calendars and Reminders for the agenda, Bluetooth for headphone battery, the microphone and speech recognition for the prompter’s voice modes, Local Network for the prompter’s phone remote and the AI servers you add on another machine, the Downloads folder only if you turn on Downloads in progress, the camera only while the mirror is open.</p></div></details>
-          <details><summary data-sound="tick">Is it safe with my AI agents?</summary><div><p>Col never signs in to any AI service. It hears the hooks Claude Code, Codex, Gemini CLI, Cursor and GitHub Copilot in VS Code call on your Mac, a documented feature of each, and Allow in the notch is the same as typing yes in the terminal.</p></div></details>
+          <details><summary data-sound="tick">Does my Mac need a notch?</summary><div><p>No. On a MacBook with a notch, Col lives in it. On other Macs and on external displays it becomes a small pill in the menu bar, Col’s own notch or a capsule below the menu bar, as you choose in Settings, Appearance, Shape.</p></div></details>
+          <details><summary data-sound="tick">My MacBook Pro has Apple’s own Dynamic Island. Can I use Col?</summary><div><p>Yes. In Settings, Appearance, Shape, choose Below the menu bar: Col floats just under the menu bar and leaves the notch to macOS.</p></div></details>
+          <details><summary data-sound="tick">Does it work on macOS 27?</summary><div><p>Yes, Col 3 is made for it. macOS 27 draws every menu bar icon in one place and puts its own » button for hidden icons right beside the notch: Col watches that menu bar and measures it again the moment an icon comes or goes, so its wings never cover the » button, an icon or a menu. The permission it asks for there is called Device Control and Data Access.</p></div></details>
+          <details><summary data-sound="tick">Will it cover my menu bar icons?</summary><div><p>Never. Col measures where the menus and the icons are on every app switch and whenever an icon comes or goes. The wings shrink to the free space, keep a single wing when an app’s menus reach the notch, and wait in the open island when there is no room at all.</p></div></details>
+          <details><summary data-sound="tick">What goes over the network?</summary><div><p>The update check, once a day. LRCLIB, if lyrics are on, with the title, artist, album and length of the song that plays. Open-Meteo, if the weather is on, with a position rounded to about a kilometre. The AI servers you add yourself. The web addresses you give widgets, only while they show. And Col Connect, off until you turn it on, which answers only the devices you paired on your local network. Nothing else: no account, no analytics, no crash reports.</p></div></details>
+          <details><summary data-sound="tick">Which permissions does it ask for?</summary><div><p>Only those the modules you keep need, each on the line that needs it: Accessibility (Device Control and Data Access on macOS 27) for the volume and brightness keys and to measure the menu bar, Calendars and Reminders for the agenda and your next call, Bluetooth for headphone battery, the microphone and speech recognition for the prompter’s voice modes, Local Network for the phone remote, Col Connect and the AI servers on another machine, Location only for the weather where you are, System Audio Recording only for bars that follow the sound, Automation of Terminal and iTerm2 the first time you click an agent’s session, the Downloads folder only if you turn on Downloads in progress, the camera only while the mirror is open.</p></div></details>
+          <details><summary data-sound="tick">Is it safe with my AI agents?</summary><div><p>Col never signs in to any AI service. It hears the hooks Claude Code, Codex, Gemini CLI, Cursor and GitHub Copilot in VS Code call on your Mac, a documented feature of each, and Allow in the notch is the same as typing yes in the terminal. Requests, questions and plans never reach the network, even with Col Connect on.</p></div></details>
           <details><summary data-sound="tick">Where do my questions to my models go?</summary><div><p>Only to the server you chose, on your Mac or on your network. Tokens stay in your Keychain. Col adds no service in between.</p></div></details>
+          <details><summary data-sound="tick">Windows says it protected my PC. What do I do?</summary><div><p>Col for Windows is a preview and not signed yet, so SmartScreen may stop the installer the first time. Choose More info, then Run anyway. Every file is built from the repository by its workflow on GitHub’s own machines, and its logs show how.</p></div></details>
+          <details><summary data-sound="tick">Which Linux desktops does it work on?</summary><div><p>KDE Plasma 6, COSMIC, Hyprland, Sway, niri and Wayfire draw the island above everything, through layer-shell. GNOME has no layer-shell: there Col runs through XWayland, under the top bar. It needs GTK 4.14 and libadwaita 1.5 or later: Ubuntu 24.04, Debian 13, Fedora 40, Arch and later.</p></div></details>
+          <details><summary data-sound="tick">Which languages does Col speak?</summary><div><p>Col for Mac speaks English, French, German, Dutch, Italian, Spanish, Brazilian Portuguese, Japanese, Korean, and Simplified and Traditional Chinese; the Windows and Linux previews, English and French. Every translation was made by AI, not by native speakers: if a word sounds wrong, <a href="https://github.com/ruben4reall/col/blob/main/CONTRIBUTING.md#translations">please help fix it</a>.</p></div></details>
+          <details><summary data-sound="tick">I use Islet. What happens?</summary><div><p>Islet became Col with version 2.0: a col is the pass between two peaks, and the notch is one. The update renames the app, and your settings, permissions, pages and extensions stay as they were. <code>islet://</code> links, the <code>islet</code> command and the hooks your agents already call keep working; in a terminal, the command is now <code>colctl</code>. Installed with Homebrew? <code>brew upgrade --cask --greedy col</code> gives you Col.app.</p></div></details>
           <details><summary data-sound="tick">How much memory does it use?</summary><div><p>15 MB at rest, the music helper included, and almost no processor time: Col only wakes when something changes.</p></div></details>
-          <details><summary data-sound="tick">How do I remove it?</summary><div><p>Disconnect your AI agents in Settings, AI apps, then quit Col from its right-click menu and move it to the Trash.</p></div></details>
+          <details><summary data-sound="tick">How do I remove it?</summary><div><p>On a Mac, disconnect your AI agents in Settings, AI apps, then quit Col from its right-click menu and move it to the Trash. On Windows, Settings, Apps, Installed apps, Col, Uninstall. On Linux, remove the package, or run <code>install.sh --uninstall</code>.</p></div></details>
           <details><summary data-sound="tick">Is Col made by Apple?</summary><div><p>No. Col is an independent open source project and is not affiliated with Apple.</p></div></details>
         </div>
       </div>
     </section>
 
-    <section class="section download" id="download" aria-labelledby="download-title">
+    <section class="section section-2 download" id="download" aria-labelledby="download-title">
       <div class="wrap">
         <figure class="mac" data-mac role="img" aria-label="A MacBook with a song in its notch, shown by Col.">
           <div class="mac-model">
@@ -508,7 +713,7 @@
               <div class="mac-screen">
                 <div class="mac-display">
                   <img class="mac-still" src="assets/desktop.webp" width="1920" height="1247" alt="" loading="lazy">
-                  <div class="island"><img loading="lazy" decoding="async" class="shot" src="assets/island/rest.webp" style="--w:193" alt=""><img loading="lazy" decoding="async" class="shot" src="assets/island/music-compact.webp" style="--w:273" alt=""></div>
+                  <div class="island"><img loading="lazy" decoding="async" class="shot" src="assets/island/rest.webp" style="--w:193" alt=""><img loading="lazy" decoding="async" class="shot" src="assets/island/music-compact.webp" style="--w:271" alt=""></div>
                 </div>
               </div>
               <div class="mac-shell"></div>
@@ -519,11 +724,12 @@
         <h2 class="h2 center reveal" id="download-title">Look up. It’s already there.</h2>
         <p class="lead center reveal">Free, open source, and ready in a minute.</p>
         <div class="actions">
-          <a class="btn btn-primary" href="https://github.com/ruben4reall/col/releases/latest/download/Col.dmg" data-sound="open">Download for Mac</a>
+          <a class="btn btn-primary" href="https://github.com/ruben4reall/col/releases/latest/download/Col.dmg" data-sound="open" data-download>Download for Mac</a>
           <a class="btn btn-ghost" href="https://github.com/ruben4reall/col" data-sound="tick">View on GitHub</a>
         </div>
         <p class="fine center">macOS 14 or later · Apple silicon and Intel · Notarized by Apple. Updates arrive through the app, when you allow them.</p>
         <p class="fine center">Or with Homebrew: <code>brew install --cask ruben4reall/tap/col</code></p>
+        <p class="fine center" data-download-also>On Windows or Linux? <a href="#everywhere" data-sound="tick">Get the preview</a>.</p>
       </div>
     </section>
   </main>
@@ -535,7 +741,7 @@
         <span>The notch, made useful.</span>
         <div class="footer-links"><a href="https://github.com/ruben4reall/col">GitHub</a><a href="https://github.com/ruben4reall/col/releases">Releases</a><a href="https://github.com/ruben4reall/col/blob/main/CHANGELOG.md">What’s new</a><a href="https://github.com/ruben4reall/col/blob/main/LICENSE">MIT License</a></div>
       </div>
-      <p class="legal">Made in Switzerland by Ruben Catalao. Col was called Islet until version 2.0. Col is not affiliated with Apple. MacBook, AirPods and macOS are trademarks of Apple Inc. The song and the lyrics on this page were written for it.</p>
+      <p class="legal">Made in Switzerland by Ruben Catalao. Col was called Islet until version 2.0. Col is not affiliated with Apple or Microsoft. MacBook, AirPods and macOS are trademarks of Apple Inc. Windows is a trademark of the Microsoft group of companies. Linux is a registered trademark of Linus Torvalds. The songs and the lyrics on this page were written for its pictures.</p>
     </div>
   </footer>
 </body>
