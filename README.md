@@ -36,9 +36,11 @@ your scripts and your AI agents.
 
 - **Now playing.** Apple Music, Spotify, YouTube in your browser and any app that shows in Control Center, with the
   cover, a scrubber, the controls and the audio output. A cover and a live equalizer sit beside the camera while you
-  work; swipe the closed island to skip a track.
+  work, dancing on their own or, if you choose, following the sound itself; swipe the closed island to skip a track.
 - **Synced lyrics.** The words of the song beside the player, line by line, as Apple Music shows them, whatever plays:
-  Spotify, Apple Music, Deezer or your browser. From LRCLIB, an open database, or your own `.lrc` files.
+  Spotify, Apple Music, Deezer or your browser, filling word by word when the lyrics are timed that way. Large on the
+  Lock Screen and on the desktop if you like. Lyrics a little early or late, or the wrong ones, can be moved, replaced
+  or hidden for one song. From LRCLIB, an open database, or your own `.lrc` files.
 - **A prompter in the notch.** Your script comes out of the notch right under the camera, at the pace of your voice:
   it waits when you stop talking (Voice Pace), follows your words one by one (Voice Follow), rolls at a steady pace, or
   moves only when you move it. Recognition runs on your Mac, and the prompter stays out of screenshots, recordings and
@@ -161,6 +163,8 @@ Each one only if a module you chose needs it:
 - **Speech Recognition**, for the prompter's Voice Follow, on your Mac only.
 - **Local Network**, for the prompter's phone remote and the AI servers you add on another machine.
 - **Downloads folder**, only if you turn on Downloads in progress, to show the files your browser is still writing.
+- **System Audio Recording**, only if you turn on Bars that follow the sound, so the bars move with the music. The
+  sound is analysed on your Mac as it plays and never recorded or sent.
 
 ## Privacy
 
@@ -168,8 +172,9 @@ Each one only if a module you chose needs it:
 - Col uses the network for these, and nothing else:
   - The update check, once a day, which you can turn off in Settings, General. Sparkle's system profile is off.
   - [LRCLIB](https://lrclib.net), an open lyrics database, while lyrics are on (Settings, Music and lyrics). Only the
-    title, artist, album and length of the song that plays are sent. Lyrics are on in a new install, where the welcome
-    shows the choice; after an update from Islet they stay off until you turn them on.
+    title, artist, album and length of the song that plays are sent; when you look for other lyrics for a song, its
+    title and artist again. Lyrics are on in a new install, where the welcome shows the choice; after an update from
+    Islet they stay off until you turn them on.
   - The AI servers you add yourself, and the Ollama or LM Studio installed on this Mac, which Col asks on this Mac
     only (localhost). Your questions go only to the server you picked.
   - The prompter's phone remote, which listens on your local network only while you turn it on.
@@ -202,7 +207,7 @@ opens and thrown away as it closes, and the Liquid Glass under them only draws w
 
 ## Private macOS APIs
 
-Col uses private macOS functions for six features. Each is looked up at runtime: if a macOS update removes one, its
+Col uses private macOS functions for seven features. Each is looked up at runtime: if a macOS update removes one, its
 feature turns off and nothing crashes.
 
 | Feature | Functions | Why |
@@ -212,7 +217,8 @@ feature turns off and nothing crashes.
 | Headphone battery and model | `batteryPercentLeft`, `batteryPercentCase`, `productID` on `IOBluetoothDevice` | AirPods report them through properties IOBluetooth does not document. |
 | Liquid glass of the open island | The `glassBackground` filter of `NSGlassEffectView` (Core Animation): its refraction and blur inputs | Liquid Glass can bend what lies behind it like a lens, but macOS turns that off on large panels and frosts them. Only inputs that exist are set: otherwise the glass stays Apple's own. |
 | Transparent glass of the open island | `CABackdropLayer`, `CAFilter` (Core Animation) | A light blur of the desktop with a set strength: Liquid Glass has no setting clear enough to see through a panel this size. Without them, Transparent uses Liquid Glass. |
-| Lock Screen (beta, off by default) | `SLSSpaceCreate`, `SLSSpaceSetAbsoluteLevel`, `SLSShowSpaces` (SkyLight) | Only a window in a space at lock screen level can draw above it. Technique from [Lakr233/SkyLightWindow](https://github.com/Lakr233/SkyLightWindow) (MIT), rewritten. |
+| Lock Screen and its lyrics (beta, off by default) | `SLSMainConnectionID`, `SLSSpaceCreate`, `SLSSpaceSetAbsoluteLevel`, `SLSShowSpaces`, `SLSSpaceAddWindowsAndRemoveFromSpaces` (SkyLight) | Only a window in a space at lock screen level can draw above it. Technique from [Lakr233/SkyLightWindow](https://github.com/Lakr233/SkyLightWindow) (MIT), rewritten. |
+| Bars that follow the sound (off by default) | `TCCAccessPreflight`, `TCCAccessRequest` (TCC) | macOS has no public way to tell whether System Audio Recording was allowed, nor to ask before recording starts. Without them, macOS asks the first time the bars listen. The sound itself comes from Core Audio's public process taps. |
 
 ## Build from source
 

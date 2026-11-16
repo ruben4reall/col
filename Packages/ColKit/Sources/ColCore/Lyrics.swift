@@ -17,11 +17,15 @@ public struct LyricLine: Equatable, Sendable, Identifiable {
     public var text: String
     /// The timing of each word, when the lyrics have it.
     public var words: [LyricWord]
+    /// When the last word ends, for lyrics timed word by word that close the line with a time of their own
+    /// (`… <00:14.20> world <00:15.00>`).
+    public var end: TimeInterval?
 
-    public init(time: TimeInterval, text: String, words: [LyricWord] = []) {
+    public init(time: TimeInterval, text: String, words: [LyricWord] = [], end: TimeInterval? = nil) {
         self.time = time
         self.text = text
         self.words = words
+        self.end = end
     }
 
     /// Lines are told apart by their start; two lines never start at the same moment.
@@ -68,9 +72,12 @@ public struct Lyrics: Equatable, Sendable {
                 rest = rest[rest.index(after: close)...]
             }
             guard !times.isEmpty else { continue }
-            let (text, words) = wordTiming(String(rest))
+            let (text, words, end) = wordTiming(String(rest))
             for time in times {
-                lines.append(LyricLine(time: time, text: text, words: words))
+                // Word times belong to the first moment the line is sung: a chorus sung again keeps its words
+                // only when they fall with it. A first word a little ahead of its line's time still counts.
+                let timed = words.first.map { $0.time >= time - 1 } ?? false
+                lines.append(LyricLine(time: time, text: text, words: timed ? words : [], end: timed ? end : nil))
             }
         }
         guard !lines.isEmpty else { return nil }
@@ -78,6 +85,7 @@ public struct Lyrics: Equatable, Sendable {
             var line = line
             line.time = max(0, line.time - offset)
             line.words = line.words.map { LyricWord(time: max(0, $0.time - offset), text: $0.text) }
+            line.end = line.end.map { max(0, $0 - offset) }
             return line
         }
         lines.sort { $0.time < $1.time }
@@ -138,9 +146,10 @@ public struct Lyrics: Equatable, Sendable {
         return total < longest ? total : nil
     }
 
-    /// Takes word timing out of a line: `<00:12.10> Hello <00:12.60> world` reads "Hello world".
-    static func wordTiming(_ text: String) -> (String, [LyricWord]) {
-        guard text.contains("<") else { return (text.trimmingCharacters(in: .whitespaces), []) }
+    /// Takes word timing out of a line: `<00:12.10> Hello <00:12.60> world` reads "Hello world". A time that closes
+    /// the line, with no word after it, is when the last word ends.
+    static func wordTiming(_ text: String) -> (String, [LyricWord], TimeInterval?) {
+        guard text.contains("<") else { return (text.trimmingCharacters(in: .whitespaces), [], nil) }
         var words: [LyricWord] = []
         var plain = ""
         var rest = Substring(text)
@@ -154,12 +163,20 @@ public struct Lyrics: Equatable, Sendable {
             current = timestamp(rest[rest.index(after: open)..<close])
             rest = rest[rest.index(after: close)...]
         }
-        if let current, !rest.trimmingCharacters(in: .whitespaces).isEmpty {
-            words.append(LyricWord(time: current, text: rest.trimmingCharacters(in: .whitespaces)))
+        var end: TimeInterval?
+        if let current {
+            if rest.trimmingCharacters(in: .whitespaces).isEmpty {
+                // Only an end that comes after the last word's start means anything.
+                if let last = words.last, current > last.time { end = current }
+            } else {
+                words.append(LyricWord(time: current, text: rest.trimmingCharacters(in: .whitespaces)))
+            }
         }
         plain += rest
         let collapsed = plain.split(whereSeparator: \.isWhitespace).joined(separator: " ")
-        return (collapsed, words)
+        // Word times out of order are a damaged line: it is followed line by line instead.
+        let ordered = zip(words, words.dropFirst()).allSatisfy { $0.time <= $1.time }
+        return (collapsed, ordered ? words : [], ordered ? end : nil)
     }
 
     /// A long gap after a line ends becomes a pause line of its own, so the view can show that the song goes on.
@@ -174,7 +191,7 @@ public struct Lyrics: Equatable, Sendable {
             guard !line.isPause, index + 1 < lines.count else { continue }
             let next = lines[index + 1]
             // A sung line lasts about as long as its words take, at most eight seconds.
-            let sung = line.words.last.map { $0.time + 1 } ?? line.time + min(8, max(2, Double(line.text.count) * 0.09))
+            let sung = line.end ?? line.words.last.map { $0.time + 1 } ?? line.time + min(8, max(2, Double(line.text.count) * 0.09))
             if next.time - sung > pauseThreshold, !next.isPause {
                 result.append(LyricLine(time: sung, text: ""))
             }

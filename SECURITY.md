@@ -13,7 +13,7 @@ Everything Col reads, writes or runs, and why.
 
 | Path | What | When |
 |---|---|---|
-| `~/Library/Preferences/ch.rubencatalao.islet.plist` | Settings, the shelf's file bookmarks, pinned clipboard text | Always |
+| `~/Library/Preferences/ch.rubencatalao.islet.plist` | Settings, the shelf's file bookmarks, pinned clipboard text, and the songs whose lyrics you moved, chose or hid (their title, artist and LRCLIB number, never the lyrics) | Always |
 | `~/Library/Application Support/Col/col.sock` | The local socket scripts and agents talk to: mode 0600 in a 0700 folder, so only your user can connect. It never listens on the network | While Col runs |
 | `~/Library/Application Support/Col/Extensions/` | Your extensions, one folder each | When you add one |
 | `~/Library/Application Support/Col/Scripts/` | The prompter's scripts, one Markdown file each, saved as you type. The first time, the scripts of Souffleur (the prompter's former app) are copied in from `~/Library/Application Support/Souffleur/Scripts/`, which is left as it was | When you use the prompter |
@@ -51,7 +51,9 @@ Copies that password managers mark as concealed or transient are skipped.
   song that plays are sent to [LRCLIB](https://lrclib.net), an open lyrics database, once per song. Answers are kept in
   `~/Library/Caches/Col/Lyrics/`; your own `.lrc` files in `~/Library/Application Support/Col/Lyrics/` are read
   first and never sent anywhere. Lyrics are on in a new install, where the welcome shows the choice; after an update
-  from Islet they stay off until you turn them on.
+  from Islet they stay off until you turn them on. When you look for other lyrics for a song (the ⋯ button on the
+  lyrics, Not the Right Lyrics?), its title and artist are sent again to LRCLIB's search. The lyrics you choose are
+  kept in the same folder; if that copy is gone, they are asked by their LRCLIB number alone (`/api/get/<number>`).
 - The AI servers you add in Settings, AI apps, and the Ollama or LM Studio installed on this Mac, which Col asks on
   this Mac only (`localhost`, ports 11434 and 1234): Col asks them every few seconds, only while their page or the
   settings show them, for their models (`/api/tags`, `/api/ps`, `/api/v0/models`, `/v1/models`, `/slots`). A token
@@ -73,7 +75,11 @@ bar), Calendars and Reminders (the agenda), Bluetooth (headphone battery and mod
 is open), Microphone (the prompter's voice modes, while a take runs: the sound is analysed on your Mac and never
 recorded), Speech Recognition (the prompter's Voice Follow, on your Mac only), Local Network (the prompter's phone
 remote, and the AI servers you add on another machine), Downloads folder (only if you turn on Downloads in
-progress). The colour picker uses the system's own sampler, which asks for nothing.
+progress), System Audio Recording (only if you turn on Bars that follow the sound: while music plays and the bars
+show, a Core Audio tap copies the player's sound, or the Mac's when the player's own cannot be told apart, into a
+private aggregate device with no other input, so no microphone is ever opened; it is analysed in memory thirty times
+a second into the bars' heights, then dropped, never recorded or sent). The colour picker uses the system's own
+sampler, which asks for nothing.
 
 ### Login item
 
@@ -84,7 +90,8 @@ Login Items. After an update from Islet, the login item is registered again for 
 
 MediaRemote (now playing), DisplayServices (brightness), undocumented `IOBluetoothDevice` properties (headphone
 battery and model), `CABackdropLayer`, `CAFilter` and the `glassBackground` filter of Liquid Glass (the Liquid and Transparent glass of the
-open island) and SkyLight (the Lock
-Screen, off by default). Each is looked up at run time: if a macOS update
+open island), SkyLight (the Lock
+Screen and its lyrics, off by default) and TCC (whether System Audio Recording is allowed, and asking for it, only for
+Bars that follow the sound, off by default). Each is looked up at run time: if a macOS update
 removes one, its feature turns off and nothing crashes. The [README](README.md#private-macos-apis) says why each is
 needed.

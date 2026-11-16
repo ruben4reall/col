@@ -14,7 +14,7 @@ final class PermissionCenter {
     static let shared = PermissionCenter()
 
     enum Permission: String, CaseIterable, Identifiable {
-        case accessibility, calendars, bluetooth, camera, microphone, speech
+        case accessibility, calendars, bluetooth, camera, microphone, speech, audioCapture
         var id: String { rawValue }
 
         var title: LocalizedStringResource {
@@ -29,6 +29,7 @@ final class PermissionCenter {
             case .camera: LocalizedStringResource("Camera", bundle: .settings)
             case .microphone: LocalizedStringResource("Microphone", bundle: .settings)
             case .speech: LocalizedStringResource("Speech Recognition", bundle: .settings)
+            case .audioCapture: LocalizedStringResource("System Audio Recording", bundle: .settings)
             }
         }
 
@@ -41,6 +42,7 @@ final class PermissionCenter {
             case .camera: LocalizedStringResource("Used only while the mirror is open. Seeing that another app uses the camera needs no permission.", bundle: .settings)
             case .microphone: LocalizedStringResource("Lets the prompter roll while you speak and wait when you stop. The sound stays on your Mac and is never recorded.", bundle: .settings)
             case .speech: LocalizedStringResource("Lets Voice Follow keep your place word by word. Recognition runs on your Mac.", bundle: .settings)
+            case .audioCapture: LocalizedStringResource("Lets the bars beside the camera follow the music itself. The sound is analysed on your Mac, never recorded or sent. Without it, the bars dance on their own.", bundle: .settings)
             }
         }
 
@@ -52,6 +54,7 @@ final class PermissionCenter {
             case .bluetooth: LocalizedStringResource("AirPods and speakers", bundle: .settings)
             case .camera: LocalizedStringResource("Mirror", bundle: .settings)
             case .microphone, .speech: LocalizedStringResource("Prompter", bundle: .settings)
+            case .audioCapture: LocalizedStringResource("Bars that follow the sound", bundle: .settings)
             }
         }
 
@@ -63,6 +66,7 @@ final class PermissionCenter {
             case .camera: "camera.fill"
             case .microphone: "mic.fill"
             case .speech: "waveform"
+            case .audioCapture: "speaker.wave.3.fill"
             }
         }
 
@@ -74,6 +78,7 @@ final class PermissionCenter {
             case .camera: .gray
             case .microphone: .orange
             case .speech: .purple
+            case .audioCapture: .pink
             }
         }
 
@@ -86,6 +91,8 @@ final class PermissionCenter {
             case .camera: "Privacy_Camera"
             case .microphone: "Privacy_Microphone"
             case .speech: "Privacy_SpeechRecognition"
+            // System audio recording is listed with screen recording.
+            case .audioCapture: "Privacy_ScreenCapture"
             }
         }
     }
@@ -96,6 +103,7 @@ final class PermissionCenter {
     private(set) var camera = AVCaptureDevice.authorizationStatus(for: .video)
     private(set) var microphone = AVCaptureDevice.authorizationStatus(for: .audio)
     private(set) var speech = SFSpeechRecognizer.authorizationStatus()
+    private(set) var audioCapture = AudioCapturePermission.status
     /// Accessibility was asked for and the list in System Settings is open: say what to do there.
     private(set) var awaitingAccessibility = false
 
@@ -119,6 +127,7 @@ final class PermissionCenter {
         case .camera: camera == .authorized
         case .microphone: microphone == .authorized
         case .speech: speech == .authorized
+        case .audioCapture: audioCapture == .granted
         }
     }
 
@@ -131,6 +140,7 @@ final class PermissionCenter {
         case .camera: camera == .notDetermined
         case .microphone: microphone == .notDetermined
         case .speech: speech == .notDetermined
+        case .audioCapture: audioCapture == .unknown
         }
     }
 
@@ -142,6 +152,7 @@ final class PermissionCenter {
             camera = AVCaptureDevice.authorizationStatus(for: .video)
             microphone = AVCaptureDevice.authorizationStatus(for: .audio)
             speech = SFSpeechRecognizer.authorizationStatus()
+            audioCapture = AudioCapturePermission.status
             if accessibility { awaitingAccessibility = false }
         }
     }
@@ -183,6 +194,17 @@ final class PermissionCenter {
                 _ = await Self.requestSpeechRecognition()
                 refresh()
             }
+        case .audioCapture:
+            // Without TCC's function, macOS asks the moment the bars first listen.
+            let asked = AudioCapturePermission.request { @Sendable _ in
+                DispatchQueue.main.async {
+                    MainActor.assumeIsolated {
+                        PermissionCenter.shared.refresh()
+                        SoundLevels.shared.permissionChanged()
+                    }
+                }
+            }
+            if !asked { SoundLevels.shared.listenOnce() }
         }
     }
 

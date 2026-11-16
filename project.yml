@@ -92,6 +92,8 @@ targets:
         NSRemindersFullAccessUsageDescription: Col shows the reminders due today beside your agenda.
         NSMicrophoneUsageDescription: The prompter listens to your voice to roll the script as you speak. The sound never leaves your Mac and is never recorded.
         NSSpeechRecognitionUsageDescription: In Voice Follow, the prompter recognizes your words on your Mac to keep your place in the script.
+        # Asked only when Bars that follow the sound is turned on (Settings, Music and lyrics).
+        NSAudioCaptureUsageDescription: With Bars that follow the sound, the bars beside the camera move with the music that plays. The sound is analysed on your Mac as it plays, never recorded or sent.
         NSLocalNetworkUsageDescription: "Col reaches the devices you choose on your network, and only them: your phone for the prompter's remote, and the AI servers you add."
         # The AI servers are the user's own, often plain http on their network under a name such as mac-studio.lan,
         # which App Transport Security would refuse. Everything else Col reaches (the update feed, LRCLIB) is https.

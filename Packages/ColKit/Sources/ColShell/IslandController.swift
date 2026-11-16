@@ -47,7 +47,8 @@ public final class IslandController {
     /// The frontmost app is one the island steps aside for (Settings, Island).
     private var hiddenForApp = false
     let extensions = ExtensionRunner()
-    private lazy var lockScreen = LockScreenWidgets(media: media, timer: timer, power: system.power)
+    private lazy var lockScreen = LockScreenWidgets(media: media, timer: timer, power: system.power, lyrics: lyrics)
+    private lazy var desktopLyrics = DesktopLyrics(media: media, lyrics: lyrics)
     private var api: ControlAPI!
     /// True while the island is open because something asked for the user, not because the user opened it.
     private var openedByRequest = false
@@ -651,6 +652,7 @@ public final class IslandController {
         let steppedAside = fullScreenActive || hiddenForApp
         let visible = !prompterInNotch && (!steppedAside || urgent || machine.state == .expanded)
         if visible { panel.orderFrontRegardless() } else { panel.orderOut(nil) }
+        islandView.compact.isOnScreen = visible
     }
 
     /// The prompter came out of the notch, or went back in: the island steps aside for the take and returns after it.
@@ -778,6 +780,7 @@ public final class IslandController {
         prompter.onActiveChange = { [weak self] active, placement in self?.prompterChanged(active: active, placement: placement) }
         prompter.start()
         lockScreen.start()
+        desktopLyrics.start()
         if Preferences.showsOnLockScreen { LockScreenSpace.shared?.adopt(panel) }
         if !WelcomeWindow.hasWelcomed { greet() }
         retireSouffleur()
@@ -843,6 +846,7 @@ public final class IslandController {
     public func stop() {
         PrompterCenter.shared.willTerminate()
         lockScreen.stop()
+        desktopLyrics.stop()
         media.stop()
         api.stop()
     }
@@ -966,6 +970,7 @@ public final class IslandController {
     private func place(measuringStatusItems: Bool = true) {
         guard let screen = Self.notchScreen() else {
             panel.orderOut(nil)
+            islandView.compact.isOnScreen = false
             return
         }
         self.screen = screen

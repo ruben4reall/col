@@ -197,12 +197,14 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .activities: ["Music beside the camera", "Announce new tracks", "Replace the volume and brightness displays",
                            "Headphones and speakers", "Battery card for headphones", "Charging and low battery",
                            "Microphone and camera in use", "Downloads in progress", "Show on the Lock Screen"]
-        case .music: ["Synced lyrics", "Lyrics", "Spotify", "Apple Music", "Deezer", "LRCLIB", "Your own lyrics", "Karaoke"]
+        case .music: ["Synced lyrics", "Lyrics", "Spotify", "Apple Music", "Deezer", "LRCLIB", "Your own lyrics", "Karaoke",
+                      "Lyrics on the Lock Screen", "Lyrics on the desktop", "Songs with hidden lyrics", "Bars that follow the sound",
+                      "Equalizer", "Spectrum"]
         case .prompter: ["Scripts", "Voice Pace", "Voice Follow", "Auto Scroll", "Manual", "Stage light", "Phone remote",
                          "Presentation remotes and foot pedals", "Hide from screen sharing and recordings", "Teleprompter"]
         case .aiApps: ["Claude Code", "Codex", "Gemini CLI", "Cursor", "GitHub Copilot (VS Code)", "Connect", "Allow", "Deny"]
         case .permissions: ["Accessibility", "Device Control", "Calendars", "Reminders", "Bluetooth", "Camera", "Microphone", "Speech Recognition",
-                            "Local Network", "Downloads"]
+                            "Local Network", "Downloads", "System Audio Recording"]
         case .shortcuts: ["Keyboard", "Gestures", "Swipe", "Click", "Trackpad", "Right-click"]
         case .developers: ["The colctl command", "API reference", "Extensions", "Writing an extension"]
         case .about: ["Version", "Website", "Source code on GitHub", "Report a problem", "Quit Col", "Network"]

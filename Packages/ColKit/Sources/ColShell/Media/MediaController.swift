@@ -47,6 +47,7 @@ final class MediaController {
             playerName = app?.localizedName ?? ""
         }
         let trackChanged = nowPlaying.trackKey != previousTrack && !previousTrack.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        SoundLevels.shared.playerChanged(playing: nowPlaying.isPlaying, pid: nowPlaying.pid)
         onChange?(trackChanged)
     }
 
@@ -56,12 +57,19 @@ final class MediaController {
         tint = image.flatMap(ArtworkProcessor.tint(of:)) ?? .white
     }
 
+    /// Shows a sample track and cover, for screenshots: the player itself is left alone.
+    func showDemo(_ playing: NowPlaying, artwork: CGImage?) {
+        nowPlaying = playing
+        setArtwork(artwork)
+    }
+
     // MARK: Commands
 
     /// Commands update the island at once and let the bridge confirm, so the controls never feel late.
     func togglePlayback() {
         nowPlaying.setPlaying(!nowPlaying.isPlaying, at: Date())
         bridge.send("toggle")
+        SoundLevels.shared.playerChanged(playing: nowPlaying.isPlaying, pid: nowPlaying.pid)
         onChange?(false)
     }
 
