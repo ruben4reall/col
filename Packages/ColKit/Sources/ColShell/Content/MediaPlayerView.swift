@@ -21,6 +21,10 @@ struct MediaPlayerView: View {
                     }
                     .lineLimit(1)
                     Spacer(minLength: 0)
+                    if Preferences.barsFollowSound {
+                        SoundSpectrum(color: media.tint.nsColor)
+                            .padding(.top, 5)
+                    }
                     OutputPicker(audio: audio)
                 }
                 .contentTransition(.opacity)

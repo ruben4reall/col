@@ -4,7 +4,9 @@ import ColCore
 /// Draws the two wings of the compact island with plain Core Animation layers.
 ///
 /// Everything that moves here, the equalizer above all, runs as a repeating animation inside the render server: once
-/// it is set up, the app itself does no work per frame and stays at zero CPU while music plays.
+/// it is set up, the app itself does no work per frame and stays at zero CPU while music plays. When the bars follow
+/// the sound (Settings, Music and lyrics), they take its levels instead, about thirty times a second, only while they
+/// show.
 @MainActor
 final class CompactRenderer {
     let layer = CALayer()
@@ -14,6 +16,8 @@ final class CompactRenderer {
     private var scale: CGFloat = 2
     /// Widest a wing may grow, as the user chose.
     var wingLimit: CGFloat = IslandLayout.standardWing
+    /// Taking the sound's levels, for an equalizer on show.
+    private var listening = false
 
     init() {
         layer.addSublayer(leading.container)
@@ -70,6 +74,24 @@ final class CompactRenderer {
             let width = min(item.map { itemWidth($0, notchHeight: height) } ?? 0, max(0, wing - WingSlot.padding * 2))
             slot.update(item, size: CGSize(width: width, height: WingSlot.side(for: height)), position: position, images: images, scale: scale)
         }
+        listen()
+    }
+
+    /// Takes the sound's levels while an equalizer of music playing shows, and only then.
+    private func listen() {
+        let wants = layer.opacity > 0 && (leading.showsPlayingEqualizer || trailing.showsPlayingEqualizer)
+        guard wants != listening else { return }
+        listening = wants
+        if wants {
+            SoundLevels.shared.subscribe(self) { [weak self] levels in
+                self?.leading.setLevels(levels)
+                self?.trailing.setLevels(levels)
+            }
+        } else {
+            SoundLevels.shared.unsubscribe(self)
+            leading.setLevels(nil)
+            trailing.setLevels(nil)
+        }
     }
 
     func setVisible(_ visible: Bool, animated: Bool) {
@@ -84,6 +106,7 @@ final class CompactRenderer {
             layer.add(fade, forKey: "opacity")
         }
         layer.opacity = opacity
+        listen()
     }
 }
 
@@ -98,6 +121,8 @@ private final class WingSlot {
     let content = CALayer()
     private var parts: [CALayer] = []
     private(set) var item: CompactItem?
+    /// The equalizer's bars follow the sound's levels rather than their own dance.
+    private var live = false
     /// The request the app icon last hopped for. Kept across changes of item, so the island opening and closing, or
     /// another activity passing over it, never makes it hop again for the same request.
     private var hoppedFor: Date?
@@ -189,7 +214,42 @@ private final class WingSlot {
     private func reset() {
         parts.forEach { $0.removeFromSuperlayer() }
         parts = []
+        live = false
         content.contentsGravity = .resizeAspect
+    }
+
+    var showsPlayingEqualizer: Bool {
+        if case .equalizer(_, true) = item { return true }
+        return false
+    }
+
+    /// The sound's levels for the equalizer's bars, or nil to let them dance on their own again. Each change glides
+    /// to the next in the render server, so thirty a second look continuous.
+    func setLevels(_ levels: [Float]?) {
+        guard showsPlayingEqualizer, parts.count >= Self.bars else {
+            live = false
+            return
+        }
+        let bars = Array(parts.prefix(Self.bars))
+        guard let levels else {
+            if live {
+                live = false
+                for (index, bar) in bars.enumerated() { bar.add(Self.dance(index), forKey: "dance") }
+            }
+            return
+        }
+        if !live {
+            live = true
+            bars.forEach { $0.removeAnimation(forKey: "dance") }
+        }
+        let heights = SpectrumBands.regroup(levels, into: Self.bars)
+        CATransaction.begin()
+        CATransaction.setAnimationDuration(1.0 / 24)
+        CATransaction.setAnimationTimingFunction(CAMediaTimingFunction(name: .linear))
+        for (bar, height) in zip(bars, heights) {
+            bar.transform = CATransform3DMakeScale(1, 0.22 + 0.78 * CGFloat(min(max(height, 0), 1)), 1)
+        }
+        CATransaction.commit()
     }
 
     private func part<T: CALayer>(_ index: Int, _ make: () -> T) -> T {
@@ -234,13 +294,27 @@ private final class WingSlot {
         }
     }
 
+    private static let bars = 4
+    // Each bar breathes at its own pace, so together they never fall into step.
+    private static let periods: [CFTimeInterval] = [0.46, 0.34, 0.52, 0.4]
+    private static let peaks: [CGFloat] = [0.95, 0.7, 1, 0.8]
+
+    private static func dance(_ index: Int) -> CABasicAnimation {
+        let dance = CABasicAnimation(keyPath: "transform.scale.y")
+        dance.fromValue = 0.22
+        dance.toValue = peaks[index]
+        dance.duration = periods[index]
+        dance.autoreverses = true
+        dance.repeatCount = .infinity
+        dance.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+        dance.timeOffset = periods[index] * Double(index) * 0.37
+        return dance
+    }
+
     private func drawEqualizer(size: CGSize, tint: RGBA, playing: Bool, restart: Bool) {
-        let count = 4
+        let count = Self.bars
         let gap = size.width * 0.12
         let barWidth = (size.width - gap * CGFloat(count - 1)) / CGFloat(count)
-        // Each bar breathes at its own pace, so together they never fall into step.
-        let periods: [CFTimeInterval] = [0.46, 0.34, 0.52, 0.4]
-        let peaks: [CGFloat] = [0.95, 0.7, 1, 0.8]
         for index in 0..<count {
             let bar = part(index) { CALayer() }
             bar.backgroundColor = tint.cgColor
@@ -250,20 +324,15 @@ private final class WingSlot {
             bar.position = CGPoint(x: barWidth / 2 + CGFloat(index) * (barWidth + gap), y: size.height / 2)
             let resting = barWidth / size.height
             if playing {
+                // Following the sound, the bars keep the height the last levels gave them.
+                guard !live else { continue }
                 if restart || bar.animation(forKey: "dance") == nil {
-                    let dance = CABasicAnimation(keyPath: "transform.scale.y")
-                    dance.fromValue = 0.22
-                    dance.toValue = peaks[index]
-                    dance.duration = periods[index]
-                    dance.autoreverses = true
-                    dance.repeatCount = .infinity
-                    dance.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-                    dance.timeOffset = periods[index] * Double(index) * 0.37
-                    bar.add(dance, forKey: "dance")
+                    bar.add(Self.dance(index), forKey: "dance")
                 }
                 bar.transform = CATransform3DMakeScale(1, 0.22, 1)
             } else {
                 // Settle to dots, from wherever the bar was.
+                live = false
                 let current = (bar.presentation()?.value(forKeyPath: "transform.scale.y") as? CGFloat) ?? resting
                 bar.removeAnimation(forKey: "dance")
                 let settle = CASpringAnimation(perceptualDuration: 0.35, bounce: 0.2)

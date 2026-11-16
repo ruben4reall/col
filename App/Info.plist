@@ -76,6 +76,8 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSAudioCaptureUsageDescription</key>
+	<string>With Bars that follow the sound, the bars beside the camera move with the music that plays. The sound is analysed on your Mac as it plays, never recorded or sent.</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Col reads the battery of your AirPods and other headphones.</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
