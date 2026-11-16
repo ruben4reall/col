@@ -3,6 +3,40 @@
     <channel>
         <title>Islet</title>
         <item>
+            <title>2.1.0</title>
+            <pubDate>Mon, 16 Nov 2026 17:45:59 +0100</pubDate>
+            <link>https://getcol.vercel.app</link>
+            <sparkle:fullReleaseNotesLink>https://github.com/ruben4reall/col/releases</sparkle:fullReleaseNotesLink>
+            <sparkle:version>2.1.0</sparkle:version>
+            <sparkle:shortVersionString>2.1.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <description sparkle:format="markdown"><![CDATA[- **Made for macOS 27**: macOS 27 draws every menu bar icon in one place and puts its own » button for hidden icons
+  right beside the notch. Col now watches that menu bar and measures it again the moment an icon comes or goes, so
+  its wings never cover the » button, an icon or a menu. The wings also leave room for the island's rounded edges
+  and for its swell under the pointer, which used to reach a few points over the first icon. When there is no room
+  on one side, the activity keeps a single wing on the other; a line of text too long for that wing gives way to its
+  icon.
+- **A pill on screens without a notch**: on an external display or a Mac without a notch, the island is now a small
+  black pill inside the menu bar, clear of the top edge, the way the iPhone's island sits in its status bar. It
+  stretches to show what is happening and opens into a card with four round corners. Prefer Col's notch, or the
+  larger capsule below the menu bar? Settings, Appearance, Shape. Turn off "Show the island when nothing happens" to
+  see it only when something happens. When an app's menus reach the middle of the menu bar, the pill steps out of
+  their way.
+- **Below the menu bar, even with a notch**: on a Mac whose notch area already shows something, such as its own
+  Dynamic Island, the island can float below the menu bar instead (Settings, Appearance, Shape).
+- **Wings as wide as you like**: choose how far the closed island may reach beside the camera, Narrow, Standard or
+  Wide (Settings, Appearance, Shape). Whatever the choice, it never covers a menu or an icon.
+- **Long lines glide**: a song title or a lyric too long for its wing glides across it, held still at each end,
+  instead of ending with an ellipsis. With Reduce Motion, it still ends with an ellipsis.
+- **Step aside for some apps**: choose apps in front of which the island hides, as it does in full screen
+  (Settings, General). Volume, alerts and requests still show.
+- **Open and close from a link**: `col://open`, `col://open?page=live` and `col://close`, for Shortcuts and scripts.
+- **macOS 27 names**: the permission Col asks for its wings and its volume display is called Device Control and Data
+  Access on macOS 27, and Col now says so.
+]]></description>
+            <enclosure url="https://github.com/ruben4reall/col/releases/download/v2.1.0/Col-2.1.0.dmg" length="6261944" type="application/octet-stream" sparkle:edSignature="hnZ/fcfXoJjq7fWubLOsaRZ1vrp+/p1jpUXZdfyOtXQD0hzsrhXgFGJu4kOC0hX+d5Iw/B7tWnuOu3dd9KT/AQ=="/>
+        </item>
+        <item>
             <title>2.0.0</title>
             <pubDate>Sat, 03 Oct 2026 14:13:53 +0200</pubDate>
             <link>https://getcol.vercel.app</link>
