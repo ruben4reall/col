@@ -62,14 +62,43 @@ actor LyricsService {
         return answer
     }
 
+    /// The lyrics the user chose for a track among LRCLIB's: read from the disk, else asked by their number alone.
+    func lyrics(choice id: Int) async -> Answer {
+        let key = Self.choiceKey(id)
+        if let answer = Self.cached(key), answer != .notFound { return answer }
+        if let quietUntil, quietUntil > Date() { return .unavailable }
+        switch await request(Self.base.appendingPathComponent("get/\(id)"), as: Record.self) {
+        case .success(let record?):
+            Self.store(record, for: key)
+            return answer(from: record)
+        case .success(nil): return .notFound
+        case .failure: return .unavailable
+        }
+    }
+
+    /// Every recording LRCLIB has under the track's title and artist, best first, for the user to choose from when the
+    /// lyrics found are not the right ones. The same search as a lookup: only the title and the artist are sent. Nil
+    /// when LRCLIB cannot be reached.
+    func candidates(for query: LyricsQuery) async -> [LyricsRecord]? {
+        if let quietUntil, quietUntil > Date() { return nil }
+        var search = URLComponents(url: Self.base.appendingPathComponent("search"), resolvingAgainstBaseURL: false)!
+        search.queryItems = [URLQueryItem(name: "track_name", value: query.cleanTitle), URLQueryItem(name: "artist_name", value: query.mainArtist)]
+        switch await request(search.url!, as: [Record].self) {
+        case .success(let records): return LyricsRecord.ranked(records ?? [], for: query)
+        case .failure: return nil
+        }
+    }
+
+    /// Keeps the record the user chose, so the track finds it on the disk next time.
+    func remember(_ record: LyricsRecord) {
+        Self.store(record, for: Self.choiceKey(record.id))
+    }
+
+    private static func choiceKey(_ id: Int) -> String { "lrclib\u{1F}\(id)" }
+
     // MARK: LRCLIB
 
-    private struct Record: Decodable {
-        var duration: Double?
-        var instrumental: Bool?
-        var plainLyrics: String?
-        var syncedLyrics: String?
-    }
+    private typealias Record = LyricsRecord
 
     /// The answer, and the record it came from, kept as it was for the cache.
     private func fetch(_ query: LyricsQuery) async -> (Answer, Record?) {
