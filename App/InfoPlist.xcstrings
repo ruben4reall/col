@@ -128,6 +128,38 @@
           }
         }
       }
+    },
+    "NSLocationUsageDescription": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col shows the weather where you are. Only a position rounded to about a kilometre is sent to Open-Meteo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col affiche la météo là où vous êtes. Seule une position arrondie à un kilomètre près est envoyée à Open-Meteo."
+          }
+        }
+      }
+    },
+    "NSLocationWhenInUseUsageDescription": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col shows the weather where you are. Only a position rounded to about a kilometre is sent to Open-Meteo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col affiche la météo là où vous êtes. Seule une position arrondie à un kilomètre près est envoyée à Open-Meteo."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

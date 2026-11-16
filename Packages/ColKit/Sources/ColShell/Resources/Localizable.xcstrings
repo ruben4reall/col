@@ -2873,16 +2873,6 @@
         }
       }
     },
-    "Processor, memory, disk, network": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Processeur, mémoire, disque, réseau"
-          }
-        }
-      }
-    },
     "Processor, memory, network and disk, measured only while you look.": {
       "localizations": {
         "fr": {
@@ -3999,16 +3989,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Le titre s’affiche un instant au début d’un morceau."
-          }
-        }
-      }
-    },
-    "The update check, once a day, on the Col website; you can turn it off in General. While lyrics are on, the title, artist, album and length of the song you play, sent to LRCLIB. The AI servers you add, and your questions only to the one you pick; Ollama or LM Studio installed on this Mac, asked on this Mac only. The prompter’s phone remote, on your local network, only while you turn it on. Nothing else: no account, no analytics.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La recherche de mises à jour, une fois par jour, sur le site de Col ; vous pouvez la couper dans Général. Quand les paroles sont activées, le titre, l’artiste, l’album et la durée du morceau joué, envoyés à LRCLIB. Les serveurs d’IA que vous ajoutez, et vos questions seulement à celui que vous choisissez ; Ollama ou LM Studio installés sur ce Mac, interrogés sur ce Mac seulement. La télécommande du prompteur, sur votre réseau local, seulement quand vous l’activez. Rien d’autre : pas de compte, pas de statistiques."
           }
         }
       }
@@ -5469,6 +5449,1226 @@
           "stringUnit": {
             "state": "translated",
             "value": "Utiliser les paroles trouvées en premier"
+          }
+        }
+      }
+    },
+    "%@ is muted": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ est coupé"
+          }
+        }
+      }
+    },
+    "%@ listening": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ écoute"
+          }
+        }
+      }
+    },
+    "%lld completed today": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld terminées aujourd’hui"
+          }
+        }
+      }
+    },
+    "%lld min focus": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld min de concentration"
+          }
+        }
+      }
+    },
+    "%lld today": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld aujourd’hui"
+          }
+        }
+      }
+    },
+    "A city": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une ville"
+          }
+        }
+      }
+    },
+    "A countdown in its calendar’s colour before an event starts, and Join on the Live page when it has a call link. Uses the agenda’s access to Calendars.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un compte à rebours à la couleur de son calendrier avant le début d’un événement, et Rejoindre sur la page En direct quand il a un lien d’appel. Utilise l’accès de l’agenda aux Calendriers."
+          }
+        }
+      }
+    },
+    "A Mute button on the Live page mutes your Mac’s default microphone, and the island shows it in red while it stays muted. Turning this off, or quitting Col, unmutes it.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un bouton Couper sur la page En direct coupe le micro par défaut de votre Mac, et l’île le montre en rouge tant qu’il reste coupé. Désactiver ce réglage, ou quitter Col, le rétablit."
+          }
+        }
+      }
+    },
+    "A search field above the recent copies. The island takes the keyboard only while you type.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un champ de recherche au-dessus des dernières copies. L’île ne prend le clavier que pendant que vous tapez."
+          }
+        }
+      }
+    },
+    "Accessories are off": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les accessoires sont désactivés"
+          }
+        }
+      }
+    },
+    "Accessories’ batteries": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Batterie des accessoires"
+          }
+        }
+      }
+    },
+    "Added to the shelf": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouté à l’étagère"
+          }
+        }
+      }
+    },
+    "Allow Location": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autoriser la localisation"
+          }
+        }
+      }
+    },
+    "Already that size": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déjà à cette taille"
+          }
+        }
+      }
+    },
+    "Also with Control-Option-Command-M": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aussi avec Contrôle-Option-Commande-M"
+          }
+        }
+      }
+    },
+    "Archive": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archive"
+          }
+        }
+      }
+    },
+    "At %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "À %@"
+          }
+        }
+      }
+    },
+    "Break": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pause"
+          }
+        }
+      }
+    },
+    "Break over": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fin de la pause"
+          }
+        }
+      }
+    },
+    "Break: %lld min": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pause : %lld min"
+          }
+        }
+      }
+    },
+    "Calendar": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calendrier"
+          }
+        }
+      }
+    },
+    "Caps Lock": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verrouillage des majuscules"
+          }
+        }
+      }
+    },
+    "Caps Lock off": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Majuscules désactivées"
+          }
+        }
+      }
+    },
+    "Caps Lock on": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Majuscules activées"
+          }
+        }
+      }
+    },
+    "Change…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier…"
+          }
+        }
+      }
+    },
+    "City": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ville"
+          }
+        }
+      }
+    },
+    "Cloudy": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nuageux"
+          }
+        }
+      }
+    },
+    "Col asks again in a moment.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col redemande dans un instant."
+          }
+        }
+      }
+    },
+    "Compress": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compresser"
+          }
+        }
+      }
+    },
+    "Compress All %lld Files": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compresser les %lld fichiers"
+          }
+        }
+      }
+    },
+    "Compressing…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compression…"
+          }
+        }
+      }
+    },
+    "Convert": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Convertir"
+          }
+        }
+      }
+    },
+    "Convert to": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Convertir en"
+          }
+        }
+      }
+    },
+    "Converting…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conversion…"
+          }
+        }
+      }
+    },
+    "Copy Text from Image": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copier le texte de l’image"
+          }
+        }
+      }
+    },
+    "Devices": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appareils"
+          }
+        }
+      }
+    },
+    "Drizzle": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bruine"
+          }
+        }
+      }
+    },
+    "Finds the weather where you are, to about a kilometre: only that rounded position goes to Open-Meteo. Without it, type a city in Settings.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trouve la météo là où vous êtes, à un kilomètre près : seule cette position arrondie part chez Open-Meteo. Sans elle, tapez une ville dans les Réglages."
+          }
+        }
+      }
+    },
+    "Focus": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Concentration"
+          }
+        }
+      }
+    },
+    "Focus and breaks, and today’s sessions": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Concentration et pauses, et les séances du jour"
+          }
+        }
+      }
+    },
+    "Focus, then a break, counted in the wings like the timer, with a gentle sound at the end. In the Tools page and as a widget.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De la concentration, puis une pause, comptées dans les ailes comme le minuteur, avec un son doux à la fin. Dans la page Outils et en widget."
+          }
+        }
+      }
+    },
+    "Focus: %lld min": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Concentration : %lld min"
+          }
+        }
+      }
+    },
+    "Fog": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brouillard"
+          }
+        }
+      }
+    },
+    "Freezing drizzle": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bruine verglaçante"
+          }
+        }
+      }
+    },
+    "Freezing rain": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pluie verglaçante"
+          }
+        }
+      }
+    },
+    "From a file’s menu: convert an image to PNG, JPEG or HEIC, resize it, compress files into a .zip, copy the text of an image. Everything runs on your Mac; what they make lands beside the original and on the shelf.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Depuis le menu d’un fichier : convertir une image en PNG, JPEG ou HEIC, la redimensionner, compresser des fichiers en .zip, copier le texte d’une image. Tout se fait sur votre Mac ; le résultat arrive à côté de l’original et sur l’étagère."
+          }
+        }
+      }
+    },
+    "From Open-Meteo, a free weather service. Col sends it only a position rounded to about a kilometre, or the name of the city you search, at most every 30 minutes and only while the weather shows. Temperatures follow the unit of your Mac.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "D’Open-Meteo, un service météo gratuit. Col ne lui envoie qu’une position arrondie à un kilomètre près, ou le nom de la ville que vous cherchez, au plus toutes les 30 minutes et seulement pendant que la météo s’affiche. Les températures suivent l’unité de votre Mac."
+          }
+        }
+      }
+    },
+    "From Open-Meteo, where you are or in your city.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "D’Open-Meteo, là où vous êtes ou dans votre ville."
+          }
+        }
+      }
+    },
+    "Getting the weather…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Récupération de la météo…"
+          }
+        }
+      }
+    },
+    "Graphics": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Graphisme"
+          }
+        }
+      }
+    },
+    "Graphics processor on the System page": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Processeur graphique sur la page Système"
+          }
+        }
+      }
+    },
+    "H %@  L %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Max. %@  Min. %@"
+          }
+        }
+      }
+    },
+    "Half the Size (50 %)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Moitié de la taille (50 %)"
+          }
+        }
+      }
+    },
+    "Heavy rain": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Forte pluie"
+          }
+        }
+      }
+    },
+    "Here": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ici"
+          }
+        }
+      }
+    },
+    "Its load beside the processor’s, measured only while you look.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sa charge à côté de celle du processeur, mesurée seulement pendant que vous regardez."
+          }
+        }
+      }
+    },
+    "Keyboard backlight": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rétroéclairage du clavier"
+          }
+        }
+      }
+    },
+    "Lausanne, Tokyo…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lausanne, Tokyo…"
+          }
+        }
+      }
+    },
+    "Location": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Localisation"
+          }
+        }
+      }
+    },
+    "Location is off": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La localisation est désactivée"
+          }
+        }
+      }
+    },
+    "Location Services is off for Col. Allow it in System Settings, or choose a city.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le service de localisation est désactivé pour Col. Autorisez-le dans les Réglages Système, ou choisissez une ville."
+          }
+        }
+      }
+    },
+    "macOS asks you once.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS vous le demande une fois."
+          }
+        }
+      }
+    },
+    "Mice, keyboards and trackpads show here with their battery.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les souris, claviers et trackpads s’affichent ici avec leur batterie."
+          }
+        }
+      }
+    },
+    "Microphone on": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Micro activé"
+          }
+        }
+      }
+    },
+    "Mostly clear": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plutôt dégagé"
+          }
+        }
+      }
+    },
+    "Mute": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couper"
+          }
+        }
+      }
+    },
+    "Mute or unmute the microphone": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couper ou rétablir le micro"
+          }
+        }
+      }
+    },
+    "Mute the microphone from the island": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couper le micro depuis l’île"
+          }
+        }
+      }
+    },
+    "Muted": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coupé"
+          }
+        }
+      }
+    },
+    "Next meeting": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prochaine réunion"
+          }
+        }
+      }
+    },
+    "No accessories": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun accessoire"
+          }
+        }
+      }
+    },
+    "No city by that name.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune ville de ce nom."
+          }
+        }
+      }
+    },
+    "No copy matches “%@”": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune copie ne correspond à « %@ »"
+          }
+        }
+      }
+    },
+    "No text found": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun texte trouvé"
+          }
+        }
+      }
+    },
+    "No weather right now": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pas de météo pour l’instant"
+          }
+        }
+      }
+    },
+    "Now": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maintenant"
+          }
+        }
+      }
+    },
+    "Now, today’s high and low and the hours ahead, in the Weather widget and on the Lock Screen. Add the widget to a page in Pages.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maintenant, les maximales et minimales du jour et les heures à venir, dans le widget Météo et sur l’écran verrouillé. Ajoutez le widget à une page dans Pages."
+          }
+        }
+      }
+    },
+    "Now, today’s high and low, the hours ahead": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maintenant, les maximales et minimales du jour, les heures à venir"
+          }
+        }
+      }
+    },
+    "On or off, for a moment. Col sees the modifier keys only, never what you type. Needs Accessibility.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activé ou désactivé, un instant. Col ne voit que les touches de modification, jamais ce que vous tapez. Nécessite l’Accessibilité."
+          }
+        }
+      }
+    },
+    "On or off, for a moment. Col sees the modifier keys only, never what you type. Needs Device Control and Data Access.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activé ou désactivé, un instant. Col ne voit que les touches de modification, jamais ce que vous tapez. Nécessite Contrôle de l’appareil et accès aux données."
+          }
+        }
+      }
+    },
+    "Open-Meteo": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open-Meteo"
+          }
+        }
+      }
+    },
+    "Or type a city in Settings.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ou tapez une ville dans les Réglages."
+          }
+        }
+      }
+    },
+    "Partly cloudy": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Partiellement nuageux"
+          }
+        }
+      }
+    },
+    "Pomodoro": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pomodoro"
+          }
+        }
+      }
+    },
+    "Pomodoro is off": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pomodoro est désactivé"
+          }
+        }
+      }
+    },
+    "Processor, graphics, memory, disk, network": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Processeur, graphisme, mémoire, disque, réseau"
+          }
+        }
+      }
+    },
+    "Rain": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pluie"
+          }
+        }
+      }
+    },
+    "Reading the text…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lecture du texte…"
+          }
+        }
+      }
+    },
+    "Resize": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Redimensionner"
+          }
+        }
+      }
+    },
+    "Resizing…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Redimensionnement…"
+          }
+        }
+      }
+    },
+    "Retina Capture to 1x": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Capture Retina en 1x"
+          }
+        }
+      }
+    },
+    "Search your copies": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechercher dans vos copies"
+          }
+        }
+      }
+    },
+    "Shelf, clipboard and System": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Étagère, presse-papiers et Système"
+          }
+        }
+      }
+    },
+    "Showers": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Averses"
+          }
+        }
+      }
+    },
+    "Snow": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neige"
+          }
+        }
+      }
+    },
+    "Snow showers": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Averses de neige"
+          }
+        }
+      }
+    },
+    "Starts %lld min before": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commence %lld min avant"
+          }
+        }
+      }
+    },
+    "Text copied": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Texte copié"
+          }
+        }
+      }
+    },
+    "That did not work": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cela n’a pas fonctionné"
+          }
+        }
+      }
+    },
+    "The level, as for brightness, on the Macs with backlight keys. Needs Accessibility.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le niveau, comme pour la luminosité, sur les Mac dotés de touches de rétroéclairage. Nécessite l’Accessibilité."
+          }
+        }
+      }
+    },
+    "The level, as for brightness, on the Macs with backlight keys. Needs Device Control and Data Access.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le niveau, comme pour la luminosité, sur les Mac dotés de touches de rétroéclairage. Nécessite Contrôle de l’appareil et accès aux données."
+          }
+        }
+      }
+    },
+    "The update check, once a day, on the Col website; you can turn it off in General. While lyrics are on, the title, artist, album and length of the song you play, sent to LRCLIB. The AI servers you add, and your questions only to the one you pick; Ollama or LM Studio installed on this Mac, asked on this Mac only. The prompter’s phone remote, on your local network, only while you turn it on. While the weather is on, a position rounded to about a kilometre, sent to Open-Meteo at most every 30 minutes, only while the weather shows. Nothing else: no account, no analytics.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La recherche de mises à jour, une fois par jour, sur le site de Col ; vous pouvez la désactiver dans Général. Quand les paroles sont activées, le titre, l’artiste, l’album et la durée du morceau joué, envoyés à LRCLIB. Les serveurs d’IA que vous ajoutez, et vos questions seulement à celui que vous choisissez ; Ollama ou LM Studio installés sur ce Mac, interrogés sur ce Mac seulement. La télécommande du prompteur sur votre téléphone, sur votre réseau local, seulement quand vous l’activez. Quand la météo est activée, une position arrondie à un kilomètre près, envoyée à Open-Meteo au plus toutes les 30 minutes, seulement pendant que la météo s’affiche. Rien d’autre : aucun compte, aucune statistique."
+          }
+        }
+      }
+    },
+    "The weather, Pomodoro, and what the shelf, clipboard and System pages can do.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La météo, Pomodoro, et ce que savent faire les pages Étagère, Presse-papiers et Système."
+          }
+        }
+      }
+    },
+    "then %lld min break": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "puis %lld min de pause"
+          }
+        }
+      }
+    },
+    "Thunderstorms": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orages"
+          }
+        }
+      }
+    },
+    "Thunderstorms and hail": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orages et grêle"
+          }
+        }
+      }
+    },
+    "Time for a break": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "C’est l’heure de la pause"
+          }
+        }
+      }
+    },
+    "To about a kilometre, read only when the weather is due.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "À un kilomètre près, lue seulement quand la météo doit se mettre à jour."
+          }
+        }
+      }
+    },
+    "today": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "aujourd’hui"
+          }
+        }
+      }
+    },
+    "Tools for files on the shelf": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Outils pour les fichiers de l’étagère"
+          }
+        }
+      }
+    },
+    "Turn On…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activer…"
+          }
+        }
+      }
+    },
+    "Turn them on in Settings, Live activities.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activez-les dans Réglages, Activités en direct."
+          }
+        }
+      }
+    },
+    "Type a city in Settings for its weather.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tapez une ville dans les Réglages pour avoir sa météo."
+          }
+        }
+      }
+    },
+    "Unmute": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rétablir"
+          }
+        }
+      }
+    },
+    "Weather": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Météo"
+          }
+        }
+      }
+    },
+    "Weather and tools": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Météo et outils"
+          }
+        }
+      }
+    },
+    "Weather for": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Météo pour"
+          }
+        }
+      }
+    },
+    "Weather where you are": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La météo là où vous êtes"
+          }
+        }
+      }
+    },
+    "Where I am": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Là où je suis"
+          }
+        }
+      }
+    },
+    "Your Mac’s default microphone, while Mute the microphone is on in Live activities. Off until you turn it on.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le micro par défaut de votre Mac, quand Couper le micro est activé dans Activités en direct. Désactivé jusqu’à ce que vous l’activiez."
+          }
+        }
+      }
+    },
+    "Your mouse, keyboard and trackpad in the Devices widget, and a word when one falls under 15 %.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre souris, votre clavier et votre trackpad dans le widget Appareils, et un mot quand l’un d’eux passe sous 15 %."
+          }
+        }
+      }
+    },
+    "Your mouse, keyboard and trackpad, with their battery": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre souris, votre clavier et votre trackpad, avec leur batterie"
           }
         }
       }
