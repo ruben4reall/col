@@ -1,0 +1,115 @@
+name: linux
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+    paths:
+      - 'linux/**'
+      - 'packaging/linux/**'
+      - '.github/workflows/linux.yml'
+  pull_request:
+    paths:
+      - 'linux/**'
+      - 'packaging/linux/**'
+      - '.github/workflows/linux.yml'
+permissions:
+  contents: read
+jobs:
+  build:
+    name: build (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            arch: amd64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install the build tools and libraries
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends valac meson ninja-build pkg-config libgtk-4-dev \
+            libadwaita-1-dev libjson-glib-dev libsoup-3.0-dev libpulse-dev libwayland-dev libwayland-bin \
+            wayland-protocols libx11-dev gettext desktop-file-utils appstream dpkg-dev
+      - name: The version is the tag's
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          version=$(sed -n "s/^  version: '\(.*\)',$/\1/p" linux/meson.build)
+          test "v$version" = "$GITHUB_REF_NAME" || { echo "linux/meson.build says $version, the tag $GITHUB_REF_NAME"; exit 1; }
+      - name: Build
+        run: |
+          meson setup build linux --prefix=/usr --buildtype=release
+          meson compile -C build
+      - name: Unit tests
+        run: meson test -C build --suite col --print-errorlogs
+      - name: Packages
+        run: |
+          packaging/linux/build-deb.sh build dist
+          packaging/linux/build-tarball.sh build dist
+          ls -l dist
+      - name: The package installs and runs
+        run: |
+          sudo apt-get install -y ./dist/col_*_${{ matrix.arch }}.deb
+          col-island --version
+          colctl --version
+      - name: Install a headless Sway
+        run: |
+          sudo apt-get install -y --no-install-recommends sway grim swaybg fonts-inter adwaita-icon-theme \
+            python3-gi gir1.2-glib-2.0 pulseaudio pulseaudio-utils dbus
+      - name: Screenshots of every state
+        run: |
+          dbus-run-session -- linux/tools/screenshots.sh build/src/app/col-island screenshots 1
+          dbus-run-session -- linux/tools/screenshots.sh build/src/app/col-island screenshots 2 \
+            collapsed music-closed lyrics agent-permission tools
+      - name: End to end, with a virtual pointer
+        run: dbus-run-session -- linux/tools/e2e.sh build screenshots/e2e
+      - name: Memory and processor at rest
+        run: |
+          echo "### Col at rest (${{ matrix.arch }}, headless Sway)" >>"$GITHUB_STEP_SUMMARY"
+          dbus-run-session -- linux/tools/measure.sh build 60 | tee -a "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots-${{ matrix.arch }}
+          path: screenshots
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packages-${{ matrix.arch }}
+          path: dist
+
+  release:
+    name: attach to the release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: packages-*
+          merge-multiple: true
+          path: dist
+      - name: Upload the packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=${GITHUB_REF_NAME#v}
+          # The versioned names, and copies under names that never change, so a page can always link to
+          # https://github.com/ruben4reall/col/releases/latest/download/<name>.
+          cp "dist/col_${version}_amd64.deb" dist/col_amd64.deb
+          cp "dist/col_${version}_arm64.deb" dist/col_arm64.deb
+          cp "dist/Col-${version}-linux-x86_64.tar.gz" dist/Col-linux-x86_64.tar.gz
+          cp "dist/Col-${version}-linux-aarch64.tar.gz" dist/Col-linux-aarch64.tar.gz
+          files="dist/col_${version}_amd64.deb dist/col_${version}_arm64.deb dist/Col-${version}-linux-x86_64.tar.gz dist/Col-${version}-linux-aarch64.tar.gz"
+          files="$files dist/col_amd64.deb dist/col_arm64.deb dist/Col-linux-x86_64.tar.gz dist/Col-linux-aarch64.tar.gz"
+          ls -l $files
+          # The release itself is made by the Mac's release script: it may come a little after the tag.
+          for _ in $(seq 30); do
+            gh release view "$GITHUB_REF_NAME" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1 && break
+            sleep 20
+          done
+          gh release upload "$GITHUB_REF_NAME" -R "$GITHUB_REPOSITORY" --clobber $files

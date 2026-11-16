@@ -1,0 +1,27 @@
+[Desktop Entry]
+Type=Application
+Name=Col
+GenericName=Live Island
+GenericName[fr]=Île en direct
+Comment=The island at the top of your screen: music and lyrics, coding agents, volume and your own live activities
+Comment[fr]=L’île en haut de votre écran : musique et paroles, agents de code, volume et vos propres activités en direct
+Exec=col-island %U
+Icon=ch.rubencatalao.Col
+Terminal=false
+Categories=Utility;GTK;
+Keywords=island;music;lyrics;agents;timer;clipboard;
+Keywords[fr]=île;musique;paroles;agents;minuteur;presse-papiers;
+StartupNotify=false
+SingleMainWindow=true
+MimeType=x-scheme-handler/col;
+Actions=settings;quit;
+
+[Desktop Action settings]
+Name=Settings
+Name[fr]=Réglages
+Exec=col-island --settings
+
+[Desktop Action quit]
+Name=Quit
+Name[fr]=Quitter
+Exec=col-island --quit

@@ -1,0 +1,417 @@
+# French translations for Col for Linux.
+# This file is distributed under the same license as Col (MIT).
+msgid ""
+msgstr ""
+"Project-Id-Version: col\n"
+"Report-Msgid-Bugs-To: https://github.com/ruben4reall/col/issues\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: src/app/expanded.vala:66 src/app/preferences.vala:121
+msgid "Music"
+msgstr "Musique"
+
+#: src/app/expanded.vala:66
+msgid "Agents and activities"
+msgstr "Agents et activités"
+
+#: src/app/expanded.vala:66
+msgid "Tools"
+msgstr "Outils"
+
+#: src/app/expanded.vala:91
+msgid "Settings"
+msgstr "Réglages"
+
+#: src/app/live.vala:103
+msgid "Allow"
+msgstr "Autoriser"
+
+#: src/app/live.vala:106
+msgid "Deny"
+msgstr "Refuser"
+
+#: src/app/live.vala:109
+msgid "Answer in terminal"
+msgstr "Répondre dans le terminal"
+
+#: src/app/live.vala:122
+msgid "Too long to check here: answer in the terminal."
+msgstr "Trop long pour être vérifié ici : répondez dans le terminal."
+
+#: src/app/live.vala:140
+msgid "Agent"
+msgstr "Agent"
+
+#: src/app/live.vala:191
+msgid "No agent at work"
+msgstr "Aucun agent au travail"
+
+#: src/app/live.vala:193
+msgid "Connect Claude Code or Codex in Settings, or push your own activities with colctl."
+msgstr "Reliez Claude Code ou Codex dans les Réglages, ou envoyez vos propres activités avec colctl."
+
+#: src/app/live.vala:238
+msgid "Working"
+msgstr "Au travail"
+
+#: src/app/live.vala:241
+msgid "Waiting for you"
+msgstr "Vous attend"
+
+#: src/app/live.vala:244
+msgid "Done"
+msgstr "Terminé"
+
+#: src/app/live.vala:247
+msgid "Idle"
+msgstr "Inactif"
+
+#: src/app/model.vala:415
+msgid "Time is up"
+msgstr "C’est l’heure"
+
+#: src/app/model.vala:432
+msgid "Awake"
+msgstr "Éveillé"
+
+#: src/app/model.vala:452
+msgid "Muted"
+msgstr "Muet"
+
+#: src/app/model.vala:472
+#, c-format
+msgid "Charging, %d%%"
+msgstr "En charge, %d %%"
+
+#: src/app/model.vala:480
+#, c-format
+msgid "Low battery, %d%%"
+msgstr "Batterie faible, %d %%"
+
+#: src/app/music.vala:384
+msgid "Previous"
+msgstr "Précédent"
+
+#: src/app/music.vala:385
+msgid "Play or pause"
+msgstr "Lecture ou pause"
+
+#: src/app/music.vala:387
+msgid "Next"
+msgstr "Suivant"
+
+#: src/app/music.vala:421
+msgid "Nothing playing"
+msgstr "Rien en lecture"
+
+#: src/app/preferences.vala:11
+msgid "Col Settings"
+msgstr "Réglages de Col"
+
+#: src/app/preferences.vala:36
+msgid "General"
+msgstr "Général"
+
+#: src/app/preferences.vala:41
+msgid "Welcome to Col"
+msgstr "Bienvenue dans Col"
+
+#: src/app/preferences.vala:42
+msgid "The island lives at the top of your screen. Rest the pointer on the top edge, in the middle, to bring it out; click it to open it. Everything below can change later, here."
+msgstr "L’île vit en haut de votre écran. Posez le pointeur sur le bord du haut, au milieu, pour la faire venir ; cliquez dessus pour l’ouvrir. Tout ce qui suit se change ensuite, ici."
+
+#: src/app/preferences.vala:47
+msgid "Island"
+msgstr "Île"
+
+#: src/app/preferences.vala:49
+msgid "Open Col at login"
+msgstr "Ouvrir Col à la connexion"
+
+#: src/app/preferences.vala:53
+msgid "Show the island at rest"
+msgstr "Afficher l’île au repos"
+
+#: src/app/preferences.vala:54
+msgid "Off, it appears only when something happens. The top edge of the screen always brings it out."
+msgstr "Désactivé, elle n’apparaît que lorsqu’il se passe quelque chose. Le bord du haut de l’écran la fait toujours venir."
+
+#: src/app/preferences.vala:55
+msgid "Open on hover"
+msgstr "Ouvrir au survol"
+
+#: src/app/preferences.vala:55
+msgid "Rest the pointer on the island to open it. A click always does."
+msgstr "Posez le pointeur sur l’île pour l’ouvrir. Un clic l’ouvre toujours."
+
+#: src/app/preferences.vala:58
+msgid "Size of the open island"
+msgstr "Taille de l’île ouverte"
+
+#: src/app/preferences.vala:59
+msgid "Compact"
+msgstr "Compacte"
+
+#: src/app/preferences.vala:59
+msgid "Standard"
+msgstr "Standard"
+
+#: src/app/preferences.vala:59
+msgid "Large"
+msgstr "Grande"
+
+#: src/app/preferences.vala:70
+msgid "Screen"
+msgstr "Écran"
+
+#: src/app/preferences.vala:72
+msgid "Automatic"
+msgstr "Automatique"
+
+#: src/app/preferences.vala:96
+msgid "Below the top panel"
+msgstr "Sous le panneau du haut"
+
+#: src/app/preferences.vala:97
+msgid "Leaves a panel at the top of the screen uncovered. Not on GNOME, where the island always sits below the top bar."
+msgstr "Laisse découvert un panneau en haut de l’écran. Sauf sur GNOME, où l’île se place toujours sous la barre du haut."
+
+#: src/app/preferences.vala:102
+msgid "System"
+msgstr "Système"
+
+#: src/app/preferences.vala:103
+msgid "Volume"
+msgstr "Volume"
+
+#: src/app/preferences.vala:103
+msgid "A gauge in the island when the volume changes."
+msgstr "Une jauge dans l’île quand le volume change."
+
+#: src/app/preferences.vala:106
+msgid "Plasma shows its own volume display too"
+msgstr "Plasma affiche aussi son propre indicateur de volume"
+
+#: src/app/preferences.vala:107
+msgid "To keep only Col's, open the settings of the Audio Volume widget in your panel and turn off its visual feedback for volume changes."
+msgstr "Pour ne garder que celui de Col, ouvrez les réglages du composant Volume audio de votre panneau et désactivez son retour visuel lors des changements de volume."
+
+#: src/app/preferences.vala:111
+msgid "Charging and low battery"
+msgstr "Charge et batterie faible"
+
+#: src/app/preferences.vala:111
+msgid "Plugging in and a low battery show in the island."
+msgstr "Le branchement et la batterie faible s’affichent dans l’île."
+
+#: src/app/preferences.vala:112
+msgid "Clipboard history"
+msgstr "Historique du presse-papiers"
+
+#: src/app/preferences.vala:113
+msgid "Kept in memory only, except the copies you pin, which are saved in Col's settings. Copies from password managers are skipped."
+msgstr "Gardé en mémoire seulement, sauf les copies épinglées, enregistrées dans les réglages de Col. Les copies des gestionnaires de mots de passe sont ignorées."
+
+#: src/app/preferences.vala:125
+msgid "Music and lyrics"
+msgstr "Musique et paroles"
+
+#: src/app/preferences.vala:126
+msgid "The song playing comes from any player that speaks MPRIS: Spotify, your browser, VLC and most others. Lyrics come from LRCLIB, an open database written by its users. Col sends it only the title, the artist, the album and the length of the track, and keeps the answer on this computer, so each song is asked once."
+msgstr "Le morceau en cours vient de tout lecteur qui parle MPRIS : Spotify, votre navigateur, VLC et la plupart des autres. Les paroles viennent de LRCLIB, une base libre écrite par ses utilisateurs. Col ne lui envoie que le titre, l’artiste, l’album et la durée du morceau, et garde la réponse sur cet ordinateur : chaque morceau n’est demandé qu’une fois."
+
+#: src/app/preferences.vala:127
+msgid "Synced lyrics"
+msgstr "Paroles synchronisées"
+
+#: src/app/preferences.vala:127
+msgid "The words of the song beside the player, line by line."
+msgstr "Les paroles à côté du lecteur, ligne par ligne."
+
+#: src/app/preferences.vala:128
+msgid "The line being sung in the closed island"
+msgstr "La ligne chantée dans l’île fermée"
+
+#: src/app/preferences.vala:131
+msgid "Your own lyrics"
+msgstr "Vos propres paroles"
+
+#: src/app/preferences.vala:132
+#, c-format
+msgid "Files named Artist - Title.lrc in %s take precedence."
+msgstr "Les fichiers nommés Artiste - Titre.lrc dans %s passent en premier."
+
+#: src/app/preferences.vala:135
+msgid "Open the Folder"
+msgstr "Ouvrir le dossier"
+
+#: src/app/preferences.vala:146
+msgid "Lyrics kept on this computer"
+msgstr "Paroles gardées sur cet ordinateur"
+
+#: src/app/preferences.vala:147
+msgid "Forget them, so each song is asked again."
+msgstr "Les oublier, pour que chaque morceau soit redemandé."
+
+#: src/app/preferences.vala:148
+msgid "Clear"
+msgstr "Effacer"
+
+#: src/app/preferences.vala:162
+msgid "Agents"
+msgstr "Agents"
+
+#: src/app/preferences.vala:166
+msgid "Coding agents"
+msgstr "Agents de code"
+
+#: src/app/preferences.vala:167
+msgid "Sessions in the island, and permission requests with Allow and Deny. Col never signs in to any AI service: it only hears the hooks each agent calls on this computer. Connecting adds Col's hooks to the agent's settings and keeps a backup beside them."
+msgstr "Les sessions dans l’île, et les demandes d’autorisation avec Autoriser et Refuser. Col ne se connecte à aucun service d’IA : il entend seulement les hooks que chaque agent appelle sur cet ordinateur. Relier un agent ajoute les hooks de Col à ses réglages et garde une copie de sauvegarde à côté."
+
+#: src/app/preferences.vala:184
+msgid "Your scripts"
+msgstr "Vos scripts"
+
+#: src/app/preferences.vala:185
+msgid "Put your own live activities in the island from a terminal, a script or a hook."
+msgstr "Mettez vos propres activités en direct dans l’île depuis un terminal, un script ou un hook."
+
+#: src/app/preferences.vala:199
+msgid "Local API"
+msgstr "API locale"
+
+#: src/app/preferences.vala:200
+#, c-format
+msgid "HTTP on the Unix socket %s, open to your account only."
+msgstr "HTTP sur le socket Unix %s, ouvert à votre compte seulement."
+
+#: src/app/preferences.vala:213
+msgid "Connected. In Codex, run /hooks once and trust Col's hooks."
+msgstr "Connecté. Dans Codex, lancez /hooks une fois et approuvez les hooks de Col."
+
+#: src/app/preferences.vala:213
+msgid "Connected"
+msgstr "Connecté"
+
+#: src/app/preferences.vala:214
+msgid "Not connected"
+msgstr "Non connecté"
+
+#: src/app/preferences.vala:214
+msgid "Not found on this computer"
+msgstr "Absent de cet ordinateur"
+
+#: src/app/preferences.vala:215
+msgid "Disconnect"
+msgstr "Déconnecter"
+
+#: src/app/preferences.vala:215
+msgid "Connect"
+msgstr "Connecter"
+
+#: src/app/preferences.vala:240
+#, c-format
+msgid "Disconnected. %s no longer calls Col."
+msgstr "Déconnecté. %s n’appelle plus Col."
+
+#: src/app/preferences.vala:241
+#, c-format
+msgid "Connected. New %s sessions report to Col."
+msgstr "Connecté. Les nouvelles sessions %s s’affichent dans Col."
+
+#: src/app/preferences.vala:250
+msgid "About"
+msgstr "À propos"
+
+#: src/app/preferences.vala:253
+msgid "Col for Linux"
+msgstr "Col pour Linux"
+
+#: src/app/preferences.vala:254
+msgid "A preview: the island, the music playing with its lyrics, your coding agents, the volume, the battery and a few tools. Col is free and open source, under the MIT license."
+msgstr "Une préversion : l’île, la musique en cours avec ses paroles, vos agents de code, le volume, la batterie et quelques outils. Col est libre et open source, sous licence MIT."
+
+#: src/app/preferences.vala:256
+msgid "About Col"
+msgstr "À propos de Col"
+
+#: src/app/preferences.vala:262
+msgid "Privacy"
+msgstr "Confidentialité"
+
+#: src/app/preferences.vala:263
+msgid "No account, no telemetry. Col reaches the network only for LRCLIB while lyrics are on, and for a cover when the player gives its address. Scripts and agents reach Col through a socket only your account can open."
+msgstr "Pas de compte, pas de télémétrie. Col n’utilise le réseau que pour LRCLIB quand les paroles sont activées, et pour une pochette quand le lecteur en donne l’adresse. Les scripts et les agents joignent Col par un socket que seul votre compte peut ouvrir."
+
+#: src/app/preferences.vala:267
+msgid "Quit Col"
+msgstr "Quitter Col"
+
+#: src/app/preferences.vala:285
+#, c-format
+msgid "%s (preview)"
+msgstr "%s (préversion)"
+
+#: src/app/preferences.vala:286
+msgid "The island at the top of your screen: the song playing, its lyrics, your coding agents asking for permission, the volume and your own live activities."
+msgstr "L’île en haut de votre écran : le morceau en cours, ses paroles, vos agents de code qui demandent une autorisation, le volume et vos propres activités en direct."
+
+#: src/app/settings.vala:132
+msgid "The island at the top of your screen"
+msgstr "L’île en haut de votre écran"
+
+#: src/app/system.vala:165 src/app/system.vala:197
+msgid "Keep awake is on in Col"
+msgstr "Garder éveillé est activé dans Col"
+
+#. Timer and keep awake.
+#: src/app/tools.vala:24
+msgid "Timer"
+msgstr "Minuteur"
+
+#: src/app/tools.vala:36
+#, c-format
+msgid "%d min"
+msgstr "%d min"
+
+#: src/app/tools.vala:49
+msgid "+1 min"
+msgstr "+1 min"
+
+#: src/app/tools.vala:54
+msgid "Cancel the timer"
+msgstr "Annuler le minuteur"
+
+#: src/app/tools.vala:71
+msgid "Keep awake"
+msgstr "Garder éveillé"
+
+#. Clipboard.
+#: src/app/tools.vala:90
+msgid "Clipboard"
+msgstr "Presse-papiers"
+
+#: src/app/tools.vala:99
+msgid "Nothing copied yet"
+msgstr "Rien de copié pour l’instant"
+
+#: src/app/tools.vala:104
+msgid "Clipboard history is off, or this desktop does not share the clipboard with Col."
+msgstr "L’historique du presse-papiers est désactivé, ou ce bureau ne partage pas le presse-papiers avec Col."
+
+#: src/app/tools.vala:137
+msgid "Copy again"
+msgstr "Copier à nouveau"
+
+#: src/app/tools.vala:141
+msgid "Unpin"
+msgstr "Désépingler"
+
+#: src/app/tools.vala:141
+msgid "Pin"
+msgstr "Épingler"

@@ -1,5 +1,19 @@
 name: ci
-on: [push, pull_request]
+on:
+  push:
+    paths-ignore:
+      - 'windows/**'
+      - 'linux/**'
+      - 'packaging/linux/**'
+      - '.github/workflows/windows.yml'
+      - '.github/workflows/linux.yml'
+  pull_request:
+    paths-ignore:
+      - 'windows/**'
+      - 'linux/**'
+      - 'packaging/linux/**'
+      - '.github/workflows/windows.yml'
+      - '.github/workflows/linux.yml'
 permissions:
   contents: read
 jobs:

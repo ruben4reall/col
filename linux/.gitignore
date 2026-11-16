@@ -1,0 +1,5 @@
+# Meson downloads and unpacks subprojects here; only the wrap files are versioned.
+/subprojects/*/
+/subprojects/packagecache/
+/build*/
+/dist/
