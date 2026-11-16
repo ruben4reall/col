@@ -16,6 +16,8 @@ enum IslandRoute: Hashable {
     case drop
     /// Souffleur, the prompter's former app, closed because it is now part of Col; never a tab.
     case souffleur
+    /// Col cannot see the menu bar without Accessibility, and says so once; never a tab.
+    case menuBarAccess
 
     var symbol: String {
         switch self {
@@ -25,6 +27,7 @@ enum IslandRoute: Hashable {
         case .device: "airpodspro"
         case .drop: "tray.full.fill"
         case .souffleur: "text.aligncenter"
+        case .menuBarAccess: "accessibility"
         }
     }
 }

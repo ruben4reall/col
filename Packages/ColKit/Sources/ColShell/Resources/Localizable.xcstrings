@@ -5002,6 +5002,46 @@
           }
         }
       }
+    },
+    "Let Col see the menu bar": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laissez Col voir la barre des menus"
+          }
+        }
+      }
+    },
+    "Thank you: the wings now keep clear of every menu and icon.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merci : les ailes restent maintenant à l’écart de chaque menu et de chaque icône."
+          }
+        }
+      }
+    },
+    "With Device Control and Data Access, its wings never cover a menu or an icon. Until then they stay narrow.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avec Contrôle de l’appareil et accès aux données, ses ailes ne couvrent jamais un menu ni une icône. D’ici là, elles restent étroites."
+          }
+        }
+      }
+    },
+    "With Accessibility, its wings never cover a menu or an icon. Until then they stay narrow.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avec l’Accessibilité, ses ailes ne couvrent jamais un menu ni une icône. D’ici là, elles restent étroites."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

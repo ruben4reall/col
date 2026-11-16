@@ -230,6 +230,31 @@ public final class IslandController {
         }
     }
 
+    // MARK: Menu bar access
+
+    /// Once, when the island cannot see the menu bar it shares, it says why its wings stay narrow and offers to ask
+    /// for the permission. Never during the welcome, which asks for it itself.
+    private func showMenuBarAccessNoteIfDue() {
+        let key = "menuBarAccessNoteShown"
+        guard WelcomeWindow.hasWelcomed, !AXIsProcessTrusted(), layout?.sharesMenuBar == true,
+              !UserDefaults.standard.bool(forKey: key), machine.state != .expanded,
+              ![.greeting, .souffleur, .device].contains(navigation.route), !prompterInNotch
+        else { return }
+        UserDefaults.standard.set(true, forKey: key)
+        navigation.jump(to: .menuBarAccess)
+        openedByRequest = true
+        send(.requested)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 12) { [weak self] in
+            MainActor.assumeIsolated {
+                guard let self, self.navigation.route == .menuBarAccess else { return }
+                if !self.machine.pointerInside { self.send(.dismissed) }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    MainActor.assumeIsolated { if self.navigation.route == .menuBarAccess { self.navigation.jumpHome() } }
+                }
+            }
+        }
+    }
+
     // MARK: Souffleur
 
     /// Souffleur, the prompter's former app, running beside Col is asked to quit: now, and if it opens in the minute
@@ -255,6 +280,9 @@ public final class IslandController {
         // A note left due by an earlier launch, whose welcome was put off.
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
             MainActor.assumeIsolated { self?.showSouffleurNoteIfDue() }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
+            MainActor.assumeIsolated { self?.showMenuBarAccessNoteIfDue() }
         }
     }
 
@@ -521,6 +549,13 @@ public final class IslandController {
             applySideRoom()
             return
         }
+        // Without Accessibility the menu bar cannot be read: a narrow wing on each side, rather than one over menus and
+        // icons Col cannot see.
+        guard AXIsProcessTrusted() else {
+            freeLeft = WingBudget.unknownRoom; freeRight = WingBudget.unknownRoom; restBlocked = false
+            applySideRoom()
+            return
+        }
         let notchLeft = screen.frame.minX + layout.notch.centerX - layout.notch.width / 2
         let notchRight = notchLeft + layout.notch.width
         // Accessibility measures from the top left of the main screen.
@@ -773,6 +808,14 @@ public final class IslandController {
         case "souffleur":
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
                 MainActor.assumeIsolated { self?.showSouffleurNote() }
+            }
+        case "menubar":
+            // The note about the menu bar, whatever the permission says.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
+                MainActor.assumeIsolated {
+                    self?.navigation.jump(to: .menuBarAccess)
+                    self?.send(.requested)
+                }
             }
         default:
             break

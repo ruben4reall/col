@@ -99,6 +99,9 @@ public enum WingBudget {
     public static let margin: CGFloat = 8
     /// Below this, a wing cannot hold even an icon; the activity then waits in the open island.
     public static let minimum: CGFloat = 30
+    /// Without Accessibility Col cannot see the menu bar: it assumes this much room on each side, enough for an icon,
+    /// rather than reaching over menus and icons it cannot see.
+    public static let unknownRoom: CGFloat = 50
 
     /// Room on one side, from the edge of the notch to the nearest item less the margin, or nil when unknown.
     public static func free(notchEdge: CGFloat, nearestItem: CGFloat?, leftSide: Bool) -> CGFloat? {
