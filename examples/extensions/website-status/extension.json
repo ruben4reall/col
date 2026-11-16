@@ -1,0 +1,6 @@
+{
+  "name": "Website Status",
+  "description": "Whether a website answers, and how fast",
+  "command": "./check.sh",
+  "interval": 60
+}

@@ -115,7 +115,7 @@ public enum ActivitySource: String, CaseIterable, Codable, Sendable {
         else if id == "agents" { self = .agents }
         else if id == "timer" || id == "pomodoro" { self = .timers }
         else if id.hasPrefix("download.") { self = .downloads }
-        else if id.hasPrefix("api.") { self = .scripts }
+        else if id.hasPrefix("api.") || id.hasPrefix("widget.") { self = .scripts }
         else if id == "media" || id.hasPrefix("media.") { self = .music }
         else if id == "awake" { self = .keepAwake }
         else { return nil }

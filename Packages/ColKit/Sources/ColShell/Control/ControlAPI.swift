@@ -9,20 +9,31 @@ import ColCore
 ///     POST   /v1/activities/<id>/done       ?text=Done
 ///     DELETE /v1/activities/<id>
 ///     POST   /v1/agents/events?agent=codex  body: a hook event as the agent wrote it (claude by default, codex,
-///                                           gemini, cursor); answers {"decision": allow|deny|ask}
+///                                           gemini, cursor); answers {"decision": allow|deny|ask}, with the
+///                                           `updatedInput` an answered question or an approved plan hands back
+///     GET    /v1/widgets
+///     PUT    /v1/widgets/<id>               body: WidgetRequest (docs/widgets.md)
+///     DELETE /v1/widgets/<id>
+///     POST   /v1/extensions/reload
+///
+/// Col Connect reaches some of the same routes from the network (`connect`), never the agents'.
 @MainActor
 final class ControlAPI {
     let server = ControlServer()
     private let custom: CustomActivities
     private let agents: AgentCenter
+    private let widgets: WidgetCenter
     private let post: (Activity) -> Void
     private let remove: (String) -> Void
     /// Opens the island, on a page when one is named, or closes it: `col://open?page=live`, `col://close`.
     var showIsland: ((_ open: Bool, _ page: String?) -> Void)?
+    /// Reads the extensions folder again, after `colctl extensions install` or `remove`; answers how many there are.
+    var reloadExtensions: (() -> Int)?
 
-    init(custom: CustomActivities, agents: AgentCenter, post: @escaping (Activity) -> Void, remove: @escaping (String) -> Void) {
+    init(custom: CustomActivities, agents: AgentCenter, widgets: WidgetCenter, post: @escaping (Activity) -> Void, remove: @escaping (String) -> Void) {
         self.custom = custom
         self.agents = agents
+        self.widgets = widgets
         self.post = post
         self.remove = remove
     }
@@ -45,10 +56,15 @@ final class ControlAPI {
         let route = Array(parts.dropFirst())
         // The id of /v1/activities/<id>[/done].
         let id = route.count >= 2 && route[0] == "activities" ? route[1] : ""
+        // The id of /v1/widgets/<id>.
+        let widgetID = route.count == 2 && route[0] == "widgets" ? route[1] : ""
         switch (request.method, route) {
         case ("GET", ["status"]):
             let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "dev"
-            respond(.json(["app": "Col", "version": version, "activities": custom.entries.count, "agents": agents.sessions.count]))
+            respond(.json([
+                "app": "Col", "version": version, "activities": custom.entries.count, "agents": agents.sessions.count,
+                "widgets": widgets.count, "connect": Preferences.connectEnabled,
+            ]))
 
         case ("GET", ["activities"]):
             let list = custom.entries.map { entry -> [String: Any] in
@@ -63,7 +79,7 @@ final class ControlAPI {
         case ("POST", ["activities"]):
             do {
                 let payload = try JSONDecoder().decode(ActivityRequest.self, from: request.body).validated()
-                push(payload)
+                guard push(payload) else { return respond(.error(Self.activitiesFull, status: 409)) }
                 respond(.json(["id": payload.id]))
             } catch {
                 respond(.error("expected an activity with an id", status: 400))
@@ -84,16 +100,92 @@ final class ControlAPI {
             else { return respond(.error("expected a hook event", status: 400)) }
             // Events an agent sends that Col does not follow are simply acknowledged.
             guard let event = agent.event(from: raw) else { return respond(.json(["decision": "ask"])) }
-            agents.receive(event) { decision in respond(.json(["decision": decision.rawValue])) }
+            // Where the session runs, as `colctl hook` found it, to bring its terminal forward later.
+            let origin = AgentOrigin(query: request.query, folder: event.cwd)
+            agents.receive(event, origin: origin) { answer in respond(.json(answer.json)) }
+
+        case ("GET", ["widgets"]):
+            let list = widgets.entries.map { entry -> [String: Any] in
+                var item: [String: Any] = ["id": entry.id, "fromURL": entry.fromURL]
+                if let title = entry.widget.title { item["title"] = title }
+                if let value = entry.widget.shownValue { item["value"] = value }
+                if !entry.isWaiting { item["updated"] = ISO8601DateFormatter().string(from: entry.updated) }
+                return item
+            }
+            respond(.json(["widgets": list]))
+
+        case ("PUT", ["widgets", widgetID]) where !widgetID.isEmpty, ("POST", ["widgets", widgetID]) where !widgetID.isEmpty:
+            let (status, body) = setWidget(widgetID, body: request.body)
+            respond(.json(body, status: status))
+
+        case ("DELETE", ["widgets", widgetID]) where !widgetID.isEmpty:
+            widgets.remove(widgetID)
+            respond(.json(["id": widgetID]))
+
+        case ("POST", ["extensions", "reload"]):
+            respond(.json(["extensions": reloadExtensions?() ?? 0]))
 
         default:
             respond(.error("not found", status: 404))
         }
     }
 
-    func push(_ request: ActivityRequest) {
-        custom.upsert(request)
+    /// Sets the widget a body describes under the id of its address, which wins over the body's: the status and the
+    /// JSON to answer.
+    func setWidget(_ id: String, body: Data) -> (Int, [String: Any]) {
+        guard var widget = try? JSONDecoder().decode(WidgetRequest.self, from: body.isEmpty ? Data("{}".utf8) : body) else {
+            return (400, ["error": "expected a widget as JSON (docs/widgets.md)"])
+        }
+        widget.id = id
+        do {
+            let valid = try widget.validated()
+            guard widgets.set(valid) else {
+                return (409, ["error": "the island holds \(WidgetCenter.maximumPushed) pushed widgets at most: remove one first"])
+            }
+            return (200, ["id": valid.id])
+        } catch let invalid as WidgetRequest.Invalid {
+            return (400, ["error": invalid.message])
+        } catch {
+            return (400, ["error": "invalid widget"])
+        }
+    }
+
+    /// A request a device paired with Col Connect made, on a route ConnectRoute allows: the same as the local API's.
+    func connect(_ route: ConnectRoute, _ request: ConnectRequest) -> ConnectResponse {
+        switch route {
+        case .status:
+            let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "dev"
+            return .json(["app": "Col", "version": version, "activities": custom.entries.count, "widgets": widgets.count])
+        case .pushActivity:
+            guard let payload = try? JSONDecoder().decode(ActivityRequest.self, from: request.body).validated() else {
+                return .error("expected an activity with an id", status: 400)
+            }
+            guard push(payload) else { return .error(Self.activitiesFull, status: 409) }
+            return .json(["id": payload.id])
+        case .finishActivity(let id):
+            guard finish(id, text: request.query["text"]) else { return .error("no such activity", status: 404) }
+            return .json(["id": id])
+        case .removeActivity(let id):
+            custom.remove(id)
+            remove("api." + id)
+            return .json(["id": id])
+        case .setWidget(let id):
+            let (status, body) = setWidget(id, body: request.body)
+            return .json(body, status: status)
+        case .removeWidget(let id):
+            widgets.remove(id)
+            return .json(["id": id])
+        }
+    }
+
+    static let activitiesFull = "Col holds \(CustomActivities.maximum) activities pushed by programs at most: remove one, or let one end"
+
+    /// Shows or updates an activity; false when as many run as Col holds and this one is new.
+    @discardableResult
+    func push(_ request: ActivityRequest) -> Bool {
+        guard custom.upsert(request) else { return false }
         post(request.activity(now: Date()))
+        return true
     }
 
     @discardableResult

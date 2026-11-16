@@ -1,0 +1,6 @@
+{
+  "name": "Homebrew Outdated",
+  "description": "How many Homebrew packages have a newer version",
+  "command": "./outdated.sh",
+  "interval": 3600
+}

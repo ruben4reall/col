@@ -9,6 +9,9 @@ Col listens on a Unix domain socket:
 The socket file is readable only by your user account, so only programs running as you can reach it. Web pages
 cannot: browsers do not open Unix sockets. It speaks plain HTTP/1.1 with JSON bodies.
 
+Other devices of your network reach some of the same routes through [Col Connect](connect.md), off until you turn it
+on. Widgets have [a format of their own](widgets.md).
+
 ## The `colctl` command
 
 ```
@@ -18,6 +21,13 @@ colctl done <id> [--text T]
 colctl remove <id>
 colctl list
 colctl status
+colctl widget set <id> [--json FILE|-] [--title T] [--value V] [--unit U] [--symbol S] [--tint COLOR]
+                       [--progress 0..1 | N%] [--line L]... [--stale-after SECONDS] [--activity]
+colctl widget remove <id>
+colctl widget list
+colctl extensions list
+colctl extensions install <folder | git URL> [--path SUBFOLDER] [--name NAME] [--on]
+colctl extensions remove <name>
 colctl agent <name> <working|waiting|done|idle|end> [--message M] [--session S]
 colctl hook [--agent AGENT]      # the hook itself, reads the agent's event on stdin
 colctl hooks install [--agent claude|codex|gemini|cursor|copilot|all] [--settings PATH]
@@ -40,12 +50,16 @@ When several activities want the notch, the highest priority wins, then the most
 
 | Method and path | Body | Answer |
 |---|---|---|
-| `GET /v1/status` | | `{"app": "Col", "version": "0.1.0", "activities": 1, "agents": 0}` |
+| `GET /v1/status` | | `{"app": "Col", "version": "2.4.0", "activities": 1, "agents": 0, "widgets": 2, "connect": false}` |
 | `GET /v1/activities` | | `{"activities": [{"id": "build", "title": "Build", "progress": 0.4}]}` |
 | `POST /v1/activities` | an activity | `{"id": "build"}` |
 | `POST /v1/activities/<id>/done?text=Done` | | `{"id": "build"}` |
 | `DELETE /v1/activities/<id>` | | `{"id": "build"}` |
 | `POST /v1/agents/events?agent=codex` | a hook event, as the agent wrote it | `{"decision": "allow"}`, `"deny"` or `"ask"` |
+| `GET /v1/widgets` | | `{"widgets": [{"id": "temp", "title": "Living room", "value": "21.5°C", "updated": "…"}]}` |
+| `PUT /v1/widgets/<id>` | a [widget](widgets.md) | `{"id": "temp"}`, or `400` with what to fix |
+| `DELETE /v1/widgets/<id>` | | `{"id": "temp"}` |
+| `POST /v1/extensions/reload` | | `{"extensions": 3}`: the extensions folder read again, as `colctl extensions` does after a change |
 
 An activity:
 
@@ -80,7 +94,7 @@ col://push?id=tea&title=Tea&symbol=cup.and.saucer.fill&ttl=240
 col://done?id=tea
 col://remove?id=tea
 col://settings?pane=developers   # general, appearance, pages, activities, music, prompter, aiApps,
-                                   # permissions, shortcuts, developers, about
+                                   # permissions, shortcuts, connect, developers, about
 col://welcome                    # the welcome tour
 col://open                       # opens the island on its first page
 col://open?page=live             # opens it on a page: live, a page id, or a widget it holds (ai, music)
@@ -120,7 +134,20 @@ the same states:
 
 For a Claude Code or Codex `PermissionRequest`, the request waits until the user answers from the island, for up to
 90 seconds. The answer is `allow`, `deny`, or `ask`, which means "let the agent ask in the terminal". `colctl hook`
-turns it into the hook output both agents read. For Gemini CLI and Cursor, `colctl hook` always answers the neutral
+turns it into the hook output both agents read.
+
+Two of Claude Code's requests are not tools to allow:
+
+- **A plan** (`ExitPlanMode`, as Claude Code leaves plan mode): the island shows the plan as Markdown. Approve answers
+  `allow` with an `updatedInput` that leaves the plan out, so Claude Code carries out the plan of its file, edits made
+  in the terminal included; Keep Planning answers `deny` with a `message` for Claude.
+- **Questions** (`AskUserQuestion`): the island shows each question with its options. The answer is `allow` with
+  `updatedInput`: the questions as asked, and `answers`, each question's text mapped to the labels chosen (several
+  joined with commas). Answer in Terminal answers `ask` and brings the terminal forward.
+
+`colctl hook` also adds `pids` (the processes above the hook, nearest first) and `tty` (the agent's terminal) to the
+query. Clicking a session in the island uses them to bring forward the tab of Terminal or iTerm2 it runs in, the
+window of its folder in VS Code, Cursor, Windsurf or Zed, or the app that holds it. For Gemini CLI and Cursor, `colctl hook` always answers the neutral
 output they expect (`{}`, or `{"continue": true}` before a Cursor prompt), so their own behaviour never changes. Copilot
 only reports: VS Code applies each session's own permission mode, and sends no event when a chat ends, so a Copilot
 session leaves the island once its Done has shown.

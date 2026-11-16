@@ -65,7 +65,8 @@ your scripts and your AI agents.
   your Mac's microphone (⌃⌥⌘M too, if you turn it on). Col unmutes it when you turn the setting off or quit; after a
   crash, it stays muted until Col opens again.
 - **Programmable.** The `colctl` command, a local API, `col://` links, Shortcuts actions and extensions put your own
-  live activities in the notch.
+  live activities and widgets in the notch. With Col Connect, your phone, Home Assistant or a build machine on your
+  network push them too, each with a token of its own; and a widget can read any web address that answers JSON.
 - **Never in the way.** The wings never cover a menu or a menu bar icon, the island steps aside in full screen, and on
   a Mac without a notch it floats just under the menu bar.
 - **Liquid Glass.** On macOS 26 the open island stays black where it meets the notch and melts into glass toward its
@@ -151,7 +152,13 @@ colctl done build
 ```
 
 The command, the local API over a Unix socket that only your account can open, `col://` links and extensions are
-described in [docs/api.md](docs/api.md) and [docs/extensions.md](docs/extensions.md).
+described in [docs/api.md](docs/api.md) and [docs/extensions.md](docs/extensions.md). Widgets have
+[their own format](docs/widgets.md), and [Col Connect](docs/connect.md) opens the same routes to your phone (a
+Shortcut), Home Assistant or any device of your network.
+
+```sh
+colctl widget set temp --title "Living room" --value 21.5 --unit °C --symbol thermometer.medium --tint orange
+```
 
 ## Permissions
 
@@ -165,8 +172,9 @@ Each one only if a module you chose needs it:
 - **Microphone**, for the prompter's voice modes, only while a take runs. The sound is analysed on your Mac and never
   recorded.
 - **Speech Recognition**, for the prompter's Voice Follow, on your Mac only.
-- **Local Network**, for the prompter's phone remote and the AI servers you add on another machine.
+- **Local Network**, for the prompter's phone remote, Col Connect and the AI servers you add on another machine.
 - **Location**, only for the weather where you are, if you turn the weather on without typing a city.
+- **Automation of Terminal and iTerm2**, the first time you click an agent's session, to bring its tab forward.
 - **Downloads folder**, only if you turn on Downloads in progress, to show the files your browser is still writing.
 - **System Audio Recording**, only if you turn on Bars that follow the sound, so the bars move with the music. The
   sound is analysed on your Mac as it plays and never recorded or sent.
@@ -185,6 +193,8 @@ Each one only if a module you chose needs it:
   - The prompter's phone remote, which listens on your local network only while you turn it on.
   - [Open-Meteo](https://open-meteo.com), for the weather, once you turn it on (Settings, Weather and tools). Only a
     position rounded to about a kilometre is sent, at most every 30 minutes and only while the weather shows.
+  - Col Connect, off until you turn it on: it listens on your local network and answers only the devices you paired.
+  - The web addresses you give widgets, read only while the widget shows, and a widget's button when you press it.
 - The clipboard history lives in memory and skips copies that password managers mark as private. Only the copies you
   pin are saved, in Col's settings.
 - Scripts and agents reach Col through a socket in your user folder, mode 0600, which never listens on the network.

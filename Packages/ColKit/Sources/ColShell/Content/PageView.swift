@@ -18,6 +18,7 @@ extension WidgetKind {
         case .weather: LocalizedStringResource("Weather", bundle: bundle)
         case .devices: LocalizedStringResource("Devices", bundle: bundle)
         case .pomodoro: LocalizedStringResource("Pomodoro", bundle: bundle)
+        case .widgets: LocalizedStringResource("Widgets", bundle: bundle)
         }
     }
 
@@ -37,6 +38,7 @@ extension WidgetKind {
         case .weather: LocalizedStringResource("Now, today’s high and low, the hours ahead", bundle: bundle)
         case .devices: LocalizedStringResource("Your mouse, keyboard and trackpad, with their battery", bundle: bundle)
         case .pomodoro: LocalizedStringResource("Focus and breaks, and today’s sessions", bundle: bundle)
+        case .widgets: LocalizedStringResource("What your scripts, devices and web addresses show", bundle: bundle)
         }
     }
 
@@ -55,6 +57,7 @@ extension WidgetKind {
         case .weather: "cloud.sun.fill"
         case .devices: "magicmouse.fill"
         case .pomodoro: "brain.head.profile.fill"
+        case .widgets: "square.grid.2x2"
         }
     }
 
@@ -73,6 +76,7 @@ extension WidgetKind {
         case .weather: .cyan
         case .devices: .gray
         case .pomodoro: .red
+        case .widgets: .indigo
         }
     }
 }
@@ -119,6 +123,7 @@ enum WidgetAvailability {
         case .music: services.media.hasPlayer
         case .lyrics: services.media.hasPlayer && services.lyrics.lyrics != nil
         case .devices: !services.glance.accessories.levels.isEmpty
+        case .widgets: services.widgets.hasContent
         case .clock, .agenda, .prompter, .ai, .shelf, .clipboard, .tools, .system, .weather, .pomodoro: true
         }
     }
@@ -162,6 +167,8 @@ struct WidgetView: View {
             DevicesWidget(accessories: services.glance.accessories, width: width)
         case .pomodoro:
             PomodoroWidget(pomodoro: services.glance.pomodoro, width: width)
+        case .widgets:
+            WidgetsWidget(center: services.widgets, width: width)
         }
     }
 }

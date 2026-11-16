@@ -15,7 +15,9 @@ Everything Col reads, writes or runs, and why.
 |---|---|---|
 | `~/Library/Preferences/ch.rubencatalao.islet.plist` | Settings, the shelf's file bookmarks, pinned clipboard text, the songs whose lyrics you moved, chose or hid (their title, artist and LRCLIB number, never the lyrics), the weather's city if you type one, today's count of Pomodoro sessions, and the microphone Col muted until it gives it back | Always |
 | `~/Library/Application Support/Col/col.sock` | The local socket scripts and agents talk to: mode 0600 in a 0700 folder, so only your user can connect. It never listens on the network | While Col runs |
-| `~/Library/Application Support/Col/Extensions/` | Your extensions, one folder each | When you add one |
+| `~/Library/Application Support/Col/Extensions/` | Your extensions, one folder each. A `.col-off` file inside one keeps it off | When you add one, or install one with `colctl extensions install`, which checks its manifest, copies it into a hidden folder Col never reads, marks it off and renames it into place, without running anything of it |
+| `~/Library/Application Support/Col/Widgets.json` | The widgets your scripts and devices pushed, so they are still there after a restart: mode 0600 | When a widget is pushed or removed |
+| Your login Keychain | The tokens of your AI servers, of the devices paired with Col Connect, and the headers you give widgets read from an address. Never in Col's settings | When you add one |
 | `~/Library/Application Support/Col/Scripts/` | The prompter's scripts, one Markdown file each, saved as you type. The first time, the scripts of Souffleur (the prompter's former app) are copied in from `~/Library/Application Support/Souffleur/Scripts/`, which is left as it was | When you use the prompter |
 | `~/Library/Preferences/ch.rubencatalao.souffleur.plist` | Read once: the settings made in Souffleur (pace, mode, light, text, shortcuts, the phone remote's pairing) are copied into Col's, except those already set in Col. Whether the remote was on is not copied: it stays off until you turn it on in Col. The file is left as it was | Once, the first time Col runs |
 | `~/Library/Application Support/com.apple.wallpaper/Store/Index.plist` and the picture it names | Read only: your wallpaper, so the settings previews are drawn on it. A picture in Desktop, Documents, iCloud Drive or on another volume is skipped for the Mac's default wallpaper, so nothing asks for a permission | While a settings pane shows a preview |
@@ -38,6 +40,13 @@ Copies that password managers mark as concealed or transient are skipped.
   playing. Since macOS 15.4 only Apple-signed processes may read the now playing information.
 - Your extensions' scripts, on the schedule each one declares, with your user's rights. macOS treats each one as a
   program of its own: it never inherits Col's Accessibility, Microphone, Camera or Calendars permissions.
+- `/usr/bin/osascript`, when you click an agent's session in the island: a script that selects the Terminal or iTerm2
+  tab on the session's terminal (found from the processes above the agent's hook; only a terminal's name ever goes
+  in the script) and brings it forward. macOS asks for Automation the first time; refused, Col only brings the app
+  forward. VS Code, Cursor, Windsurf and Zed are asked to
+  open the session's folder, which brings its window forward; other apps are only brought forward.
+- `/usr/bin/git`, when you install an extension from a repository with `colctl extensions install`: a shallow clone,
+  without submodules and with hooks turned off, into a temporary folder that is removed afterwards.
 - Souffleur, the prompter's former app, when it is open beside Col: Col asks it to quit as it opens (or in the minute
   after, as when both open at login), the way its own Quit command would, so that the two prompters do not both answer
   your shortcuts and your phone. It is never forced to quit, and its app, its files and its login item are left as
@@ -72,6 +81,16 @@ Copies that password managers mark as concealed or transient are skipped.
   decimals (about a kilometre): the city you typed, or where the Mac is. It is asked at most every 30 minutes, and
   only while the Weather widget or the Lock Screen shows it; nothing is fetched while the island sits closed. Typing
   a city sends that name to `geocoding-api.open-meteo.com` when you search. No cookies, no cache on disk.
+- Col Connect, off until you turn it on in Settings, Connect: a small web server on your local network (port 7580 to
+  7584), advertised with Bonjour as `_col._tcp`, that only answers the devices you paired, each with its token. It
+  stops when you turn it off. See [Col Connect](#col-connect) below.
+- The widgets you read from an address (Settings, Connect, Add a Widget from a URL): Col reads each address at the
+  interval you chose, only while the widget shows in the island, with the headers you gave, and nothing else. A
+  redirect is followed only within the same scheme, host and port, so those headers never reach another host; an
+  answer is read up to 1 MB, for 30 seconds at most.
+- A widget's button, when you press it: one request to its address, never redirected. The first time that widget's
+  button calls it, the island shows the host on its own line and the whole address, and asks. Only http and https,
+  without a user part (`name@host`), which could dress one host up as another.
 - Nothing else. No account, no telemetry, no analytics, no crash reports.
 
 ### Permissions
@@ -80,7 +99,8 @@ Each one only if a module you chose needs it: Accessibility (the volume and brig
 bar), Calendars and Reminders (the agenda), Bluetooth (headphone battery and model), Camera (only while the mirror
 is open), Microphone (the prompter's voice modes, while a take runs: the sound is analysed on your Mac and never
 recorded), Speech Recognition (the prompter's Voice Follow, on your Mac only), Local Network (the prompter's phone
-remote, and the AI servers you add on another machine), Downloads folder (only if you turn on Downloads in
+remote, Col Connect, and the AI servers you add on another machine), Automation of Terminal and iTerm2 (bringing an
+agent's tab forward, the first time you click one of its sessions), Downloads folder (only if you turn on Downloads in
 progress), System Audio Recording (only if you turn on Bars that follow the sound: while music plays and the bars
 show, a Core Audio tap copies the player's sound, or the Mac's when the player's own cannot be told apart, into a
 private aggregate device with no other input, so no microphone is ever opened; it is analysed in memory thirty times
@@ -98,6 +118,36 @@ or turns its input volume to zero when it has none, and needs no permission. Wha
 settings (`microphoneMuteLedger`: each device's Core Audio UID, how it was muted, the volume it had), so that Col
 always gives it back: when you unmute, when you turn the setting off, and when Col quits. If Col stops without
 quitting (a crash, a forced quit), the microphone stays muted until Col opens again, which unmutes it first thing.
+
+### Col Connect
+
+What it is for: your phone, a home server, Home Assistant or a build machine on your network pushes activities and
+widgets into the island. The threat it is built against: anything else on the same network, a page open in a browser
+there, a device you paired and then lost.
+
+- **Off by default.** It listens only while Connect is on, and stops listening when you turn it off.
+- **Local network only.** Connections from addresses outside private, link-local and loopback ranges, and outside
+  the networks of the Mac's own Wi-Fi and Ethernet interfaces (where a phone may come from a global IPv6 address), are
+  closed at once, unless you turn on Accept connections from outside this network.
+- **A token for every request.** Each paired device has its own token: 32 random bytes, kept in your Keychain,
+  compared in constant time against every token. You can replace a device's token or take it back alone, at once.
+  Without a paired device's token, Col answers `401` and nothing else.
+- **What a device can reach:** Col's name, version and the number of activities and widgets; pushing, finishing and
+  removing activities (in the same namespace as scripts on the Mac, never Col's own); setting and removing widgets.
+- **What it cannot reach:** agents' permission requests, which Allow and Deny answer only on the Mac, and every other
+  route of the local API (the agents' events, the list of activities, the extensions); your settings, files,
+  clipboard, music or anything else. Widget buttons a device pushes are only called when you press them, and the
+  first time only after the island showed you the address.
+- **Limits.** A request's head is 8 KB at most and its body 64 KB, refused before it is read; chunked bodies are
+  refused; a request has five seconds to arrive; sixteen connections at once, four waiting from one address; each
+  address 60 requests at once then 20 a second; after ten wrong tokens, an address waits thirty seconds for each new
+  try. Programs and devices together keep 32 activities and 32 widgets at most: a new one past that is refused.
+- **Plain HTTP.** Requests are not encrypted: someone who can read your network's traffic can read a token. Use
+  Connect on networks you trust, and take back a token you think was seen.
+- **Browsers.** A web page cannot send the token it does not know, and Col sends no CORS headers, so a page's request
+  with a token is refused by the browser before it is sent. The page the pairing code opens is served without a token
+  and holds none: the token stays in its address's fragment, on the phone.
+- **Bonjour** says to the network that a Mac runs Col Connect, and on which port, while it is on.
 
 ### Login item
 

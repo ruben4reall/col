@@ -32,6 +32,8 @@ struct IslandServices {
     /// Weather, Pomodoro, the next meeting, the microphone's mute and the accessories' batteries.
     let glance: Glance
     let openSettings: () -> Void
+    /// Widgets pushed by programs and devices, and read from addresses.
+    var widgets: WidgetCenter = WidgetCenter(file: nil, definitions: [])
 
     /// The same models with pages of their own, for a second island such as the one in the settings; agents of its own
     /// too when given, for an example that must not reach the real ones.
@@ -39,7 +41,7 @@ struct IslandServices {
         IslandServices(
             media: media, lyrics: lyrics, ai: ai, agents: agents ?? self.agents, custom: custom, navigation: navigation, power: power, shelf: shelf,
             clipboard: clipboard, timer: timer, picker: picker, mirror: mirror, calendar: calendar, stats: stats,
-            device: device, audio: audio, awake: awake, glance: glance, openSettings: openSettings
+            device: device, audio: audio, awake: awake, glance: glance, openSettings: openSettings, widgets: widgets
         )
     }
 }

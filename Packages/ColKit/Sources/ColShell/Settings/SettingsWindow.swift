@@ -12,6 +12,7 @@ final class SettingsWindow: NSObject, NSWindowDelegate {
     private var window: NSWindow?
     private let model = SettingsModel()
     var extensions: ExtensionRunner?
+    var widgets: WidgetCenter?
 
     static let preferredSize = NSSize(width: 960, height: 680)
     static let minimumSize = NSSize(width: 820, height: 560)
@@ -43,7 +44,7 @@ final class SettingsWindow: NSObject, NSWindowDelegate {
     }
 
     private func makeWindow() -> NSWindow {
-        let hosting = NSHostingController(rootView: SettingsView(model: model, extensions: extensions))
+        let hosting = NSHostingController(rootView: SettingsView(model: model, extensions: extensions, widgets: widgets))
         let window = NSWindow(contentViewController: hosting)
         window.title = String(localized: "Col Settings", bundle: .module)
         window.styleMask = [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView]
@@ -98,6 +99,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
     case general, appearance, pages, activities
     case music, prompter, aiApps, glance
     case permissions, shortcuts, developers, about
+    case connect
     var id: String { rawValue }
 
     enum Group: CaseIterable {
@@ -111,14 +113,19 @@ enum SettingsPane: String, CaseIterable, Identifiable {
             }
         }
 
-        var panes: [SettingsPane] { SettingsPane.allCases.filter { $0.group == self } }
+        var panes: [SettingsPane] {
+            // Connect sits between Shortcuts and Developers.
+            let panes = SettingsPane.allCases.filter { $0.group == self && $0 != .connect }
+            guard self == .app, let index = panes.firstIndex(of: .developers) else { return panes }
+            return Array(panes[..<index]) + [.connect] + Array(panes[index...])
+        }
     }
 
     var group: Group {
         switch self {
         case .general, .appearance, .pages, .activities: .island
         case .music, .prompter, .aiApps, .glance: .modules
-        case .permissions, .shortcuts, .developers, .about: .app
+        case .permissions, .shortcuts, .developers, .about, .connect: .app
         }
     }
 
@@ -136,6 +143,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .shortcuts: LocalizedStringResource("Shortcuts and gestures", bundle: .settings)
         case .developers: LocalizedStringResource("Developers", bundle: .settings)
         case .about: LocalizedStringResource("About Col", bundle: .settings)
+        case .connect: LocalizedStringResource("Connect", bundle: .settings)
         }
     }
 
@@ -153,6 +161,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .shortcuts: LocalizedStringResource("Every way to open and drive the island.", bundle: .settings)
         case .developers: LocalizedStringResource("The colctl command, the local API and extensions.", bundle: .settings)
         case .about: LocalizedStringResource("Version, privacy and credits.", bundle: .settings)
+        case .connect: LocalizedStringResource("Your phone, a home server or a build machine, pushing to the island; widgets from the web.", bundle: .settings)
         }
     }
 
@@ -170,6 +179,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .shortcuts: "command"
         case .developers: "chevron.left.forwardslash.chevron.right"
         case .about: "info.circle.fill"
+        case .connect: "antenna.radiowaves.left.and.right"
         }
     }
 
@@ -187,6 +197,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .shortcuts: Color(red: 0.42, green: 0.45, blue: 0.5)
         case .developers: Color(red: 0.42, green: 0.45, blue: 0.5)
         case .about: .gray
+        case .connect: .blue
         }
     }
 
@@ -216,6 +227,8 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .shortcuts: ["Keyboard", "Gestures", "Swipe", "Click", "Trackpad", "Right-click"]
         case .developers: ["The colctl command", "API reference", "Extensions", "Writing an extension"]
         case .about: ["Version", "Website", "Source code on GitHub", "Report a problem", "Quit Col", "Network"]
+        case .connect: ["Col Connect", "Pair a Device", "Token", "Widgets", "Add a Widget from a URL", "Shortcuts", "Home Assistant",
+                        "Local Network", "Bonjour"]
         }
         return terms.map { LocalizedStringResource($0, bundle: .settings) }
     }
@@ -249,6 +262,7 @@ extension LocalizedStringResource.BundleDescription {
 struct SettingsView: View {
     @Bindable var model: SettingsModel
     let extensions: ExtensionRunner?
+    var widgets: WidgetCenter? = nil
 
     var body: some View {
         NavigationSplitView {
@@ -316,6 +330,7 @@ struct SettingsView: View {
         case .permissions: PermissionsPane()
         case .shortcuts: ShortcutsPane()
         case .developers: DevelopersPane(extensions: extensions)
+        case .connect: ConnectPane(widgets: widgets)
         case .about: AboutPane()
         }
     }
