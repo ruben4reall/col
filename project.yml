@@ -60,7 +60,8 @@ targets:
         script: ln -sfh colctl "$TARGET_BUILD_DIR/$CONTENTS_FOLDER_PATH/Helpers/islet"
         basedOnDependencyAnalysis: false
     # The hardened runtime blocks the camera, the microphone, calendars and the location unless the app declares them:
-    # the mirror, the prompter's voice modes, the agenda and reminders, the weather where you are.
+    # the mirror, the prompter's voice modes, the agenda and reminders, the weather where you are. Apple events select
+    # the tab of Terminal or iTerm2 an agent runs in, when its session is clicked in the island.
     entitlements:
       path: App/Col.entitlements
       properties:
@@ -68,6 +69,7 @@ targets:
         com.apple.security.device.audio-input: true
         com.apple.security.personal-information.calendars: true
         com.apple.security.personal-information.location: true
+        com.apple.security.automation.apple-events: true
     info:
       path: App/Info.plist
       properties:
@@ -99,6 +101,9 @@ targets:
         # The weather where you are, when no city is typed: asked when the weather is turned on, to about a kilometre.
         NSLocationUsageDescription: Col shows the weather where you are. Only a position rounded to about a kilometre is sent to Open-Meteo.
         NSLocationWhenInUseUsageDescription: Col shows the weather where you are. Only a position rounded to about a kilometre is sent to Open-Meteo.
+        # Col Connect, while it is on, says it is there to the devices of the network.
+        NSBonjourServices: [_col._tcp]
+        NSAppleEventsUsageDescription: Col brings forward the Terminal or iTerm2 tab an AI agent runs in, when you click its session in the island.
         # The AI servers are the user's own, often plain http on their network under a name such as mac-studio.lan,
         # which App Transport Security would refuse. Everything else Col reaches (the update feed, LRCLIB, Open-Meteo) is https.
         # Nothing else may sit beside this key: NSAllowsLocalNetworking, for one, would turn it off.

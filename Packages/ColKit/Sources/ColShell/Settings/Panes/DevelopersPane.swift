@@ -50,6 +50,9 @@ struct DevelopersPane: View {
             Section {
                 Link(destination: URL(string: "https://github.com/ruben4reall/col/blob/main/docs/api.md")!) { Text("API reference", bundle: .module) }
                 Link(destination: URL(string: "https://github.com/ruben4reall/col/blob/main/docs/extensions.md")!) { Text("Writing an extension", bundle: .module) }
+                Link(destination: URL(string: "https://github.com/ruben4reall/col/blob/main/docs/widgets.md")!) { Text("The widget format", bundle: .module) }
+                Button { SettingsWindow.shared.show(.connect) } label: { Text("Col Connect and widgets from the web…", bundle: .module) }
+                    .buttonStyle(.link)
             } header: {
                 Text("Documentation", bundle: .module)
             }

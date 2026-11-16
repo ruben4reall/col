@@ -235,9 +235,9 @@ public final class RemoteServer {
     }
 }
 
-enum NetworkAddress {
+public enum NetworkAddress {
     /// The Mac's IPv4 address on Wi-Fi or Ethernet.
-    static func localIPv4() -> String? {
+    public static func localIPv4() -> String? {
         var pointer: UnsafeMutablePointer<ifaddrs>?
         guard getifaddrs(&pointer) == 0, let first = pointer else { return nil }
         defer { freeifaddrs(pointer) }
@@ -255,7 +255,7 @@ enum NetworkAddress {
     }
 
     /// Loopback, link-local and private addresses.
-    static func isLocal(_ host: NWEndpoint.Host) -> Bool {
+    public static func isLocal(_ host: NWEndpoint.Host) -> Bool {
         switch host {
         case .ipv4(let address):
             let bytes = [UInt8](address.rawValue)

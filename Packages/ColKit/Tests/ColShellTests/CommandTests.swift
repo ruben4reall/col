@@ -33,7 +33,7 @@ private struct FakeHome {
 
     /// Runs the command at `tool` with these arguments, or, with `typed`, as a shell runs it when it is typed: found on
     /// the PATH, under its bare name, from another folder.
-    func run(_ tool: URL, _ arguments: [String], typed: Bool = false) throws -> (status: Int32, output: String) {
+    func run(_ tool: URL, _ arguments: [String], typed: Bool = false, environment: [String: String] = [:]) throws -> (status: Int32, output: String) {
         let elsewhere = root.appendingPathComponent("elsewhere")
         try FileManager.default.createDirectory(at: elsewhere, withIntermediateDirectories: true)
         let process = Process()
@@ -48,7 +48,7 @@ private struct FakeHome {
         process.environment = [
             "CFFIXED_USER_HOME": home.path, "HOME": home.path, "PATH": "\(bin.path):/usr/bin:/bin",
             "COL_SOCKET": root.appendingPathComponent("none.sock").path,
-        ]
+        ].merging(environment) { _, extra in extra }
         let pipe = Pipe()
         process.standardOutput = pipe
         process.standardError = pipe
@@ -155,5 +155,72 @@ struct CommandTests {
         #expect(islet.resolvingSymlinksInPath().path == tool.path)
         #expect(FileManager.default.isExecutableFile(atPath: islet.path))
         #expect(try String(contentsOf: fake.home.appendingPathComponent(".claude/settings.json"), encoding: .utf8).contains(".local/bin/colctl\\\" hook"))
+    }
+
+    /// An extension is checked and copied, never run, and stays off until the user turns it on.
+    @Test func extensionsAreCheckedAndInstalledOff() throws {
+        let tool = try #require(colctl)
+        let fake = try FakeHome()
+        defer { fake.remove() }
+        let suite = "col-tests-\(UUID().uuidString)"
+        defer { UserDefaults.standard.removePersistentDomain(forName: suite) }
+        let environment = ["COL_DEFAULTS_SUITE": suite]
+        let source = fake.root.appendingPathComponent("countdown")
+        try FileManager.default.createDirectory(at: source, withIntermediateDirectories: true)
+        // A script that would leave a mark if anything ran it.
+        try Data(#"{"name":"Countdown","command":"touch ran; printf '{}'","interval":2}"#.utf8)
+            .write(to: source.appendingPathComponent("extension.json"))
+
+        let install = try fake.run(tool, ["extensions", "install", source.path], environment: environment)
+        #expect(install.status == 0)
+        #expect(install.output.contains("It is off"))
+        let installed = fake.home.appendingPathComponent("Library/Application Support/Col/Extensions/countdown")
+        #expect(FileManager.default.fileExists(atPath: installed.appendingPathComponent("extension.json").path))
+        #expect(!FileManager.default.fileExists(atPath: installed.appendingPathComponent("ran").path))
+        #expect(!FileManager.default.fileExists(atPath: source.appendingPathComponent("ran").path))
+        #expect(UserDefaults(suiteName: suite)?.stringArray(forKey: "disabledExtensions") == ["countdown"])
+        // Listed as Col reads it: off, and at ten seconds at least.
+        #expect(try fake.run(tool, ["extensions", "list"], environment: environment).output.contains("countdown  Countdown  off, every 10s"))
+        // Never over an extension already there.
+        let again = try fake.run(tool, ["extensions", "install", source.path], environment: environment)
+        #expect(again.status == 1)
+        #expect(again.output.contains("already installed"))
+        // Turned on when asked, under another name.
+        let on = try fake.run(tool, ["extensions", "install", source.path, "--name", "timer", "--on"], environment: environment)
+        #expect(on.status == 0)
+        #expect(UserDefaults(suiteName: suite)?.stringArray(forKey: "disabledExtensions") == ["countdown"])
+    }
+
+    @Test func aManifestThatIsNotRightIsRefused() throws {
+        let tool = try #require(colctl)
+        let fake = try FakeHome()
+        defer { fake.remove() }
+        let source = fake.root.appendingPathComponent("broken")
+        try FileManager.default.createDirectory(at: source, withIntermediateDirectories: true)
+        try Data(#"{"name":"Broken","interval":60}"#.utf8).write(to: source.appendingPathComponent("extension.json"))
+        let install = try fake.run(tool, ["extensions", "install", source.path, "--on"])
+        #expect(install.status == 1)
+        #expect(install.output.contains(#"needs a "command""#))
+        #expect(!FileManager.default.fileExists(atPath: fake.home.appendingPathComponent("Library/Application Support/Col/Extensions/broken").path))
+        // Only https and ssh repositories, cloned without running anything of theirs.
+        let plain = try fake.run(tool, ["extensions", "install", "http://example.com/ext.git"])
+        #expect(plain.status == 1)
+        #expect(plain.output.contains("only https:// and ssh"))
+        #expect(try fake.run(tool, ["extensions", "install", source.path, "--name", "../x", "--on"]).status == 1)
+    }
+
+    @Test func widgetsNeedColRunningAndJSON() throws {
+        let tool = try #require(colctl)
+        let fake = try FakeHome()
+        defer { fake.remove() }
+        let set = try fake.run(tool, ["widget", "set", "temp", "--value", "21", "--unit", "°C", "--line", "Inside"])
+        #expect(set.status == 1)
+        #expect(set.output.contains("Col is not running"))
+        let file = fake.root.appendingPathComponent("widget.json")
+        try Data("[1, 2]".utf8).write(to: file)
+        let bad = try fake.run(tool, ["widget", "set", "temp", "--json", file.path])
+        #expect(bad.status == 1)
+        #expect(bad.output.contains("is not a JSON object"))
+        #expect(try fake.run(tool, ["widget", "set"]).output.contains("widget set needs an id"))
     }
 }

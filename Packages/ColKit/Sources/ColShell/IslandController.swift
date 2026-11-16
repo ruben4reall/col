@@ -29,6 +29,8 @@ public final class IslandController {
     private let downloads = DownloadsMonitor()
     /// Your Mac at a glance (2.3): weather, Caps Lock, accessories, Pomodoro, the next meeting.
     private let glance: Glance
+    /// Widgets pushed by programs and devices, and read from addresses (Col Connect).
+    private let widgets = WidgetCenter()
     private var hotKey: HotKey?
     /// An app covers the notch's screen in full screen: the island only shows brief displays.
     private var fullScreenActive = false
@@ -85,7 +87,7 @@ public final class IslandController {
             media: media, lyrics: lyrics, ai: ai, agents: agents, custom: custom, navigation: navigation, power: system.power,
             shelf: shelf, clipboard: clipboard, timer: timer, picker: picker, mirror: mirror, calendar: calendar, stats: stats,
             device: device, audio: system.audio, awake: awake, glance: glance,
-            openSettings: { SettingsWindow.shared.show() }
+            openSettings: { SettingsWindow.shared.show() }, widgets: widgets
         )
         self.services = services
         islandView = IslandView(services: services)
@@ -133,10 +135,11 @@ public final class IslandController {
             self.send(.requested)
         }
         api = ControlAPI(
-            custom: custom, agents: agents,
+            custom: custom, agents: agents, widgets: widgets,
             post: { [weak self] activity in self?.post(activity) },
             remove: { [weak self] id in self?.removeActivity(id) }
         )
+        connectWidgets()
         NotificationCenter.default.addObserver(forName: Preferences.didChange, object: nil, queue: .main) { [weak self] _ in
             MainActor.assumeIsolated {
                 self?.preferencesChanged()
@@ -709,6 +712,26 @@ public final class IslandController {
         mediaChanged(trackChanged: false)
         agentsChanged()
         glance.preferencesChanged()
+        ConnectCenter.shared.update()
+    }
+
+    // MARK: Connect and widgets
+
+    /// Widgets post their activities to the board; Connect's requests reach the same routes as the local API's.
+    private func connectWidgets() {
+        widgets.post = { [weak self] activity in self?.post(activity) }
+        widgets.remove = { [weak self] id in self?.removeActivity(id) }
+        api.reloadExtensions = { [weak self] in
+            guard let self else { return 0 }
+            self.extensions.reload()
+            return self.extensions.installed.count
+        }
+        extensions.pushWidget = { [weak self] widget in self?.widgets.set(widget) }
+        extensions.removeWidget = { [weak self] id in self?.widgets.remove(id) }
+        SettingsWindow.shared.widgets = widgets
+        ConnectCenter.shared.server.handler = { [weak self] route, request, _ in
+            self?.api.connect(route, request) ?? .error("unavailable", status: 503)
+        }
     }
 
     /// Handles a `col://` link, Islet's `islet://` ones, and the prompter's links (`col://prompter/…`, and Souffleur's
@@ -764,6 +787,7 @@ public final class IslandController {
         }
         extensions.reload()
         SettingsWindow.shared.extensions = extensions
+        ConnectCenter.shared.update()
         hotKey = HotKey { [weak self] in self?.toggleFromShortcut() }
         if Preferences.hotKeyEnabled { hotKey?.register() }
         if Preferences.watchesDownloads { downloads.start() }
@@ -866,6 +890,7 @@ public final class IslandController {
         desktopLyrics.stop()
         media.stop()
         api.stop()
+        ConnectCenter.shared.server.stop()
     }
 
     // MARK: Activities

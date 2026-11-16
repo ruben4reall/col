@@ -18,6 +18,9 @@ final class ExtensionRunner {
     private(set) var installed: [Installed] = []
     @ObservationIgnored var push: ((ActivityRequest) -> Void)?
     @ObservationIgnored var remove: ((String) -> Void)?
+    /// A run printed a widget (docs/widgets.md), or its widget goes.
+    @ObservationIgnored var pushWidget: ((WidgetRequest) -> Void)?
+    @ObservationIgnored var removeWidget: ((String) -> Void)?
     @ObservationIgnored private var timers: [String: Timer] = [:]
     @ObservationIgnored private var running: Set<String> = []
 
@@ -31,6 +34,7 @@ final class ExtensionRunner {
     func reload() {
         timers.values.forEach { $0.invalidate() }
         timers.removeAll()
+        let previous = installed
         let disabled = Set(UserDefaults.standard.stringArray(forKey: Self.disabledKey) ?? [])
         let folders = (try? FileManager.default.contentsOfDirectory(at: Self.folder, includingPropertiesForKeys: [.isDirectoryKey])) ?? []
         installed = folders.sorted { $0.lastPathComponent < $1.lastPathComponent }.compactMap { url in
@@ -39,6 +43,12 @@ final class ExtensionRunner {
                   let manifest = try? JSONDecoder().decode(ExtensionManifest.self, from: data).validated()
             else { return nil }
             return Installed(folder: url.lastPathComponent, manifest: manifest, enabled: !disabled.contains(url.lastPathComponent))
+        }
+        // An extension removed (`colctl extensions remove`) or turned off by another hand takes what it showed along.
+        let showing = Set(previous.filter(\.enabled).map(\.folder))
+        for folder in showing.subtracting(installed.filter(\.enabled).map(\.folder)) {
+            remove?("api.ext-" + folder)
+            removeWidget?(ExtensionManifest.widgetID(folder: folder))
         }
         for item in installed where item.enabled {
             run(item)
@@ -55,7 +65,10 @@ final class ExtensionRunner {
         var disabled = Set(UserDefaults.standard.stringArray(forKey: Self.disabledKey) ?? [])
         if enabled { disabled.remove(folder) } else { disabled.insert(folder) }
         UserDefaults.standard.set(Array(disabled), forKey: Self.disabledKey)
-        if !enabled { remove?("api.ext-" + folder) }
+        if !enabled {
+            remove?("api.ext-" + folder)
+            removeWidget?(ExtensionManifest.widgetID(folder: folder))
+        }
         reload()
     }
 
@@ -100,7 +113,9 @@ final class ExtensionRunner {
             push?(request)
         } else if data.isEmpty || String(decoding: data, as: UTF8.self).trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             remove?("api.ext-" + folder)
+            removeWidget?(ExtensionManifest.widgetID(folder: folder))
         }
+        if let widget = ExtensionManifest.widget(fromOutput: data, folder: folder) { pushWidget?(widget) }
     }
 
     private func note(_ error: String?, for folder: String) {

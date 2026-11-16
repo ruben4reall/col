@@ -15,6 +15,19 @@ usage: colctl <command> [options]
   list                  list the activities pushed by programs
   status                check that Col is running
 
+  widget set <id> [--json FILE|-] [--title T] [--value V] [--unit U] [--symbol S] [--tint COLOR]
+                  [--progress 0..1 | N%] [--line L]... [--stale-after SECONDS] [--activity]
+                        show or update a widget in the island's Widgets place (docs/widgets.md)
+  widget remove <id>    take a widget away
+  widget list           list the widgets
+
+  extensions list       list the extensions installed
+  extensions install <folder | git URL> [--path SUBFOLDER] [--name NAME] [--on]
+                        check an extension's manifest and copy it into Col's extensions folder,
+                        turned off until you turn it on (--on turns it on). Nothing of it runs here.
+  extensions remove <name>
+                        move an extension to the Trash
+
   hooks install [--agent AGENT] [--settings PATH]
                         connect a coding agent to the notch; AGENT is claude (default),
                         codex, gemini, cursor, copilot or all
@@ -185,17 +198,49 @@ func hook(_ agent: Agent) -> Never {
     }
     guard !event.isEmpty else { carryOn() }
     let waits = agent.answersPermissions && name == "PermissionRequest"
-    guard let (status, data) = try? request("POST", "/v1/agents/events?agent=\(agent.id)", body: input, timeout: waits ? 110 : 3),
+    guard let (status, data) = try? request("POST", "/v1/agents/events?agent=\(agent.id)\(originQuery())", body: input, timeout: waits ? 110 : 3),
           status == 200, waits,
           let answer = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
           let decision = answer["decision"] as? String, decision == "allow" || decision == "deny"
     else { carryOn() }
-    // Claude Code and Codex read the same answer.
+    // Claude Code and Codex read the same answer. A question answered, or a plan approved, hands its input back.
     var verdict: [String: Any] = ["behavior": decision]
-    if decision == "deny" { verdict["message"] = "Denied from Col." }
+    if decision == "deny" { verdict["message"] = answer["message"] as? String ?? "Denied from Col." }
+    if decision == "allow", let input = answer["updatedInput"] as? [String: Any] { verdict["updatedInput"] = input }
     let output = ["hookSpecificOutput": ["hookEventName": "PermissionRequest", "decision": verdict]]
     FileHandle.standardOutput.write(json(output))
     exit(0)
+}
+
+// MARK: Where a session runs
+
+/// A process's parent and controlling terminal, or nil once it has gone.
+func processInfo(_ pid: pid_t) -> (parent: pid_t, terminal: dev_t)? {
+    var info = kinfo_proc()
+    var size = MemoryLayout<kinfo_proc>.stride
+    var mib: [Int32] = [CTL_KERN, KERN_PROC, KERN_PROC_PID, pid]
+    guard sysctl(&mib, u_int(mib.count), &info, &size, nil, 0) == 0, size > 0 else { return nil }
+    return (info.kp_eproc.e_ppid, info.kp_eproc.e_tdev)
+}
+
+/// The processes above this hook, nearest first, and the terminal the agent runs on, as a query: Col finds the app
+/// that holds the session among them, and the tab by its terminal, when the user clicks the session in the island.
+func originQuery() -> String {
+    var processes: [pid_t] = []
+    var terminal: String?
+    var pid = getppid()
+    while pid > 1, processes.count < 24 {
+        processes.append(pid)
+        guard let info = processInfo(pid) else { break }
+        if terminal == nil, info.terminal != -1, let name = devname(info.terminal, S_IFCHR) {
+            let text = String(cString: name)
+            if text.hasPrefix("tty") { terminal = text }
+        }
+        pid = info.parent
+    }
+    var query = processes.isEmpty ? "" : "&pids=" + processes.map(String.init).joined(separator: ",")
+    if let terminal { query += "&tty=" + terminal }
+    return query
 }
 
 func linkPath() -> String { NSHomeDirectory() + "/.local/bin/colctl" }
@@ -468,8 +513,9 @@ case "agent":
     }
     var event: [String: Any] = ["hook_event_name": state, "agent_name": rest[0], "session_id": values["session"] ?? rest[0].lowercased()]
     if let message = values["message"] { event["message"] = message }
+    event["cwd"] = FileManager.default.currentDirectoryPath
     // Agents call this from their own hooks: never fail loudly when Col is closed.
-    _ = try? request("POST", "/v1/agents/events", body: json(event), timeout: 3)
+    _ = try? request("POST", "/v1/agents/events?agent=claude\(originQuery())", body: json(event), timeout: 3)
 
 case "hook":
     let id = options(arguments.dropFirst())["agent"] ?? "claude"
@@ -507,6 +553,12 @@ case "hooks":
         fail("hooks takes install, uninstall or status")
     }
 
+case "widget":
+    widgetCommand(Array(arguments.dropFirst()))
+
+case "extensions":
+    extensionsCommand(Array(arguments.dropFirst()))
+
 case "help", "--help", "-h":
     print(usage)
 
@@ -524,4 +576,266 @@ func isInstalled(_ agent: Agent) -> Bool {
         NSHomeDirectory() + "/.vscode/extensions",
     ]
         .contains { FileManager.default.fileExists(atPath: $0) }
+}
+
+// MARK: Widgets
+
+/// A widget id as it goes in an address.
+func widgetPath(_ id: String) -> String {
+    id.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed.subtracting(CharacterSet(charactersIn: "/?#"))) ?? id
+}
+
+/// `colctl widget set|remove|list`: the widgets of the island's Widgets place, in the format of docs/widgets.md.
+func widgetCommand(_ rest: [String]) {
+    let action = rest.first ?? ""
+    switch action {
+    case "set":
+        guard rest.count >= 2, !rest[1].hasPrefix("--") else { fail("widget set needs an id") }
+        let id = rest[1]
+        var widget: [String: Any] = [:]
+        var lines: [String] = []
+        var index = 2
+        func value(_ flag: String) -> String {
+            guard index + 1 < rest.count else { fail("\(flag) needs a value") }
+            index += 1
+            return rest[index]
+        }
+        while index < rest.count {
+            let flag = rest[index]
+            switch flag {
+            case "--json":
+                let source = value(flag)
+                let data: Data
+                if source == "-" {
+                    data = FileHandle.standardInput.readDataToEndOfFile()
+                } else {
+                    guard let read = FileManager.default.contents(atPath: (source as NSString).expandingTildeInPath) else {
+                        fail("cannot read \(source)")
+                    }
+                    data = read
+                }
+                guard let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+                    fail("\(source == "-" ? "stdin" : source) is not a JSON object")
+                }
+                widget.merge(object) { _, new in new }
+            case "--title", "--value", "--unit", "--symbol", "--tint":
+                widget[String(flag.dropFirst(2))] = value(flag)
+            case "--progress":
+                let text = value(flag)
+                guard let fraction = percentOrFraction(text) else { fail("--progress takes 0 to 1, or a percentage") }
+                widget["progress"] = fraction
+            case "--line":
+                lines.append(value(flag))
+            case "--stale-after":
+                guard let seconds = Double(value(flag)) else { fail("--stale-after takes seconds") }
+                widget["staleAfter"] = seconds
+            case "--activity":
+                widget["activity"] = true
+            default:
+                fail("unexpected argument \(flag)")
+            }
+            index += 1
+        }
+        if !lines.isEmpty { widget["lines"] = lines }
+        widget["id"] = id
+        _ = run("PUT", "/v1/widgets/\(widgetPath(id))", body: json(widget))
+    case "remove":
+        guard rest.count >= 2 else { fail("widget remove needs an id") }
+        _ = run("DELETE", "/v1/widgets/\(widgetPath(rest[1]))")
+    case "list":
+        let data = run("GET", "/v1/widgets")
+        let list = (try? JSONSerialization.jsonObject(with: data) as? [String: Any])?["widgets"] as? [[String: Any]] ?? []
+        if list.isEmpty { print("No widgets.") }
+        for item in list {
+            let fields = [item["id"] as? String, item["title"] as? String, item["value"] as? String,
+                          (item["fromURL"] as? Bool) == true ? "(from a URL)" : nil]
+            print(fields.compactMap { $0 }.joined(separator: "  "))
+        }
+    default:
+        fail("widget takes set, remove or list")
+    }
+}
+
+// MARK: Extensions
+
+/// Col's extensions folder.
+func extensionsFolder() -> URL {
+    URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("Library/Application Support/Col/Extensions", isDirectory: true)
+}
+
+/// Col's settings, where the extensions turned off are listed. `COL_DEFAULTS_SUITE` points elsewhere, for tests.
+func colDefaults() -> UserDefaults? {
+    UserDefaults(suiteName: ProcessInfo.processInfo.environment["COL_DEFAULTS_SUITE"] ?? "ch.rubencatalao.islet")
+}
+
+/// What an extension's manifest says, once checked as Col checks it: a name, a command, an interval of 10 seconds to
+/// a day. Nothing of the extension runs to check it.
+struct Manifest {
+    var name: String
+    var command: String
+    var interval: Double
+    var description: String?
+
+    static func read(_ folder: URL) throws -> Manifest {
+        let file = folder.appendingPathComponent("extension.json")
+        guard let data = FileManager.default.contents(atPath: file.path) else {
+            throw ClientError.failed("\(folder.path) has no extension.json")
+        }
+        guard let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            throw ClientError.failed("\(file.path) is not a JSON object")
+        }
+        let name = (object["name"] as? String ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let command = (object["command"] as? String ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty else { throw ClientError.failed("\(file.path) needs a \"name\"") }
+        guard !command.isEmpty else { throw ClientError.failed("\(file.path) needs a \"command\"") }
+        guard let interval = object["interval"] as? Double else { throw ClientError.failed("\(file.path) needs an \"interval\" in seconds") }
+        return Manifest(name: name, command: command, interval: min(max(interval, 10), 86_400), description: object["description"] as? String)
+    }
+}
+
+/// A folder name an extension can live under: no path, nothing hidden.
+func isFolderName(_ name: String) -> Bool {
+    !name.isEmpty && name.count <= 64 && !name.hasPrefix(".") && !name.contains("/") && !name.contains(":")
+}
+
+/// Asks a running Col to read its extensions folder again; nothing when Col is closed.
+func reloadExtensions() {
+    _ = try? request("POST", "/v1/extensions/reload", timeout: 3)
+}
+
+/// Turns an extension off or on in Col's settings; written only when that changes something.
+func setEnabled(_ enabled: Bool, folder: String) {
+    guard let defaults = colDefaults() else { return }
+    var disabled = defaults.stringArray(forKey: "disabledExtensions") ?? []
+    let isOff = disabled.contains(folder)
+    guard isOff == enabled else { return }
+    if enabled { disabled.removeAll { $0 == folder } } else { disabled.append(folder) }
+    defaults.set(disabled, forKey: "disabledExtensions")
+    defaults.synchronize()
+}
+
+/// Clones a repository into a new temporary folder: shallow, without submodules, without running any of its hooks.
+func cloneRepository(_ address: String) throws -> URL {
+    let ssh = address.hasPrefix("ssh://") || (address.hasPrefix("git@") && address.contains(":"))
+    guard address.hasPrefix("https://") || ssh else {
+        throw ClientError.failed("only https:// and ssh git addresses can be installed")
+    }
+    let folder = FileManager.default.temporaryDirectory.appendingPathComponent("colctl-\(UUID().uuidString)")
+    try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+    let target = folder.appendingPathComponent("repository")
+    let process = Process()
+    process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
+    process.arguments = ["-c", "core.hooksPath=/dev/null", "-c", "protocol.file.allow=never", "clone", "--depth", "1",
+                         "--no-recurse-submodules", "--quiet", "--", address, target.path]
+    process.environment = ["PATH": "/usr/bin:/bin", "HOME": NSHomeDirectory(), "GIT_TERMINAL_PROMPT": "0"]
+    process.standardInput = FileHandle.nullDevice
+    try process.run()
+    process.waitUntilExit()
+    guard process.terminationStatus == 0 else {
+        try? FileManager.default.removeItem(at: folder)
+        throw ClientError.failed("git could not clone \(address)")
+    }
+    return target
+}
+
+/// `colctl extensions list|install|remove`.
+func extensionsCommand(_ rest: [String]) {
+    let files = FileManager.default
+    let folder = extensionsFolder()
+    switch rest.first ?? "" {
+    case "list":
+        let names = ((try? files.contentsOfDirectory(atPath: folder.path)) ?? []).filter { !$0.hasPrefix(".") }.sorted()
+        if names.isEmpty { print("No extensions in \(folder.path).") }
+        let disabled = Set(colDefaults()?.stringArray(forKey: "disabledExtensions") ?? [])
+        for name in names {
+            do {
+                let manifest = try Manifest.read(folder.appendingPathComponent(name))
+                let state = disabled.contains(name) ? "off" : "on"
+                print("\(name)  \(manifest.name)  \(state), every \(Int(manifest.interval))s: \(manifest.command)")
+            } catch ClientError.failed(let reason) {
+                print("\(name)  not an extension: \(reason)")
+            } catch {
+                print("\(name)  not an extension")
+            }
+        }
+
+    case "install":
+        guard rest.count >= 2 else { fail("extensions install needs a folder or a git address") }
+        let source = rest[1]
+        var values: [String: String] = [:]
+        var on = false
+        var index = 2
+        while index < rest.count {
+            switch rest[index] {
+            case "--on": on = true
+            case "--path", "--name":
+                guard index + 1 < rest.count else { fail("\(rest[index]) needs a value") }
+                values[String(rest[index].dropFirst(2))] = rest[index + 1]
+                index += 1
+            default: fail("unexpected argument \(rest[index])")
+            }
+            index += 1
+        }
+        let isRemote = ["https://", "http://", "ssh://", "git@"].contains { source.hasPrefix($0) }
+        var cloned: URL?
+        defer { if let cloned { try? files.removeItem(at: cloned.deletingLastPathComponent()) } }
+        var root: URL
+        if isRemote {
+            do { cloned = try cloneRepository(source) } catch ClientError.failed(let reason) { fail(reason) } catch { fail("\(error)") }
+            root = cloned!
+        } else {
+            root = URL(fileURLWithPath: (source as NSString).expandingTildeInPath).standardizedFileURL
+            var isFolder: ObjCBool = false
+            guard files.fileExists(atPath: root.path, isDirectory: &isFolder), isFolder.boolValue else { fail("\(source) is not a folder") }
+        }
+        if let sub = values["path"] {
+            guard !sub.split(separator: "/").contains("..") else { fail("--path stays inside the extension's folder") }
+            root = root.appendingPathComponent(sub).standardizedFileURL
+        }
+        let manifest: Manifest
+        do { manifest = try Manifest.read(root) } catch ClientError.failed(let reason) { fail(reason) } catch { fail("\(error)") }
+        var name = values["name"] ?? root.lastPathComponent
+        if isRemote, values["path"] == nil, values["name"] == nil {
+            // The repository's own name, without `.git`.
+            name = source.split(whereSeparator: { $0 == "/" || $0 == ":" }).last.map(String.init) ?? "extension"
+            if name.hasSuffix(".git") { name = String(name.dropLast(4)) }
+        }
+        guard isFolderName(name) else { fail("\(name) cannot name an extension's folder: use --name") }
+        let destination = folder.appendingPathComponent(name, isDirectory: true)
+        guard !files.fileExists(atPath: destination.path) else {
+            fail("\(name) is already installed: colctl extensions remove \(name) first")
+        }
+        do {
+            try files.createDirectory(at: folder, withIntermediateDirectories: true)
+            try files.copyItem(at: root, to: destination)
+            try? files.removeItem(at: destination.appendingPathComponent(".git"))
+        } catch {
+            fail("could not copy \(root.path): \(error.localizedDescription)")
+        }
+        // Off until the user has read it and turns it on, unless asked otherwise.
+        setEnabled(on, folder: name)
+        reloadExtensions()
+        print("\(manifest.name) installed in \(destination.path).")
+        print("Every \(Int(manifest.interval)) seconds, Col runs: \(manifest.command)")
+        print(on ? "It is on." : "It is off: read it, then turn it on in Col's settings, Developers.")
+
+    case "remove":
+        guard rest.count >= 2 else { fail("extensions remove needs a name") }
+        let wanted = rest[1]
+        let names = ((try? files.contentsOfDirectory(atPath: folder.path)) ?? []).filter { !$0.hasPrefix(".") }
+        let match = names.first { $0 == wanted }
+            ?? names.first { (try? Manifest.read(folder.appendingPathComponent($0)))?.name.caseInsensitiveCompare(wanted) == .orderedSame }
+        guard let match, isFolderName(match) else { fail("no extension named \(wanted). Run `colctl extensions list`.") }
+        do {
+            try files.trashItem(at: folder.appendingPathComponent(match), resultingItemURL: nil)
+        } catch {
+            fail("could not move \(match) to the Trash: \(error.localizedDescription)")
+        }
+        setEnabled(true, folder: match)
+        reloadExtensions()
+        print("\(match) moved to the Trash.")
+
+    default:
+        fail("extensions takes list, install or remove")
+    }
 }

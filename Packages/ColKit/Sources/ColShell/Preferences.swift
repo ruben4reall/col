@@ -327,4 +327,37 @@ enum Preferences {
         get { bool("showsGPU", default: true) }
         set { defaults.set(newValue, forKey: "showsGPU"); changed() }
     }
+
+    // MARK: Connect and widgets
+
+    /// Col Connect: the devices of the local network may push activities and widgets. Off until the user turns it on.
+    static var connectEnabled: Bool {
+        get { bool("connectEnabled", default: false) }
+        set { defaults.set(newValue, forKey: "connectEnabled"); changed() }
+    }
+
+    /// Connect also answers addresses outside the local network, for a Mac reached through a VPN or a forwarded port.
+    static var connectAllowsOutside: Bool {
+        get { bool("connectAllowsOutside", default: false) }
+        set { defaults.set(newValue, forKey: "connectAllowsOutside"); changed() }
+    }
+
+    /// The devices paired with Connect, without their tokens, which live in the Keychain. Saved without telling the
+    /// island: the time a device was last seen changes with its requests and lays nothing out again.
+    static var connectDevices: [ConnectDevice] {
+        get { defaults.data(forKey: "connectDevices").flatMap { try? JSONDecoder().decode([ConnectDevice].self, from: $0) } ?? [] }
+        set { defaults.set(try? JSONEncoder().encode(newValue), forKey: "connectDevices") }
+    }
+
+    /// The widgets read from an address. The values of their headers live in the Keychain.
+    static var apiWidgets: [APIWidget] {
+        get { defaults.data(forKey: "apiWidgets").flatMap { try? JSONDecoder().decode([APIWidget].self, from: $0) } ?? [] }
+        set { defaults.set(try? JSONEncoder().encode(newValue), forKey: "apiWidgets"); changed() }
+    }
+
+    /// The addresses widgets' buttons may call, each one said yes to once (method and address).
+    static var confirmedWidgetCalls: Set<String> {
+        get { Set(defaults.stringArray(forKey: "confirmedWidgetCalls") ?? []) }
+        set { defaults.set(newValue.sorted(), forKey: "confirmedWidgetCalls") }
+    }
 }

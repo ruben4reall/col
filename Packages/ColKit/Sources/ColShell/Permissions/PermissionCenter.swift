@@ -226,6 +226,15 @@ final class PermissionCenter {
         }
     }
 
+    /// Local Network has no prompt Col can call and no state it can read: macOS asks the first time Col listens on the
+    /// network or reaches a device there, as when Col Connect is turned on. When Col was refused, only System Settings
+    /// can change the answer.
+    func openLocalNetworkSettings() {
+        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork") {
+            NSWorkspace.shared.open(url)
+        }
+    }
+
     func openSettings(for permission: Permission) {
         if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?\(permission.anchor)") {
             NSWorkspace.shared.open(url)
