@@ -64,9 +64,10 @@ jobs:
             }
             Copy-Item "artifacts/colctl-$rid/colctl.exe" "artifacts/$rid/colctl.exe"
             Remove-Item "artifacts/$rid/*.pdb" -ErrorAction SilentlyContinue
-            # The small build: the same app without .NET inside, for a PC that has the .NET 8 Desktop Runtime.
+            # The small build: the same app without .NET inside, for a PC that has the .NET 8 Desktop Runtime. Without
+            # ReadyToRun: in a single file that leans on the installed .NET 8, it stops the runtime at launch.
             dotnet publish windows/src/Col/Col.csproj -c Release -r $rid --self-contained false -p:PublishSingleFile=true `
-              -p:Version=$env:VERSION -o "artifacts/$rid-small"
+              -p:PublishReadyToRun=false -p:Version=$env:VERSION -o "artifacts/$rid-small"
             if ($LASTEXITCODE -ne 0) { throw "Col $rid small" }
             Copy-Item "artifacts/colctl-$rid/colctl.exe" "artifacts/$rid-small/colctl.exe"
             Remove-Item "artifacts/$rid-small/*.pdb" -ErrorAction SilentlyContinue

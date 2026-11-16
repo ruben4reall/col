@@ -169,7 +169,7 @@ dotnet test windows/tests/Col.Tests                          # the rules: geomet
 dotnet run --project windows/src/Col                         # the island
 dotnet run --project windows/src/Col -- --demo lyrics        # a demo state, with made-up data
 dotnet publish windows/src/Col -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -o publish        # .NET inside
-dotnet publish windows/src/Col -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o small   # small
+dotnet publish windows/src/Col -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -p:PublishReadyToRun=false -o small
 dotnet publish windows/src/colctl -c Release -r win-x64 -o publish   # native code, needs Visual Studio's C++ tools
 ```
 
