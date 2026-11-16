@@ -83,7 +83,7 @@ col://settings?pane=developers   # general, appearance, pages, activities, music
                                    # permissions, shortcuts, developers, about
 col://welcome                    # the welcome tour
 col://open                       # opens the island on its first page
-col://open?page=live             # opens it on a page: live, or a page's id
+col://open?page=live             # opens it on a page: live, a page id, or a widget it holds (ai, music)
 col://close                      # closes it
 ```
 

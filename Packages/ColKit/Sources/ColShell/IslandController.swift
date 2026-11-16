@@ -469,7 +469,7 @@ public final class IslandController {
     /// Opens the island from a link, on the page asked for, or closes it.
     private func showFromLink(open: Bool, page: String?) {
         if open {
-            if let page { navigation.show(page == "live" ? .live : .page(page)) } else { navigation.showHome() }
+            if let page { navigation.show(navigation.route(named: page)) } else { navigation.showHome() }
             openedByRequest = true
             if machine.state != .expanded { send(.requested) }
         } else if machine.state == .expanded {
@@ -792,7 +792,7 @@ public final class IslandController {
         // `-ColOpen YES` starts the island open, for screenshots and for working on its content; `-ColPage live`
         // chooses the page.
         if UserDefaults.standard.bool(forKey: "ColOpen") {
-            if let page = UserDefaults.standard.string(forKey: "ColPage") { navigation.show(page == "live" ? .live : .page(page)) }
+            if let page = UserDefaults.standard.string(forKey: "ColPage") { navigation.show(navigation.route(named: page)) }
             send(.pressed)
         }
     }

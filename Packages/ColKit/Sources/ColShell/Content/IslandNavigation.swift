@@ -96,6 +96,15 @@ final class IslandNavigation {
         show(deck.firstPage(holding: kind).map { .page($0.id) } ?? fallback)
     }
 
+    /// The page a link names: `live`, a page's id, or a widget it holds (`ai`, `music`, `prompter`); else the first
+    /// page, never a page that does not exist.
+    func route(named name: String) -> IslandRoute {
+        if name == "live" { return .live }
+        if deck.page(name) != nil { return .page(name) }
+        if let kind = WidgetKind(rawValue: name), let page = deck.firstPage(holding: kind) { return .page(page.id) }
+        return .page(deck.pages[0].id)
+    }
+
     func show(_ route: IslandRoute) {
         guard route != self.route else { return }
         let order = deck.pages.map { IslandRoute.page($0.id) } + [.live]
