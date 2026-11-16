@@ -64,7 +64,7 @@ struct IslandContentView: View {
                 openSettings: services.openSettings
             )
             .frame(height: model.notchHeight)
-            .opacity(model.isPresented && ![.greeting, .device, .souffleur, .menuBarAccess].contains(services.navigation.route) ? 1 : 0)
+            .opacity(model.isPresented && ![.greeting, .device, .souffleur, .menuBarAccess, .whatsNew].contains(services.navigation.route) ? 1 : 0)
             .animation(model.isPresented ? .easeOut(duration: 0.3).delay(0.12) : .easeOut(duration: 0.1), value: model.isPresented)
 
             page
@@ -108,6 +108,9 @@ struct IslandContentView: View {
                     .transition(.opacity)
             case .menuBarAccess:
                 MenuBarAccessNoteView()
+                    .transition(.opacity)
+            case .whatsNew:
+                WhatsNewView()
                     .transition(.opacity)
             }
         }
