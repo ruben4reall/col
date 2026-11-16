@@ -1,0 +1,203 @@
+name: windows
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+    paths: ['windows/**', '.github/workflows/windows.yml']
+  pull_request:
+    paths: ['windows/**', '.github/workflows/windows.yml']
+  release:
+    types: [published]
+permissions:
+  contents: read
+concurrency:
+  group: windows-${{ github.ref }}
+  cancel-in-progress: true
+env:
+  DOTNET_NOLOGO: 1
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+jobs:
+  build:
+    name: Build, test, run and photograph
+    runs-on: windows-2025
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Version
+        shell: pwsh
+        run: |
+          $version = '3.0.0'
+          if ($env:GITHUB_REF -like 'refs/tags/v*') { $version = $env:GITHUB_REF_NAME.Substring(1) }
+          "VERSION=$version" >> $env:GITHUB_ENV
+          Write-Host "Col for Windows $version"
+
+      - name: Restore
+        run: dotnet restore windows/Col.sln
+
+      - name: Build
+        run: dotnet build windows/Col.sln -c Release --no-restore -p:Version=${{ env.VERSION }}
+
+      - name: Test
+        run: dotnet test windows/tests/Col.Tests/Col.Tests.csproj -c Release --no-build
+
+      - name: Publish
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          foreach ($rid in 'win-x64', 'win-arm64') {
+            dotnet publish windows/src/Col/Col.csproj -c Release -r $rid --self-contained -p:PublishSingleFile=true `
+              -p:Version=$env:VERSION -o "artifacts/$rid"
+            if ($LASTEXITCODE -ne 0) { throw "Col $rid" }
+            # colctl is compiled ahead of time to native code: a hook starts in milliseconds.
+            dotnet publish windows/src/colctl/colctl.csproj -c Release -r $rid -p:Version=$env:VERSION -o "artifacts/colctl-$rid"
+            if ($LASTEXITCODE -ne 0) {
+              Write-Warning "Native colctl for $rid did not build: publishing it as a trimmed single file instead"
+              dotnet publish windows/src/colctl/colctl.csproj -c Release -r $rid --self-contained -p:PublishAot=false `
+                -p:PublishSingleFile=true -p:PublishTrimmed=true -p:Version=$env:VERSION -o "artifacts/colctl-$rid"
+              if ($LASTEXITCODE -ne 0) { throw "colctl $rid" }
+            }
+            Copy-Item "artifacts/colctl-$rid/colctl.exe" "artifacts/$rid/colctl.exe"
+            Remove-Item "artifacts/$rid/*.pdb" -ErrorAction SilentlyContinue
+            # The small build: the same app without .NET inside, for a PC that has the .NET 8 Desktop Runtime. Without
+            # ReadyToRun: in a single file that leans on the installed .NET 8, it stops the runtime at launch.
+            dotnet publish windows/src/Col/Col.csproj -c Release -r $rid --self-contained false -p:PublishSingleFile=true `
+              -p:PublishReadyToRun=false -p:Version=$env:VERSION -o "artifacts/$rid-small"
+            if ($LASTEXITCODE -ne 0) { throw "Col $rid small" }
+            Copy-Item "artifacts/colctl-$rid/colctl.exe" "artifacts/$rid-small/colctl.exe"
+            Remove-Item "artifacts/$rid-small/*.pdb" -ErrorAction SilentlyContinue
+            foreach ($folder in $rid, "$rid-small") {
+              Get-ChildItem "artifacts/$folder" | ForEach-Object { "{0,-16} {1,-12} {2,8:N1} MB" -f $folder, $_.Name, ($_.Length / 1MB) }
+            }
+          }
+
+      - name: Small build runs on the installed .NET 8
+        shell: pwsh
+        run: windows/tools/smallcheck.ps1 -Rid win-x64
+
+      - name: Screenshots
+        shell: pwsh
+        run: windows/tools/screenshots.ps1 -App artifacts/win-x64/Col.exe -Out shots
+
+      - name: End to end
+        shell: powershell
+        run: windows/tools/e2e.ps1 -App artifacts/win-x64/Col.exe -Colctl artifacts/win-x64/colctl.exe -Out shots
+
+      - name: Installer
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          choco install innosetup -y --no-progress | Out-Null
+          $iscc = Join-Path ${env:ProgramFiles(x86)} 'Inno Setup 6\ISCC.exe'
+          & $iscc "/DVersion=$env:VERSION" "/DSource=$((Resolve-Path artifacts).Path)" windows/installer/Col.iss
+          if ($LASTEXITCODE -ne 0) { throw 'Inno Setup' }
+
+      - name: Install, check, uninstall
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $setup = "artifacts/Col-$env:VERSION-windows-setup.exe"
+          Start-Process -FilePath $setup -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/TASKS=startup' -Wait
+          $folder = Join-Path $env:LOCALAPPDATA 'Programs\Col'
+          if (-not (Test-Path "$folder\Col.exe") -or -not (Test-Path "$folder\colctl.exe")) { throw 'not installed' }
+          $command = (Get-ItemProperty 'HKCU:\Software\Classes\col\shell\open\command').'(default)'
+          $run = (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run').Col
+          $path = (Get-ItemProperty 'HKCU:\Environment').Path
+          Write-Host "col:// opens $command"
+          Write-Host "At login: $run"
+          if (-not ($path -split ';' -contains $folder)) { throw 'colctl is not on the PATH' }
+          & "$folder\colctl.exe" --version
+          # This machine has the .NET 8 Desktop Runtime: the setup installs the small build, which runs on it.
+          $size = (Get-Item "$folder\Col.exe").Length / 1MB
+          Write-Host ("Installed Col.exe: {0:N1} MB" -f $size)
+          if ($size -gt 80) { throw 'the setup did not pick the small build although .NET 8 is here' }
+          $col = Start-Process -FilePath "$folder\Col.exe" -ArgumentList '--demo', 'collapsed' -PassThru
+          Start-Sleep -Seconds 6
+          if ($col.HasExited) { throw "the small build quit with code $($col.ExitCode)" }
+          Stop-Process -Id $col.Id -Force
+          function Uninstall {
+            Start-Process -FilePath "$folder\unins000.exe" -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART' -Wait
+            Start-Sleep -Seconds 3
+          }
+          Uninstall
+          if (Test-Path "$folder\Col.exe") { throw 'not uninstalled' }
+          if (Test-Path 'HKCU:\Software\Classes\col') { throw 'col:// left behind' }
+          $path = (Get-ItemProperty 'HKCU:\Environment').Path
+          if ($path -split ';' -contains $folder) { throw 'PATH left behind' }
+          # Asked for, the full build, with .NET inside.
+          Start-Process -FilePath $setup -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SELFCONTAINED=yes' -Wait
+          $size = (Get-Item "$folder\Col.exe").Length / 1MB
+          Write-Host ("Installed with /SELFCONTAINED=yes: {0:N1} MB" -f $size)
+          if ($size -lt 150) { throw 'the setup did not install the full build when asked' }
+          Uninstall
+          Write-Host 'Installed and uninstalled cleanly, both builds'
+
+      - name: Archives
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          foreach ($arch in 'x64', 'arm64') {
+            Copy-Item LICENSE "artifacts/win-$arch/LICENSE.txt"
+            Compress-Archive -Path "artifacts/win-$arch/*" -DestinationPath "artifacts/Col-$env:VERSION-windows-$arch.zip" -Force
+            Copy-Item LICENSE "artifacts/win-$arch-small/LICENSE.txt"
+            Compress-Archive -Path "artifacts/win-$arch-small/*" -DestinationPath "artifacts/Col-$env:VERSION-windows-$arch-small.zip" -Force
+          }
+          Get-ChildItem artifacts -File | ForEach-Object { "{0,-40} {1,8:N1} MB" -f $_.Name, ($_.Length / 1MB) }
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots
+          path: shots/*
+          if-no-files-found: warn
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: col-windows
+          path: |
+            artifacts/Col-*-windows-x64.zip
+            artifacts/Col-*-windows-arm64.zip
+            artifacts/Col-*-windows-x64-small.zip
+            artifacts/Col-*-windows-arm64-small.zip
+            artifacts/Col-*-windows-setup.exe
+
+  release:
+    name: Attach to the release
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: col-windows
+          path: dist
+      - name: Upload to the existing release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          # Beside each versioned file, a copy under a name that never changes, so a page can link to
+          # https://github.com/ruben4reall/col/releases/latest/download/Col-windows-setup.exe and the like.
+          for file in dist/Col-*-windows-*; do
+            stable="dist/Col-windows-${file##*-windows-}"
+            cp "$file" "$stable"
+          done
+          ls -l dist
+          # The release is made by hand for the Mac; wait for it, never create one.
+          for attempt in $(seq 1 40); do
+            if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+              gh release upload "$TAG" dist/* --repo "$GITHUB_REPOSITORY" --clobber
+              exit 0
+            fi
+            echo "Release $TAG not there yet, waiting"
+            sleep 30
+          done
+          echo "No release $TAG after 20 minutes: publishing it will run this again."
+          exit 1
