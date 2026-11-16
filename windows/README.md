@@ -10,10 +10,11 @@ This is the first Windows edition of [Col](../README.md), released with Col 3.0.
 ## What it does
 
 - **The island.** Windows has no notch, so the island floats 8 pixels below the top edge, rounded on all four corners.
-  By default it shows only when something happens; rest the pointer on the top edge of the screen and it comes out.
-  A short rest makes it peek, a click or a longer rest opens it. It opens with a slight overshoot and closes without
-  one, and nothing moves while it rests. Clicks around the capsule go to the windows below. It follows each monitor's
-  scale (per-monitor DPI) and steps aside under full-screen apps unless an agent needs you.
+  By default it shows only when something happens; rest the pointer on the top edge of the screen, right above where
+  it sleeps, and it comes out. A short rest makes it peek, a click or a longer rest opens it. It opens with a slight
+  overshoot and closes without one, and nothing moves while it rests. Clicks around the capsule, and anywhere on the
+  top edge, go to the windows below: a maximised browser keeps its tabs. It follows each monitor's scale (per-monitor
+  DPI) and steps aside under full-screen apps unless an agent needs you.
 - **Now playing.** Whatever shows in Windows' media controls (Spotify, a browser, Media Player): the title, the
   artist, the cover, play, pause, next, previous and a scrubber. Closed, the island shows the cover and a small
   equalizer.
@@ -37,20 +38,31 @@ This is the first Windows edition of [Col](../README.md), released with Col 3.0.
 2. Run it. It installs for your account only, in `%LOCALAPPDATA%\Programs\Col`, without administrator rights: a Start
    menu entry, `col://` links, `colctl` on your PATH, and, if you leave the box ticked, Col at sign-in.
 
-Or take `Col-3.0.0-windows-x64.zip` (or `-arm64.zip`), unzip it anywhere and run `Col.exe`: everything is in that
-folder.
+The setup looks for the [.NET 8 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/8.0) on your PC. When it
+is there, it installs the small `Col.exe`, which uses it; when it is not, the full one, with .NET inside. Run it with
+`/SELFCONTAINED=yes` to install the full one anyway. If you install the small one and later remove the .NET 8 Desktop
+Runtime, install Col again.
 
-Windows 10 version 2004 or later, or Windows 11; x64 or Arm64. Nothing else to install: .NET is inside `Col.exe`.
+Or take a zip, unzip it anywhere and run `Col.exe`: everything is in that folder.
+
+- `Col-3.0.0-windows-x64.zip` (or `-arm64.zip`): .NET inside, nothing else to install.
+- `Col-3.0.0-windows-x64-small.zip` (or `-arm64-small.zip`): for a PC that has the .NET 8 Desktop Runtime, from
+  Microsoft's link above (x64 or Arm64, as your PC).
+
+Windows 10 version 2004 or later, or Windows 11; x64 or Arm64.
 
 | | Size |
 |---|---|
-| `Col-3.0.0-windows-setup.exe` (x64 and Arm64 in one) | 107 MB |
-| `Col-3.0.0-windows-x64.zip` | 85 MB |
-| `Col.exe`, unpacked | 222 MB |
-| `colctl.exe`, compiled ahead of time to native code | 2.4 MB |
+| `Col-3.0.0-windows-setup.exe` (x64 and Arm64, small and full, in one) | about 115 MB |
+| `Col-3.0.0-windows-x64.zip`, .NET inside | 85 MB |
+| `Col-3.0.0-windows-x64-small.zip` | about 8 MB |
+| `Col.exe` with .NET inside, unpacked | 222 MB |
+| `Col.exe` small, unpacked | 27 MB |
+| `colctl.exe`, compiled ahead of time to native code (in every download) | 2.4 MB |
 
-`Col.exe` carries .NET and WPF uncompressed, on purpose: Windows maps them from the file instead of unpacking them
-into Col's own memory, which keeps Col light while it runs.
+The full `Col.exe` carries .NET and WPF uncompressed, on purpose: Windows maps them from the file instead of
+unpacking them into Col's own memory, which keeps Col light while it runs. Most of the small one is the part of .NET
+that reaches Windows' own APIs (media controls, accent colour).
 
 ## Light on your PC
 
@@ -140,6 +152,9 @@ Links work as on the Mac: `col://push?id=tea&title=Tea&ttl=240`, `col://done?id=
 - The clipboard history lives in memory only, pins included, and skips copies that password managers mark as
   private. Nothing of it is written to disk.
 - Scripts and agents reach Col through a pipe only your account can open.
+- To know when the pointer rests on the top edge, Col watches the pointer's position with a low-level mouse hook, as
+  pointer utilities do: no window lies on the top edge, so it cannot take your clicks there. The hook reads where the
+  pointer is and whether a button is held, on this PC only, and keeps nothing.
 - Col keeps its settings in `%LOCALAPPDATA%\Col\settings.json` and a short log of errors (never what plays, what you
   copy or what an agent runs) in `%LOCALAPPDATA%\Col\col.log`.
 
@@ -153,7 +168,8 @@ cd col
 dotnet test windows/tests/Col.Tests                          # the rules: geometry, springs, agents, lyrics, API
 dotnet run --project windows/src/Col                         # the island
 dotnet run --project windows/src/Col -- --demo lyrics        # a demo state, with made-up data
-dotnet publish windows/src/Col -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -o publish
+dotnet publish windows/src/Col -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -o publish        # .NET inside
+dotnet publish windows/src/Col -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o small   # small
 dotnet publish windows/src/colctl -c Release -r win-x64 -o publish   # native code, needs Visual Studio's C++ tools
 ```
 
@@ -189,9 +205,10 @@ To change a word, edit `tools/strings.py` and run it: it writes `Resources/Strin
 - Players that do not publish to Windows' media controls do not show.
 - Tested on Windows Server 2025 machines (GitHub's) at 100 % scale and without a sound card or a battery, so the
   volume and battery displays were checked with demo data only. The Arm64 build is made but not run.
-- The invisible strip that brings the island out takes the top 3 pixels of the middle of the screen: there, a click
-  on the tab of a maximised browser opens the island instead.
-- `Col.exe` is large (see above): the price of a self-contained .NET app that stays light in memory.
+- The island comes out when the pointer rests on the top row of pixels right above it; resting a moment on a
+  maximised browser's tabs there, before clicking, can bring it out. The click itself always goes to the browser.
+- The full `Col.exe` is large (see above): the price of a self-contained .NET app that stays light in memory. The
+  small one needs the .NET 8 Desktop Runtime.
 
 ## Credits
 
