@@ -5068,7 +5068,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Col ne demande jamais l’Enregistrement de l’écran, l’Accès complet au disque ni la Surveillance de l’entrée. Il voit quand une autre app utilise le micro sans l’écouter, et n’écoute lui-même que pendant que le prompteur suit votre voix. L’Enregistrement audio du système n’est demandé que si vous activez Barres qui suivent le son."
+            "value": "Col ne demande jamais l’Enregistrement de l’écran, l’Accès complet au disque ni la Surveillance de l’entrée. Il voit quand une autre app utilise le micro sans l’écouter, et n’écoute lui-même que pendant que le prompteur suit votre voix. L’Enregistrement des sons du système n’est demandé que si vous activez Barres qui suivent le son."
           }
         }
       }
@@ -5368,7 +5368,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Enregistrement audio du système"
+            "value": "Enregistrement des sons du système"
           }
         }
       }
@@ -5378,7 +5378,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Les barres à côté de la caméra et un spectre dans le lecteur bougent avec la musique elle-même. Demande l’enregistrement audio du système : le son est analysé sur votre Mac pendant la lecture, jamais enregistré ni envoyé."
+            "value": "Les barres à côté de la caméra et un spectre dans le lecteur bougent avec la musique elle-même. Demande l’Enregistrement des sons du système : le son est analysé sur votre Mac pendant la lecture, jamais enregistré ni envoyé."
           }
         }
       }
