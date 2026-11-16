@@ -78,6 +78,22 @@ sudo Col-3.0.0/install.sh --system   # or for everyone, in /usr/local
 
 `install.sh --uninstall` takes it away. The libraries come from your system; the script names the ones missing.
 
+### Links that always lead to the latest release
+
+Each release also carries its packages under names without a version, so these links never change:
+
+| Package | Link |
+|---|---|
+| Debian and Ubuntu, x86-64 | https://github.com/ruben4reall/col/releases/latest/download/col_amd64.deb |
+| Debian and Ubuntu, ARM64 | https://github.com/ruben4reall/col/releases/latest/download/col_arm64.deb |
+| Tarball, x86-64 | https://github.com/ruben4reall/col/releases/latest/download/Col-linux-x86_64.tar.gz |
+| Tarball, ARM64 | https://github.com/ruben4reall/col/releases/latest/download/Col-linux-aarch64.tar.gz |
+
+```sh
+curl -LO https://github.com/ruben4reall/col/releases/latest/download/col_amd64.deb
+sudo apt install ./col_amd64.deb
+```
+
 ### Arch Linux
 
 `packaging/linux/arch/PKGBUILD` builds the release with the system's `gtk4-layer-shell` (`makepkg -si`).
