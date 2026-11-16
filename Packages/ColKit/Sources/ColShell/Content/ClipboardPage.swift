@@ -35,8 +35,14 @@ struct ClipboardPage: View {
                     list(matches)
                 }
             }
-            // The next time the page shows, it shows every copy again.
-            .onDisappear { clipboard.query = "" }
+            // The next time the page shows, it shows every copy again; a field still typing gives the keyboard back.
+            .onDisappear {
+                clipboard.query = ""
+                if clipboard.searching {
+                    clipboard.searching = false
+                    IslandController.shared?.releaseKeyboard()
+                }
+            }
         } else {
             list(entries)
         }
