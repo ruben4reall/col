@@ -8,6 +8,60 @@
             "state": "translated",
             "value": "Ouvrir ${applicationName}"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "${applicationName} öffnen"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open ${applicationName}"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apri ${applicationName}"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir ${applicationName}"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir ${applicationName}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "${applicationName}を開く"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "${applicationName} 열기"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开 ${applicationName}"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打開 ${applicationName}"
+          }
         }
       }
     },
@@ -18,6 +72,60 @@
             "state": "translated",
             "value": "Lancer un minuteur dans ${applicationName}"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Timer in ${applicationName} starten"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start een timer in ${applicationName}"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avvia un timer in ${applicationName}"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iniciar un temporizador en ${applicationName}"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iniciar um timer no ${applicationName}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "${applicationName}でタイマーを開始"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "${applicationName}에서 타이머 시작"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 ${applicationName} 中启动计时器"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 ${applicationName} 中啟動計時器"
+          }
         }
       }
     },
@@ -27,6 +135,60 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lancer le prompteur dans ${applicationName}"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prompter in ${applicationName} starten"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start de prompter in ${applicationName}"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avvia il prompter in ${applicationName}"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iniciar el teleprompter en ${applicationName}"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iniciar o teleprompter no ${applicationName}"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "${applicationName}でプロンプターを開始"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "${applicationName}에서 프롬프터 시작"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 ${applicationName} 中启动提词器"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 ${applicationName} 中啟動提詞機"
           }
         }
       }

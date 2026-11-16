@@ -36,6 +36,15 @@
 	<array>
 		<string>en</string>
 		<string>fr</string>
+		<string>de</string>
+		<string>nl</string>
+		<string>it</string>
+		<string>es</string>
+		<string>pt-BR</string>
+		<string>ja</string>
+		<string>ko</string>
+		<string>zh-Hans</string>
+		<string>zh-Hant</string>
 	</array>
 	<key>CFBundleName</key>
 	<string>Col</string>
@@ -76,10 +85,10 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
-	<key>NSAudioCaptureUsageDescription</key>
-	<string>With Bars that follow the sound, the bars beside the camera move with the music that plays. The sound is analysed on your Mac as it plays, never recorded or sent.</string>
 	<key>NSAppleEventsUsageDescription</key>
 	<string>Col brings forward the Terminal or iTerm2 tab an AI agent runs in, when you click its session in the island.</string>
+	<key>NSAudioCaptureUsageDescription</key>
+	<string>With Bars that follow the sound, the bars beside the camera move with the music that plays. The sound is analysed on your Mac as it plays, never recorded or sent.</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Col reads the battery of your AirPods and other headphones.</string>
 	<key>NSBonjourServices</key>

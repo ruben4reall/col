@@ -42,6 +42,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
+## Col for Windows and Linux
+
+- **Col for Windows** (`windows/`) ships with the .NET 8 runtime and WPF, by Microsoft, under the MIT License, in its
+  self-contained builds. Its tests use xUnit (Apache 2.0) and Microsoft's test packages (MIT), which are not shipped.
+- **Col for Linux** (`linux/`) links GTK 4 and libadwaita (LGPL 2.1 or later), json-glib and libsoup (LGPL), from the
+  system, and builds in [gtk4-layer-shell](https://github.com/wmww/gtk4-layer-shell) (MIT) when the system has none.
+  Its own list: [linux/THIRD-PARTY-NOTICES.md](linux/THIRD-PARTY-NOTICES.md).
+
 ## The website
 
 `site/` ships one third-party work, unchanged: the [Inter](https://rsms.me/inter/) typeface

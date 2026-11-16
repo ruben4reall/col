@@ -177,7 +177,7 @@ public final class IslandController {
                 let inside = self.islandView.containsPointer
                 if inside != self.machine.pointerInside {
                     self.send(inside ? .pointerEntered : .pointerExited)
-                } else if !inside, self.machine.state == .expanded, self.openedByRequest, self.agents.pending.isEmpty {
+                } else if !inside, self.machine.state == .expanded, self.openedByRequest, self.agents.pending.isEmpty, !self.showingNote {
                     self.openedByRequest = false
                     self.send(.dismissed)
                 }
@@ -221,6 +221,8 @@ public final class IslandController {
 
     /// The welcome went back into the notch: the island opens on "Let's go" for a moment.
     func sayReady() {
+        // Someone new has just met this version: nothing to announce later.
+        WhatsNew.markShown()
         navigation.greetsReady = true
         navigation.jump(to: .greeting)
         openedByRequest = true
@@ -240,6 +242,33 @@ public final class IslandController {
         }
     }
 
+    // MARK: What's new
+
+    /// Once after an update to a new major version, the island opens on what it brings, then tucks back in; it stays
+    /// while the pointer is on it. Someone new gets the welcome instead.
+    private func showWhatsNewIfDue(force: Bool = false) {
+        guard force || (WhatsNew.isDue && WelcomeWindow.hasWelcomed) else { return }
+        guard machine.state != .expanded, ![.greeting, .souffleur, .device].contains(navigation.route), !prompterInNotch else { return }
+        WhatsNew.markShown()
+        navigation.jump(to: .whatsNew)
+        openedByRequest = true
+        send(.requested)
+        closeWhatsNew(after: 14)
+    }
+
+    private func closeWhatsNew(after delay: TimeInterval) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+            MainActor.assumeIsolated {
+                guard let self, self.navigation.route == .whatsNew else { return }
+                guard !self.machine.pointerInside else { return self.closeWhatsNew(after: 3) }
+                self.send(.dismissed)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    MainActor.assumeIsolated { if self.navigation.route == .whatsNew { self.navigation.jumpHome() } }
+                }
+            }
+        }
+    }
+
     // MARK: Menu bar access
 
     /// Once, when the island cannot see the menu bar it shares, it says why its wings stay narrow and offers to ask
@@ -248,7 +277,7 @@ public final class IslandController {
         let key = "menuBarAccessNoteShown"
         guard WelcomeWindow.hasWelcomed, !AXIsProcessTrusted(), layout?.sharesMenuBar == true,
               !UserDefaults.standard.bool(forKey: key), machine.state != .expanded,
-              ![.greeting, .souffleur, .device].contains(navigation.route), !prompterInNotch
+              ![.greeting, .souffleur, .device, .whatsNew].contains(navigation.route), !prompterInNotch
         else { return }
         UserDefaults.standard.set(true, forKey: key)
         navigation.jump(to: .menuBarAccess)
@@ -290,6 +319,9 @@ public final class IslandController {
         // A note left due by an earlier launch, whose welcome was put off.
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
             MainActor.assumeIsolated { self?.showSouffleurNoteIfDue() }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+            MainActor.assumeIsolated { self?.showWhatsNewIfDue() }
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
             MainActor.assumeIsolated { self?.showMenuBarAccessNoteIfDue() }
@@ -755,8 +787,9 @@ public final class IslandController {
         } else {
             removeActivity("agents")
         }
-        // Once the user has answered, an island that opened by itself closes by itself.
-        if agents.pending.isEmpty, openedByRequest {
+        // Once the user has answered, an island that opened by itself closes by itself. A note the island opened on
+        // (what's new, the welcome's hello, a card) keeps its own time: an agent at work elsewhere does not cut it short.
+        if agents.pending.isEmpty, openedByRequest, !showingNote {
             openedByRequest = false
             if machine.state == .expanded, !machine.pointerInside { send(.dismissed) }
         }
@@ -838,7 +871,9 @@ public final class IslandController {
         // Demo content for screenshots, standing in for the user's, which is neither shown nor changed:
         // `-ColDemoShelf <folder>` puts that folder's files on the shelf, `-ColDemo clipboard` shows a few copies
         // (`-ColDemoImage <png>` for the copied photo), `-ColDemo drop` shows files being dragged over the island,
-        // `-ColDemo souffleur` the note the island gives the first time it closes Souffleur.
+        // `-ColDemo souffleur` the note the island gives the first time it closes Souffleur. `-ColDemo meeting`,
+        // `devices` or `pomodoro` stand in a call about to start, three accessories or a focus session under way for
+        // the calendar, the accessories and the timer of the Mac.
         if let folder = UserDefaults.standard.string(forKey: "ColDemoShelf") {
             shelf.showDemo(folder: URL(fileURLWithPath: folder))
         }
@@ -851,6 +886,10 @@ public final class IslandController {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
                 MainActor.assumeIsolated { self?.showSouffleurNote() }
             }
+        case "whatsnew":
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
+                MainActor.assumeIsolated { self?.showWhatsNewIfDue(force: true) }
+            }
         case "menubar":
             // The note about the menu bar, whatever the permission says.
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
@@ -859,6 +898,18 @@ public final class IslandController {
                     self?.send(.requested)
                 }
             }
+        case "meeting":
+            let start = Date().addingTimeInterval(4 * 60 + 32)
+            glance.meetings.showDemo(CalendarModel.Event(id: "demo", title: "Design review", start: start, end: start.addingTimeInterval(1800),
+                                                         isAllDay: false, color: .systemPurple, meeting: URL(string: "https://example.com/call")))
+        case "devices":
+            glance.accessories.showDemo([
+                AccessoryLevel(id: "keyboard", name: "Magic Keyboard", kind: .keyboard, percent: 82),
+                AccessoryLevel(id: "mouse", name: "Magic Mouse", kind: .mouse, percent: 64),
+                AccessoryLevel(id: "controller", name: "Wireless Controller", kind: .gameController, percent: 31),
+            ])
+        case "pomodoro":
+            glance.pomodoro.showDemo(Pomodoro(phase: .focus, plan: .standard, starting: Date().addingTimeInterval(-9 * 60)), completed: 2)
         default:
             break
         }
@@ -1078,6 +1129,12 @@ public final class IslandController {
             width: size.width,
             height: size.height
         )
+    }
+
+    /// The island is open on a note that closes on its own schedule: the hello, what's new, a card, a word about the
+    /// menu bar or Souffleur.
+    private var showingNote: Bool {
+        [.greeting, .whatsNew, .menuBarAccess, .souffleur, .device].contains(navigation.route)
     }
 
     /// The open island has no wings; its content replaces them.

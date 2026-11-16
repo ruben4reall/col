@@ -2,6 +2,25 @@
 
 Each release's section is what Col's update window and the GitHub release show. Dates are in ISO format.
 
+## 3.0.0 (2026-11-16)
+
+- **Col on Windows and Linux**: the island comes to Windows 10 and 11 and to Linux as a preview, as native apps
+  built for each system (C# and WPF on Windows; Vala, GTK 4 and libadwaita on Linux), not a web view. A floating pill
+  at the top of the screen shows what plays with its synced lyrics, your volume and battery, a timer, your clipboard,
+  and Claude Code and Codex with Allow and Deny, through the same `colctl` command, API and hooks as on the Mac. On
+  Linux it is a layer-shell overlay on KDE Plasma, COSMIC, Hyprland, Sway and niri, and runs under XWayland on GNOME.
+  Download the Windows installer or zips, or the Linux `.deb` packages and tarballs, from the release. The Windows
+  builds are not signed yet: SmartScreen asks once.
+- **Eleven languages**: Col now speaks German, Dutch, Italian, Spanish, Brazilian Portuguese, Japanese, Korean, and
+  Simplified and Traditional Chinese, besides English and French, and follows the language of your Mac (or the one you
+  pick in Settings, General). The translations were made by AI: if a word sounds wrong, you can fix it.
+- **What's new, in the island**: once after the update, the island opens on what Col 3 brings, tile after tile.
+- **Since 2.0**, in short (each version has its own notes below): the wings are made for macOS 27 and never cover
+  the » button, a menu or an icon; screens without a notch get a pill in the menu bar (2.1). Lyrics on the Lock Screen
+  and on the desktop, word by word, and bars that follow the real sound (2.2). Weather, your next meeting, a
+  microphone mute, your accessories' batteries, Pomodoro and tools for the shelf (2.3). Col Connect for your phone and
+  your home, widgets from anywhere, and Claude Code's questions and plans answered from the island (2.4).
+
 ## 2.4.0 (2026-11-16)
 
 - **Col Connect**: your iPhone, Home Assistant, a Raspberry Pi or a build machine on your network can now push live

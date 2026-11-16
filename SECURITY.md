@@ -165,3 +165,12 @@ removes one, its feature turns off and nothing crashes. The [README](README.md#p
 needed.
 
 CoreBrightness's `KeyboardBrightnessClient` (the keyboard backlight's level, for its keys) is looked up the same way.
+
+## Col for Windows and Linux
+
+The Windows and Linux editions keep the same promises: no account, no telemetry, scripts and agents reach Col only
+through a channel that your account alone can open (a named pipe on Windows, a Unix socket in `$XDG_RUNTIME_DIR` on
+Linux), and Allow and Deny for your agents never travel over the network. They use the network only for the lyrics
+of what plays, while lyrics are on (LRCLIB), and on Linux for the covers players give as web addresses. What each one
+touches is listed in [windows/README.md](windows/README.md#privacy) and [linux/README.md](linux/README.md#privacy).
+The Windows builds are not code-signed yet: SmartScreen asks once before the first launch.
