@@ -1,0 +1,62 @@
+<UserControl x:Class="Col.Island.ToolsPage" x:ClassModifier="internal"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:l="clr-namespace:Col.Localization"
+             FontFamily="{StaticResource Island.Font}" Foreground="{StaticResource Island.Text}">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="172" />
+            <ColumnDefinition Width="20" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- The timer, and keep awake under it. -->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TextBlock Text="{l:Loc Tools_Timer}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource Island.Secondary}" />
+            <DockPanel Grid.Row="1" Margin="0,0,0,4">
+                <Button x:Name="CancelTimer" DockPanel.Dock="Right" Style="{StaticResource Island.IconButton}" Width="30" Height="30"
+                        ToolTip="{l:Loc Tools_Cancel}" />
+                <Button x:Name="StartTimer" DockPanel.Dock="Right" Style="{StaticResource Island.IconButton}" Width="30" Height="30"
+                        Background="#1A0A84FF" Margin="0,0,4,0" />
+                <TextBlock x:Name="TimerText" FontFamily="{StaticResource Island.DisplayFont}" FontSize="30" FontWeight="Light"
+                           Typography.NumeralAlignment="Tabular" VerticalAlignment="Center" />
+            </DockPanel>
+            <StackPanel x:Name="Presets" Grid.Row="2" Orientation="Horizontal" />
+            <Button x:Name="KeepAwakeButton" Grid.Row="3" Style="{StaticResource Island.Row}" VerticalAlignment="Bottom"
+                    Padding="8,5" Margin="-8,0,0,0">
+                <DockPanel>
+                    <ContentPresenter x:Name="CupSlot" Margin="0,0,9,0" VerticalAlignment="Center" />
+                    <TextBlock x:Name="AwakeState" DockPanel.Dock="Right" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    <TextBlock Text="{l:Loc Tools_KeepAwake}" FontSize="13" VerticalAlignment="Center" />
+                </DockPanel>
+            </Button>
+        </Grid>
+
+        <!-- The clipboard: the last copies, pins first. -->
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <DockPanel>
+                <Button x:Name="ClearClipboard" DockPanel.Dock="Right" Style="{StaticResource Island.Row}" Padding="6,0"
+                        Margin="0,-3,0,0" Height="20">
+                    <TextBlock Text="{l:Loc Tools_Clear}" FontSize="11.5" Foreground="{StaticResource Island.Secondary}" />
+                </Button>
+                <TextBlock Text="{l:Loc Tools_Clipboard}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource Island.Secondary}" />
+            </DockPanel>
+            <ScrollViewer Grid.Row="1" Style="{StaticResource Island.Scroll}" Margin="0,4,0,0">
+                <StackPanel x:Name="Copies" />
+            </ScrollViewer>
+            <TextBlock x:Name="NoCopies" Grid.Row="1" Text="{l:Loc Tools_Clipboard_Empty}" FontSize="12"
+                       Foreground="{StaticResource Island.Secondary}" TextWrapping="Wrap" VerticalAlignment="Center"
+                       HorizontalAlignment="Center" TextAlignment="Center" MaxWidth="220" />
+        </Grid>
+    </Grid>
+</UserControl>

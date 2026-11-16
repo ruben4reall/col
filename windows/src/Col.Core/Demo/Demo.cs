@@ -14,6 +14,7 @@ public enum DemoState
     Lyrics,
     AgentPermission,
     Agents,
+    Live,
     Volume,
     Battery,
     Timer,

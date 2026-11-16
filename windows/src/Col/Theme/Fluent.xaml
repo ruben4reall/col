@@ -1,0 +1,281 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- The settings window, drawn the way Windows 11 draws its own: cards on Mica, the system's accent colour, light or
+         dark as Windows is. The colours are set by ThemeManager; these are the dark ones, until it runs. -->
+    <SolidColorBrush x:Key="Win.Background" Color="#202020" />
+    <SolidColorBrush x:Key="Win.Text" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="Win.Text.Secondary" Color="#C5FFFFFF" />
+    <SolidColorBrush x:Key="Win.Text.Tertiary" Color="#87FFFFFF" />
+    <SolidColorBrush x:Key="Win.Card" Color="#0DFFFFFF" />
+    <SolidColorBrush x:Key="Win.Card.Stroke" Color="#19000000" />
+    <SolidColorBrush x:Key="Win.Control" Color="#0FFFFFFF" />
+    <SolidColorBrush x:Key="Win.Control.Hover" Color="#15FFFFFF" />
+    <SolidColorBrush x:Key="Win.Control.Stroke" Color="#12FFFFFF" />
+    <SolidColorBrush x:Key="Win.Control.StrokeStrong" Color="#8BFFFFFF" />
+    <SolidColorBrush x:Key="Win.Nav.Hover" Color="#0FFFFFFF" />
+    <SolidColorBrush x:Key="Win.Nav.Selected" Color="#0FFFFFFF" />
+    <SolidColorBrush x:Key="Win.Accent" Color="#60CDFF" />
+    <SolidColorBrush x:Key="Win.OnAccent" Color="#000000" />
+    <SolidColorBrush x:Key="Win.Divider" Color="#15FFFFFF" />
+    <SolidColorBrush x:Key="Win.Success" Color="#6CCB5F" />
+    <SolidColorBrush x:Key="Win.Caution" Color="#FCE100" />
+    <SolidColorBrush x:Key="Win.Badge" Color="#26FFFFFF" />
+    <system:String x:Key="Win.Str.On" xmlns:system="clr-namespace:System;assembly=mscorlib">On</system:String>
+    <system:String x:Key="Win.Str.Off" xmlns:system="clr-namespace:System;assembly=mscorlib">Off</system:String>
+    <FontFamily x:Key="Win.Font">Segoe UI Variable Text, Segoe UI</FontFamily>
+    <FontFamily x:Key="Win.DisplayFont">Segoe UI Variable Display, Segoe UI</FontFamily>
+    <FontFamily x:Key="Win.Icons">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
+
+    <Style x:Key="Win.Card" TargetType="Border">
+        <Setter Property="Background" Value="{DynamicResource Win.Card}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Win.Card.Stroke}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Padding" Value="16,12" />
+        <Setter Property="Margin" Value="0,0,0,4" />
+        <Setter Property="MinHeight" Value="64" />
+    </Style>
+
+    <Style x:Key="Win.CardTitle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="{DynamicResource Win.Text}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
+    <Style x:Key="Win.CardDetail" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Foreground" Value="{DynamicResource Win.Text.Secondary}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Margin" Value="0,2,0,0" />
+    </Style>
+
+    <Style x:Key="Win.Section" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{DynamicResource Win.Text}" />
+        <Setter Property="Margin" Value="1,22,0,8" />
+    </Style>
+
+    <Style x:Key="Win.CardIcon" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Win.Icons}" />
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="Foreground" Value="{DynamicResource Win.Text}" />
+        <Setter Property="Width" Value="20" />
+        <Setter Property="Margin" Value="2,0,18,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- A toggle switch, with On or Off to its left. -->
+    <Style x:Key="Win.Toggle" TargetType="CheckBox">
+        <Setter Property="Foreground" Value="{DynamicResource Win.Text}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <StackPanel Orientation="Horizontal" Background="Transparent">
+                        <TextBlock x:Name="State" Text="{DynamicResource Win.Str.Off}" FontSize="14" Margin="0,0,12,0"
+                                   VerticalAlignment="Center" Foreground="{TemplateBinding Foreground}" MinWidth="24"
+                                   TextAlignment="Right" />
+                        <Grid Width="40" Height="20" VerticalAlignment="Center">
+                            <Border x:Name="Track" CornerRadius="10" BorderThickness="1"
+                                    BorderBrush="{DynamicResource Win.Control.StrokeStrong}" Background="{DynamicResource Win.Control}" />
+                            <Ellipse x:Name="Knob" Width="12" Height="12" Fill="{DynamicResource Win.Text.Secondary}"
+                                     HorizontalAlignment="Left" Margin="4,0,0,0" />
+                        </Grid>
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Knob" Property="Width" Value="14" />
+                            <Setter TargetName="Knob" Property="Height" Value="14" />
+                            <Setter TargetName="Knob" Property="Margin" Value="3,0,0,0" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Track" Property="Background" Value="{DynamicResource Win.Accent}" />
+                            <Setter TargetName="Track" Property="BorderBrush" Value="{DynamicResource Win.Accent}" />
+                            <Setter TargetName="Knob" Property="Fill" Value="{DynamicResource Win.OnAccent}" />
+                            <Setter TargetName="Knob" Property="HorizontalAlignment" Value="Right" />
+                            <Setter TargetName="Knob" Property="Margin" Value="0,0,4,0" />
+                            <Setter TargetName="State" Property="Text" Value="{DynamicResource Win.Str.On}" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsChecked" Value="True" />
+                                <Condition Property="IsMouseOver" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Knob" Property="Margin" Value="0,0,3,0" />
+                        </MultiTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.4" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Win.Button" TargetType="Button">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="{DynamicResource Win.Text}" />
+        <Setter Property="Background" Value="{DynamicResource Win.Control}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Win.Control.Stroke}" />
+        <Setter Property="Padding" Value="12,5,12,6" />
+        <Setter Property="MinWidth" Value="96" />
+        <Setter Property="MinHeight" Value="32" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid>
+                        <Border x:Name="Body" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="1" CornerRadius="4" />
+                        <Border x:Name="Hover" Background="White" Opacity="0" CornerRadius="4" />
+                        <ContentPresenter Margin="{TemplateBinding Padding}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          TextElement.Foreground="{TemplateBinding Foreground}" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Hover" Property="Opacity" Value="0.05" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Hover" Property="Opacity" Value="0.0" />
+                            <Setter Property="Opacity" Value="0.8" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.4" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Win.AccentButton" TargetType="Button" BasedOn="{StaticResource Win.Button}">
+        <Setter Property="Background" Value="{DynamicResource Win.Accent}" />
+        <Setter Property="Foreground" Value="{DynamicResource Win.OnAccent}" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+
+    <Style x:Key="Win.LinkButton" TargetType="Button">
+        <Setter Property="Foreground" Value="{DynamicResource Win.Accent}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <TextBlock x:Name="Label" Text="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}" Foreground="{TemplateBinding Foreground}" />
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Label" Property="TextDecorations" Value="Underline" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- The navigation on the left: an icon, a name, and the accent's small bar beside the page that shows. -->
+    <Style x:Key="Win.Nav" TargetType="RadioButton">
+        <Setter Property="Foreground" Value="{DynamicResource Win.Text}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="GroupName" Value="Nav" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Border x:Name="Body" Background="Transparent" CornerRadius="4" Height="36" Margin="0,2">
+                        <Grid>
+                            <Border x:Name="Pill" Width="3" Height="16" CornerRadius="1.5" Background="{DynamicResource Win.Accent}"
+                                    HorizontalAlignment="Left" Visibility="Collapsed" />
+                            <StackPanel Orientation="Horizontal" Margin="16,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"
+                                           FontFamily="{StaticResource Win.Icons}" FontSize="16" Margin="0,0,16,0"
+                                           VerticalAlignment="Center" Foreground="{TemplateBinding Foreground}" />
+                                <ContentPresenter VerticalAlignment="Center" TextElement.Foreground="{TemplateBinding Foreground}" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Body" Property="Background" Value="{DynamicResource Win.Nav.Hover}" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Body" Property="Background" Value="{DynamicResource Win.Nav.Selected}" />
+                            <Setter TargetName="Pill" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- One choice among a few, side by side: the island's size. -->
+    <Style x:Key="Win.Segment" TargetType="RadioButton">
+        <Setter Property="Foreground" Value="{DynamicResource Win.Text}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Border x:Name="Body" Background="Transparent" CornerRadius="4" Padding="14,5,14,6" Margin="2">
+                        <ContentPresenter x:Name="Label" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          TextElement.Foreground="{TemplateBinding Foreground}" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Body" Property="Background" Value="{DynamicResource Win.Control.Hover}" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Body" Property="Background" Value="{DynamicResource Win.Accent}" />
+                            <Setter TargetName="Label" Property="TextElement.Foreground" Value="{DynamicResource Win.OnAccent}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Win.Radio" TargetType="RadioButton">
+        <Setter Property="Foreground" Value="{DynamicResource Win.Text}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <StackPanel Orientation="Horizontal" Background="Transparent" Margin="0,5">
+                        <Grid Width="20" Height="20" VerticalAlignment="Center">
+                            <Ellipse x:Name="Outer" Stroke="{DynamicResource Win.Control.StrokeStrong}" StrokeThickness="1"
+                                     Fill="{DynamicResource Win.Control}" />
+                            <Ellipse x:Name="Inner" Width="8" Height="8" Fill="{DynamicResource Win.OnAccent}" Visibility="Collapsed" />
+                        </Grid>
+                        <ContentPresenter Margin="10,0,0,0" VerticalAlignment="Center" TextElement.Foreground="{TemplateBinding Foreground}" />
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Outer" Property="Fill" Value="{DynamicResource Win.Accent}" />
+                            <Setter TargetName="Outer" Property="Stroke" Value="{DynamicResource Win.Accent}" />
+                            <Setter TargetName="Inner" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Inner" Property="Width" Value="10" />
+                            <Setter TargetName="Inner" Property="Height" Value="10" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Win.ScrollViewer" TargetType="ScrollViewer">
+        <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+    </Style>
+</ResourceDictionary>

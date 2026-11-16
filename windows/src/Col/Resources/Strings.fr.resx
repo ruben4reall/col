@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Written by windows/tools/strings.py: edit the words there. -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Island_Home" xml:space="preserve"><value>Accueil</value></data>
+  <data name="Island_Live" xml:space="preserve"><value>En direct</value></data>
+  <data name="Island_Tools" xml:space="preserve"><value>Outils</value></data>
+  <data name="Island_Settings" xml:space="preserve"><value>Réglages</value></data>
+  <data name="Home_NothingPlaying" xml:space="preserve"><value>Rien ne joue</value></data>
+  <data name="Home_NothingPlaying_Detail" xml:space="preserve"><value>Lancez un morceau dans Spotify, votre navigateur ou un autre lecteur, et il s'affiche ici.</value></data>
+  <data name="Lyrics_Off" xml:space="preserve"><value>Les paroles sont désactivées. Activez-les dans Réglages, Musique et paroles.</value></data>
+  <data name="Lyrics_Looking" xml:space="preserve"><value>Recherche des paroles…</value></data>
+  <data name="Lyrics_Instrumental" xml:space="preserve"><value>Instrumental</value></data>
+  <data name="Lyrics_Unavailable" xml:space="preserve"><value>LRCLIB ne répond pas pour le moment.</value></data>
+  <data name="Lyrics_NotFound" xml:space="preserve"><value>Pas de paroles pour ce morceau.</value></data>
+  <data name="Live_Empty" xml:space="preserve"><value>Rien en cours</value></data>
+  <data name="Live_Empty_Detail" xml:space="preserve"><value>Claude Code, Codex et vos scripts s'affichent ici pendant qu'ils travaillent.</value></data>
+  <data name="Agent_Waiting" xml:space="preserve"><value>Vous attend</value></data>
+  <data name="Agent_Working" xml:space="preserve"><value>Au travail</value></data>
+  <data name="Agent_Done" xml:space="preserve"><value>Terminé</value></data>
+  <data name="Agent_Idle" xml:space="preserve"><value>Au repos</value></data>
+  <data name="Card_Heading" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="Card_AnAgent" xml:space="preserve"><value>Un agent</value></data>
+  <data name="Card_Tool" xml:space="preserve"><value>Outil</value></data>
+  <data name="Card_More" xml:space="preserve"><value>+{0} en attente</value></data>
+  <data name="Card_Allow" xml:space="preserve"><value>Autoriser</value></data>
+  <data name="Card_Deny" xml:space="preserve"><value>Refuser</value></data>
+  <data name="Card_TooLong" xml:space="preserve"><value>Trop long pour être vérifié ici : répondez dans le terminal.</value></data>
+  <data name="Tools_Timer" xml:space="preserve"><value>Minuteur</value></data>
+  <data name="Tools_Start" xml:space="preserve"><value>Démarrer</value></data>
+  <data name="Tools_Pause" xml:space="preserve"><value>Pause</value></data>
+  <data name="Tools_Cancel" xml:space="preserve"><value>Annuler</value></data>
+  <data name="Tools_Minutes" xml:space="preserve"><value>{0} minutes</value></data>
+  <data name="Tools_KeepAwake" xml:space="preserve"><value>Rester éveillé</value></data>
+  <data name="Tools_Clipboard" xml:space="preserve"><value>Presse-papiers</value></data>
+  <data name="Tools_Clear" xml:space="preserve"><value>Effacer</value></data>
+  <data name="Tools_Clipboard_Empty" xml:space="preserve"><value>Le texte copié s'affiche ici, gardé en mémoire seulement.</value></data>
+  <data name="Tools_Clipboard_Off" xml:space="preserve"><value>L'historique du presse-papiers est désactivé.</value></data>
+  <data name="Tools_Pin" xml:space="preserve"><value>Épingler</value></data>
+  <data name="Tools_Unpin" xml:space="preserve"><value>Désépingler</value></data>
+  <data name="Tools_CopyAgain" xml:space="preserve"><value>Copier à nouveau</value></data>
+  <data name="Timer_Done" xml:space="preserve"><value>Fini</value></data>
+  <data name="State_On" xml:space="preserve"><value>Activé</value></data>
+  <data name="State_Off" xml:space="preserve"><value>Désactivé</value></data>
+  <data name="Menu_Open" xml:space="preserve"><value>Ouvrir l'île</value></data>
+  <data name="Menu_Settings" xml:space="preserve"><value>Réglages…</value></data>
+  <data name="Menu_Quit" xml:space="preserve"><value>Quitter Col</value></data>
+  <data name="Settings_Title" xml:space="preserve"><value>Réglages de Col</value></data>
+  <data name="Settings_Preview" xml:space="preserve"><value>Aperçu</value></data>
+  <data name="Nav_General" xml:space="preserve"><value>Général</value></data>
+  <data name="Nav_Music" xml:space="preserve"><value>Musique et paroles</value></data>
+  <data name="Nav_Agents" xml:space="preserve"><value>Agents</value></data>
+  <data name="Nav_About" xml:space="preserve"><value>À propos</value></data>
+  <data name="General_Launch" xml:space="preserve"><value>Ouvrir Col à la connexion</value></data>
+  <data name="General_Launch_Detail" xml:space="preserve"><value>Col démarre avec Windows et attend en haut de l'écran.</value></data>
+  <data name="General_Island" xml:space="preserve"><value>Île</value></data>
+  <data name="General_AtRest" xml:space="preserve"><value>Afficher l'île quand rien ne se passe</value></data>
+  <data name="General_AtRest_Detail" xml:space="preserve"><value>Désactivé, l'île ne sort que quand il se passe quelque chose, ou quand vous posez le pointeur sur le bord haut de l'écran.</value></data>
+  <data name="General_Hover" xml:space="preserve"><value>Ouvrir au survol</value></data>
+  <data name="General_Hover_Detail" xml:space="preserve"><value>Posez le pointeur sur l'île pour l'ouvrir. Désactivé, un clic l'ouvre.</value></data>
+  <data name="General_Size" xml:space="preserve"><value>Taille</value></data>
+  <data name="General_Size_Detail" xml:space="preserve"><value>La taille de l'île, fermée et ouverte.</value></data>
+  <data name="Size_Compact" xml:space="preserve"><value>Compacte</value></data>
+  <data name="Size_Standard" xml:space="preserve"><value>Standard</value></data>
+  <data name="Size_Large" xml:space="preserve"><value>Grande</value></data>
+  <data name="General_Display" xml:space="preserve"><value>Écran</value></data>
+  <data name="General_Display_Detail" xml:space="preserve"><value>L'île se place en haut au centre de cet écran.</value></data>
+  <data name="General_Display_Primary" xml:space="preserve"><value>Écran principal</value></data>
+  <data name="General_Display_Number" xml:space="preserve"><value>Écran {0}, {1} × {2}</value></data>
+  <data name="General_Display_IsPrimary" xml:space="preserve"><value>principal</value></data>
+  <data name="General_Shows" xml:space="preserve"><value>Ce que l'île affiche</value></data>
+  <data name="General_Volume" xml:space="preserve"><value>Volume</value></data>
+  <data name="General_Volume_Detail" xml:space="preserve"><value>Une jauge dans l'île quand le volume change. Le volume de Windows s'affiche toujours aussi.</value></data>
+  <data name="General_Battery" xml:space="preserve"><value>Batterie et charge</value></data>
+  <data name="General_Battery_Detail" xml:space="preserve"><value>Quand le chargeur est branché ou débranché, et quand la batterie est faible.</value></data>
+  <data name="General_Clipboard" xml:space="preserve"><value>Historique du presse-papiers</value></data>
+  <data name="General_Clipboard_Detail" xml:space="preserve"><value>Vos dernières copies de texte dans la page Outils, gardées en mémoire seulement, jamais écrites sur le disque. Les copies que les gestionnaires de mots de passe marquent comme privées sont ignorées.</value></data>
+  <data name="Music_NowPlaying" xml:space="preserve"><value>À l'écoute</value></data>
+  <data name="Music_NowPlaying_Detail" xml:space="preserve"><value>Le morceau qui joue dans Spotify, votre navigateur ou toute app des commandes multimédias de Windows, avec sa pochette et ses commandes.</value></data>
+  <data name="Music_Lyrics" xml:space="preserve"><value>Paroles</value></data>
+  <data name="Music_SyncedLyrics" xml:space="preserve"><value>Paroles synchronisées</value></data>
+  <data name="Music_SyncedLyrics_Detail" xml:space="preserve"><value>Les paroles à côté du lecteur, ligne par ligne. Col les demande à LRCLIB, une base de paroles ouverte : seuls le titre, l'artiste, l'album et la durée du morceau sont envoyés, et la réponse est gardée sur ce PC.</value></data>
+  <data name="Music_LineClosed" xml:space="preserve"><value>Ligne en cours dans l'île fermée</value></data>
+  <data name="Music_LineClosed_Detail" xml:space="preserve"><value>La ligne chantée, entre la pochette et l'égaliseur.</value></data>
+  <data name="Music_Cache" xml:space="preserve"><value>Paroles gardées sur ce PC</value></data>
+  <data name="Music_Cache_Detail" xml:space="preserve"><value>{0} morceaux, {1} Ko</value></data>
+  <data name="Music_Clear" xml:space="preserve"><value>Effacer</value></data>
+  <data name="Agents_Intro" xml:space="preserve"><value>Claude Code et Codex s'affichent dans l'île pendant qu'ils travaillent. Quand l'un demande une permission, l'île s'ouvre avec la commande entière, Autoriser et Refuser. Col ne se connecte à aucun service d'IA.</value></data>
+  <data name="Agents_Connect" xml:space="preserve"><value>Connecter</value></data>
+  <data name="Agents_Disconnect" xml:space="preserve"><value>Déconnecter</value></data>
+  <data name="Agents_Connected" xml:space="preserve"><value>Connecté</value></data>
+  <data name="Agents_NotConnected" xml:space="preserve"><value>Non connecté</value></data>
+  <data name="Agents_NotFound" xml:space="preserve"><value>Introuvable sur ce PC</value></data>
+  <data name="Agents_Backup" xml:space="preserve"><value>Col ajoute ses hooks à côté des vôtres, garde une copie du fichier modifié (.col-backup) et ne touche à rien d'autre. Codex vous demande une fois de faire confiance aux nouveaux hooks, avec /hooks.</value></data>
+  <data name="Agents_Scripts" xml:space="preserve"><value>Scripts et autres agents</value></data>
+  <data name="Agents_Colctl_Detail" xml:space="preserve"><value>Vos scripts mettent leurs propres activités dans l'île avec la commande colctl, depuis PowerShell, cmd ou Git Bash.</value></data>
+  <data name="Agents_Colctl_Path" xml:space="preserve"><value>Installé dans {0}</value></data>
+  <data name="Agents_Colctl_Missing" xml:space="preserve"><value>colctl.exe n'est pas à côté de Col.exe : réinstallez Col pour connecter les agents.</value></data>
+  <data name="About_Name" xml:space="preserve"><value>Col pour Windows</value></data>
+  <data name="About_Version" xml:space="preserve"><value>Version {0}, aperçu</value></data>
+  <data name="About_Tagline" xml:space="preserve"><value>Une Dynamic Island en haut de votre écran.</value></data>
+  <data name="About_License" xml:space="preserve"><value>Libre et gratuit, sous licence MIT.</value></data>
+  <data name="About_Website" xml:space="preserve"><value>Site web</value></data>
+  <data name="About_Source" xml:space="preserve"><value>Code source</value></data>
+  <data name="About_Changelog" xml:space="preserve"><value>Nouveautés</value></data>
+  <data name="About_Issues" xml:space="preserve"><value>Signaler un problème</value></data>
+  <data name="About_Privacy" xml:space="preserve"><value>Confidentialité</value></data>
+  <data name="About_Privacy_Detail" xml:space="preserve"><value>Pas de compte, pas de télémétrie, pas de statistiques. Col ne va sur le réseau que pour demander des paroles à LRCLIB, tant que les paroles synchronisées sont activées. Scripts et agents joignent Col par un canal que seul votre compte peut ouvrir.</value></data>
+  <data name="About_Unsigned" xml:space="preserve"><value>Un aperçu non signé</value></data>
+  <data name="About_Unsigned_Detail" xml:space="preserve"><value>Cet aperçu n'est pas encore signé par un certificat de signature de code, Windows SmartScreen peut donc avertir avant le premier lancement : choisissez Informations complémentaires, puis Exécuter quand même.</value></data>
+  <data name="About_Credits" xml:space="preserve"><value>Les logos des agents de code viennent de LobeHub Icons (MIT) et appartiennent à leurs propriétaires.</value></data>
+</root>

@@ -1,0 +1,58 @@
+<Window x:Class="Col.Island.IslandWindow" x:ClassModifier="internal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:island="clr-namespace:Col.Island"
+        xmlns:l="clr-namespace:Col.Localization"
+        Title="Col" WindowStyle="None" AllowsTransparency="True" Background="Transparent" ResizeMode="NoResize"
+        ShowInTaskbar="False" ShowActivated="False" Topmost="True" SizeToContent="Manual" Focusable="False"
+        Width="600" Height="260" Left="0" Top="0"
+        UseLayoutRounding="True" SnapsToDevicePixels="True" TextOptions.TextFormattingMode="Ideal"
+        FontFamily="{StaticResource Island.Font}" Foreground="{StaticResource Island.Text}">
+    <Grid x:Name="Root">
+        <!-- An invisible strip along the top edge of the screen: resting the pointer on it brings the island out. Drawn
+             at the lowest alpha a window can have, so Windows still gives it the pointer. -->
+        <Rectangle x:Name="WakeStrip" Fill="#01000000" VerticalAlignment="Top" HorizontalAlignment="Center" Height="3" Width="220" />
+        <!-- Between the strip and the island, so moving down from one to the other never leaves the window. -->
+        <Rectangle x:Name="Bridge" Fill="#01000000" VerticalAlignment="Top" HorizontalAlignment="Center" Height="9" Width="124" />
+
+        <!-- The island itself: night black, rounded on all four corners. -->
+        <Border x:Name="Body" Background="{StaticResource Island.Night}" VerticalAlignment="Top" HorizontalAlignment="Center"
+                Margin="0,8,0,0" Width="124" Height="32" CornerRadius="16" />
+
+        <!-- The closed island's content: an item on each side, a line of text in the middle. -->
+        <Grid x:Name="CompactLayer" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,8,0,0" Width="124" Height="32"
+              IsHitTestVisible="False" ClipToBounds="True">
+            <ContentPresenter x:Name="LeadingSlot" HorizontalAlignment="Left" VerticalAlignment="Center" />
+            <TextBlock x:Name="MiddleText" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12.5"
+                       FontWeight="SemiBold" TextTrimming="CharacterEllipsis" Foreground="{StaticResource Island.Text}" />
+            <ContentPresenter x:Name="TrailingSlot" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        </Grid>
+
+        <!-- The open island's content, at its final size from the start: the island's outline reveals it as it grows. -->
+        <Grid x:Name="ExpandedLayer" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,8,0,0" Width="480" Height="200"
+              Opacity="0" IsHitTestVisible="False">
+            <Grid x:Name="PagesView" Margin="18,12,18,14">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="28" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <DockPanel>
+                    <Button x:Name="SettingsButton" DockPanel.Dock="Right" Style="{StaticResource Island.IconButton}" Width="28"
+                            Height="28" ToolTip="{l:Loc Island_Settings}" AutomationProperties.AutomationId="Settings" />
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <RadioButton x:Name="HomeTab" Style="{StaticResource Island.Tab}" Content="{l:Loc Island_Home}" GroupName="Pages"
+                                     IsChecked="True" />
+                        <RadioButton x:Name="LiveTab" Style="{StaticResource Island.Tab}" Content="{l:Loc Island_Live}" GroupName="Pages" />
+                        <RadioButton x:Name="ToolsTab" Style="{StaticResource Island.Tab}" Content="{l:Loc Island_Tools}" GroupName="Pages" />
+                    </StackPanel>
+                </DockPanel>
+                <Grid Grid.Row="1" Margin="0,8,0,0">
+                    <island:HomePage x:Name="Home" />
+                    <island:LivePage x:Name="Live" Visibility="Collapsed" />
+                    <island:ToolsPage x:Name="Tools" Visibility="Collapsed" />
+                </Grid>
+            </Grid>
+            <island:PermissionCard x:Name="Card" Margin="20,16,20,16" Visibility="Collapsed" />
+        </Grid>
+    </Grid>
+</Window>
