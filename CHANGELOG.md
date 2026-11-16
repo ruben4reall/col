@@ -2,7 +2,7 @@
 
 Each release's section is what Col's update window and the GitHub release show. Dates are in ISO format.
 
-## 2.3.0 (unreleased)
+## 2.3.0 (2026-11-16)
 
 - **The weather**: now, today's high and low and the next hours, with the sky drawn by SF Symbols, in a Weather widget
   you can put on any page, and beside the clock of the Lock Screen when the island shows there. Where you are, or in

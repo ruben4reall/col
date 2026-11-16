@@ -96,6 +96,9 @@ private struct Gauge: View {
             title
                 .font(.system(size: 11, weight: .semibold))
                 .foregroundStyle(Theme.secondaryText)
+                // Five tiles leave little room: a long word shrinks a little rather than break in two.
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
             Text(value)
                 .font(.system(size: tight ? 15.5 : 17, weight: .semibold, design: .rounded).monospacedDigit())
                 .lineLimit(1)
