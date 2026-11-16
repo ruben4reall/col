@@ -84,10 +84,16 @@
 	<string>Col shows your next events in the notch.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Col uses the camera only when you open its mirror.</string>
+	<key>NSFocusStatusUsageDescription</key>
+	<string>Col says in the notch when a Focus turns on or off.</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Ruben Catalao. MIT License. Col is not affiliated with Apple.</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Col reaches the devices you choose on your network, and only them: your phone for the prompter's remote, and the AI servers you add.</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Col shows the weather where you are. Only a position rounded to about a kilometre is sent to Open-Meteo.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Col shows the weather where you are. Only a position rounded to about a kilometre is sent to Open-Meteo.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>The prompter listens to your voice to roll the script as you speak. The sound never leaves your Mac and is never recorded.</string>
 	<key>NSRemindersFullAccessUsageDescription</key>

@@ -27,6 +27,8 @@ public final class IslandController {
     private let device = DeviceCardModel()
     private let awake = KeepAwake()
     private let downloads = DownloadsMonitor()
+    /// Your Mac at a glance (2.3): weather, Focus, Caps Lock, accessories, Pomodoro, the next meeting.
+    private let glance: Glance
     private var hotKey: HotKey?
     /// An app covers the notch's screen in full screen: the island only shows brief displays.
     private var fullScreenActive = false
@@ -77,10 +79,12 @@ public final class IslandController {
     private var previewClose: Task<Void, Never>?
 
     public init() {
+        let glance = Glance(calendar: calendar, system: system)
+        self.glance = glance
         let services = IslandServices(
             media: media, lyrics: lyrics, ai: ai, agents: agents, custom: custom, navigation: navigation, power: system.power,
             shelf: shelf, clipboard: clipboard, timer: timer, picker: picker, mirror: mirror, calendar: calendar, stats: stats,
-            device: device, audio: system.audio, awake: awake,
+            device: device, audio: system.audio, awake: awake, glance: glance,
             openSettings: { SettingsWindow.shared.show() }
         )
         self.services = services
@@ -98,6 +102,8 @@ public final class IslandController {
         system.post = { [weak self] activity in self?.post(activity) }
         system.remove = { [weak self] id in self?.removeActivity(id) }
         system.registerImage = { [weak self] image, key in self?.islandView.compact.register(image, for: key) }
+        glance.post = { [weak self] activity in self?.post(activity) }
+        glance.remove = { [weak self] id in self?.removeActivity(id) }
         machine.opensOnHover = Preferences.opensOnHover
         board.ranking = Preferences.activityRanking
         islandView.onPageSwipe = { [weak self] step in
@@ -359,6 +365,11 @@ public final class IslandController {
 
     public func startTimer(minutes: Int) {
         timer.start(minutes: max(1, min(minutes, 24 * 60)))
+    }
+
+    /// Mutes or unmutes the microphone, from the Live page's button.
+    func toggleMicrophone() {
+        system.toggleMicrophone()
     }
 
     public func openIsland() {
@@ -697,6 +708,7 @@ public final class IslandController {
         }
         mediaChanged(trackChanged: false)
         agentsChanged()
+        glance.preferencesChanged()
     }
 
     /// Handles a `col://` link, Islet's `islet://` ones, and the prompter's links (`col://prompter/…`, and Souffleur's
@@ -741,6 +753,7 @@ public final class IslandController {
         ) { _ in MainActor.assumeIsolated { SettingsWindow.shared.show() } })
         media.start()
         system.start()
+        glance.start()
         api.start()
         clipboard.start()
         api.showIsland = { [weak self] open, page in self?.showFromLink(open: open, page: page) }
@@ -780,6 +793,7 @@ public final class IslandController {
         prompter.showLibraryHandler = { ScriptLibraryWindow.shared.show() }
         prompter.onActiveChange = { [weak self] active, placement in self?.prompterChanged(active: active, placement: placement) }
         prompter.start()
+        lockScreen.weather = glance.weather
         lockScreen.start()
         desktopLyrics.start()
         if Preferences.showsOnLockScreen { LockScreenSpace.shared?.adopt(panel) }
@@ -1106,6 +1120,7 @@ public final class IslandController {
         if state == .expanded, previous != .expanded {
             calendar.refresh()
             clipboard.check()
+            glance.islandOpened()
             islandView.presentContent()
         }
         if previous == .expanded, state != .expanded {

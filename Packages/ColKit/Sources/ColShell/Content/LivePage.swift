@@ -1,21 +1,31 @@
 import ColCore
 import SwiftUI
 
-/// Everything running: agent sessions, their permission requests, and activities pushed by other programs.
+/// Everything running: agent sessions, their permission requests, and activities pushed by other programs; the next
+/// meeting with its Join button, the microphone with its mute, and a sign while a Focus is on.
 struct LivePage: View {
     let agents: AgentCenter
     let custom: CustomActivities
+    let glance: Glance
 
     var body: some View {
         let sessions = agents.sessions
         // Oldest first: a request that arrives goes below the others, never under the pointer about to answer one.
         let requests = agents.pending.values.sorted { ($0.received, $0.id) < ($1.received, $1.id) }
         let sessionsWithRequests = Set(requests.map(\.sessionID))
-        if sessions.isEmpty && custom.entries.isEmpty {
-            EmptyLive()
+        let meeting = glance.meetings.current
+        let microphone = MicrophoneRow.shows(glance.microphone)
+        let focused = FocusSign.shows(glance.focus)
+        if sessions.isEmpty && custom.entries.isEmpty && meeting == nil && !microphone {
+            EmptyLive(focused: focused)
         } else {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 8) {
+                    if focused {
+                        FocusSign().frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    if let meeting { MeetingCard(event: meeting) }
+                    if microphone { MicrophoneRow(microphone: glance.microphone) }
                     ForEach(Array(requests.enumerated()), id: \.element.id) { position, request in
                         PermissionCard(request: request, position: position) { agents.decide(request.id, $0) }
                             .transition(.scale(scale: 0.96).combined(with: .opacity))
@@ -49,8 +59,11 @@ private struct AgentTag: View {
 }
 
 private struct EmptyLive: View {
+    var focused = false
+
     var body: some View {
         VStack(spacing: 6) {
+            if focused { FocusSign().padding(.bottom, 4) }
             Image(systemName: "dot.radiowaves.left.and.right")
                 .font(.system(size: 22, weight: .medium))
                 .foregroundStyle(Theme.accent)

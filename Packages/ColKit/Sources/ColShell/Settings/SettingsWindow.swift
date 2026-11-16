@@ -96,7 +96,7 @@ final class SettingsModel {
 /// The panes, in the order of the sidebar.
 enum SettingsPane: String, CaseIterable, Identifiable {
     case general, appearance, pages, activities
-    case music, prompter, aiApps
+    case music, prompter, aiApps, glance
     case permissions, shortcuts, developers, about
     var id: String { rawValue }
 
@@ -117,7 +117,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
     var group: Group {
         switch self {
         case .general, .appearance, .pages, .activities: .island
-        case .music, .prompter, .aiApps: .modules
+        case .music, .prompter, .aiApps, .glance: .modules
         case .permissions, .shortcuts, .developers, .about: .app
         }
     }
@@ -131,6 +131,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .music: LocalizedStringResource("Music and lyrics", bundle: .settings)
         case .prompter: LocalizedStringResource("Prompter", bundle: .settings)
         case .aiApps: LocalizedStringResource("AI apps", bundle: .settings)
+        case .glance: LocalizedStringResource("Weather and tools", bundle: .settings)
         case .permissions: LocalizedStringResource("Permissions", bundle: .settings)
         case .shortcuts: LocalizedStringResource("Shortcuts and gestures", bundle: .settings)
         case .developers: LocalizedStringResource("Developers", bundle: .settings)
@@ -147,6 +148,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .music: LocalizedStringResource("Synced lyrics beside the player, whatever plays.", bundle: .settings)
         case .prompter: LocalizedStringResource("Your script under the camera, at the pace of your voice.", bundle: .settings)
         case .aiApps: LocalizedStringResource("Your AI apps in the notch: their sessions, their requests, their state.", bundle: .settings)
+        case .glance: LocalizedStringResource("The weather, Pomodoro, and what the shelf, clipboard and System pages can do.", bundle: .settings)
         case .permissions: LocalizedStringResource("What Col may use, and for what.", bundle: .settings)
         case .shortcuts: LocalizedStringResource("Every way to open and drive the island.", bundle: .settings)
         case .developers: LocalizedStringResource("The colctl command, the local API and extensions.", bundle: .settings)
@@ -163,6 +165,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .music: "music.note"
         case .prompter: "text.aligncenter"
         case .aiApps: "sparkles"
+        case .glance: "cloud.sun.fill"
         case .permissions: "hand.raised.fill"
         case .shortcuts: "command"
         case .developers: "chevron.left.forwardslash.chevron.right"
@@ -179,6 +182,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .music: Color(red: 0.98, green: 0.24, blue: 0.4)
         case .prompter: .orange
         case .aiApps: Color(red: 0.36, green: 0.42, blue: 1)
+        case .glance: .cyan
         case .permissions: .blue
         case .shortcuts: Color(red: 0.42, green: 0.45, blue: 0.5)
         case .developers: Color(red: 0.42, green: 0.45, blue: 0.5)
@@ -196,15 +200,19 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .pages: ["Home", "Shelf", "Clipboard", "Tools", "System", "Live"]
         case .activities: ["Music beside the camera", "Announce new tracks", "Replace the volume and brightness displays",
                            "Headphones and speakers", "Battery card for headphones", "Charging and low battery",
-                           "Microphone and camera in use", "Downloads in progress", "Show on the Lock Screen"]
+                           "Microphone and camera in use", "Downloads in progress", "Show on the Lock Screen",
+                           "Keyboard backlight", "Caps Lock", "Focus", "Mute the microphone from the island",
+                           "Accessories’ batteries", "Next meeting"]
         case .music: ["Synced lyrics", "Lyrics", "Spotify", "Apple Music", "Deezer", "LRCLIB", "Your own lyrics", "Karaoke",
                       "Lyrics on the Lock Screen", "Lyrics on the desktop", "Songs with hidden lyrics", "Bars that follow the sound",
                       "Equalizer", "Spectrum"]
         case .prompter: ["Scripts", "Voice Pace", "Voice Follow", "Auto Scroll", "Manual", "Stage light", "Phone remote",
                          "Presentation remotes and foot pedals", "Hide from screen sharing and recordings", "Teleprompter"]
         case .aiApps: ["Claude Code", "Codex", "Gemini CLI", "Cursor", "GitHub Copilot (VS Code)", "Connect", "Allow", "Deny"]
+        case .glance: ["Weather", "Open-Meteo", "Location", "Pomodoro", "Tools for files on the shelf", "Search your copies",
+                       "Graphics processor on the System page", "Convert", "Resize", "Compress", "Text"]
         case .permissions: ["Accessibility", "Device Control", "Calendars", "Reminders", "Bluetooth", "Camera", "Microphone", "Speech Recognition",
-                            "Local Network", "Downloads", "System Audio Recording"]
+                            "Local Network", "Downloads", "System Audio Recording", "Location", "Focus"]
         case .shortcuts: ["Keyboard", "Gestures", "Swipe", "Click", "Trackpad", "Right-click"]
         case .developers: ["The colctl command", "API reference", "Extensions", "Writing an extension"]
         case .about: ["Version", "Website", "Source code on GitHub", "Report a problem", "Quit Col", "Network"]
@@ -304,6 +312,7 @@ struct SettingsView: View {
         case .music: MusicPane()
         case .prompter: PrompterPane()
         case .aiApps: AIAppsPane()
+        case .glance: GlancePane()
         case .permissions: PermissionsPane()
         case .shortcuts: ShortcutsPane()
         case .developers: DevelopersPane(extensions: extensions)

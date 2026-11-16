@@ -1,7 +1,7 @@
 import AppKit
 import ColCore
 
-/// Takes over the volume, mute and brightness keys so Col's own display replaces the system's.
+/// Takes over the volume, mute, brightness and keyboard backlight keys so Col's own display replaces the system's.
 ///
 /// It needs the Accessibility permission, and only listens to system-defined events: typing never reaches it.
 /// A key Col cannot honour, such as volume on a display without its own, goes through to macOS untouched, and only a

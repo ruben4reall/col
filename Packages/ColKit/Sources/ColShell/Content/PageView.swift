@@ -15,6 +15,9 @@ extension WidgetKind {
         case .clipboard: LocalizedStringResource("Clipboard", bundle: bundle)
         case .tools: LocalizedStringResource("Tools", bundle: bundle)
         case .system: LocalizedStringResource("System", bundle: bundle)
+        case .weather: LocalizedStringResource("Weather", bundle: bundle)
+        case .devices: LocalizedStringResource("Devices", bundle: bundle)
+        case .pomodoro: LocalizedStringResource("Pomodoro", bundle: bundle)
         }
     }
 
@@ -30,7 +33,10 @@ extension WidgetKind {
         case .shelf: LocalizedStringResource("Files dropped on the notch, AirDrop", bundle: bundle)
         case .clipboard: LocalizedStringResource("Your recent copies", bundle: bundle)
         case .tools: LocalizedStringResource("Timer, colour picker, mirror", bundle: bundle)
-        case .system: LocalizedStringResource("Processor, memory, disk, network", bundle: bundle)
+        case .system: LocalizedStringResource("Processor, graphics, memory, disk, network", bundle: bundle)
+        case .weather: LocalizedStringResource("Now, today’s high and low, the hours ahead", bundle: bundle)
+        case .devices: LocalizedStringResource("Your mouse, keyboard and trackpad, with their battery", bundle: bundle)
+        case .pomodoro: LocalizedStringResource("Focus and breaks, and today’s sessions", bundle: bundle)
         }
     }
 
@@ -46,6 +52,9 @@ extension WidgetKind {
         case .clipboard: "doc.on.clipboard.fill"
         case .tools: "square.grid.2x2.fill"
         case .system: "gauge.with.dots.needle.67percent"
+        case .weather: "cloud.sun.fill"
+        case .devices: "magicmouse.fill"
+        case .pomodoro: "brain.head.profile.fill"
         }
     }
 
@@ -61,6 +70,9 @@ extension WidgetKind {
         case .clipboard: .orange
         case .tools: .teal
         case .system: .green
+        case .weather: .cyan
+        case .devices: .gray
+        case .pomodoro: .red
         }
     }
 }
@@ -106,7 +118,8 @@ enum WidgetAvailability {
         switch kind {
         case .music: services.media.hasPlayer
         case .lyrics: services.media.hasPlayer && services.lyrics.lyrics != nil
-        case .clock, .agenda, .prompter, .ai, .shelf, .clipboard, .tools, .system: true
+        case .devices: !services.glance.accessories.levels.isEmpty
+        case .clock, .agenda, .prompter, .ai, .shelf, .clipboard, .tools, .system, .weather, .pomodoro: true
         }
     }
 }
@@ -140,9 +153,15 @@ struct WidgetView: View {
         case .clipboard:
             ClipboardPage(clipboard: services.clipboard)
         case .tools:
-            ToolsPage(timer: services.timer, picker: services.picker, mirror: services.mirror, awake: services.awake)
+            ToolsPage(timer: services.timer, picker: services.picker, mirror: services.mirror, awake: services.awake, pomodoro: services.glance.pomodoro)
         case .system:
             SystemPage(stats: services.stats)
+        case .weather:
+            WeatherWidget(weather: services.glance.weather, width: width)
+        case .devices:
+            DevicesWidget(accessories: services.glance.accessories, width: width)
+        case .pomodoro:
+            PomodoroWidget(pomodoro: services.glance.pomodoro, width: width)
         }
     }
 }

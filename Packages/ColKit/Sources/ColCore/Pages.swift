@@ -3,19 +3,20 @@ import Foundation
 /// What a page of the open island can hold.
 public enum WidgetKind: String, Codable, CaseIterable, Sendable {
     case music, lyrics, clock, agenda, prompter, ai, shelf, clipboard, tools, system
+    case weather, devices, pomodoro
 
     /// The widths the widget can be drawn at: half a page beside another widget, or the whole page.
     public var widths: Set<WidgetWidth> {
         switch self {
-        case .music, .lyrics, .agenda, .prompter, .ai: [.half, .full]
+        case .music, .lyrics, .agenda, .prompter, .ai, .weather, .devices, .pomodoro: [.half, .full]
         case .clock: [.half]
         case .shelf, .clipboard, .tools, .system: [.full]
         }
     }
 
-    /// False for a widget that has nothing to show at times (the player while nothing plays, lyrics a track has not):
-    /// another widget of the same place stands in for it.
-    public var alwaysShows: Bool { self != .music && self != .lyrics }
+    /// False for a widget that has nothing to show at times (the player while nothing plays, lyrics a track has not,
+    /// devices while no accessory reports a battery): another widget of the same place stands in for it.
+    public var alwaysShows: Bool { self != .music && self != .lyrics && self != .devices }
 }
 
 public enum WidgetWidth: String, Codable, Sendable {
