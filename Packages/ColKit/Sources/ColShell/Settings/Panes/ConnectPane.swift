@@ -545,7 +545,7 @@ struct APIWidgetEditor: View {
             }
             Text("Answer", bundle: .module).font(.headline)
             ScrollView {
-                Text(verbatim: answerText.isEmpty ? "—" : answerText)
+                Text(verbatim: answerText.isEmpty ? "–" : answerText)
                     .font(.system(size: 10.5, design: .monospaced))
                     .foregroundStyle(.secondary)
                     .textSelection(.enabled)
