@@ -185,6 +185,40 @@ enum Preferences {
         set { defaults.set(newValue, forKey: "hidesInFullScreen"); changed() }
     }
 
+    /// How the island looks on a screen without a notch: a pill in the menu bar by default, as the iPhone's island
+    /// sits in its status bar.
+    static var floatingStyle: FloatingStyle {
+        get { FloatingStyle(rawValue: defaults.string(forKey: "floatingStyle") ?? "") ?? .pill }
+        set { defaults.set(newValue.rawValue, forKey: "floatingStyle"); changed() }
+    }
+
+    /// Under a notch, the island hangs from it, or floats below the menu bar (`.below`), for a Mac whose notch area
+    /// is taken by something else.
+    static var notchStyle: FloatingStyle {
+        get { defaults.string(forKey: "notchStyle") == FloatingStyle.below.rawValue ? .below : .notch }
+        set { defaults.set(newValue == .below ? FloatingStyle.below.rawValue : FloatingStyle.notch.rawValue, forKey: "notchStyle"); changed() }
+    }
+
+    /// Without a notch to hide behind, the resting island still shows: a small black pill, or Col's notch. Off, it
+    /// appears only when something happens.
+    static var showsIslandAtRest: Bool {
+        get { bool("showsIslandAtRest", default: true) }
+        set { defaults.set(newValue, forKey: "showsIslandAtRest"); changed() }
+    }
+
+    /// How far the closed island may reach on each side of the camera, at most: it never covers a menu or an icon
+    /// anyway. 96, 132 (the default) or 160 points.
+    static var wingLimit: CGFloat {
+        get { defaults.object(forKey: "wingLimit") == nil ? IslandLayout.standardWing : CGFloat(defaults.double(forKey: "wingLimit")) }
+        set { defaults.set(Double(newValue), forKey: "wingLimit"); changed() }
+    }
+
+    /// Apps in front of which the island steps aside, as in full screen: brief displays and alerts still show.
+    static var hiddenInApps: [String] {
+        get { defaults.stringArray(forKey: "hiddenInApps") ?? [] }
+        set { defaults.set(newValue, forKey: "hiddenInApps"); changed() }
+    }
+
     /// "notch": the screen with the notch, or the built-in one; "main": the screen with the active window.
     static var displayChoice: String {
         get { defaults.string(forKey: "displayChoice") ?? "notch" }

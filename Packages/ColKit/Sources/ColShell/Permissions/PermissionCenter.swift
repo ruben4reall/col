@@ -19,7 +19,11 @@ final class PermissionCenter {
 
         var title: LocalizedStringResource {
             switch self {
-            case .accessibility: LocalizedStringResource("Accessibility", bundle: .settings)
+            // macOS 27 renamed the pane that grants it.
+            case .accessibility:
+                ProcessInfo.processInfo.isOperatingSystemAtLeast(OperatingSystemVersion(majorVersion: 27, minorVersion: 0, patchVersion: 0))
+                    ? LocalizedStringResource("Device Control and Data Access", bundle: .settings)
+                    : LocalizedStringResource("Accessibility", bundle: .settings)
             case .calendars: LocalizedStringResource("Calendars", bundle: .settings)
             case .bluetooth: LocalizedStringResource("Bluetooth", bundle: .settings)
             case .camera: LocalizedStringResource("Camera", bundle: .settings)
@@ -31,7 +35,7 @@ final class PermissionCenter {
         /// What Col does with it, and what happens without it.
         var detail: LocalizedStringResource {
             switch self {
-            case .accessibility: LocalizedStringResource("Lets Col take over the volume and brightness keys. Without it, macOS shows its own display too.", bundle: .settings)
+            case .accessibility: LocalizedStringResource("Lets Col take over the volume and brightness keys, and keep its wings clear of the menus and icons of the menu bar. Without it, macOS shows its own display too, and the wings guess.", bundle: .settings)
             case .calendars: LocalizedStringResource("Shows your next events beside the clock. Without it, the agenda stays empty.", bundle: .settings)
             case .bluetooth: LocalizedStringResource("Reads the battery of your AirPods and other headphones. Without it, the card shows no battery.", bundle: .settings)
             case .camera: LocalizedStringResource("Used only while the mirror is open. Seeing that another app uses the camera needs no permission.", bundle: .settings)

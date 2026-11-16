@@ -47,6 +47,9 @@ public enum CompactItem: Equatable, Sendable {
 }
 
 public struct CompactPresentation: Equatable, Sendable {
+    /// Narrower than this, a wing cannot show enough of a line of text to be read.
+    public static let readableTextWing: CGFloat = 60
+
     public var leading: CompactItem?
     public var trailing: CompactItem?
 
@@ -56,11 +59,15 @@ public struct CompactPresentation: Equatable, Sendable {
     }
 
     /// What the wings can show. A single wing carries one item: the trailing one, which holds the value (level,
-    /// countdown, equalizer), or the leading one when there is no value.
+    /// countdown, equalizer), or the leading one when there is no value, or when the value is a line of text and the
+    /// wing too narrow to read it.
     public func fitted(to wings: Wings) -> CompactPresentation? {
         if wings.isEmpty { return nil }
         guard wings.isOneSided else { return self }
-        let item = trailing ?? leading
+        var item = trailing ?? leading
+        if case .text? = trailing, let leading, max(wings.leading, wings.trailing) < Self.readableTextWing {
+            item = leading
+        }
         return wings.leading > 0 ? CompactPresentation(leading: item) : CompactPresentation(trailing: item)
     }
 }

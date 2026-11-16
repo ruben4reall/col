@@ -34,6 +34,15 @@ final class IslandView: NSView {
     private var glassStyle: IslandGlass = .off
     private var usesGlass: Bool { glassStyle != .off }
     private var targetState: IslandState = .collapsed
+    private var shownWings: Wings = .none
+    /// Whether an island without a notch to hide behind still shows when idle and closed. Under a notch, idle means
+    /// tucked inside it, so this changes nothing there.
+    var restVisible = true {
+        didSet {
+            guard restVisible != oldValue else { return }
+            setIdleVisibility(state: targetState, wings: shownWings, animated: true)
+        }
+    }
     private let contentContainer = NSView()
     private let compactView = NSView()
     private let contentMask = CAShapeLayer()
@@ -140,11 +149,18 @@ final class IslandView: NSView {
         track(state, wings: wings)
     }
 
-    /// A floating island (no notch) has nothing to hide behind: idle and closed, it fades away entirely and only
-    /// its hover area stays.
+    /// Takes a new layout that only changes how far the island may swell under the pointer: the canvas is the same.
+    func updateLayout(_ layout: IslandLayout) {
+        self.layout = layout
+    }
+
+    /// An island without a notch to hide behind can rest as a small pill or a drawn notch, or fade away entirely
+    /// while idle and closed, leaving only its hover area. Below a real notch it always fades away.
     private func setIdleVisibility(state: IslandState, wings: Wings, animated: Bool) {
         guard let layout else { return }
-        let hidden = !layout.notch.isHardware && state == .collapsed && wings.isEmpty
+        shownWings = wings
+        let idle = layout.style != nil && state == .collapsed && wings.isEmpty
+        let hidden = idle && (!restVisible || layout.notch.isHardware)
         let target: Float = hidden ? 0 : 1
         for layer in [backdrop.layer, glassHost.layer, fade.layer, contentContainer.layer].compactMap({ $0 }) where layer.opacity != target {
             if animated {
@@ -320,7 +336,7 @@ final class IslandView: NSView {
     /// Where the black starts to thin: below everything the closed island ever covers and below the camera row.
     private static func solidDepth(_ layout: IslandLayout) -> CGFloat {
         let open = layout.frame(for: .expanded)
-        let closed = max(layout.frame(for: .peek).maxY, layout.frame(for: .collapsed, wings: Wings(IslandLayout.maximumWing)).maxY)
+        let closed = max(layout.frame(for: .peek).maxY, layout.frame(for: .collapsed, wings: Wings(layout.wingLimit)).maxY)
         return max(closed, open.minY + layout.notch.height) + 16
     }
 

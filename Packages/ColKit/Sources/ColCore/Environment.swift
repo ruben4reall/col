@@ -95,12 +95,12 @@ public struct AccessoryBattery: Equatable, Sendable {
 /// How wide the wings may grow without covering the menu bar: the app's menus on the left of the camera, the
 /// status items on its right.
 public enum WingBudget {
-    /// Space kept clear between a wing and the nearest menu or icon.
+    /// Space kept clear between the island and the nearest menu or icon.
     public static let margin: CGFloat = 8
     /// Below this, a wing cannot hold even an icon; the activity then waits in the open island.
     public static let minimum: CGFloat = 30
 
-    /// Free space on one side, from the edge of the notch to the nearest item, or nil when unknown.
+    /// Room on one side, from the edge of the notch to the nearest item less the margin, or nil when unknown.
     public static func free(notchEdge: CGFloat, nearestItem: CGFloat?, leftSide: Bool) -> CGFloat? {
         guard let nearestItem else { return nil }
         return max(0, (leftSide ? notchEdge - nearestItem : nearestItem - notchEdge) - margin)
@@ -109,10 +109,13 @@ public enum WingBudget {
     /// The wings that fit: the requested width on both sides, capped by the tighter one. When a long menu leaves no
     /// room on one side, the other keeps a wing of its own; only when neither side holds an icon does the activity
     /// wait in the open island. Unknown sides do not limit it.
-    public static func allowed(requested: CGFloat, left: CGFloat?, right: CGFloat?) -> Wings {
+    ///
+    /// `overhang` is how far the island reaches past its wings: its concave ears, and the swell under the pointer.
+    /// A wing that filled the room would leave them over the first menu or icon.
+    public static func allowed(requested: CGFloat, left: CGFloat?, right: CGFloat?, overhang: CGFloat = 0) -> Wings {
         guard requested > 0 else { return .none }
         func fit(_ room: CGFloat?) -> CGFloat {
-            let wing = min(requested, room ?? .greatestFiniteMagnitude)
+            let wing = min(requested, room.map { $0 - overhang } ?? .greatestFiniteMagnitude)
             return wing < minimum ? 0 : wing
         }
         let leading = fit(left), trailing = fit(right)

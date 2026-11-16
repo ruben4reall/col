@@ -38,6 +38,7 @@ struct GeneralPane: View {
             } header: {
                 Text("Behaviour", bundle: .module)
             }
+            HiddenAppsSection()
             Section {
                 Picker(selection: $language) {
                     Text("Same as the Mac (\(AppLanguage.name(for: AppLanguage.system)))", bundle: .module).tag("")
@@ -103,5 +104,62 @@ struct GeneralPane: View {
     /// A language was picked that differs from the one on screen.
     private var languagePending: Bool {
         (language.isEmpty ? AppLanguage.system : language) != AppLanguage.current
+    }
+}
+
+/// The apps in front of which the island steps aside, as it does in full screen.
+private struct HiddenAppsSection: View {
+    @State private var apps = Preferences.hiddenInApps
+
+    var body: some View {
+        Section {
+            ForEach(apps, id: \.self) { identifier in
+                HStack(spacing: 12) {
+                    Image(nsImage: Self.icon(for: identifier))
+                        .resizable()
+                        .frame(width: 22, height: 22)
+                    Text(verbatim: Self.name(for: identifier))
+                    Spacer()
+                    Button {
+                        apps.removeAll { $0 == identifier }
+                        Preferences.hiddenInApps = apps
+                    } label: {
+                        Image(systemName: "minus.circle.fill").foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(Text("Remove", bundle: .module))
+                }
+            }
+            Button { add() } label: { Text("Add an App…", bundle: .module) }
+        } header: {
+            Text("Step aside for these apps", bundle: .module)
+        } footer: {
+            Text("While one of them is in front, the island hides, as in full screen. Volume, alerts and requests still show.", bundle: .module)
+        }
+    }
+
+    private func add() {
+        let panel = NSOpenPanel()
+        panel.directoryURL = URL(fileURLWithPath: "/Applications")
+        panel.allowedContentTypes = [.application]
+        panel.allowsMultipleSelection = true
+        guard panel.runModal() == .OK else { return }
+        for url in panel.urls {
+            guard let identifier = Bundle(url: url)?.bundleIdentifier, !apps.contains(identifier) else { continue }
+            apps.append(identifier)
+        }
+        Preferences.hiddenInApps = apps
+    }
+
+    static func name(for identifier: String) -> String {
+        guard let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: identifier) else { return identifier }
+        return FileManager.default.displayName(atPath: url.path).replacingOccurrences(of: ".app", with: "")
+    }
+
+    static func icon(for identifier: String) -> NSImage {
+        guard let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: identifier) else {
+            return NSImage(systemSymbolName: "app.dashed", accessibilityDescription: nil) ?? NSImage()
+        }
+        return NSWorkspace.shared.icon(forFile: url.path)
     }
 }

@@ -12,6 +12,8 @@ final class CompactRenderer {
     private var trailing = WingSlot()
     private var images: [String: CGImage] = [:]
     private var scale: CGFloat = 2
+    /// Widest a wing may grow, as the user chose.
+    var wingLimit: CGFloat = IslandLayout.standardWing
 
     init() {
         layer.addSublayer(leading.container)
@@ -46,7 +48,7 @@ final class CompactRenderer {
         let side = WingSlot.side(for: notchHeight)
         switch item {
         case .text(let string, _):
-            return min(ceil(TextMetrics.width(of: string)), IslandLayout.maximumWing - WingSlot.padding * 2)
+            return min(ceil(TextMetrics.width(of: string)), wingLimit - WingSlot.padding * 2)
         case .level:
             return side * 2.4
         case .battery:
@@ -275,19 +277,72 @@ private final class WingSlot {
         }
     }
 
+    /// A line of text. One too long for its wing glides across it, held still at each end, a couple of times, then
+    /// rests on its beginning (with Reduce Motion it ends with an ellipsis instead). The glide is a Core Animation
+    /// keyframe animation: the render server plays it, the app does nothing per frame.
     private func drawText(_ string: String, size: CGSize, tint: RGBA, scale: CGFloat) {
-        let text = part(0) { CATextLayer() }
+        let clip = part(0) { CALayer() }
+        clip.frame = CGRect(origin: .zero, size: size)
+        clip.masksToBounds = true
+        let text: CATextLayer
+        if let existing = clip.sublayers?.first as? CATextLayer {
+            text = existing
+        } else {
+            text = CATextLayer()
+            clip.addSublayer(text)
+        }
+        let full = ceil(TextMetrics.width(of: string))
+        let scrolls = full > size.width + 1 && !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
+        let changed = (text.string as? String) != string || abs(text.bounds.width - (scrolls ? full : size.width)) > 0.5
         // A plain string with the font set on the layer: an attributed string wider than its frame draws nothing at
-        // all, where a plain one truncates. Long lines, a lyric or a title, need the truncation.
+        // all, where a plain one truncates.
         text.string = string
         text.font = TextMetrics.font
         text.fontSize = TextMetrics.font.pointSize
         text.foregroundColor = tint.cgColor
-        text.truncationMode = .end
+        text.truncationMode = scrolls ? .none : .end
         text.contentsScale = scale
-        text.alignmentMode = .center
+        text.alignmentMode = scrolls ? .left : .center
         let line = ceil(TextMetrics.font.ascender - TextMetrics.font.descender)
-        text.frame = CGRect(x: 0, y: (size.height - line) / 2, width: size.width, height: line)
+        text.frame = CGRect(x: 0, y: (size.height - line) / 2, width: scrolls ? full : size.width, height: line)
+        clip.mask = scrolls ? edgeFade(width: size.width, height: size.height) : nil
+        guard changed else { return }
+        text.removeAnimation(forKey: "marquee")
+        guard scrolls else { return }
+        text.add(Self.marquee(distance: full - size.width, from: text.position.x), forKey: "marquee")
+    }
+
+    /// Fades the line out over a few points at each end of the wing, so it slides in and out rather than being cut.
+    private func edgeFade(width: CGFloat, height: CGFloat) -> CALayer {
+        let fade = CAGradientLayer()
+        fade.frame = CGRect(x: 0, y: 0, width: width, height: height)
+        fade.startPoint = CGPoint(x: 0, y: 0.5)
+        fade.endPoint = CGPoint(x: 1, y: 0.5)
+        let edge = NSNumber(value: Double(min(6 / max(width, 1), 0.2)))
+        fade.colors = [NSColor.clear.cgColor, NSColor.black.cgColor, NSColor.black.cgColor, NSColor.clear.cgColor]
+        fade.locations = [0, edge, NSNumber(value: 1 - edge.doubleValue), 1]
+        return fade
+    }
+
+    /// Holds, glides to the end at a reading pace, holds, fades out, comes back at the start; twice.
+    static func marquee(distance: CGFloat, from start: CGFloat) -> CAAnimation {
+        let hold = 1.6, rest = 1.2, fadeOut = 0.25, fadeIn = 0.3
+        let travel = Double(distance / 30)
+        let total = hold + travel + rest + fadeOut + fadeIn
+        let marks = [0, hold, hold + travel, hold + travel + rest, hold + travel + rest + fadeOut].map { NSNumber(value: $0 / total) }
+        let end = start - distance
+        let slide = CAKeyframeAnimation(keyPath: "position.x")
+        slide.values = [start, start, end, end, end, start, start]
+        slide.keyTimes = marks + [NSNumber(value: (hold + travel + rest + fadeOut + 0.001) / total), 1]
+        slide.timingFunctions = Array(repeating: CAMediaTimingFunction(name: .linear), count: 6)
+        let opacity = CAKeyframeAnimation(keyPath: "opacity")
+        opacity.values = [1, 1, 0, 0, 1]
+        opacity.keyTimes = [0, marks[3], marks[4], NSNumber(value: (hold + travel + rest + fadeOut + 0.001) / total), 1]
+        let group = CAAnimationGroup()
+        group.animations = [slide, opacity]
+        group.duration = total
+        group.repeatCount = 2
+        return group
     }
 
     private func drawRing(progress: Double, size: CGSize, tint: RGBA) {

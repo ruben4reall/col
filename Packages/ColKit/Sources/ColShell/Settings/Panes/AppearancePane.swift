@@ -7,6 +7,12 @@ struct AppearancePane: View {
     @State private var glass = Preferences.islandGlass
     @State private var opensOnHover = Preferences.opensOnHover
     @State private var delay = Preferences.hoverDelay
+    @State private var notchStyle = Preferences.notchStyle
+    @State private var floatingStyle = Preferences.floatingStyle
+    @State private var showsAtRest = Preferences.showsIslandAtRest
+    @State private var wingLimit = Preferences.wingLimit
+    /// This Mac has a screen with a notch.
+    private let hasNotch = NSScreen.screens.contains { $0.safeAreaInsets.top > 0 }
     /// Replays the opening of the island in the stage after a change.
     @State private var replay = 0
 
@@ -59,6 +65,64 @@ struct AppearancePane: View {
             } footer: {
                 if IslandView.glassAvailable {
                     Text("Each change also shows on the notch, at the top of your screen.", bundle: .module)
+                }
+            }
+            Section {
+                if hasNotch {
+                    Picker(selection: $notchStyle) {
+                        Text("In the notch", bundle: .module).tag(FloatingStyle.notch)
+                        Text("Below the menu bar", bundle: .module).tag(FloatingStyle.below)
+                    } label: {
+                        HStack(spacing: 12) {
+                            IconTile(symbol: "macbook", tint: .gray)
+                            Text("On the screen with the notch", bundle: .module)
+                        }
+                    }
+                    .onChange(of: notchStyle) {
+                        Preferences.notchStyle = notchStyle
+                        changed()
+                    }
+                }
+                Picker(selection: $floatingStyle) {
+                    Text("A pill in the menu bar", bundle: .module).tag(FloatingStyle.pill)
+                    Text("A notch drawn by Col", bundle: .module).tag(FloatingStyle.notch)
+                    Text("Below the menu bar", bundle: .module).tag(FloatingStyle.below)
+                } label: {
+                    HStack(spacing: 12) {
+                        IconTile(symbol: "display", tint: .blue)
+                        Text("On screens without a notch", bundle: .module)
+                    }
+                }
+                .onChange(of: floatingStyle) {
+                    Preferences.floatingStyle = floatingStyle
+                    changed()
+                }
+                Picker(selection: $wingLimit) {
+                    Text("Narrow", bundle: .module).tag(CGFloat(96))
+                    Text("Standard", bundle: .module).tag(IslandLayout.standardWing)
+                    Text("Wide", bundle: .module).tag(IslandLayout.maximumWing)
+                } label: {
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text("Wings", bundle: .module)
+                        Text("How far the closed island may reach beside the camera. It never covers a menu or an icon.", bundle: .module)
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .onChange(of: wingLimit) {
+                    Preferences.wingLimit = wingLimit
+                    changed()
+                }
+                IconToggle(symbol: "capsule.fill", tint: .indigo, title: "Show the island when nothing happens",
+                           detail: "Without a notch to hide behind, the resting island stays in sight as a small pill or a notch. Off, it appears only when something happens.",
+                           isOn: $showsAtRest)
+                    .onChange(of: showsAtRest) { Preferences.showsIslandAtRest = showsAtRest }
+            } header: {
+                Text("Shape", bundle: .module)
+            } footer: {
+                if hasNotch {
+                    Text("Below the menu bar suits a Mac whose notch area already shows something, such as its own Dynamic Island.", bundle: .module)
                 }
             }
             Section {

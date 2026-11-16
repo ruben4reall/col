@@ -17,6 +17,8 @@ final class ControlAPI {
     private let agents: AgentCenter
     private let post: (Activity) -> Void
     private let remove: (String) -> Void
+    /// Opens the island, on a page when one is named, or closes it: `col://open?page=live`, `col://close`.
+    var showIsland: ((_ open: Bool, _ page: String?) -> Void)?
 
     init(custom: CustomActivities, agents: AgentCenter, post: @escaping (Activity) -> Void, remove: @escaping (String) -> Void) {
         self.custom = custom
@@ -111,8 +113,9 @@ final class ControlAPI {
         return true
     }
 
-    /// `col://push?id=build&title=Build&progress=0.4`, `col://done?id=build`, `col://remove?id=build`, and
-    /// `col://settings?pane=developers`, `col://welcome`. Links written for Islet, `islet://…`, work the same.
+    /// `col://push?id=build&title=Build&progress=0.4`, `col://done?id=build`, `col://remove?id=build`,
+    /// `col://open?page=live`, `col://close`, `col://settings?pane=developers` and `col://welcome`. Links written for
+    /// Islet, `islet://…`, work the same.
     func open(_ url: URL) {
         guard ["col", "islet"].contains(url.scheme), let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return }
         var query: [String: String] = [:]
@@ -124,6 +127,9 @@ final class ControlAPI {
             return
         case "welcome":
             WelcomeWindow.shared.show()
+            return
+        case "open", "close":
+            showIsland?(action == "open", query["page"])
             return
         default:
             break
