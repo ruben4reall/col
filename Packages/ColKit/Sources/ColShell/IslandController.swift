@@ -838,7 +838,9 @@ public final class IslandController {
         // Demo content for screenshots, standing in for the user's, which is neither shown nor changed:
         // `-ColDemoShelf <folder>` puts that folder's files on the shelf, `-ColDemo clipboard` shows a few copies
         // (`-ColDemoImage <png>` for the copied photo), `-ColDemo drop` shows files being dragged over the island,
-        // `-ColDemo souffleur` the note the island gives the first time it closes Souffleur.
+        // `-ColDemo souffleur` the note the island gives the first time it closes Souffleur. `-ColDemo meeting`,
+        // `devices` or `pomodoro` stand in a call about to start, three accessories or a focus session under way for
+        // the calendar, the accessories and the timer of the Mac.
         if let folder = UserDefaults.standard.string(forKey: "ColDemoShelf") {
             shelf.showDemo(folder: URL(fileURLWithPath: folder))
         }
@@ -859,6 +861,18 @@ public final class IslandController {
                     self?.send(.requested)
                 }
             }
+        case "meeting":
+            let start = Date().addingTimeInterval(4 * 60 + 32)
+            glance.meetings.showDemo(CalendarModel.Event(id: "demo", title: "Design review", start: start, end: start.addingTimeInterval(1800),
+                                                         isAllDay: false, color: .systemPurple, meeting: URL(string: "https://example.com/call")))
+        case "devices":
+            glance.accessories.showDemo([
+                AccessoryLevel(id: "keyboard", name: "Magic Keyboard", kind: .keyboard, percent: 82),
+                AccessoryLevel(id: "mouse", name: "Magic Mouse", kind: .mouse, percent: 64),
+                AccessoryLevel(id: "controller", name: "Wireless Controller", kind: .gameController, percent: 31),
+            ])
+        case "pomodoro":
+            glance.pomodoro.showDemo(Pomodoro(phase: .focus, plan: .standard, starting: Date().addingTimeInterval(-9 * 60)), completed: 2)
         default:
             break
         }

@@ -107,8 +107,9 @@ final class MeetingWatch {
         return RGBA(red: Double(srgb.redComponent), green: Double(srgb.greenComponent), blue: Double(srgb.blueComponent)).readableOnBlack
     }
 
-    /// For screenshots: a meeting stands in for the calendar.
+    /// For screenshots: a meeting stands in for the calendar, counted down beside the camera.
     func showDemo(_ event: CalendarModel.Event) {
         current = event
+        post?(activity(for: event, now: Date()))
     }
 }
