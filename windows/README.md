@@ -42,6 +42,33 @@ folder.
 
 Windows 10 version 2004 or later, or Windows 11; x64 or Arm64. Nothing else to install: .NET is inside `Col.exe`.
 
+| | Size |
+|---|---|
+| `Col-3.0.0-windows-setup.exe` (x64 and Arm64 in one) | 107 MB |
+| `Col-3.0.0-windows-x64.zip` | 85 MB |
+| `Col.exe`, unpacked | 222 MB |
+| `colctl.exe`, compiled ahead of time to native code | 2.4 MB |
+
+`Col.exe` carries .NET and WPF uncompressed, on purpose: Windows maps them from the file instead of unpacking them
+into Col's own memory, which keeps Col light while it runs.
+
+## Light on your PC
+
+Measured by the workflow on GitHub's Windows Server 2025 machines, one minute after the last event, nothing playing:
+
+| | Col for Windows |
+|---|---|
+| Private memory at rest | about 50 to 60 MB |
+| Working set at rest | about 130 to 150 MB |
+| Processor at rest | 0.000 to 0.013 % |
+| Processor while music plays (the equalizer dances, at 24 frames a second) | about 0.5 % |
+| A hook, from the agent's call to its answer | about 30 ms; about 360 ms when Col is not running |
+
+The island is one window that never moves or resizes: springs reshape the capsule inside it, frame by frame while
+they move, and nothing runs once they rest. Media, volume, battery, clipboard and full-screen apps are followed
+through Windows' own notifications, never by asking again and again; the timer and the line of lyrics wait for
+exactly the moment they change.
+
 ### The binaries are not signed yet
 
 Col for Windows has no code-signing certificate yet, so Windows SmartScreen may stop the installer or `Col.exe` the
@@ -135,7 +162,8 @@ there too with `-p:EnableWindowsTargeting=true` (set in `Directory.Build.props`)
 
 Demo states, for screenshots that come out the same every time: `--demo collapsed`, `peek`, `music`, `lyrics`,
 `agent-permission`, `agents`, `live`, `volume`, `battery`, `timer`, `tools`, `settings` (with `--page general`,
-`music`, `agents` or `about`). `--lang fr` shows French whatever the language of Windows. The workflow runs each one
+`music`, `agents` or `about`). `--lang fr` shows French whatever the language of Windows, `--theme dark` or `light`
+the settings in that mode. The workflow runs each one
 on a Windows machine and keeps the screenshots, then drives the real app with `colctl` and a permission request
 answered through UI Automation (`windows/tools/e2e.ps1`).
 
@@ -159,7 +187,11 @@ To change a word, edit `tools/strings.py` and run it: it writes `Resources/Strin
 - The volume gauge shows beside Windows' own flyout, which Col does not hide.
 - The island stays under the Start menu, Search and the notification centre: Windows keeps them above every app.
 - Players that do not publish to Windows' media controls do not show.
-- Tested on Windows Server 2025 machines (GitHub's) at 100 % scale, and built for Arm64 without being run there.
+- Tested on Windows Server 2025 machines (GitHub's) at 100 % scale and without a sound card or a battery, so the
+  volume and battery displays were checked with demo data only. The Arm64 build is made but not run.
+- The invisible strip that brings the island out takes the top 3 pixels of the middle of the screen: there, a click
+  on the tab of a maximised browser opens the island instead.
+- `Col.exe` is large (see above): the price of a self-contained .NET app that stays light in memory.
 
 ## Credits
 

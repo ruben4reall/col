@@ -212,7 +212,7 @@ def write(path: Path, index: int) -> None:
     lines = [HEADER]
     for key, values in STRINGS.items():
         text = values[index]
-        assert "—" not in text, f"{key}: no em dash"
+        assert "\u2014" not in text, f"{key}: no em dash"
         lines.append(f'  <data name="{key}" xml:space="preserve"><value>{escape(text)}</value></data>\n')
     lines.append("</root>\n")
     path.write_text("".join(lines), encoding="utf-8")
