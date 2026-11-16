@@ -1,0 +1,6 @@
+{
+  "name": "Countdown",
+  "description": "Days left until a date, in the Widgets place",
+  "command": "./countdown.sh",
+  "interval": 3600
+}

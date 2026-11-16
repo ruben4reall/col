@@ -1,0 +1,6 @@
+{
+  "name": "Docker Containers",
+  "description": "The containers running, and their names",
+  "command": "./containers.sh",
+  "interval": 60
+}
