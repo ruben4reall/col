@@ -25,6 +25,11 @@
     <ProjectReference Include="../Col.Core/Col.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <!-- ReadyToRun for Col's own code; the Windows API projection is large and Col calls little of it. -->
+    <PublishReadyToRunExclude Include="Microsoft.Windows.SDK.NET.dll" />
+    <PublishReadyToRunExclude Include="WinRT.Runtime.dll" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Assets\col.ico" />
     <Resource Include="Assets\col-64.png" />
     <Resource Include="Assets\col-256.png" />
