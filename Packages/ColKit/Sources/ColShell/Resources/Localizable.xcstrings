@@ -2073,16 +2073,6 @@
         }
       }
     },
-    "Lets Col take over the volume and brightness keys. Without it, macOS shows its own display too.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Permet à Col de prendre en charge les touches volume et luminosité. Sans elle, macOS affiche aussi le sien."
-          }
-        }
-      }
-    },
     "Lets Voice Follow keep your place word by word. Recognition runs on your Mac.": {
       "localizations": {
         "fr": {
@@ -4809,6 +4799,166 @@
           "stringUnit": {
             "state": "translated",
             "value": "« %@ » de %@ est en lecture : l’île l’affiche avec sa pochette et ses commandes."
+          }
+        }
+      }
+    },
+    "In the notch": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dans l’encoche"
+          }
+        }
+      }
+    },
+    "Below the menu bar": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sous la barre des menus"
+          }
+        }
+      }
+    },
+    "On the screen with the notch": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sur l’écran à encoche"
+          }
+        }
+      }
+    },
+    "A pill in the menu bar": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une pilule dans la barre des menus"
+          }
+        }
+      }
+    },
+    "A notch drawn by Col": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une encoche dessinée par Col"
+          }
+        }
+      }
+    },
+    "On screens without a notch": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sur les écrans sans encoche"
+          }
+        }
+      }
+    },
+    "Show the island when nothing happens": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Montrer l’île quand rien ne se passe"
+          }
+        }
+      }
+    },
+    "Without a notch to hide behind, the resting island stays in sight as a small pill or a notch. Off, it appears only when something happens.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sans encoche derrière laquelle se cacher, l’île au repos reste en vue, en petite pilule ou en encoche. Désactivé, elle n’apparaît que quand il se passe quelque chose."
+          }
+        }
+      }
+    },
+    "Shape": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Forme"
+          }
+        }
+      }
+    },
+    "Below the menu bar suits a Mac whose notch area already shows something, such as its own Dynamic Island.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "« Sous la barre des menus » convient à un Mac dont l’encoche montre déjà autre chose, comme sa propre Dynamic Island."
+          }
+        }
+      }
+    },
+    "Add an App…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter une app…"
+          }
+        }
+      }
+    },
+    "Step aside for these apps": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "S’effacer devant ces apps"
+          }
+        }
+      }
+    },
+    "While one of them is in front, the island hides, as in full screen. Volume, alerts and requests still show.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quand l’une d’elles est au premier plan, l’île se cache, comme en plein écran. Le volume, les alertes et les demandes s’affichent toujours."
+          }
+        }
+      }
+    },
+    "Device Control and Data Access": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contrôle de l’appareil et accès aux données"
+          }
+        }
+      }
+    },
+    "Needs Device Control and Data Access.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nécessite Contrôle de l’appareil et accès aux données."
+          }
+        }
+      }
+    },
+    "Lets Col take over the volume and brightness keys, and keep its wings clear of the menus and icons of the menu bar. Without it, macOS shows its own display too, and the wings guess.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permet à Col de prendre en charge les touches volume et luminosité, et de garder ses ailes à l’écart des menus et des icônes de la barre des menus. Sans elle, macOS affiche aussi le sien, et les ailes devinent."
           }
         }
       }

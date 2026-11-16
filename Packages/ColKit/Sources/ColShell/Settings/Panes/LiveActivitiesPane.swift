@@ -53,7 +53,7 @@ struct LiveActivitiesPane: View {
                 Text("Music", bundle: .module)
             }
             Section {
-                IconToggle(symbol: "speaker.wave.2.fill", tint: .blue, title: "Replace the volume and brightness displays", detail: "Needs Accessibility.", isOn: $hud)
+                IconToggle(symbol: "speaker.wave.2.fill", tint: .blue, title: "Replace the volume and brightness displays", detail: needsAccessibility, isOn: $hud)
                     .onChange(of: hud) { Preferences.replacesSystemHUD = hud }
                 IconToggle(symbol: "airpodspro", tint: .gray, title: "Headphones and speakers", detail: "The device the moment it connects.", isOn: $devices)
                     .onChange(of: devices) { Preferences.showsAudioDevices = devices }
@@ -123,4 +123,11 @@ extension ActivitySource {
         case .keepAwake: .brown
         }
     }
+}
+
+/// The permission's name as System Settings shows it: macOS 27 renamed it.
+private var needsAccessibility: LocalizedStringKey {
+    ProcessInfo.processInfo.isOperatingSystemAtLeast(OperatingSystemVersion(majorVersion: 27, minorVersion: 0, patchVersion: 0))
+        ? "Needs Device Control and Data Access."
+        : "Needs Accessibility."
 }

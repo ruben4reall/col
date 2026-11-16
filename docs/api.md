@@ -82,6 +82,9 @@ col://remove?id=tea
 col://settings?pane=developers   # general, appearance, pages, activities, music, prompter, aiApps,
                                    # permissions, shortcuts, developers, about
 col://welcome                    # the welcome tour
+col://open                       # opens the island on its first page
+col://open?page=live             # opens it on a page: live, or a page's id
+col://close                      # closes it
 ```
 
 ## The prompter
