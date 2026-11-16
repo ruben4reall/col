@@ -5,7 +5,7 @@
         Title="{l:Loc Settings_Title}" Width="940" Height="680" MinWidth="740" MinHeight="520"
         WindowStartupLocation="CenterScreen" ResizeMode="CanResize"
         FontFamily="{StaticResource Win.Font}" FontSize="14" Foreground="{DynamicResource Win.Text}"
-        Background="{DynamicResource Win.Background}" Icon="pack://application:,,,/Assets/col.ico"
+        Background="{DynamicResource Win.Background}" Icon="pack://application:,,,/Assets/col-64.png"
         UseLayoutRounding="True" TextOptions.TextFormattingMode="Ideal">
     <Grid>
         <Grid.ColumnDefinitions>

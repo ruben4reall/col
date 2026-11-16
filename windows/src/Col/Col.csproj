@@ -7,6 +7,7 @@
     <UseWPF>true</UseWPF>
     <AssemblyName>Col</AssemblyName>
     <RootNamespace>Col</RootNamespace>
+    <StartupObject>Col.Program</StartupObject>
     <ApplicationIcon>Assets\col.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Description>Col, a Dynamic Island for Windows</Description>

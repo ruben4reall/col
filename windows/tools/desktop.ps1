@@ -4,7 +4,7 @@
 #>
 
 Add-Type -AssemblyName System.Drawing
-Add-Type -TypeDefinition @'
+Add-Type -ReferencedAssemblies System.Drawing -TypeDefinition @'
 using System;
 using System.Runtime.InteropServices;
 
@@ -38,6 +38,30 @@ public static class ColDesktop
 
     [DllImport("user32.dll")]
     public static extern int GetSystemMetrics(int index);
+
+    [DllImport("user32.dll")]
+    public static extern IntPtr GetDC(IntPtr hwnd);
+
+    [DllImport("user32.dll")]
+    public static extern int ReleaseDC(IntPtr hwnd, IntPtr dc);
+
+    [DllImport("gdi32.dll")]
+    public static extern bool BitBlt(IntPtr dest, int x, int y, int width, int height, IntPtr source, int sx, int sy, int operation);
+
+    /// <summary>Copies part of the screen, layered windows included (CAPTUREBLT), into a bitmap.</summary>
+    public static System.Drawing.Bitmap Capture(int x, int y, int width, int height)
+    {
+        var bitmap = new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
+        using (var graphics = System.Drawing.Graphics.FromImage(bitmap))
+        {
+            var target = graphics.GetHdc();
+            var screen = GetDC(IntPtr.Zero);
+            BitBlt(target, 0, 0, width, height, screen, x, y, 0x00CC0020 | 0x40000000);
+            ReleaseDC(IntPtr.Zero, screen);
+            graphics.ReleaseHdc(target);
+        }
+        return bitmap;
+    }
 
     public static int SetResolution(int width, int height)
     {
@@ -76,18 +100,24 @@ function Initialize-Desktop([string] $Out) {
     Start-Sleep -Seconds 1
 }
 
+# Why a .NET app quit: the runtime writes the exception to the Application event log.
+function Show-Crash {
+    try {
+        Get-WinEvent -FilterHashtable @{ LogName = 'Application'; ProviderName = '.NET Runtime', 'Application Error' } -MaxEvents 2 -ErrorAction Stop |
+            ForEach-Object { Write-Host "--- $($_.ProviderName) $($_.TimeCreated)"; Write-Host $_.Message }
+    }
+    catch {
+        Write-Host "No event: $_"
+    }
+}
+
 function Save-Screen([string] $Path, [switch] $Full, [switch] $Zoom) {
     $width = [ColDesktop]::GetSystemMetrics(0)
     $height = [ColDesktop]::GetSystemMetrics(1)
     if ($Full) { $x = 0; $y = 0; $w = $width; $h = $height }
     elseif ($Zoom) { $w = 720; $h = 280; $x = [int](($width - $w) / 2); $y = 0 }
     else { $x = 0; $y = 0; $w = $width; $h = 320 }
-    $bitmap = New-Object System.Drawing.Bitmap $w, $h
-    $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
-    # CaptureBlt: layered windows, the island among them, are part of the capture.
-    $operation = [System.Drawing.CopyPixelOperation]::SourceCopy -bor [System.Drawing.CopyPixelOperation]::CaptureBlt
-    $graphics.CopyFromScreen($x, $y, 0, 0, (New-Object System.Drawing.Size $w, $h), $operation)
-    $graphics.Dispose()
+    $bitmap = [ColDesktop]::Capture($x, $y, $w, $h)
     if ($Zoom) {
         # Twice as big, without smoothing, to judge the edges pixel by pixel.
         $large = New-Object System.Drawing.Bitmap ($w * 2), ($h * 2)

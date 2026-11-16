@@ -50,6 +50,7 @@ internal partial class HomePage : UserControl
     /// <summary>The page shows or hides with the open island: the clock and the line timer run only while it shows.</summary>
     public void SetOnScreen(bool onScreen)
     {
+        if (onScreen == _onScreen) return;
         _onScreen = onScreen;
         if (_hub is not null)
         {

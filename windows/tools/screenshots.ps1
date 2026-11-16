@@ -43,6 +43,7 @@ foreach ($state in $states) {
     Start-Sleep -Seconds ($(if ($state.Name -eq 'collapsed') { 8 } else { 4 }))
     if ($process.HasExited) {
         Write-Warning "$($state.Name): Col quit with code $($process.ExitCode)"
+        Show-Crash
         continue
     }
     if ($state.Full) {

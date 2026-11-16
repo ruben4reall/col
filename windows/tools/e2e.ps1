@@ -74,6 +74,13 @@ Check ($status.Code -eq 1 -and $status.Errors -match 'not running') 'colctl stat
 # Col, as it starts at login.
 $col = Start-Process -FilePath $App -ArgumentList '--background' -PassThru
 Start-Sleep -Seconds 8
+if ($col.HasExited) {
+    Write-Host "Col quit with code $($col.ExitCode)"
+    Show-Crash
+    $log = Join-Path $env:LOCALAPPDATA 'Col\col.log'
+    if (Test-Path $log) { Get-Content $log | Write-Host }
+    exit 1
+}
 
 $status = Finish (Invoke-Colctl @('status'))
 Write-Host "status: $($status.Output) $($status.Errors)"

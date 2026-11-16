@@ -63,6 +63,7 @@ jobs:
               if ($LASTEXITCODE -ne 0) { throw "colctl $rid" }
             }
             Copy-Item "artifacts/colctl-$rid/colctl.exe" "artifacts/$rid/colctl.exe"
+            Remove-Item "artifacts/$rid/*.pdb" -ErrorAction SilentlyContinue
             Get-ChildItem "artifacts/$rid" | ForEach-Object { "{0,-12} {1,-12} {2,8:N1} MB" -f $rid, $_.Name, ($_.Length / 1MB) }
           }
 
