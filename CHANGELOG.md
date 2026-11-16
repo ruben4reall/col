@@ -2,6 +2,37 @@
 
 Each release's section is what Col's update window and the GitHub release show. Dates are in ISO format.
 
+## 2.2.0 (unreleased)
+
+- **Lyrics on the Lock Screen**: while the Mac is locked and music plays, the lyrics show large under the clock, the
+  line being sung bright, the one before and the ones to come dim around it, each line gliding into place as the song
+  moves on. Long instrumental passages breathe three dots. The cover, blurred and darkened, sits behind the words so
+  they read on any wallpaper (a deep shade of its colour with Reduce Transparency), and the controls stay at the foot.
+  The lyrics keep between the clock and your picture, never over the password field. Settings, Music and lyrics; it
+  relies on Show on the Lock Screen, and so on private macOS functions.
+- **The Lock Screen on recent macOS**: Col read the number of its Lock Screen space in half the room macOS gives it,
+  which kept the widgets off the Lock Screen on recent versions; it now reads it whole. If macOS one day lacks what
+  the feature needs, Settings says so instead of offering a switch that does nothing.
+- **Lyrics on the desktop**: the line being sung, large, with the next one smaller below it, above your wallpaper and
+  below your icons and every window, in the centre or lower left, centre or right, in three sizes. Clicks go through
+  it, it never takes the focus, it shows only while music plays with synced lyrics, and it fades away a few seconds
+  after a pause. It follows Hide the island from screenshots and recordings. Off by default; Settings, Music and
+  lyrics.
+- **Word by word**: lyrics timed word by word fill as they are sung, from left to right, in the island, on the Lock
+  Screen and on the desktop. A word sung in several pieces fills as one word, and lyrics written without spaces fill
+  piece by piece. With Reduce Motion, each word lights up whole. Lyrics timed line by line show as before.
+- **Lyrics that are off**: a ⋯ button on the lyrics in the island shows them half a second sooner or later at a time,
+  until they meet the voice, or back on time. Not the right lyrics? Choose among the other recordings LRCLIB has for
+  the song, synced ones first, with their length and album. Or hide the lyrics of that song. Each choice is kept for
+  that song only, everywhere its lyrics show; hidden songs are listed in Settings, Music and lyrics, to show them
+  again. Choosing asks LRCLIB with the same title and artist as before, and nothing else.
+- **Bars that follow the sound**: the bars beside the camera can move with the music itself, and a small spectrum
+  joins the player in the open island. Col listens to the player's sound (or the Mac's, when the player's own cannot
+  be told apart) and analyses it as it plays: nothing is recorded, kept or sent. The bars listen only while they show
+  and music plays, and use about 1.5 % of one core then. macOS asks for System Audio Recording when you turn it on,
+  and only then; until you allow it, the bars dance on their own, as before. Off by default; Settings, Music and
+  lyrics. Needs macOS 14.2 or later.
+
 ## 2.1.0 (2026-11-16)
 
 - **Made for macOS 27**: macOS 27 draws every menu bar icon in one place and puts its own » button for hidden icons
