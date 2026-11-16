@@ -1,0 +1,3 @@
+option('app', type: 'boolean', value: true, description: 'Build the island app (needs GTK 4 and libadwaita); off builds only colctl')
+option('tests', type: 'boolean', value: true, description: 'Build the unit tests')
+option('x11', type: 'feature', value: 'auto', description: 'The XWayland fallback for desktops without layer-shell (GNOME)')

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>ch.rubencatalao.Col</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <name>Col</name>
+  <summary>The island at the top of your screen</summary>
+  <summary xml:lang="fr">L’île en haut de votre écran</summary>
+  <description>
+    <p>
+      Col puts a small black island at the top of your screen. While you work, it shows what matters: the song
+      playing, a coding agent waiting for you, the volume, a timer, your own scripts. Hover it or click it, and it
+      opens.
+    </p>
+    <ul>
+      <li>Now playing from any player that speaks MPRIS, with the cover, the controls and a scrubber</li>
+      <li>Synced lyrics from LRCLIB beside the player, the line being sung lit; click a line to jump there</li>
+      <li>Claude Code and Codex in the island, and their permission requests with Allow and Deny</li>
+      <li>A volume gauge, the battery and the charger</li>
+      <li>A timer that counts down in the island, keep awake and a clipboard history kept in memory</li>
+      <li>The colctl command and a local API to push your own live activities</li>
+    </ul>
+    <p>
+      This first Linux edition is a preview. It works best on desktops with the layer-shell protocol: KDE Plasma,
+      COSMIC, Hyprland, Sway, niri and Wayfire. On GNOME the island runs under XWayland, below the top bar.
+    </p>
+  </description>
+  <launchable type="desktop-id">ch.rubencatalao.Col.desktop</launchable>
+  <url type="homepage">https://getcol.vercel.app</url>
+  <url type="bugtracker">https://github.com/ruben4reall/col/issues</url>
+  <url type="vcs-browser">https://github.com/ruben4reall/col</url>
+  <developer id="ch.rubencatalao">
+    <name>Ruben Catalao</name>
+  </developer>
+  <content_rating type="oars-1.1"/>
+  <provides>
+    <binary>col-island</binary>
+    <binary>colctl</binary>
+  </provides>
+  <supports>
+    <control>pointing</control>
+  </supports>
+  <requires>
+    <display_length compare="ge">768</display_length>
+  </requires>
+  <releases>
+    <release version="3.0.0" date="2026-11-16">
+      <description>
+        <p>The first Linux edition of Col, a preview.</p>
+      </description>
+    </release>
+  </releases>
+</component>
