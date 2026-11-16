@@ -15,12 +15,15 @@ internal static class ThemeManager
 {
     public static bool IsDark { get; private set; }
 
+    /// <summary>Light or dark whatever Windows uses, for screenshots: <c>--theme dark</c>.</summary>
+    public static bool? Forced { get; set; }
+
     /// <summary>Whether Windows draws Mica behind windows: Windows 11 2022 update and later.</summary>
     public static bool SupportsMica => Environment.OSVersion.Version.Build >= 22621;
 
     public static void Apply(bool? dark = null)
     {
-        IsDark = dark ?? SystemTheme.AppsAreDark;
+        IsDark = dark ?? Forced ?? SystemTheme.AppsAreDark;
         var resources = Application.Current.Resources;
         void Set(string key, uint argb) => resources[key] = Frozen(Color.FromArgb((byte)(argb >> 24), (byte)(argb >> 16), (byte)(argb >> 8), (byte)argb));
         if (IsDark)

@@ -34,7 +34,8 @@ $states = @(
     @{ Name = 'settings-music'; Args = @('--demo', 'settings', '--page', 'music'); Full = $true },
     @{ Name = 'settings-agents'; Args = @('--demo', 'settings', '--page', 'agents'); Full = $true },
     @{ Name = 'settings-about'; Args = @('--demo', 'settings', '--page', 'about'); Full = $true },
-    @{ Name = 'settings-general-fr'; Args = @('--demo', 'settings', '--page', 'general', '--lang', 'fr'); Full = $true }
+    @{ Name = 'settings-general-fr'; Args = @('--demo', 'settings', '--page', 'general', '--lang', 'fr'); Full = $true },
+    @{ Name = 'settings-agents-dark'; Args = @('--demo', 'settings', '--page', 'agents', '--theme', 'dark'); Full = $true }
 )
 
 foreach ($state in $states) {
