@@ -403,7 +403,7 @@ namespace Col.Glyphs {
     /* A small widget showing one glyph, sized by CSS, coloured by the CSS `color`. */
     public class Icon : Gtk.Widget {
         string _name;
-        public string name {
+        public string glyph {
             get { return _name; }
             set {
                 _name = value;

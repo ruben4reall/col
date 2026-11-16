@@ -469,7 +469,7 @@ namespace Col {
             art.queue_draw ();
             title.label = media.title != "" ? media.title : media.player;
             artist.label = media.artist;
-            ((Glyphs.Icon) play.child).name = media.playing ? "pause" : "play";
+            ((Glyphs.Icon) play.child).glyph = media.playing ? "pause" : "play";
             previous.sensitive = media.can_previous;
             next.sensitive = media.can_next;
             scrub.seekable = media.can_seek && media.duration > 0;
