@@ -72,6 +72,10 @@ public struct MediaKeyPress: Equatable, Sendable {
         isDown = (flags & 0xFF00) >> 8 == 0x0A
         isRepeat = flags & 0x1 == 1
     }
+
+    /// Only a key going down may be kept from macOS. A key coming up always reaches it: since macOS 27.2, Control
+    /// Center and the apps that saw a press begin wait for its release, and misbehave when it never comes.
+    public var mayBeSwallowed: Bool { isDown }
 }
 
 public enum LevelStep {

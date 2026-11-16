@@ -4,7 +4,8 @@ import ColCore
 /// Takes over the volume, mute and brightness keys so Col's own display replaces the system's.
 ///
 /// It needs the Accessibility permission, and only listens to system-defined events: typing never reaches it.
-/// A key Col cannot honour, such as volume on a display without its own, goes through to macOS untouched.
+/// A key Col cannot honour, such as volume on a display without its own, goes through to macOS untouched, and only a
+/// key's press is ever kept from macOS: its release always reaches it.
 @MainActor
 final class MediaKeyTap {
     /// Returns true when the key was handled and must not reach the system.
@@ -53,7 +54,9 @@ final class MediaKeyTap {
         // Option alone opens the matching settings pane in macOS; leave that to the system.
         if flags.contains(.option), !flags.contains(.shift) { return false }
         let fine = flags.contains(.option) && flags.contains(.shift)
-        return handler?(press, fine) == true
+        let handled = handler?(press, fine) == true
+        // A key coming up always goes through, even when Col kept its press: what saw the press waits for it.
+        return handled && press.mayBeSwallowed
     }
 }
 
