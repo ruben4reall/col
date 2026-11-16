@@ -112,6 +112,22 @@
           }
         }
       }
+    },
+    "NSAudioCaptureUsageDescription": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "With Bars that follow the sound, the bars beside the camera move with the music that plays. The sound is analysed on your Mac as it plays, never recorded or sent."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avec Barres qui suivent le son, les barres à côté de la caméra bougent avec la musique qui joue. Le son est analysé sur votre Mac pendant la lecture, jamais enregistré ni envoyé."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
