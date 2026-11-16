@@ -3,6 +3,39 @@
     <channel>
         <title>Islet</title>
         <item>
+            <title>2.4.0</title>
+            <pubDate>Mon, 16 Nov 2026 19:57:26 +0100</pubDate>
+            <link>https://getcol.vercel.app</link>
+            <sparkle:fullReleaseNotesLink>https://github.com/ruben4reall/col/releases</sparkle:fullReleaseNotesLink>
+            <sparkle:version>2.4.0</sparkle:version>
+            <sparkle:shortVersionString>2.4.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <description sparkle:format="markdown"><![CDATA[- **Col Connect**: your iPhone, Home Assistant, a Raspberry Pi or a build machine on your network can now push live
+  activities and widgets into the island. Turn it on in Settings, Connect, pair each device (a QR code for your
+  phone, a token for the others), and it reaches the same routes as `colctl`. Each device has its own token, kept in
+  your Keychain, which you can replace or take back; the list says when each one was last seen. Off until you turn
+  it on, it answers only your local network, and Allow and Deny for your agents never leave the Mac. The guide has a
+  ready Shortcut, curl and Home Assistant: [docs/connect.md](docs/connect.md).
+- **Widgets**: a new Widgets place for your pages shows small cards with a figure, a bar, a few lines and up to three
+  buttons, pushed by `colctl widget set`, the local API, Col Connect or an extension, in one documented format. A
+  widget dims when its figures are old, and can also show beside the camera. A widget's button calls its address only
+  once you have said yes to it, the host shown on its own.
+- **Widgets from any web address**: in Settings, Connect, give an address that answers JSON, pick what each field
+  shows with key paths such as `{data.temp}`, and see the widget as you type. Col reads it at the interval you choose,
+  and only while the widget shows. Tokens for its headers stay in your Keychain and never go to another host.
+- **Plans to review**: when Claude Code asks to leave plan mode, the island shows the plan itself, as Markdown you can
+  scroll and select, with Approve and Keep Planning.
+- **Questions in the island**: when Claude Code asks you a question, the island shows it with its options. Click one
+  to answer, or answer in the terminal, which comes forward.
+- **Back to the terminal**: click an agent's session in the island and its own tab comes forward in Terminal or
+  iTerm2, or its folder's window in VS Code, Cursor, Windsurf or Zed. macOS asks once to let Col select the tab.
+- **More extensions**: Countdown, Homebrew Outdated, Docker Containers and Website Status join the examples, and
+  `colctl extensions install` checks an extension's manifest and copies it in from a folder or a repository, turned
+  off until you have read it.
+]]></description>
+            <enclosure url="https://github.com/ruben4reall/col/releases/download/v2.4.0/Col-2.4.0.dmg" length="7764447" type="application/octet-stream" sparkle:edSignature="ukUtFhQp3nNAAHFsFRwGCTLxNGaVtiDh76bHfFD3j7xi6y/BXzZRxfHE0TnVshKBGeylN9MRkTohaAYwkuwQAw=="/>
+        </item>
+        <item>
             <title>2.3.0</title>
             <pubDate>Mon, 16 Nov 2026 19:30:34 +0100</pubDate>
             <link>https://getcol.vercel.app</link>
