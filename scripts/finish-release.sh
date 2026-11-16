@@ -54,7 +54,8 @@ OUTPUT=$("$GENERATE_APPCAST" "${KEY[@]}" --download-url-prefix "$PREFIX" --link 
 printf '%s\n' "$OUTPUT"
 # A key that does not match the app's is only a warning to generate_appcast, which then leaves the new item unsigned,
 # and every copy of Col would refuse that update.
-if grep -qiE "warning|does not match" <<< "$OUTPUT"; then
+# macOS 27 marks hdiutil, which generate_appcast runs to read the image, as deprecated: that notice is not about the key.
+if grep -viE "hdiutil: WARNING: .* is deprecated" <<< "$OUTPUT" | grep -qiE "warning|does not match"; then
   fail "generate_appcast warned (above); $APPCAST is unchanged"
 fi
 # The new item's own enclosure carries the signature: the older items always do, whatever happened to it.
