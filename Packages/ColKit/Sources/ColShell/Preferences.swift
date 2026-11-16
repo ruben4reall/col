@@ -206,6 +206,13 @@ enum Preferences {
         set { defaults.set(newValue, forKey: "showsIslandAtRest"); changed() }
     }
 
+    /// How far the closed island may reach on each side of the camera, at most: it never covers a menu or an icon
+    /// anyway. 96, 132 (the default) or 160 points.
+    static var wingLimit: CGFloat {
+        get { defaults.object(forKey: "wingLimit") == nil ? IslandLayout.standardWing : CGFloat(defaults.double(forKey: "wingLimit")) }
+        set { defaults.set(Double(newValue), forKey: "wingLimit"); changed() }
+    }
+
     /// Apps in front of which the island steps aside, as in full screen: brief displays and alerts still show.
     static var hiddenInApps: [String] {
         get { defaults.stringArray(forKey: "hiddenInApps") ?? [] }

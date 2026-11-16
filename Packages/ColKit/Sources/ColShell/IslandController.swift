@@ -650,7 +650,7 @@ public final class IslandController {
         islandView.setGlass(Preferences.islandGlass)
         let style = layout.map { $0.notch.isHardware ? Preferences.notchStyle : Preferences.floatingStyle }
         islandView.restVisible = Preferences.showsIslandAtRest && !restBlocked
-        if layout?.size != Preferences.islandSize || layout?.floating != style {
+        if layout?.size != Preferences.islandSize || layout?.floating != style || layout?.wingLimit != Preferences.wingLimit {
             _ = machine.handle(.dismissed)
             islandView.dismissContent()
             islandView.discardContent()
@@ -940,7 +940,9 @@ public final class IslandController {
         let shift = UserDefaults.standard.double(forKey: "ColCenterX")
         if !notch.isHardware, shift > 0 { notch.centerX = shift }
         let style = notch.isHardware ? Preferences.notchStyle : Preferences.floatingStyle
-        let layout = IslandLayout(notch: notch, size: Preferences.islandSize, floating: style, sideRoom: self.layout?.sideRoom)
+        let layout = IslandLayout(notch: notch, size: Preferences.islandSize, floating: style, sideRoom: self.layout?.sideRoom,
+                                  wingLimit: Preferences.wingLimit)
+        islandView.compact.wingLimit = layout.wingLimit
         self.layout = layout
         panel.sharingType = Preferences.hiddenFromScreenCapture ? .none : .readOnly
 

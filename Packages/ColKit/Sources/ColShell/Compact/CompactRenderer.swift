@@ -12,6 +12,8 @@ final class CompactRenderer {
     private var trailing = WingSlot()
     private var images: [String: CGImage] = [:]
     private var scale: CGFloat = 2
+    /// Widest a wing may grow, as the user chose.
+    var wingLimit: CGFloat = IslandLayout.standardWing
 
     init() {
         layer.addSublayer(leading.container)
@@ -46,7 +48,7 @@ final class CompactRenderer {
         let side = WingSlot.side(for: notchHeight)
         switch item {
         case .text(let string, _):
-            return min(ceil(TextMetrics.width(of: string)), IslandLayout.maximumWing - WingSlot.padding * 2)
+            return min(ceil(TextMetrics.width(of: string)), wingLimit - WingSlot.padding * 2)
         case .level:
             return side * 2.4
         case .battery:

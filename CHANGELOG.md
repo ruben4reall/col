@@ -18,6 +18,8 @@ Each release's section is what Col's update window and the GitHub release show. 
   their way.
 - **Below the menu bar, even with a notch**: on a Mac whose notch area already shows something, such as its own
   Dynamic Island, the island can float below the menu bar instead (Settings, Appearance, Shape).
+- **Wings as wide as you like**: choose how far the closed island may reach beside the camera, Narrow, Standard or
+  Wide (Settings, Appearance, Shape). Whatever the choice, it never covers a menu or an icon.
 - **Long lines glide**: a song title or a lyric too long for its wing glides across it, held still at each end,
   instead of ending with an ellipsis. With Reduce Motion, it still ends with an ellipsis.
 - **Step aside for some apps**: choose apps in front of which the island hides, as it does in full screen

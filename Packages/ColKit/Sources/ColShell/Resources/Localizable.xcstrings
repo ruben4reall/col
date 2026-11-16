@@ -4962,6 +4962,46 @@
           }
         }
       }
+    },
+    "Narrow": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Étroites"
+          }
+        }
+      }
+    },
+    "Wide": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Larges"
+          }
+        }
+      }
+    },
+    "Wings": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ailes"
+          }
+        }
+      }
+    },
+    "How far the closed island may reach beside the camera. It never covers a menu or an icon.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jusqu’où l’île fermée peut s’étendre à côté de la caméra. Elle ne couvre jamais un menu ni une icône."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

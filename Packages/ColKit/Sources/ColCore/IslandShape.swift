@@ -103,13 +103,19 @@ public struct IslandLayout: Equatable, Sendable {
     /// Free room beside the resting island on its tighter side, up to the nearest menu or icon, margin taken; nil when
     /// unknown. The swell under the pointer stays inside it.
     public var sideRoom: CGFloat?
-    /// Widest a wing of the compact island may grow, so a long title never swallows the menu bar.
-    public static let maximumWing: CGFloat = 132
+    /// Widest a wing of the compact island may ever grow, whatever the setting: the canvas makes room for it.
+    public static let maximumWing: CGFloat = 160
+    /// Widest a wing grows by default, so a long title never swallows the menu bar.
+    public static let standardWing: CGFloat = 132
+    /// Widest a wing may grow on this screen, as the user chose (Settings, Appearance), up to `maximumWing`.
+    public let wingLimit: CGFloat
     static let shadowMargin: CGFloat = 40
 
     /// Without a style, a real notch is hung from and a screen without one gets the capsule below its menu bar.
-    public init(notch: NotchMetrics, size: IslandSize = .standard, floating: FloatingStyle? = nil, sideRoom: CGFloat? = nil) {
+    public init(notch: NotchMetrics, size: IslandSize = .standard, floating: FloatingStyle? = nil, sideRoom: CGFloat? = nil,
+                wingLimit: CGFloat = IslandLayout.standardWing) {
         self.notch = notch
+        self.wingLimit = min(max(wingLimit, WingBudget.minimum), Self.maximumWing)
         self.size = size
         self.floating = floating ?? (notch.isHardware ? .notch : .below)
         self.sideRoom = sideRoom
@@ -180,7 +186,7 @@ public struct IslandLayout: Equatable, Sendable {
     var pillHeight: CGFloat { notch.height - pillInset * 2 }
 
     private func attachedShape(for state: IslandState, wings: Wings) -> IslandShape {
-        let wings = wings.clamped(to: Self.maximumWing)
+        let wings = wings.clamped(to: wingLimit)
         let span = wings.leading + wings.trailing
         let offset = (wings.trailing - wings.leading) / 2
         switch state {
@@ -229,13 +235,13 @@ public struct IslandLayout: Equatable, Sendable {
 
     public var canvasSize: CGSize {
         let open = windowSize(for: .expanded)
-        let widest = shape(for: .peek, wings: Wings(Self.maximumWing)).outerWidth
+        let widest = notch.width + Self.maximumWing * 2 + Self.peekSwell + Self.ear * 2
         return CGSize(width: max(open.width, widest), height: open.height)
     }
 
     /// Where a wing's item sits, centred in the wing beside the camera, top-left origin.
     public func wingCenter(leading: Bool, wings: Wings) -> CGPoint {
-        let wings = wings.clamped(to: Self.maximumWing)
+        let wings = wings.clamped(to: wingLimit)
         let offset = notch.width / 2 + (leading ? wings.leading : wings.trailing) / 2
         let collapsed = shape(for: .collapsed, wings: wings)
         return CGPoint(x: canvasSize.width / 2 + (leading ? -offset : offset), y: collapsed.gap + collapsed.height / 2)

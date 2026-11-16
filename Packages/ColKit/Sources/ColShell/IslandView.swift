@@ -336,7 +336,7 @@ final class IslandView: NSView {
     /// Where the black starts to thin: below everything the closed island ever covers and below the camera row.
     private static func solidDepth(_ layout: IslandLayout) -> CGFloat {
         let open = layout.frame(for: .expanded)
-        let closed = max(layout.frame(for: .peek).maxY, layout.frame(for: .collapsed, wings: Wings(IslandLayout.maximumWing)).maxY)
+        let closed = max(layout.frame(for: .peek).maxY, layout.frame(for: .collapsed, wings: Wings(layout.wingLimit)).maxY)
         return max(closed, open.minY + layout.notch.height) + 16
     }
 

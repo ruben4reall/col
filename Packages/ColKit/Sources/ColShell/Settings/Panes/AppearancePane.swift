@@ -10,6 +10,7 @@ struct AppearancePane: View {
     @State private var notchStyle = Preferences.notchStyle
     @State private var floatingStyle = Preferences.floatingStyle
     @State private var showsAtRest = Preferences.showsIslandAtRest
+    @State private var wingLimit = Preferences.wingLimit
     /// This Mac has a screen with a notch.
     private let hasNotch = NSScreen.screens.contains { $0.safeAreaInsets.top > 0 }
     /// Replays the opening of the island in the stage after a change.
@@ -94,6 +95,23 @@ struct AppearancePane: View {
                 }
                 .onChange(of: floatingStyle) {
                     Preferences.floatingStyle = floatingStyle
+                    changed()
+                }
+                Picker(selection: $wingLimit) {
+                    Text("Narrow", bundle: .module).tag(CGFloat(96))
+                    Text("Standard", bundle: .module).tag(IslandLayout.standardWing)
+                    Text("Wide", bundle: .module).tag(IslandLayout.maximumWing)
+                } label: {
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text("Wings", bundle: .module)
+                        Text("How far the closed island may reach beside the camera. It never covers a menu or an icon.", bundle: .module)
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .onChange(of: wingLimit) {
+                    Preferences.wingLimit = wingLimit
                     changed()
                 }
                 IconToggle(symbol: "capsule.fill", tint: .indigo, title: "Show the island when nothing happens",

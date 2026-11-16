@@ -72,7 +72,12 @@ struct IslandWingTests {
 
     @Test func wingsAreCapped() {
         let capped = layout.shape(for: .collapsed, wings: 1_000)
-        #expect(capped.width == 188 + IslandLayout.maximumWing * 2)
+        #expect(capped.width == 188 + IslandLayout.standardWing * 2)
+        let wide = IslandLayout(notch: layout.notch, wingLimit: 160)
+        #expect(wide.shape(for: .collapsed, wings: 1_000).width == CGFloat(508))
+        #expect(wide.canvasSize == layout.canvasSize)
+        #expect(CGRect(origin: .zero, size: wide.canvasSize).contains(wide.frame(for: .peek, wings: 1_000)))
+        #expect(IslandLayout(notch: layout.notch, wingLimit: 500).wingLimit == IslandLayout.maximumWing)
         #expect(CGRect(origin: .zero, size: layout.canvasSize).contains(layout.frame(for: .peek, wings: 1_000)))
     }
 
