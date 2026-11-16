@@ -221,6 +221,8 @@ public final class IslandController {
 
     /// The welcome went back into the notch: the island opens on "Let's go" for a moment.
     func sayReady() {
+        // Someone new has just met this version: nothing to announce later.
+        WhatsNew.markShown()
         navigation.greetsReady = true
         navigation.jump(to: .greeting)
         openedByRequest = true
@@ -240,6 +242,33 @@ public final class IslandController {
         }
     }
 
+    // MARK: What's new
+
+    /// Once after an update to a new major version, the island opens on what it brings, then tucks back in; it stays
+    /// while the pointer is on it. Someone new gets the welcome instead.
+    private func showWhatsNewIfDue(force: Bool = false) {
+        guard force || (WhatsNew.isDue && WelcomeWindow.hasWelcomed) else { return }
+        guard machine.state != .expanded, ![.greeting, .souffleur, .device].contains(navigation.route), !prompterInNotch else { return }
+        WhatsNew.markShown()
+        navigation.jump(to: .whatsNew)
+        openedByRequest = true
+        send(.requested)
+        closeWhatsNew(after: 14)
+    }
+
+    private func closeWhatsNew(after delay: TimeInterval) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+            MainActor.assumeIsolated {
+                guard let self, self.navigation.route == .whatsNew else { return }
+                guard !self.machine.pointerInside else { return self.closeWhatsNew(after: 3) }
+                self.send(.dismissed)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    MainActor.assumeIsolated { if self.navigation.route == .whatsNew { self.navigation.jumpHome() } }
+                }
+            }
+        }
+    }
+
     // MARK: Menu bar access
 
     /// Once, when the island cannot see the menu bar it shares, it says why its wings stay narrow and offers to ask
@@ -248,7 +277,7 @@ public final class IslandController {
         let key = "menuBarAccessNoteShown"
         guard WelcomeWindow.hasWelcomed, !AXIsProcessTrusted(), layout?.sharesMenuBar == true,
               !UserDefaults.standard.bool(forKey: key), machine.state != .expanded,
-              ![.greeting, .souffleur, .device].contains(navigation.route), !prompterInNotch
+              ![.greeting, .souffleur, .device, .whatsNew].contains(navigation.route), !prompterInNotch
         else { return }
         UserDefaults.standard.set(true, forKey: key)
         navigation.jump(to: .menuBarAccess)
@@ -290,6 +319,9 @@ public final class IslandController {
         // A note left due by an earlier launch, whose welcome was put off.
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
             MainActor.assumeIsolated { self?.showSouffleurNoteIfDue() }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+            MainActor.assumeIsolated { self?.showWhatsNewIfDue() }
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
             MainActor.assumeIsolated { self?.showMenuBarAccessNoteIfDue() }
@@ -850,6 +882,10 @@ public final class IslandController {
         case "souffleur":
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
                 MainActor.assumeIsolated { self?.showSouffleurNote() }
+            }
+        case "whatsnew":
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
+                MainActor.assumeIsolated { self?.showWhatsNewIfDue(force: true) }
             }
         case "menubar":
             // The note about the menu bar, whatever the permission says.

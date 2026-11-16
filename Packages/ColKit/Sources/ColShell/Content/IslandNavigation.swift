@@ -18,6 +18,8 @@ enum IslandRoute: Hashable {
     case souffleur
     /// Col cannot see the menu bar without Accessibility, and says so once; never a tab.
     case menuBarAccess
+    /// What a new major version brings, once after the update; never a tab.
+    case whatsNew
 
     var symbol: String {
         switch self {
@@ -28,6 +30,7 @@ enum IslandRoute: Hashable {
         case .drop: "tray.full.fill"
         case .souffleur: "text.aligncenter"
         case .menuBarAccess: "accessibility"
+        case .whatsNew: "sparkles"
         }
     }
 }

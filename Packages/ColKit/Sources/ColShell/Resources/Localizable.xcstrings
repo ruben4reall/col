@@ -7652,6 +7652,56 @@
           }
         }
       }
+    },
+    "What’s new in Col 3": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouveautés de Col 3"
+          }
+        }
+      }
+    },
+    "See Everything": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tout voir"
+          }
+        }
+      }
+    },
+    "A pill on every Mac": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une pilule sur chaque Mac"
+          }
+        }
+      }
+    },
+    "Weather and Focus": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Météo et Concentration"
+          }
+        }
+      }
+    },
+    "On Windows and Linux": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sur Windows et Linux"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
