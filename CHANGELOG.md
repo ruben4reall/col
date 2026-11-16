@@ -2,6 +2,30 @@
 
 Each release's section is what Col's update window and the GitHub release show. Dates are in ISO format.
 
+## 2.1.0 (2026-11-16)
+
+- **Made for macOS 27**: macOS 27 draws every menu bar icon in one place and puts its own » button for hidden icons
+  right beside the notch. Col now watches that menu bar and measures it again the moment an icon comes or goes, so
+  its wings never cover the » button, an icon or a menu. The wings also leave room for the island's rounded edges
+  and for its swell under the pointer, which used to reach a few points over the first icon. When there is no room
+  on one side, the activity keeps a single wing on the other; a line of text too long for that wing gives way to its
+  icon.
+- **A pill on screens without a notch**: on an external display or a Mac without a notch, the island is now a small
+  black pill inside the menu bar, clear of the top edge, the way the iPhone's island sits in its status bar. It
+  stretches to show what is happening and opens into a card with four round corners. Prefer Col's notch, or the
+  larger capsule below the menu bar? Settings, Appearance, Shape. Turn off "Show the island when nothing happens" to
+  see it only when something happens. When an app's menus reach the middle of the menu bar, the pill steps out of
+  their way.
+- **Below the menu bar, even with a notch**: on a Mac whose notch area already shows something, such as its own
+  Dynamic Island, the island can float below the menu bar instead (Settings, Appearance, Shape).
+- **Long lines glide**: a song title or a lyric too long for its wing glides across it, held still at each end,
+  instead of ending with an ellipsis. With Reduce Motion, it still ends with an ellipsis.
+- **Step aside for some apps**: choose apps in front of which the island hides, as it does in full screen
+  (Settings, General). Volume, alerts and requests still show.
+- **Open and close from a link**: `col://open`, `col://open?page=live` and `col://close`, for Shortcuts and scripts.
+- **macOS 27 names**: the permission Col asks for its wings and its volume display is called Device Control and Data
+  Access on macOS 27, and Col now says so.
+
 ## 2.0.0 (2026-10-03)
 
 - **Islet is now Col**: the same app under a shorter name. A col is the pass between two peaks, and the notch is one.
