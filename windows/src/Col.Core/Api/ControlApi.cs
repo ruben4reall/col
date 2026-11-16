@@ -81,7 +81,7 @@ public sealed class ControlApi(CustomActivities custom, AgentCenter agents, stri
             {
                 var agent = CodingAgents.FromId(request.Query.GetValueOrDefault("agent") ?? "claude");
                 JsonObject? raw = null;
-                try { raw = JsonNode.Parse(request.Body) as JsonObject; }
+                try { raw = JsonNode.Parse(HookRelay.Clean(request.Body)) as JsonObject; }
                 catch (Exception) { /* answered below */ }
                 if (agent is null || raw is null) return HttpResponse.Error("expected a hook event", 400);
                 // Events an agent sends that Col does not follow are simply acknowledged.

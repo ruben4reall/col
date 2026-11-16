@@ -412,6 +412,19 @@ public class HookRelayTests
     }
 
     [Fact]
+    public void WhatWritersAddAroundTheJsonIsLeftOut()
+    {
+        byte[] bom = [0xEF, 0xBB, 0xBF];
+        var json = """{"session_id":"s","hook_event_name":"Stop"}"""u8.ToArray();
+        // Windows PowerShell's pipe adds its byte order mark when it closes, after what was written.
+        byte[] written = [.. bom, .. json, (byte)'\r', (byte)'\n', .. bom, 0];
+        Assert.Equal(json, HookRelay.Clean(written));
+        Assert.True(HookRelay.IsEvent(HookRelay.Clean(written)));
+        Assert.Equal("Stop", HookRelay.EventName(HookRelay.Clean(written)));
+        Assert.Empty(HookRelay.Clean([.. bom, (byte)' ']));
+    }
+
+    [Fact]
     public void ReadsTheEventAndTheDecision()
     {
         Assert.Equal("Stop", HookRelay.EventName("""{"hook_event_name":"Stop"}"""u8));

@@ -32,11 +32,14 @@ function Invoke-Colctl([string[]] $Arguments, [string] $Stdin = $null) {
     $info.RedirectStandardOutput = $true
     $info.RedirectStandardError = $true
     $process = [System.Diagnostics.Process]::Start($info)
+    $stream = $process.StandardInput.BaseStream
     if ($Stdin) {
-        $bytes = [System.Text.Encoding]::UTF8.GetBytes($Stdin)
-        $process.StandardInput.BaseStream.Write($bytes, 0, $bytes.Length)
+        $bytes = (New-Object System.Text.UTF8Encoding $false).GetBytes($Stdin)
+        $stream.Write($bytes, 0, $bytes.Length)
     }
-    $process.StandardInput.Close()
+    # The stream itself, not its text writer, which would add a byte order mark as it closes.
+    $stream.Flush()
+    $stream.Close()
     return $process
 }
 
@@ -114,6 +117,8 @@ Save-Screen -Path (Join-Path $Out 'e2e-agent.png') -Zoom
 $request = '{"session_id":"ci","hook_event_name":"PermissionRequest","cwd":"C:\\ci\\col","tool_name":"Bash","tool_input":{"command":"git push origin main","description":"Push"}}'
 $waiting = Invoke-Colctl @('hook') $request
 Start-Sleep -Seconds 2
+$status = Finish (Invoke-Colctl @('status'))
+Write-Host "while waiting: $($status.Output)"
 Save-Screen -Path (Join-Path $Out 'e2e-permission.png')
 Save-Screen -Path (Join-Path $Out 'e2e-permission-zoom.png') -Zoom
 $allow = Find-Button 'Allow'
@@ -122,7 +127,7 @@ if ($allow) {
     $allow.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
 }
 $answer = Finish $waiting
-Write-Host "hook answered: $($answer.Output)"
+Write-Host "hook answered: $($answer.Output) $($answer.Errors)"
 Check ($answer.Output -eq '{"hookSpecificOutput":{"hookEventName":"PermissionRequest","decision":{"behavior":"allow"}}}') 'Allow answers the hook as Claude Code reads it'
 
 # A second one, denied.

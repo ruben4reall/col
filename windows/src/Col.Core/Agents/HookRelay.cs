@@ -26,6 +26,25 @@ public static class HookRelay
         _ => HookFormat.Claude,
     };
 
+    /// <summary>
+    /// What the agent wrote on stdin, without what some writers add around JSON: a UTF-8 byte order mark before or
+    /// after it (Windows PowerShell's pipes add one when they close), line breaks, spaces and NULs.
+    /// </summary>
+    public static byte[] Clean(ReadOnlySpan<byte> input)
+    {
+        ReadOnlySpan<byte> bom = [0xEF, 0xBB, 0xBF];
+        var changed = true;
+        while (changed)
+        {
+            changed = false;
+            if (input.StartsWith(bom)) { input = input[3..]; changed = true; }
+            if (input.EndsWith(bom)) { input = input[..^3]; changed = true; }
+            while (input.Length > 0 && input[0] is (byte)' ' or (byte)'\t' or (byte)'\r' or (byte)'\n' or 0) { input = input[1..]; changed = true; }
+            while (input.Length > 0 && input[^1] is (byte)' ' or (byte)'\t' or (byte)'\r' or (byte)'\n' or 0) { input = input[..^1]; changed = true; }
+        }
+        return input.ToArray();
+    }
+
     /// <summary>The event's name, read from what the agent wrote on stdin; empty when it is not a JSON object.</summary>
     public static string EventName(ReadOnlySpan<byte> input)
     {

@@ -208,7 +208,7 @@ static int Hook(CodingAgent agent)
         using var stdin = Console.OpenStandardInput();
         using var buffer = new MemoryStream();
         stdin.CopyTo(buffer);
-        input = buffer.ToArray();
+        input = HookRelay.Clean(buffer.ToArray());
     }
     catch (IOException)
     {
