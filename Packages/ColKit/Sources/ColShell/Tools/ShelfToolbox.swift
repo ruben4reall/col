@@ -19,9 +19,9 @@ extension ShelfModel {
     func convert(_ item: Item, to format: ShelfTools.ImageFormat) {
         let source = item.url
         run(String(localized: "Converting…", bundle: .module)) {
-            let destination = Self.writableDestination(for: source, suffix: nil, fileExtension: format.fileExtension)
-            try Self.writeImage(from: source, to: destination, type: format.typeIdentifier, maxPixelSize: nil, dpi: nil)
-            return destination
+            try Self.produce(beside: source, suffix: nil, fileExtension: format.fileExtension) { file in
+                try Self.writeImage(from: source, to: file, type: format.typeIdentifier, maxPixelSize: nil, dpi: nil)
+            }
         }
     }
 
@@ -40,14 +40,15 @@ extension ShelfModel {
             let type = own.flatMap { writable.contains($0) ? $0 : nil } ?? UTType.png.identifier
             let fileExtension = UTType(type)?.preferredFilenameExtension ?? "png"
             let suffix = resize == .half ? "50%" : "1x"
-            let destination = Self.writableDestination(for: source, suffix: suffix, fileExtension: fileExtension)
-            try Self.writeImage(from: source, to: destination, type: type, maxPixelSize: max(size.width, size.height), dpi: resize == .pointSize ? 72 : nil)
-            return destination
+            return try Self.produce(beside: source, suffix: suffix, fileExtension: fileExtension) { file in
+                try Self.writeImage(from: source, to: file, type: type, maxPixelSize: max(size.width, size.height), dpi: resize == .pointSize ? 72 : nil)
+            }
         }
     }
 
     /// Compresses files into a .zip with the system's own archiver (the one behind file coordination). One folder
-    /// gives "Folder.zip"; a file, or several files, go in a folder of their own inside it.
+    /// gives "Folder.zip"; a file, or several files, go in a folder of their own inside it, two of the same name
+    /// becoming "Notes.txt" and "Notes 2.txt".
     func compress(_ items: [Item]) {
         let urls = items.map(\.url)
         guard let first = urls.first else { return }
@@ -56,28 +57,30 @@ extension ShelfModel {
             var isFolder: ObjCBool = false
             let single = urls.count == 1 && manager.fileExists(atPath: first.path, isDirectory: &isFolder) && isFolder.boolValue
             let name = urls.count == 1 ? first.deletingPathExtension().lastPathComponent : String(localized: "Archive", bundle: .module)
-            var staging: URL?
-            defer { if let staging { try? manager.removeItem(at: staging.deletingLastPathComponent()) } }
+            var scratch: URL?
+            defer { if let scratch { try? manager.removeItem(at: scratch) } }
             let archived: URL
             if single {
                 archived = first
             } else {
                 // Copies on the same volume are clones: instant, and taking no room.
-                let scratch = try manager.url(for: .itemReplacementDirectory, in: .userDomainMask, appropriateFor: first, create: true)
-                let folder = scratch.appendingPathComponent(name)
-                try manager.createDirectory(at: folder, withIntermediateDirectories: true)
-                for url in urls { try manager.copyItem(at: url, to: folder.appendingPathComponent(url.lastPathComponent)) }
-                staging = folder
-                archived = folder
+                let folder = try manager.url(for: .itemReplacementDirectory, in: .userDomainMask, appropriateFor: first, create: true)
+                scratch = folder
+                archived = folder.appendingPathComponent(name)
+                try manager.createDirectory(at: archived, withIntermediateDirectories: true)
+                for (url, name) in zip(urls, ShelfTools.uniqueNames(urls.map(\.lastPathComponent))) {
+                    try manager.copyItem(at: url, to: archived.appendingPathComponent(name))
+                }
             }
-            let destination = Self.writableDestination(for: first.deletingLastPathComponent().appendingPathComponent(name + ".zip"), suffix: nil, fileExtension: "zip")
-            var coordinationError: NSError?
-            var copyError: Error?
-            NSFileCoordinator().coordinate(readingItemAt: archived, options: .forUploading, error: &coordinationError) { zipped in
-                do { try manager.copyItem(at: zipped, to: destination) } catch { copyError = error }
+            let named = first.deletingLastPathComponent().appendingPathComponent(name + ".zip")
+            return try Self.produce(beside: named, suffix: nil, fileExtension: "zip") { file in
+                var coordinationError: NSError?
+                var copyError: Error?
+                NSFileCoordinator().coordinate(readingItemAt: archived, options: .forUploading, error: &coordinationError) { zipped in
+                    do { try manager.copyItem(at: zipped, to: file) } catch { copyError = error }
+                }
+                if let error = coordinationError ?? copyError { throw error }
             }
-            if let error = coordinationError ?? copyError { throw error }
-            return destination
         }
     }
 
@@ -138,16 +141,27 @@ extension ShelfModel {
 
     // MARK: Files
 
-    /// Beside the original when its folder can be written, else in Col's caches, never on top of another file.
-    nonisolated private static func writableDestination(for source: URL, suffix: String?, fileExtension: String) -> URL {
+    /// Makes a result in a scratch folder on the volume where it goes, then moves it beside the original (or into
+    /// Col's caches when that folder cannot be written) under the first free name. The move never replaces a file,
+    /// even one that appeared in the meantime: a name taken by then passes to the next.
+    nonisolated private static func produce(beside source: URL, suffix: String?, fileExtension: String, _ make: (URL) throws -> Void) throws -> URL {
         let manager = FileManager.default
         var base = source
         if !manager.isWritableFile(atPath: source.deletingLastPathComponent().path) {
             let caches = manager.urls(for: .cachesDirectory, in: .userDomainMask)[0].appendingPathComponent("Col/Shelf", isDirectory: true)
-            try? manager.createDirectory(at: caches, withIntermediateDirectories: true)
+            try manager.createDirectory(at: caches, withIntermediateDirectories: true)
             base = caches.appendingPathComponent(source.lastPathComponent)
         }
-        return ShelfTools.destination(for: base, suffix: suffix, fileExtension: fileExtension) { manager.fileExists(atPath: $0.path) }
+        let scratch = try manager.url(for: .itemReplacementDirectory, in: .userDomainMask, appropriateFor: base.deletingLastPathComponent(), create: true)
+        defer { try? manager.removeItem(at: scratch) }
+        let made = scratch.appendingPathComponent(fileExtension.isEmpty ? "result" : "result." + fileExtension)
+        try make(made)
+        for attempt in 1...1000 {
+            let target = ShelfTools.candidate(for: base, suffix: suffix, fileExtension: fileExtension, attempt: attempt)
+            if renamex_np(made.path, target.path, UInt32(RENAME_EXCL)) == 0 { return target }
+            guard errno == EEXIST else { throw POSIXError(POSIXErrorCode(rawValue: errno) ?? .EIO) }
+        }
+        throw POSIXError(.EEXIST)
     }
 
     /// Writes an image in another format, or smaller, keeping its orientation and colour profile.

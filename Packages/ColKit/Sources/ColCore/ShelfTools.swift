@@ -77,20 +77,35 @@ public enum ShelfTools {
         return size.width == width && size.height == height ? nil : size
     }
 
-    /// Where a result goes: beside `source`, named after it with `suffix` and `fileExtension`. A name already taken
-    /// gets " 2", " 3"… as the Finder does.
-    public static func destination(for source: URL, suffix: String? = nil, fileExtension: String, exists: (URL) -> Bool) -> URL {
-        let folder = source.deletingLastPathComponent()
+    /// The names a result may take, in order: beside `source`, named after it with `suffix` and `fileExtension`, then
+    /// with " 2", " 3"… as the Finder does. The tools move their result to the first one still free, never over a file.
+    public static func candidate(for source: URL, suffix: String? = nil, fileExtension: String, attempt: Int) -> URL {
         let base = source.deletingPathExtension().lastPathComponent + (suffix.map { " " + $0 } ?? "")
-        func named(_ name: String) -> URL {
-            folder.appendingPathComponent(fileExtension.isEmpty ? name : name + "." + fileExtension)
+        let name = attempt <= 1 ? base : "\(base) \(attempt)"
+        return source.deletingLastPathComponent().appendingPathComponent(fileExtension.isEmpty ? name : name + "." + fileExtension)
+    }
+
+    /// The first of those names that `exists` says is free.
+    public static func destination(for source: URL, suffix: String? = nil, fileExtension: String, exists: (URL) -> Bool) -> URL {
+        var attempt = 1
+        while exists(candidate(for: source, suffix: suffix, fileExtension: fileExtension, attempt: attempt)) { attempt += 1 }
+        return candidate(for: source, suffix: suffix, fileExtension: fileExtension, attempt: attempt)
+    }
+
+    /// Names for files gathered in one folder, as a .zip of several files gathers them: two files of the same name,
+    /// from two folders, become "Notes.txt" and "Notes 2.txt". Case does not count, as on the Mac's disks.
+    public static func uniqueNames(_ names: [String]) -> [String] {
+        var taken: Set<String> = []
+        return names.map { name in
+            let url = URL(fileURLWithPath: name)
+            var attempt = 1
+            var candidate = name
+            while taken.contains(candidate.lowercased()) {
+                attempt += 1
+                candidate = self.candidate(for: url, fileExtension: url.pathExtension, attempt: attempt).lastPathComponent
+            }
+            taken.insert(candidate.lowercased())
+            return candidate
         }
-        var candidate = named(base)
-        var number = 2
-        while exists(candidate) {
-            candidate = named("\(base) \(number)")
-            number += 1
-        }
-        return candidate
     }
 }

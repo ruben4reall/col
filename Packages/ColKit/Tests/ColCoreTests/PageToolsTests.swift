@@ -61,6 +61,16 @@ struct ShelfToolsTests {
         #expect(jpeg.path == "/Users/me/Desktop/Photo 3.jpg")
         let half = ShelfTools.destination(for: source, suffix: "50%", fileExtension: "png") { _ in false }
         #expect(half.lastPathComponent == "Photo 50%.png")
+        // The names a result tries in turn, when a move finds one taken after all.
+        #expect((1...3).map { ShelfTools.candidate(for: source, fileExtension: "heic", attempt: $0).lastPathComponent }
+            == ["Photo.heic", "Photo 2.heic", "Photo 3.heic"])
+        #expect(ShelfTools.candidate(for: source.deletingLastPathComponent().appendingPathComponent("Archive.zip"), fileExtension: "zip", attempt: 2)
+            .path == "/Users/me/Desktop/Archive 2.zip")
+    }
+
+    @Test func filesOfTheSameNameShareAnArchive() {
+        #expect(ShelfTools.uniqueNames(["Notes.txt", "Report.pdf", "notes.txt", "Notes.txt", "Folder", "Folder"])
+            == ["Notes.txt", "Report.pdf", "notes 2.txt", "Notes 3.txt", "Folder", "Folder 2"])
     }
 }
 
