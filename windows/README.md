@@ -49,15 +49,23 @@ Or take a zip, unzip it anywhere and run `Col.exe`: everything is in that folder
 - `Col-3.0.0-windows-x64-small.zip` (or `-arm64-small.zip`): for a PC that has the .NET 8 Desktop Runtime, from
   Microsoft's link above (x64 or Arm64, as your PC).
 
+Each release also carries these files under names without the version, so a page can always link to the latest:
+
+- https://github.com/ruben4reall/col/releases/latest/download/Col-windows-setup.exe
+- https://github.com/ruben4reall/col/releases/latest/download/Col-windows-x64.zip
+- https://github.com/ruben4reall/col/releases/latest/download/Col-windows-arm64.zip
+- https://github.com/ruben4reall/col/releases/latest/download/Col-windows-x64-small.zip
+- https://github.com/ruben4reall/col/releases/latest/download/Col-windows-arm64-small.zip
+
 Windows 10 version 2004 or later, or Windows 11; x64 or Arm64.
 
 | | Size |
 |---|---|
-| `Col-3.0.0-windows-setup.exe` (x64 and Arm64, small and full, in one) | about 115 MB |
+| `Col-3.0.0-windows-setup.exe` (x64 and Arm64, small and full, in one) | 114 MB |
 | `Col-3.0.0-windows-x64.zip`, .NET inside | 85 MB |
-| `Col-3.0.0-windows-x64-small.zip` | about 8 MB |
+| `Col-3.0.0-windows-x64-small.zip` | 8 MB |
 | `Col.exe` with .NET inside, unpacked | 222 MB |
-| `Col.exe` small, unpacked | 27 MB |
+| `Col.exe` small, unpacked | 25 MB |
 | `colctl.exe`, compiled ahead of time to native code (in every download) | 2.4 MB |
 
 The full `Col.exe` carries .NET and WPF uncompressed, on purpose: Windows maps them from the file instead of
@@ -70,10 +78,10 @@ Measured by the workflow on GitHub's Windows Server 2025 machines, one minute af
 
 | | Col for Windows |
 |---|---|
-| Private memory at rest | about 50 to 60 MB |
-| Working set at rest | about 130 to 150 MB |
+| Private memory at rest | about 50 to 70 MB |
+| Working set at rest | about 130 to 160 MB |
 | Processor at rest | 0.000 to 0.013 % |
-| Processor while music plays (the equalizer dances, at 24 frames a second) | about 0.5 % |
+| Processor while music plays (the equalizer dances, at 24 frames a second) | about 0.5 to 0.7 % |
 | A hook, from the agent's call to its answer | about 30 ms; when Col is not running, it gives up after 300 ms (0.4 to 0.6 s with the command's own start) |
 
 The island is one window that never moves or resizes: springs reshape the capsule inside it, frame by frame while
