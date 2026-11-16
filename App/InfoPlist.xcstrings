@@ -160,6 +160,22 @@
           }
         }
       }
+    },
+    "NSAppleEventsUsageDescription": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col brings forward the Terminal or iTerm2 tab an AI agent runs in, when you click its session in the island."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col met au premier plan l’onglet du Terminal ou d’iTerm2 où travaille un agent IA, quand vous cliquez sur sa session dans l’île."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

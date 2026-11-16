@@ -2,7 +2,7 @@
 
 Each release's section is what Col's update window and the GitHub release show. Dates are in ISO format.
 
-## 2.4.0 (unreleased)
+## 2.4.0 (2026-11-16)
 
 - **Col Connect**: your iPhone, Home Assistant, a Raspberry Pi or a build machine on your network can now push live
   activities and widgets into the island. Turn it on in Settings, Connect, pair each device (a QR code for your

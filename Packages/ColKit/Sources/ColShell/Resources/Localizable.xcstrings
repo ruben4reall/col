@@ -6672,6 +6672,986 @@
           }
         }
       }
+    },
+    "“%@” calls an address for the first time": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "« %@ » appelle une adresse pour la première fois"
+          }
+        }
+      }
+    },
+    "“%@” is not a header name: letters, digits and dashes only.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "« %@ » n’est pas un nom d’en-tête : lettres, chiffres et tirets seulement."
+          }
+        }
+      }
+    },
+    "A device sends its token with every request, in an Authorization: Bearer header. Removing a device takes its token back at once.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un appareil envoie son jeton avec chaque requête, dans un en-tête Authorization: Bearer. Retirer un appareil lui reprend son jeton aussitôt."
+          }
+        }
+      }
+    },
+    "A widget has three buttons at most.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un widget a trois boutons au plus."
+          }
+        }
+      }
+    },
+    "A widget needs an id.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un widget a besoin d’un identifiant."
+          }
+        }
+      }
+    },
+    "A widget read from an address is read only while it shows in the island, at the interval you choose.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un widget lu depuis une adresse n’est lu que pendant qu’il s’affiche dans l’île, à l’intervalle que vous choisissez."
+          }
+        }
+      }
+    },
+    "A widget’s id is 1 to 64 letters, digits, dots, dashes or underscores.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’identifiant d’un widget compte 1 à 64 lettres, chiffres, points, tirets ou tirets bas."
+          }
+        }
+      }
+    },
+    "Accept connections from outside this network": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accepter les connexions venant d’autres réseaux"
+          }
+        }
+      }
+    },
+    "Add a Header": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter un en-tête"
+          }
+        }
+      }
+    },
+    "Add a Widget from a URL": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter un widget depuis une URL"
+          }
+        }
+      }
+    },
+    "Add a Widget from a URL…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter un widget depuis une URL…"
+          }
+        }
+      }
+    },
+    "Add a Widgets Page": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter une page Widgets"
+          }
+        }
+      }
+    },
+    "Answer": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Répondre"
+          }
+        }
+      }
+    },
+    "Answer in Terminal": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Répondre dans le Terminal"
+          }
+        }
+      }
+    },
+    "Approve": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Approuver"
+          }
+        }
+      }
+    },
+    "Asked once for this button": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demandé une seule fois pour ce bouton"
+          }
+        }
+      }
+    },
+    "Bonjour": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bonjour"
+          }
+        }
+      }
+    },
+    "Button %lld needs a title and an http or https address.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le bouton %lld a besoin d’un titre et d’une adresse http ou https."
+          }
+        }
+      }
+    },
+    "Call It": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appeler"
+          }
+        }
+      }
+    },
+    "Col cannot listen on the network: %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col ne peut pas écouter sur le réseau : %@"
+          }
+        }
+      }
+    },
+    "Col Connect": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col Connect"
+          }
+        }
+      }
+    },
+    "Col Connect and widgets from the web…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col Connect et widgets venus du Web…"
+          }
+        }
+      }
+    },
+    "Col Connect: Shortcuts, curl and Home Assistant": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col Connect : Raccourcis, curl et Home Assistant"
+          }
+        }
+      }
+    },
+    "Col did not answer. Is Connect still on, and the phone on the same network?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col n’a pas répondu. Connect est-il toujours activé, et le téléphone sur le même réseau ?"
+          }
+        }
+      }
+    },
+    "Colour": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couleur"
+          }
+        }
+      }
+    },
+    "Copied": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copié"
+          }
+        }
+      }
+    },
+    "Copy Token": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copier le jeton"
+          }
+        }
+      }
+    },
+    "Device": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appareil"
+          }
+        }
+      }
+    },
+    "Edit…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier…"
+          }
+        }
+      }
+    },
+    "Every %lld min": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toutes les %lld min"
+          }
+        }
+      }
+    },
+    "For a Mac you reach through a VPN or a forwarded port. Requests still need a paired device’s token, and travel unencrypted.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pour un Mac que vous joignez par un VPN ou un port redirigé. Les requêtes ont toujours besoin du jeton d’un appareil jumelé, et circulent sans chiffrement."
+          }
+        }
+      }
+    },
+    "Headers": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En-têtes"
+          }
+        }
+      }
+    },
+    "Hello from your phone": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bonjour depuis votre téléphone"
+          }
+        }
+      }
+    },
+    "Hide": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masquer"
+          }
+        }
+      }
+    },
+    "Home Assistant": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home Assistant"
+          }
+        }
+      }
+    },
+    "If macOS kept Col off the local network, turn Col on in Privacy & Security, Local Network.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Si macOS a tenu Col à l’écart du réseau local, activez Col dans Confidentialité et sécurité, Réseau local."
+          }
+        }
+      }
+    },
+    "In the island on %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dans l’île le %@"
+          }
+        }
+      }
+    },
+    "iPhone, Home Assistant, build server…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iPhone, Home Assistant, serveur de build…"
+          }
+        }
+      }
+    },
+    "Keep Planning": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuer le plan"
+          }
+        }
+      }
+    },
+    "Last seen %@ from %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vu %@ depuis %@"
+          }
+        }
+      }
+    },
+    "Lets your phone, a home server, Home Assistant or a build machine on this network push activities and widgets into the island.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permet à votre téléphone, à un serveur maison, à Home Assistant ou à une machine de build de ce réseau d’envoyer des activités et des widgets dans l’île."
+          }
+        }
+      }
+    },
+    "Line %lld": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ligne %lld"
+          }
+        }
+      }
+    },
+    "Listening": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "À l’écoute"
+          }
+        }
+      }
+    },
+    "Look at the notch of your Mac.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Regardez l’encoche de votre Mac."
+          }
+        }
+      }
+    },
+    "New Token": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouveau jeton"
+          }
+        }
+      }
+    },
+    "No device yet. Pair your phone, a home server or a build machine: each one gets a token of its own, which you can take back.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun appareil pour l’instant. Jumelez votre téléphone, un serveur maison ou une machine de build : chacun reçoit son propre jeton, que vous pouvez reprendre."
+          }
+        }
+      }
+    },
+    "No port is free.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun port n’est libre."
+          }
+        }
+      }
+    },
+    "No widgets yet": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun widget pour l’instant"
+          }
+        }
+      }
+    },
+    "Not seen yet": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pas encore vu"
+          }
+        }
+      }
+    },
+    "Nothing at %@ in the answer.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rien à %@ dans la réponse."
+          }
+        }
+      }
+    },
+    "Off until you turn it on. Only the devices you pair can reach Col, each with a token of its own, and only from this network. Allow and Deny for your agents never leave this Mac.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Désactivé jusqu’à ce que vous l’activiez. Seuls les appareils que vous jumelez peuvent joindre Col, chacun avec son propre jeton, et seulement depuis ce réseau. Autoriser et Refuser pour vos agents ne quittent jamais ce Mac."
+          }
+        }
+      }
+    },
+    "Open Local Network Settings…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir les réglages Réseau local…"
+          }
+        }
+      }
+    },
+    "Open the plan’s file": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir le fichier du plan"
+          }
+        }
+      }
+    },
+    "Pair": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jumeler"
+          }
+        }
+      }
+    },
+    "Pair a Device": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jumeler un appareil"
+          }
+        }
+      }
+    },
+    "Pair a Device…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jumeler un appareil…"
+          }
+        }
+      }
+    },
+    "Plan": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plan"
+          }
+        }
+      }
+    },
+    "Preview": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aperçu"
+          }
+        }
+      }
+    },
+    "Progress": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Progression"
+          }
+        }
+      }
+    },
+    "Progress out of": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Progression sur"
+          }
+        }
+      }
+    },
+    "Push one with colctl widget set, from a device paired with Col Connect, or read one from an address in Settings, Connect.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Envoyez-en un avec colctl widget set, depuis un appareil jumelé avec Col Connect, ou lisez-en un depuis une adresse dans Réglages, Connect."
+          }
+        }
+      }
+    },
+    "Put a key path of the answer in braces: {data.temp}, {items.0.name}. Leave every field empty when the address answers in Col’s widget format.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mettez un chemin de la réponse entre accolades : {data.temp}, {items.0.name}. Laissez chaque champ vide quand l’adresse répond au format de widget de Col."
+          }
+        }
+      }
+    },
+    "Read": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lire"
+          }
+        }
+      }
+    },
+    "Read Now": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lire maintenant"
+          }
+        }
+      }
+    },
+    "Read only while the widget shows in the island.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lu seulement pendant que le widget s’affiche dans l’île."
+          }
+        }
+      }
+    },
+    "Read the address to see the widget it gives.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lisez l’adresse pour voir le widget qu’elle donne."
+          }
+        }
+      }
+    },
+    "Read when it shows in the island": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lu quand il s’affiche dans l’île"
+          }
+        }
+      }
+    },
+    "Reading…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lecture…"
+          }
+        }
+      }
+    },
+    "Remove this device and take its token back": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retirer cet appareil et reprendre son jeton"
+          }
+        }
+      }
+    },
+    "Save": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrer"
+          }
+        }
+      }
+    },
+    "Scan the code in Col’s settings again: this page needs the token it carries.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scannez à nouveau le code dans les réglages de Col : cette page a besoin du jeton qu’il contient."
+          }
+        }
+      }
+    },
+    "Security": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sécurité"
+          }
+        }
+      }
+    },
+    "Send a Test to the Island": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Envoyer un test à l’île"
+          }
+        }
+      }
+    },
+    "Send it in a header: Authorization: Bearer, then the token.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Envoyez-le dans un en-tête : Authorization: Bearer, puis le jeton."
+          }
+        }
+      }
+    },
+    "Shortcuts": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Raccourcis"
+          }
+        }
+      }
+    },
+    "Show Code": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher le code"
+          }
+        }
+      }
+    },
+    "Starting…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Démarrage…"
+          }
+        }
+      }
+    },
+    "Symbol": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Symbole"
+          }
+        }
+      }
+    },
+    "The address answered %lld.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’adresse a répondu %lld."
+          }
+        }
+      }
+    },
+    "The address is not an http or https one.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’adresse n’est pas une adresse http ou https."
+          }
+        }
+      }
+    },
+    "The address must start with http:// or https://.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’adresse doit commencer par http:// ou https://."
+          }
+        }
+      }
+    },
+    "The address sends Col elsewhere (%lld): give the address it leads to.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’adresse renvoie Col ailleurs (%lld) : donnez l’adresse vers laquelle elle mène."
+          }
+        }
+      }
+    },
+    "The answer is not JSON.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La réponse n’est pas du JSON."
+          }
+        }
+      }
+    },
+    "The answer is too large for a widget.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La réponse est trop grande pour un widget."
+          }
+        }
+      }
+    },
+    "The device’s current token stops working at once": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le jeton actuel de l’appareil cesse aussitôt de fonctionner"
+          }
+        }
+      }
+    },
+    "The page that opens gives the address and the token to copy into a Shortcut. Elsewhere, type them:": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La page qui s’ouvre donne l’adresse et le jeton à copier dans un raccourci. Ailleurs, tapez-les :"
+          }
+        }
+      }
+    },
+    "The widget format": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le format des widgets"
+          }
+        }
+      }
+    },
+    "This phone is paired with Col. Copy the address and the token into a Shortcut’s Get Contents of URL action, or into any app that calls a web address.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce téléphone est jumelé avec Col. Copiez l’adresse et le jeton dans l’action Obtenir le contenu de l’URL d’un raccourci, ou dans toute app qui appelle une adresse web."
+          }
+        }
+      }
+    },
+    "Title": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titre"
+          }
+        }
+      }
+    },
+    "Unit": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unité"
+          }
+        }
+      }
+    },
+    "Value": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Valeur"
+          }
+        }
+      }
+    },
+    "Value, kept in your Keychain": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Valeur, gardée dans votre trousseau"
+          }
+        }
+      }
+    },
+    "What the widget shows": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce que montre le widget"
+          }
+        }
+      }
+    },
+    "What your scripts, devices and web addresses show": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce que montrent vos scripts, vos appareils et vos adresses web"
+          }
+        }
+      }
+    },
+    "Widget": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Widget"
+          }
+        }
+      }
+    },
+    "Widgets": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Widgets"
+          }
+        }
+      }
+    },
+    "Widgets pushed with colctl widget set, the local API, Col Connect or an extension show here, and in the Widgets place you add to a page.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les widgets envoyés avec colctl widget set, l’API locale, Col Connect ou une extension s’affichent ici, et dans l’emplacement Widgets que vous ajoutez à une page."
+          }
+        }
+      }
+    },
+    "Your phone, a home server or a build machine, pushing to the island; widgets from the web.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre téléphone, un serveur maison ou une machine de build qui envoient dans l’île ; des widgets venus du Web."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
