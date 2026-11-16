@@ -19,12 +19,23 @@ colctl="$build/src/colctl/colctl"
 run=$(mktemp -d)
 chmod 700 "$run"
 pids=""
+# Whatever happens, the processes started here stop and their folder goes, and the script keeps its own result: a
+# process that already left, or a file a dying one still holds, is not a failure of the check. GTK may start the
+# document portal, which mounts a folder in the runtime directory: it is unmounted first.
 cleanup() {
-    for pid in $pids; do kill "$pid" 2>/dev/null || true; done
-    exec 3>&- 2>/dev/null || true
-    rm -rf "$run"
+    status=$?
+    set +e
+    for pid in $pids; do kill "$pid" 2>/dev/null; done
+    for pid in $pids; do wait "$pid" 2>/dev/null; done
+    exec 3>&-
+    for tool in fusermount3 fusermount; do
+        command -v "$tool" >/dev/null && "$tool" -uz "$run/doc" 2>/dev/null
+    done
+    rm -rf "$run" 2>/dev/null
+    exit "$status"
 }
 trap cleanup EXIT
+trap 'exit 130' INT TERM
 
 fail() {
     echo "FAIL: $*" >&2
@@ -225,8 +236,8 @@ if python3 -c "import gi" 2>/dev/null; then
     ls "$XDG_CACHE_HOME/col/art" >/dev/null 2>&1 && echo "warning: a file:// cover was copied to the cache"
     pointer move 800 700
     sleep 1.2
-    kill "$player"
-    sleep 1
+    kill "$player" 2>/dev/null || true
+    wait "$player" 2>/dev/null || true
 else
     echo "python3-gi missing: the music is not checked"
 fi
