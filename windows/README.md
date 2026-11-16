@@ -62,7 +62,7 @@ Measured by the workflow on GitHub's Windows Server 2025 machines, one minute af
 | Working set at rest | about 130 to 150 MB |
 | Processor at rest | 0.000 to 0.013 % |
 | Processor while music plays (the equalizer dances, at 24 frames a second) | about 0.5 % |
-| A hook, from the agent's call to its answer | about 30 ms; about 360 ms when Col is not running |
+| A hook, from the agent's call to its answer | about 30 ms; when Col is not running, it gives up after 300 ms (0.4 to 0.6 s with the command's own start) |
 
 The island is one window that never moves or resizes: springs reshape the capsule inside it, frame by frame while
 they move, and nothing runs once they rest. Media, volume, battery, clipboard and full-screen apps are followed
