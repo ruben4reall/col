@@ -16,7 +16,7 @@ import Testing
         HookEvent(sessionID: "s", event: "PermissionRequest", cwd: "/tmp/app", toolName: tool, toolInput: try raw(input), agent: .claude)
     }
 
-    @Test func anApprovedPlanGoesBackAsItCame() throws {
+    @Test func anApprovedPlanIsTheOneInItsFile() throws {
         let center = AgentCenter()
         let answers = AnswerRecorder()
         let plan = try event("ExitPlanMode", ##"{"plan":"# Refactor\n\n1. Split","planFilePath":"/Users/me/.claude/plans/a.md"}"##)
@@ -27,10 +27,11 @@ import Testing
         center.decide(request.id, .allow)
         let answer = try #require(answers.last)
         #expect(answer.decision == .allow)
-        #expect(answer.updatedInput == plan.toolInput)
+        // Sent back, the plan would read as the user's own edit, over any made in the terminal meanwhile.
+        #expect(answer.updatedInput == [:])
         let json = answer.json
         #expect(json["decision"] as? String == "allow")
-        #expect((json["updatedInput"] as? [String: Any])?["plan"] as? String == "# Refactor\n\n1. Split")
+        #expect((json["updatedInput"] as? [String: Any])?.isEmpty == true)
     }
 
     @Test func keepPlanningDenies() throws {

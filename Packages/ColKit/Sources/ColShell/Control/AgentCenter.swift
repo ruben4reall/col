@@ -130,12 +130,19 @@ final class AgentCenter {
         // approved as it was shown, its input handed back as it came.
         if case .plan = request.kind, decision != .ask {
             resolve(requestID, decision == .allow
-                ? Answer(decision: .allow, updatedInput: request.toolInput ?? [:])
+                ? Answer(decision: .allow, updatedInput: Self.approving(request.toolInput))
                 : Answer(decision: .deny, message: "The user chose to keep planning, from Col."))
         } else {
             resolve(requestID, Answer(decision: decision == .allow && !Self.canAllow(request) ? .ask : decision))
         }
         onChange?()
+    }
+
+    /// The input that approves a plan as it stands. Claude Code needs one beside `allow`, but takes a `plan` in it for
+    /// the user's own edit of the plan, which would put the island's copy over edits made in the terminal meanwhile:
+    /// the plan and its file are left out, and Claude Code keeps the plan of its file.
+    static func approving(_ input: [String: JSONValue]?) -> [String: JSONValue] {
+        (input ?? [:]).filter { $0.key != "plan" && $0.key != "planFilePath" }
     }
 
     /// Answers a request's questions with the labels chosen for each. Answers that are not among the options, or a

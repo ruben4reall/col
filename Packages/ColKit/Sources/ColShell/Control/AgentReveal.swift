@@ -74,15 +74,22 @@ enum AgentReveal {
                 app.activate()
                 return true
             }
-            // Off the main thread: the first time, macOS asks for Automation and the script waits for the answer. When
-            // the tab is not found, or Automation is refused, the app still comes forward.
+            // In a process of its own, through osascript: the first time, macOS asks for Automation and the script
+            // waits for the answer without holding the island up. When the tab is not found, or Automation is refused,
+            // the app still comes forward.
             let pid = app.processIdentifier
-            scripts.async {
-                let result = NSAppleScript(source: script)?.executeAndReturnError(nil)
-                if result?.booleanValue != true {
-                    DispatchQueue.main.async { _ = NSRunningApplication(processIdentifier: pid)?.activate() }
-                }
+            let process = Process()
+            process.executableURL = URL(fileURLWithPath: "/usr/bin/osascript")
+            process.arguments = ["-e", script]
+            let output = Pipe()
+            process.standardOutput = output
+            process.standardError = FileHandle.nullDevice
+            process.terminationHandler = { _ in
+                let answer = String(decoding: output.fileHandleForReading.readDataToEndOfFile(), as: UTF8.self)
+                guard answer.trimmingCharacters(in: .whitespacesAndNewlines) != "true" else { return }
+                DispatchQueue.main.async { _ = NSRunningApplication(processIdentifier: pid)?.activate() }
             }
+            do { try process.run() } catch { app.activate() }
         case .folderEditor:
             if let folder = origin.folder, let bundle = app.bundleURL, FileManager.default.fileExists(atPath: folder) {
                 let configuration = NSWorkspace.OpenConfiguration()
@@ -96,8 +103,6 @@ enum AgentReveal {
         }
         return true
     }
-
-    private static let scripts = DispatchQueue(label: "ch.rubencatalao.islet.reveal")
 
     /// The script that selects the tab whose terminal is `tty`, brings its window and the app forward, and answers
     /// whether it found it. Nil for a name that is not a terminal's.

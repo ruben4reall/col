@@ -92,9 +92,9 @@ private let hookTool: URL? = {
             }
             let decision = try #require((output["hookSpecificOutput"] as? [String: Any])?["decision"] as? [String: Any])
             #expect(decision["behavior"] as? String == "allow")
+            // An input beside allow, as Claude Code needs, without the plan, which it takes from the plan's file.
             let input = try #require(decision["updatedInput"] as? [String: Any])
-            #expect(input["plan"] as? String == "# Refactor\n\n1. Split")
-            #expect(input["planFilePath"] as? String == "/tmp/plans/a.md")
+            #expect(input.isEmpty)
         }
     }
 

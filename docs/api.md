@@ -139,8 +139,8 @@ turns it into the hook output both agents read.
 Two of Claude Code's requests are not tools to allow:
 
 - **A plan** (`ExitPlanMode`, as Claude Code leaves plan mode): the island shows the plan as Markdown. Approve answers
-  `allow` with `updatedInput`, the plan as Claude Code sent it, which the hook hands back; Keep Planning answers `deny`
-  with a `message` for Claude.
+  `allow` with an `updatedInput` that leaves the plan out, so Claude Code carries out the plan of its file, edits made
+  in the terminal included; Keep Planning answers `deny` with a `message` for Claude.
 - **Questions** (`AskUserQuestion`): the island shows each question with its options. The answer is `allow` with
   `updatedInput`: the questions as asked, and `answers`, each question's text mapped to the labels chosen (several
   joined with commas). Answer in Terminal answers `ask` and brings the terminal forward.
