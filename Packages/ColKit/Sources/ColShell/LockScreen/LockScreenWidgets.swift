@@ -13,6 +13,9 @@ final class LockScreenWidgets {
     private let power: PowerMonitor
     private let lyrics: LyricsModel
     var weather: WeatherModel?
+    /// The weather is kept fresh while the window shows, asked from show() and hide() once per lock, as the lyrics
+    /// are: a view's own appear and disappear do not follow a window ordered out.
+    private var watchesWeather = false
     private var window: NSWindow?
     private var observers: [NSObjectProtocol] = []
     /// The lyrics are followed line by line while the window shows them, and only then.
@@ -80,6 +83,10 @@ final class LockScreenWidgets {
             watching = true
             lyrics.watch()
         }
+        if Preferences.showsWeather, let weather, !watchesWeather {
+            watchesWeather = true
+            weather.watch()
+        }
     }
 
     private func hide() {
@@ -90,6 +97,10 @@ final class LockScreenWidgets {
         if watching {
             watching = false
             lyrics.unwatch()
+        }
+        if watchesWeather {
+            watchesWeather = false
+            weather?.unwatch()
         }
     }
 }
@@ -264,25 +275,18 @@ extension Color {
     }
 }
 
-/// The temperature and the sky, kept fresh while the Lock Screen shows them.
+/// The temperature and the sky, once a report has come.
 private struct LockScreenWeather: View {
     let weather: WeatherModel
 
     var body: some View {
-        Group {
-            if let report = weather.report {
-                HStack(spacing: 6) {
-                    Image(systemName: report.symbol).symbolRenderingMode(.multicolor)
-                    Text(WeatherFormat.temperature(report.temperature))
-                }
-                .padding(.horizontal, 12).frame(height: 30)
-                .background(Capsule().fill(.black.opacity(0.35)))
-            } else {
-                // Still a view while the report comes, so that it is asked for.
-                Color.clear.frame(width: 0, height: 0)
+        if let report = weather.report {
+            HStack(spacing: 6) {
+                Image(systemName: report.symbol).symbolRenderingMode(.multicolor)
+                Text(WeatherFormat.temperature(report.temperature))
             }
+            .padding(.horizontal, 12).frame(height: 30)
+            .background(Capsule().fill(.black.opacity(0.35)))
         }
-        .onAppear { weather.watch() }
-        .onDisappear { weather.unwatch() }
     }
 }
