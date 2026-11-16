@@ -20,7 +20,8 @@ final class LocationAccess: NSObject, CLLocationManagerDelegate {
         manager.desiredAccuracy = kCLLocationAccuracyKilometer
     }
 
-    var isAllowed: Bool { status == .authorizedAlways }
+    /// Allowed always, or while in use: macOS 11 and later may answer the latter, whose name Swift hides on the Mac.
+    var isAllowed: Bool { status == .authorizedAlways || status.rawValue == 4 }
     var canAsk: Bool { status == .notDetermined }
 
     /// Shows macOS's prompt; the answer arrives through the delegate.
