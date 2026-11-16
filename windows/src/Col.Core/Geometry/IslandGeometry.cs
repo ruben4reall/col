@@ -64,8 +64,6 @@ public sealed class IslandLayout
     public const double MaximumMiddle = 300;
     /// <summary>Room around the open island for its shadow.</summary>
     public const double ShadowMargin = 28;
-    /// <summary>Height of the invisible strip along the top edge that brings the island out on hover.</summary>
-    public const double WakeStripHeight = 3;
     /// <summary>How much the pill swells when the pointer rests on it.</summary>
     public const double PeekGrowth = 16;
 
@@ -146,15 +144,16 @@ public sealed class IslandLayout
     /// <summary>Bounding box of a shape in the canvas: centred, <see cref="Gap"/> below the top.</summary>
     public Box Frame(IslandShape shape) => new((Canvas.Width - shape.Width) / 2, Gap, shape.Width, shape.Height);
 
-    /// <summary>The invisible strip along the top edge of the screen that wakes the island: wider than the pill, so it
-    /// is easy to find, and only a few pixels high, so it hardly takes anything from the windows below.</summary>
-    public Box WakeStrip
+    /// <summary>
+    /// The row of pixels along the top edge of a monitor where a resting pointer wakes the island, in physical pixels:
+    /// one pixel high and as wide as the pill above which it sits. It is watched, never covered: no window lies there,
+    /// so a click on it goes to the window below, a maximised browser's tabs say.
+    /// </summary>
+    public EdgeZone WakeZone((int Left, int Top, int Right, int Bottom) monitor, double scale)
     {
-        get
-        {
-            var width = Rest.Width + 96;
-            return new Box((Canvas.Width - width) / 2, 0, width, WakeStripHeight);
-        }
+        var width = Math.Max(1, (int)Math.Round(Rest.Width * scale));
+        var left = monitor.Left + (monitor.Right - monitor.Left - width) / 2;
+        return new EdgeZone(left, left + width, monitor.Top);
     }
 
     /// <summary>
@@ -168,6 +167,63 @@ public sealed class IslandLayout
         var height = (int)Math.Ceiling(canvas.Height * scale);
         var x = monitor.Left + (monitor.Right - monitor.Left - width) / 2;
         return (x, monitor.Top, width, height);
+    }
+}
+
+/// <summary>The pixels at the top edge of a monitor that wake the island, in physical pixels: [Left, Right) on row Top.</summary>
+public sealed record EdgeZone(int Left, int Right, int Top)
+{
+    /// <summary>Whether the pointer rests in the zone: on the monitor's top row, within the pill's width, and with no
+    /// button held (dragging a window to the top does not wake the island).</summary>
+    public bool Contains(int x, int y, bool buttonHeld) => !buttonHeld && y == Top && x >= Left && x < Right;
+}
+
+/// <summary>
+/// Where the pointer is for the island: on the top edge's wake zone, or on the island itself. Between the two lie a few
+/// pixels that belong to the windows below; crossing them is not leaving, so a leave only counts once it has lasted a
+/// moment (<see cref="LeaveGrace"/>).
+/// </summary>
+public sealed class PointerPresence
+{
+    public static readonly TimeSpan LeaveGrace = TimeSpan.FromMilliseconds(120);
+
+    public bool AtEdge { get; private set; }
+    public bool OverIsland { get; private set; }
+    /// <summary>What the island's rules were last told.</summary>
+    public bool Inside { get; private set; }
+    public bool LeavePending { get; private set; }
+
+    public enum Change { None, Entered, LeaveStarted, LeaveCancelled }
+
+    public Change Update(bool? atEdge = null, bool? overIsland = null)
+    {
+        AtEdge = atEdge ?? AtEdge;
+        OverIsland = overIsland ?? OverIsland;
+        var here = AtEdge || OverIsland;
+        if (here)
+        {
+            var cancelled = LeavePending;
+            LeavePending = false;
+            if (!Inside)
+            {
+                Inside = true;
+                return Change.Entered;
+            }
+            return cancelled ? Change.LeaveCancelled : Change.None;
+        }
+        if (!Inside || LeavePending) return Change.None;
+        LeavePending = true;
+        return Change.LeaveStarted;
+    }
+
+    /// <summary>The grace has passed: true when the pointer has really left, and the island's rules are told.</summary>
+    public bool LeaveGraceEnded()
+    {
+        if (!LeavePending) return false;
+        LeavePending = false;
+        if (AtEdge || OverIsland) return false;
+        Inside = false;
+        return true;
     }
 }
 

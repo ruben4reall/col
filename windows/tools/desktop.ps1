@@ -40,6 +40,30 @@ public static class ColDesktop
     public static extern int GetSystemMetrics(int index);
 
     [DllImport("user32.dll")]
+    public static extern void mouse_event(int flags, int dx, int dy, int data, IntPtr extra);
+
+    /// <summary>Moves the pointer as a mouse would: through the input stream, which low-level hooks see.</summary>
+    public static void MoveTo(int x, int y)
+    {
+        int width = GetSystemMetrics(0), height = GetSystemMetrics(1);
+        // MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE, in 0 to 65535 across the screen.
+        mouse_event(0x8001, (x * 65535 + width / 2) / (width - 1), (y * 65535 + height / 2) / (height - 1), 0, IntPtr.Zero);
+    }
+
+    public static void Click()
+    {
+        mouse_event(0x0002, 0, 0, 0, IntPtr.Zero);
+        System.Threading.Thread.Sleep(30);
+        mouse_event(0x0004, 0, 0, 0, IntPtr.Zero);
+    }
+
+    [DllImport("user32.dll")]
+    public static extern bool GetCursorPos(out POINT point);
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct POINT { public int X, Y; }
+
+    [DllImport("user32.dll")]
     public static extern IntPtr GetDC(IntPtr hwnd);
 
     [DllImport("user32.dll")]

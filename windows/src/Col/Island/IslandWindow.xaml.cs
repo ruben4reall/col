@@ -12,9 +12,10 @@ namespace Col.Island;
 
 /// <summary>
 /// The island: a borderless, transparent window at the top centre of a monitor that never takes the focus and stays out
-/// of Alt-Tab. Its transparent pixels let clicks through to the windows below, so only the capsule itself (and a thin
-/// strip along the top edge) catches the pointer. The window never moves while the island animates: springs reshape the
-/// capsule inside it, frame by frame while they move, and nothing runs once they rest.
+/// of Alt-Tab. Its transparent pixels let clicks through to the windows below, so only the capsule itself catches the
+/// pointer; nothing at all is drawn above it, so the top edge of the screen stays the other windows'. The window never
+/// moves while the island animates: springs reshape the capsule inside it, frame by frame while they move, and nothing
+/// runs once they rest.
 /// </summary>
 internal partial class IslandWindow : Window
 {
@@ -41,6 +42,9 @@ internal partial class IslandWindow : Window
     private bool _frozen;
     private uint[] _privateFormats = [];
     private DispatcherTimer? _trim;
+    private readonly PointerPresence _presence = new();
+    private readonly DispatcherTimer _leave;
+    private EdgeWatcher? _edge;
 
     public IslandWindow(Hub hub)
     {
@@ -51,6 +55,12 @@ internal partial class IslandWindow : Window
         _restTimer = OneShot(IslandMachine.RestDelay, IslandEvent.RestTimerFired);
         _hoverTimer = OneShot(IslandMachine.HoverDwell, IslandEvent.HoverTimerFired);
         _exitTimer = OneShot(IslandMachine.ExitGrace, IslandEvent.ExitTimerFired);
+        _leave = new DispatcherTimer(DispatcherPriority.Normal, Dispatcher) { Interval = PointerPresence.LeaveGrace };
+        _leave.Tick += (_, _) =>
+        {
+            _leave.Stop();
+            if (_presence.LeaveGraceEnded()) Handle(IslandEvent.PointerExited);
+        };
 
         var start = _layout.Target(IslandState.Collapsed, Wings.None, 0, hub.Settings.VisibleAtRest || hub.IsDemo, false);
         _width = new SpringValue(start.Width);
@@ -75,10 +85,9 @@ internal partial class IslandWindow : Window
         };
         SettingsButton.Click += (_, _) => hub.OpenSettings();
 
-        MouseEnter += (_, _) => Handle(IslandEvent.PointerEntered);
-        MouseLeave += (_, _) => Handle(IslandEvent.PointerExited);
+        MouseEnter += (_, _) => OnPresence(_presence.Update(overIsland: true));
+        MouseLeave += (_, _) => OnPresence(_presence.Update(overIsland: false));
         Body.MouseLeftButtonUp += (_, _) => Press();
-        WakeStrip.MouseLeftButtonUp += (_, _) => Press();
         Body.MouseRightButtonUp += (_, e) =>
         {
             e.Handled = true;
@@ -124,15 +133,38 @@ internal partial class IslandWindow : Window
             ];
             _fullScreen = new FullScreenWatcher(_hwnd);
             _fullScreen.Changed += _ => UpdatePresence();
+            _edge = new EdgeWatcher();
+            _edge.Changed += atEdge => Dispatcher.BeginInvoke(() => OnPresence(_presence.Update(atEdge: atEdge)));
         }
         Place();
         _fullScreen?.Start(() => _monitor?.Bounds ?? default);
+        _edge?.Start();
+    }
+
+    /// <summary>The pointer arrived on the island or its wake zone, or left both for longer than the grace.</summary>
+    private void OnPresence(PointerPresence.Change change)
+    {
+        switch (change)
+        {
+            case PointerPresence.Change.Entered:
+                _leave.Stop();
+                Handle(IslandEvent.PointerEntered);
+                break;
+            case PointerPresence.Change.LeaveStarted:
+                _leave.Stop();
+                _leave.Start();
+                break;
+            case PointerPresence.Change.LeaveCancelled:
+                _leave.Stop();
+                break;
+        }
     }
 
     protected override void OnClosed(EventArgs e)
     {
         if (_hwnd != IntPtr.Zero && !_hub.IsDemo) Win32.RemoveClipboardFormatListener(_hwnd);
         _fullScreen?.Dispose();
+        _edge?.Dispose();
         StopRendering();
         base.OnClosed(e);
     }
@@ -178,6 +210,7 @@ internal partial class IslandWindow : Window
         var bounds = _monitor.Bounds;
         var (x, y, width, height) = IslandLayout.Placement((bounds.Left, bounds.Top, bounds.Right, bounds.Bottom), _monitor.Scale, _layout.Canvas);
         Win32.SetWindowPos(_hwnd, Win32.HWND_TOPMOST, x, y, width, height, Win32.SWP_NOACTIVATE);
+        if (_edge is not null) _edge.Zone = _layout.WakeZone((bounds.Left, bounds.Top, bounds.Right, bounds.Bottom), _monitor.Scale);
         _fullScreen?.Check();
     }
 
@@ -186,10 +219,11 @@ internal partial class IslandWindow : Window
         var (openWidth, openHeight) = _layout.Open;
         ExpandedLayer.Width = openWidth;
         ExpandedLayer.Height = openHeight;
-        WakeStrip.Width = _layout.WakeStrip.Width;
-        WakeStrip.Height = _layout.WakeStrip.Height;
-        Width = _layout.Canvas.Width;
-        Height = _layout.Canvas.Height;
+        var (canvasWidth, canvasHeight) = _layout.Canvas;
+        Width = canvasWidth;
+        Height = canvasHeight;
+        // Nothing above the island, not even its shadow: those pixels stay transparent, and the clicks theirs.
+        Root.Clip = new RectangleGeometry(new Rect(0, IslandLayout.Gap, canvasWidth, canvasHeight - IslandLayout.Gap));
     }
 
     private void OnSettingsChanged()
@@ -404,9 +438,6 @@ internal partial class IslandWindow : Window
             ExpandedLayer.Visibility = Visibility.Collapsed;
             TrimLater();
         }
-
-        Bridge.Width = Math.Max(width, 40);
-        Bridge.Visibility = opacity > 0.02 ? Visibility.Visible : Visibility.Collapsed;
 
         // A soft shadow under the open island only: at rest the capsule has none, and clicks around it pass through.
         if (open > 0.01)

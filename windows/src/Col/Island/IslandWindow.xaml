@@ -9,11 +9,8 @@
         UseLayoutRounding="True" SnapsToDevicePixels="True" TextOptions.TextFormattingMode="Ideal"
         FontFamily="{StaticResource Island.Font}" Foreground="{StaticResource Island.Text}">
     <Grid x:Name="Root">
-        <!-- An invisible strip along the top edge of the screen: resting the pointer on it brings the island out. Drawn
-             at the lowest alpha a window can have, so Windows still gives it the pointer. -->
-        <Rectangle x:Name="WakeStrip" Fill="#01000000" VerticalAlignment="Top" HorizontalAlignment="Center" Height="3" Width="220" />
-        <!-- Between the strip and the island, so moving down from one to the other never leaves the window. -->
-        <Rectangle x:Name="Bridge" Fill="#01000000" VerticalAlignment="Top" HorizontalAlignment="Center" Height="9" Width="124" />
+        <!-- Nothing is drawn above the island: the top edge of the screen stays the windows' below, and resting the
+             pointer there is noticed by EdgeWatcher, without any window in the way. -->
 
         <!-- The island itself: night black, rounded on all four corners. -->
         <Border x:Name="Body" Background="{StaticResource Island.Night}" VerticalAlignment="Top" HorizontalAlignment="Center"

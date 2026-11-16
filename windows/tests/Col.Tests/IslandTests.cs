@@ -53,7 +53,47 @@ public class IslandGeometryTests
     }
 
     [Fact]
-    public void TheCanvasHoldsEveryShapeAndTheWakeStripSitsAtTheTopEdge()
+    public void TheWakeZoneIsOneRowAsWideAsThePillAndNeverTakesAButtonHeld()
+    {
+        var layout = new IslandLayout();
+        var zone = layout.WakeZone((0, 0, 1920, 1080), 1);
+        Assert.Equal(new EdgeZone(898, 1022, 0), zone);
+        Assert.Equal(layout.Rest.Width, zone.Right - zone.Left);
+        Assert.True(zone.Contains(960, 0, buttonHeld: false));
+        Assert.True(zone.Contains(898, 0, buttonHeld: false));
+        Assert.False(zone.Contains(1022, 0, buttonHeld: false));
+        // One row only: a pixel lower is the window below's.
+        Assert.False(zone.Contains(960, 1, buttonHeld: false));
+        // Dragging a window to the top edge does not wake the island.
+        Assert.False(zone.Contains(960, 0, buttonHeld: true));
+        // At 150 %, on a monitor right of the first, under another one (its top is not 0).
+        var second = layout.WakeZone((1920, 200, 1920 + 2560, 200 + 1440), 1.5);
+        Assert.Equal(186, second.Right - second.Left);
+        Assert.Equal(200, second.Top);
+        Assert.Equal(1920 + 1280, (second.Left + second.Right) / 2);
+        Assert.False(second.Contains(3200, 199, buttonHeld: false));
+    }
+
+    [Fact]
+    public void CrossingTheGapBetweenTheEdgeAndTheIslandIsNotLeaving()
+    {
+        var presence = new PointerPresence();
+        Assert.Equal(PointerPresence.Change.Entered, presence.Update(atEdge: true));
+        // Down from the edge, over the pixels of the window below, onto the island.
+        Assert.Equal(PointerPresence.Change.LeaveStarted, presence.Update(atEdge: false));
+        Assert.Equal(PointerPresence.Change.LeaveCancelled, presence.Update(overIsland: true));
+        Assert.False(presence.LeaveGraceEnded());
+        Assert.True(presence.Inside);
+        // Away for good.
+        Assert.Equal(PointerPresence.Change.LeaveStarted, presence.Update(overIsland: false));
+        Assert.Equal(PointerPresence.Change.None, presence.Update(overIsland: false));
+        Assert.True(presence.LeaveGraceEnded());
+        Assert.False(presence.Inside);
+        Assert.Equal(PointerPresence.Change.None, presence.Update(atEdge: false));
+    }
+
+    [Fact]
+    public void TheCanvasHoldsEveryShape()
     {
         foreach (var size in Enum.GetValues<IslandSize>())
         {
@@ -68,8 +108,6 @@ public class IslandGeometryTests
                 var frame = layout.Frame(shape);
                 Assert.True(frame.X >= 0 && frame.Right <= canvas.Width && frame.Bottom <= canvas.Height);
             }
-            Assert.Equal(0, layout.WakeStrip.Y);
-            Assert.Equal(canvas.Width / 2, layout.WakeStrip.CenterX, 6);
         }
     }
 

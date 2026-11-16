@@ -157,6 +157,52 @@ $uninstall = Finish (Invoke-Colctl @('hooks', 'uninstall', '--agent', 'claude', 
 $json = Get-Content $settings -Raw | ConvertFrom-Json
 Check ($uninstall.Code -eq 0 -and $json.hooks.Stop.Count -eq 1 -and -not $json.hooks.PermissionRequest) 'hooks uninstall leaves only the user''s hooks'
 
+# The top edge: a click there reaches the window below (a maximised browser's tabs, say), and a pointer resting there
+# brings the island out. A window across the top of the screen stands for the browser.
+$clicks = Join-Path $env:TEMP 'col-ci-clicks.txt'
+Remove-Item $clicks -ErrorAction SilentlyContinue
+$target = Start-Process -FilePath powershell -ArgumentList @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', (Join-Path $PSScriptRoot 'clicktarget.ps1'), '-Log', $clicks) -PassThru
+$deadline = (Get-Date).AddSeconds(20)
+while (-not (Test-Path $clicks) -and (Get-Date) -lt $deadline) { Start-Sleep -Milliseconds 200 }
+Start-Sleep -Seconds 2
+$middle = [int]([ColDesktop]::GetSystemMetrics(0) / 2)
+function Clicked([int] $y) { @((Get-Content $clicks) | Where-Object { $_ -match "^down \d+ $y$" }).Count -gt 0 }
+[ColDesktop]::MoveTo($middle, 600)
+Start-Sleep -Milliseconds 800
+# Where the hidden island sleeps: its pixels are transparent, the click goes through.
+[ColDesktop]::MoveTo($middle, 20)
+[ColDesktop]::Click()
+Start-Sleep -Milliseconds 400
+Check (Clicked 20) 'a click where the hidden island sleeps reaches the window below'
+# On the top edge, in the wake zone, and away before the island would come out.
+[ColDesktop]::MoveTo($middle, 0)
+[ColDesktop]::Click()
+[ColDesktop]::MoveTo($middle, 600)
+Start-Sleep -Milliseconds 600
+Write-Host "clicks: $((Get-Content $clicks) -join ' | ')"
+Check (Clicked 0) 'a click on the top edge, where the island wakes, reaches the window below'
+Start-Sleep -Milliseconds 800
+
+# Resting on the top edge opens the island; leaving lets it close.
+[ColDesktop]::MoveTo($middle, 0)
+$open = Find-Button 'Settings' 4
+Save-Screen -Path (Join-Path $Out 'e2e-edge.png') -Zoom
+Check ($null -ne $open) 'resting the pointer on the top edge opens the island'
+[ColDesktop]::MoveTo($middle, 600)
+Start-Sleep -Seconds 2
+$gone = $null -eq (Find-Button 'Settings' 1)
+Check $gone 'leaving the top edge lets the island close'
+# A button held while arriving (a window being dragged) wakes nothing.
+[ColDesktop]::MoveTo($middle, 60)
+[ColDesktop]::mouse_event(0x0002, 0, 0, 0, [IntPtr]::Zero)
+[ColDesktop]::MoveTo($middle, 0)
+$dragged = Find-Button 'Settings' 2
+[ColDesktop]::mouse_event(0x0004, 0, 0, 0, [IntPtr]::Zero)
+Check ($null -eq $dragged) 'dragging to the top edge does not open the island'
+[ColDesktop]::MoveTo($middle, 600)
+Stop-Process -Id $target.Id -Force -ErrorAction SilentlyContinue
+Start-Sleep -Seconds 2
+
 # Memory and processor at rest: one minute after the last event, nothing playing, nothing to show.
 Start-Sleep -Seconds 60
 $process = Get-Process -Id $col.Id
