@@ -17,7 +17,6 @@ struct LiveActivitiesPane: View {
     @State private var ranking = Preferences.activityRanking
     @State private var backlight = Preferences.showsKeyboardBacklight
     @State private var capsLock = Preferences.showsCapsLock
-    @State private var focus = Preferences.showsFocus
     @State private var mute = Preferences.mutesMicrophone
     @State private var accessories = Preferences.showsAccessoryBatteries
     @State private var meeting = Preferences.showsNextMeeting
@@ -72,7 +71,7 @@ struct LiveActivitiesPane: View {
                 IconToggle(symbol: "mic.fill", tint: .orange, title: "Microphone and camera in use", detail: "Which app is listening or filming.", isOn: $privacy)
                     .onChange(of: privacy) { Preferences.showsMicrophoneAndCamera = privacy }
                 IconToggle(symbol: "mic.slash.fill", tint: .red, title: "Mute the microphone from the island",
-                           detail: "A Mute button on the Live page, and Control-Option-Command-M. While the microphone is muted, the island shows it in red.", isOn: $mute)
+                           detail: "A Mute button on the Live page mutes your Mac’s default microphone, and the island shows it in red while it stays muted. Turning this off, or quitting Col, unmutes it.", isOn: $mute)
                     .onChange(of: mute) { Preferences.mutesMicrophone = mute }
                 IconToggle(symbol: "light.max", tint: .gray, title: "Keyboard backlight",
                            detail: backlightDetail, isOn: $backlight)
@@ -82,13 +81,6 @@ struct LiveActivitiesPane: View {
                     .onChange(of: capsLock) {
                         Preferences.showsCapsLock = capsLock
                         if capsLock, !permissions.isGranted(.accessibility) { permissions.request(.accessibility) }
-                    }
-                IconToggle(symbol: "moon.fill", tint: .indigo, title: "Focus",
-                           detail: "A word when a Focus turns on or off, and a sign on the Live page while one is on. Asks for Focus status.", isOn: $focus)
-                    .onChange(of: focus) {
-                        Preferences.showsFocus = focus
-                        if focus { permissions.refresh() }
-                        if focus, !permissions.isGranted(.focus) { permissions.request(.focus) }
                     }
                 IconToggle(symbol: "magicmouse.fill", tint: .gray, title: "Accessories’ batteries",
                            detail: "Your mouse, keyboard and trackpad in the Devices widget, and a word when one falls under 15 %.", isOn: $accessories)

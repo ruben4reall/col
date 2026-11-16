@@ -2,22 +2,6 @@ import AppKit
 import ColCore
 import SwiftUI
 
-/// A Focus is on: a small sign at the top of the Live page, in the moon's indigo.
-struct FocusSign: View {
-    static func shows(_ focus: FocusMonitor) -> Bool {
-        Preferences.showsFocus && focus.isFocused == true
-    }
-
-    var body: some View {
-        Label { Text("Focus", bundle: .module) } icon: { Image(systemName: "moon.fill") }
-            .font(.system(size: 11, weight: .semibold))
-            .foregroundStyle(Color(red: 0.6, green: 0.59, blue: 1))
-            .padding(.horizontal, 9)
-            .frame(height: 22)
-            .background(Capsule().fill(Color(red: 0.37, green: 0.36, blue: 0.9).opacity(0.24)))
-    }
-}
-
 /// The meeting the closed island counts down to: its colour, its title, its time, and Join when it has a call link.
 struct MeetingCard: View {
     let event: CalendarModel.Event
@@ -86,7 +70,7 @@ struct MicrophoneRow: View {
                     .foregroundStyle(.white)
                 Group {
                     if muted {
-                        Text("Muted for every app", bundle: .module)
+                        Text("\(microphone.deviceName) is muted", bundle: .module)
                     } else {
                         Text("\(ListFormatter.localizedString(byJoining: microphone.users)) listening", bundle: .module)
                     }

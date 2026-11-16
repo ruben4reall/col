@@ -29,7 +29,7 @@ struct IslandServices {
     let device: DeviceCardModel
     let audio: AudioMonitor
     let awake: KeepAwake
-    /// Weather, Pomodoro, the next meeting, Focus, the microphone's mute and the accessories' batteries.
+    /// Weather, Pomodoro, the next meeting, the microphone's mute and the accessories' batteries.
     let glance: Glance
     let openSettings: () -> Void
 

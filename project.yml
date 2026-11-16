@@ -99,8 +99,6 @@ targets:
         # The weather where you are, when no city is typed: asked when the weather is turned on, to about a kilometre.
         NSLocationUsageDescription: Col shows the weather where you are. Only a position rounded to about a kilometre is sent to Open-Meteo.
         NSLocationWhenInUseUsageDescription: Col shows the weather where you are. Only a position rounded to about a kilometre is sent to Open-Meteo.
-        # Asked when the Focus display is turned on: macOS tells Col only whether a Focus is on.
-        NSFocusStatusUsageDescription: Col says in the notch when a Focus turns on or off.
         # The AI servers are the user's own, often plain http on their network under a name such as mac-studio.lan,
         # which App Transport Security would refuse. Everything else Col reaches (the update feed, LRCLIB, Open-Meteo) is https.
         # Nothing else may sit beside this key: NSAllowsLocalNetworking, for one, would turn it off.

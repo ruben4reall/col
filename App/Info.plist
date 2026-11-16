@@ -84,8 +84,6 @@
 	<string>Col shows your next events in the notch.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Col uses the camera only when you open its mirror.</string>
-	<key>NSFocusStatusUsageDescription</key>
-	<string>Col says in the notch when a Focus turns on or off.</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Ruben Catalao. MIT License. Col is not affiliated with Apple.</string>
 	<key>NSLocalNetworkUsageDescription</key>

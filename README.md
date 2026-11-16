@@ -55,14 +55,15 @@ your scripts and your AI agents.
   holds. Ask one a question from the island: the answer comes as it is written, and the question goes to that server
   only.
 - **Volume and brightness.** A quiet gauge in the notch instead of the big square in the middle of the screen, for the
-  keyboard backlight too, and Caps Lock or a Focus turning on if you like.
+  keyboard backlight too, and Caps Lock if you like.
 - **Files, clipboard, agenda.** A shelf for files with AirDrop that converts, resizes and compresses them and copies
   the text of an image, a searchable clipboard history kept in memory (only the copies you pin are saved), the next
   events of your day with a countdown before a meeting and a Join button for calls, and today's reminders.
 - **Tools.** A timer that counts down in the wings, Pomodoro, the weather, a colour picker, a camera mirror, system
   stats with the graphics processor, the battery of your mouse, keyboard and trackpad, keep awake, downloads.
-- **Privacy at a glance.** The app using your microphone or camera, right where the camera is, and a button and
-  ⌃⌥⌘M to mute the microphone for every app.
+- **Privacy at a glance.** The app using your microphone or camera, right where the camera is, and a button to mute
+  your Mac's microphone (⌃⌥⌘M too, if you turn it on). Col unmutes it when you turn the setting off or quit; after a
+  crash, it stays muted until Col opens again.
 - **Programmable.** The `colctl` command, a local API, `col://` links, Shortcuts actions and extensions put your own
   live activities in the notch.
 - **Never in the way.** The wings never cover a menu or a menu bar icon, the island steps aside in full screen, and on
@@ -166,7 +167,6 @@ Each one only if a module you chose needs it:
 - **Speech Recognition**, for the prompter's Voice Follow, on your Mac only.
 - **Local Network**, for the prompter's phone remote and the AI servers you add on another machine.
 - **Location**, only for the weather where you are, if you turn the weather on without typing a city.
-- **Focus**, only if you turn on Focus in Live activities, to say when one turns on or off.
 - **Downloads folder**, only if you turn on Downloads in progress, to show the files your browser is still writing.
 - **System Audio Recording**, only if you turn on Bars that follow the sound, so the bars move with the music. The
   sound is analysed on your Mac as it plays and never recorded or sent.

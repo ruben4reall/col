@@ -2,7 +2,6 @@ import AppKit
 import AVFoundation
 import CoreBluetooth
 import EventKit
-import Intents
 import Observation
 import Speech
 import SwiftUI
@@ -15,7 +14,7 @@ final class PermissionCenter {
     static let shared = PermissionCenter()
 
     enum Permission: String, CaseIterable, Identifiable {
-        case accessibility, calendars, bluetooth, camera, microphone, speech, audioCapture, location, focus
+        case accessibility, calendars, bluetooth, camera, microphone, speech, audioCapture, location
         var id: String { rawValue }
 
         var title: LocalizedStringResource {
@@ -32,7 +31,6 @@ final class PermissionCenter {
             case .speech: LocalizedStringResource("Speech Recognition", bundle: .settings)
             case .audioCapture: LocalizedStringResource("System Audio Recording", bundle: .settings)
             case .location: LocalizedStringResource("Location", bundle: .settings)
-            case .focus: LocalizedStringResource("Focus", bundle: .settings)
             }
         }
 
@@ -47,7 +45,6 @@ final class PermissionCenter {
             case .speech: LocalizedStringResource("Lets Voice Follow keep your place word by word. Recognition runs on your Mac.", bundle: .settings)
             case .audioCapture: LocalizedStringResource("Lets the bars beside the camera follow the music itself. The sound is analysed on your Mac, never recorded or sent. Without it, the bars dance on their own.", bundle: .settings)
             case .location: LocalizedStringResource("Finds the weather where you are, to about a kilometre: only that rounded position goes to Open-Meteo. Without it, type a city in Settings.", bundle: .settings)
-            case .focus: LocalizedStringResource("Lets the island say when a Focus turns on or off. macOS tells Col only that one is on, never which.", bundle: .settings)
             }
         }
 
@@ -61,7 +58,6 @@ final class PermissionCenter {
             case .microphone, .speech: LocalizedStringResource("Prompter", bundle: .settings)
             case .audioCapture: LocalizedStringResource("Bars that follow the sound", bundle: .settings)
             case .location: LocalizedStringResource("Weather", bundle: .settings)
-            case .focus: LocalizedStringResource("Focus", bundle: .settings)
             }
         }
 
@@ -75,7 +71,6 @@ final class PermissionCenter {
             case .speech: "waveform"
             case .audioCapture: "speaker.wave.3.fill"
             case .location: "location.fill"
-            case .focus: "moon.fill"
             }
         }
 
@@ -89,7 +84,6 @@ final class PermissionCenter {
             case .speech: .purple
             case .audioCapture: .pink
             case .location: .blue
-            case .focus: .indigo
             }
         }
 
@@ -105,7 +99,6 @@ final class PermissionCenter {
             // System audio recording is listed with screen recording.
             case .audioCapture: "Privacy_ScreenCapture"
             case .location: "Privacy_LocationServices"
-            case .focus: "Privacy_Focus"
             }
         }
     }
@@ -117,8 +110,6 @@ final class PermissionCenter {
     private(set) var microphone = AVCaptureDevice.authorizationStatus(for: .audio)
     private(set) var speech = SFSpeechRecognizer.authorizationStatus()
     private(set) var audioCapture = AudioCapturePermission.status
-    /// Read when the permissions are shown, not at launch: Col does not touch Focus status before it is wanted.
-    private(set) var focus: INFocusStatusAuthorizationStatus = .notDetermined
     /// Accessibility was asked for and the list in System Settings is open: say what to do there.
     private(set) var awaitingAccessibility = false
 
@@ -144,7 +135,6 @@ final class PermissionCenter {
         case .speech: speech == .authorized
         case .audioCapture: audioCapture == .granted
         case .location: LocationAccess.shared.isAllowed
-        case .focus: focus == .authorized
         }
     }
 
@@ -159,7 +149,6 @@ final class PermissionCenter {
         case .speech: speech == .notDetermined
         case .audioCapture: audioCapture == .unknown
         case .location: LocationAccess.shared.canAsk
-        case .focus: focus == .notDetermined
         }
     }
 
@@ -172,7 +161,6 @@ final class PermissionCenter {
             microphone = AVCaptureDevice.authorizationStatus(for: .audio)
             speech = SFSpeechRecognizer.authorizationStatus()
             audioCapture = AudioCapturePermission.status
-            focus = INFocusStatusCenter.default.authorizationStatus
             if accessibility { awaitingAccessibility = false }
         }
     }
@@ -227,11 +215,6 @@ final class PermissionCenter {
             if !asked { SoundLevels.shared.listenOnce() }
         case .location:
             LocationAccess.shared.request()
-        case .focus:
-            Task { @MainActor in
-                _ = await Self.requestFocusStatus()
-                refresh()
-            }
         }
     }
 
@@ -240,13 +223,6 @@ final class PermissionCenter {
     private nonisolated static func requestSpeechRecognition() async -> SFSpeechRecognizerAuthorizationStatus {
         await withCheckedContinuation { continuation in
             SFSpeechRecognizer.requestAuthorization { @Sendable status in continuation.resume(returning: status) }
-        }
-    }
-
-    /// Focus status answers on a queue of its own, like speech.
-    private nonisolated static func requestFocusStatus() async -> INFocusStatusAuthorizationStatus {
-        await withCheckedContinuation { continuation in
-            INFocusStatusCenter.default.requestAuthorization { @Sendable status in continuation.resume(returning: status) }
         }
     }
 

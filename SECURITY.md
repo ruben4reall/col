@@ -13,7 +13,7 @@ Everything Col reads, writes or runs, and why.
 
 | Path | What | When |
 |---|---|---|
-| `~/Library/Preferences/ch.rubencatalao.islet.plist` | Settings, the shelf's file bookmarks, pinned clipboard text, the songs whose lyrics you moved, chose or hid (their title, artist and LRCLIB number, never the lyrics), the weather's city if you type one, and today's count of Pomodoro sessions | Always |
+| `~/Library/Preferences/ch.rubencatalao.islet.plist` | Settings, the shelf's file bookmarks, pinned clipboard text, the songs whose lyrics you moved, chose or hid (their title, artist and LRCLIB number, never the lyrics), the weather's city if you type one, today's count of Pomodoro sessions, and the microphone Col muted until it gives it back | Always |
 | `~/Library/Application Support/Col/col.sock` | The local socket scripts and agents talk to: mode 0600 in a 0700 folder, so only your user can connect. It never listens on the network | While Col runs |
 | `~/Library/Application Support/Col/Extensions/` | Your extensions, one folder each | When you add one |
 | `~/Library/Application Support/Col/Scripts/` | The prompter's scripts, one Markdown file each, saved as you type. The first time, the scripts of Souffleur (the prompter's former app) are copied in from `~/Library/Application Support/Souffleur/Scripts/`, which is left as it was | When you use the prompter |
@@ -87,13 +87,17 @@ private aggregate device with no other input, so no microphone is ever opened; i
 a second into the bars' heights, then dropped, never recorded or sent). The colour picker uses the system's own
 sampler, which asks for nothing.
 
-Also, each only if you turn on what needs it: Location (only for the weather where you are, asked when you turn the
-weather on without typing a city, and read once per refresh at the accuracy of a town), Focus status (only if you turn on Focus in Live
-activities; macOS tells Col whether a Focus is on, never which). Caps Lock, when you turn it on, uses the same
-Accessibility permission to watch the modifier keys only: never what you type, and nothing is held back. The
-microphone's mute (⌃⌥⌘M or the Live page) sets the default input's own mute, or its input volume when it has none,
-and needs no permission. The batteries of your accessories are read from IOKit's registry, and the text of an image
-on the shelf is read by Vision on your Mac.
+Also, only if you turn on what needs it: Location, for the weather where you are, asked when you turn the weather on
+without typing a city, and read once per refresh at the accuracy of a town. Caps Lock, when you turn it on, uses the
+same Accessibility permission to watch the modifier keys only: never what you type, and nothing is held back. The
+batteries of your accessories are read from IOKit's registry, and the text of an image on the shelf is read by
+Vision on your Mac.
+
+The microphone's mute (the Live page's button, or ⌃⌥⌘M once you turn it on) sets the default microphone's own mute,
+or turns its input volume to zero when it has none, and needs no permission. What Col muted is written in its
+settings (`microphoneMuteLedger`: each device's Core Audio UID, how it was muted, the volume it had), so that Col
+always gives it back: when you unmute, when you turn the setting off, and when Col quits. If Col stops without
+quitting (a crash, a forced quit), the microphone stays muted until Col opens again, which unmutes it first thing.
 
 ### Login item
 

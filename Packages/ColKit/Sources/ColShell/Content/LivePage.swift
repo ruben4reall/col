@@ -2,7 +2,7 @@ import ColCore
 import SwiftUI
 
 /// Everything running: agent sessions, their permission requests, and activities pushed by other programs; the next
-/// meeting with its Join button, the microphone with its mute, and a sign while a Focus is on.
+/// meeting with its Join button, and the microphone with its mute.
 struct LivePage: View {
     let agents: AgentCenter
     let custom: CustomActivities
@@ -15,15 +15,11 @@ struct LivePage: View {
         let sessionsWithRequests = Set(requests.map(\.sessionID))
         let meeting = glance.meetings.current
         let microphone = MicrophoneRow.shows(glance.microphone)
-        let focused = FocusSign.shows(glance.focus)
         if sessions.isEmpty && custom.entries.isEmpty && meeting == nil && !microphone {
-            EmptyLive(focused: focused)
+            EmptyLive()
         } else {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 8) {
-                    if focused {
-                        FocusSign().frame(maxWidth: .infinity, alignment: .leading)
-                    }
                     if let meeting { MeetingCard(event: meeting) }
                     if microphone { MicrophoneRow(microphone: glance.microphone) }
                     ForEach(Array(requests.enumerated()), id: \.element.id) { position, request in
@@ -59,11 +55,8 @@ private struct AgentTag: View {
 }
 
 private struct EmptyLive: View {
-    var focused = false
-
     var body: some View {
         VStack(spacing: 6) {
-            if focused { FocusSign().padding(.bottom, 4) }
             Image(systemName: "dot.radiowaves.left.and.right")
                 .font(.system(size: 22, weight: .medium))
                 .foregroundStyle(Theme.accent)

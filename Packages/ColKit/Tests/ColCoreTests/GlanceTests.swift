@@ -205,6 +205,44 @@ struct AccessoryTests {
     }
 }
 
+struct MicrophoneMuteLedgerTests {
+    @Test func remembersEachDeviceColMuted() throws {
+        var ledger = MicrophoneMuteLedger()
+        #expect(ledger.isEmpty)
+        ledger.muted("BuiltInMicrophone", method: .mute)
+        ledger.muted("USB-Mic", method: .volume, volumeBefore: 0.62)
+        #expect(ledger.entry(for: "BuiltInMicrophone") == .init(method: .mute))
+        #expect(ledger.entry(for: "USB-Mic")?.volume == 0.62)
+        // Muted again while still muted: the volume to give back is still the one from before.
+        ledger.muted("USB-Mic", method: .volume, volumeBefore: 0)
+        #expect(ledger.entry(for: "USB-Mic")?.volume == 0.62)
+        // It survives a restart, written in the settings.
+        let decoded = try JSONDecoder().decode(MicrophoneMuteLedger.self, from: JSONEncoder().encode(ledger))
+        #expect(decoded == ledger)
+        ledger.forget("USB-Mic")
+        ledger.forget("BuiltInMicrophone")
+        #expect(ledger.isEmpty)
+    }
+
+    @Test func givesBackTheVolumeItHad() {
+        #expect(MicrophoneMuteLedger.volumeToRestore(.init(method: .volume, volume: 0.4)) == 0.4)
+        // A volume unknown, or already at zero, comes back at a usual level rather than silent.
+        #expect(MicrophoneMuteLedger.volumeToRestore(.init(method: .volume, volume: nil)) == 0.75)
+        #expect(MicrophoneMuteLedger.volumeToRestore(.init(method: .volume, volume: 0)) == 0.75)
+    }
+
+    @Test func undoesOnlyWhatIsStillMuted() {
+        var ledger = MicrophoneMuteLedger()
+        ledger.muted("a", method: .mute)
+        ledger.muted("b", method: .mute)
+        ledger.muted("c", method: .volume, volumeBefore: 0.5)
+        // a: still muted, so given back; b: unmuted elsewhere since, forgotten; c: not connected, kept for later.
+        let plan = ledger.reconcile { ["a": true, "b": false][$0] }
+        #expect(plan.restore == ["a"])
+        #expect(plan.forget == ["b"])
+    }
+}
+
 struct GlanceSystemTests {
     @Test func backlightKeysAreRead() {
         #expect(MediaKeyPress(data1: (21 << 16) | (0x0A << 8))?.key == .illuminationUp)

@@ -36,6 +36,8 @@ final class SystemActivities {
         audio.start()
         power.start()
         camera.start()
+        // A mute Col could not undo before it stopped is undone now, whatever the setting.
+        microphone.recover()
         if Preferences.mutesMicrophone { microphone.start() }
         startKeyTapIfAllowed()
         // Granting Accessibility in System Settings takes effect without a relaunch.
@@ -53,7 +55,7 @@ final class SystemActivities {
         if wanted, MediaKeyTap.isTrusted { keys.start() } else { keys.stop() }
     }
 
-    /// The microphone's mute was turned on or off in the settings.
+    /// The microphone's mute was turned on or off in the settings: off, the microphone Col muted is unmuted.
     func microphoneSettingChanged() {
         if Preferences.mutesMicrophone { microphone.start() } else { microphone.stop() }
         refreshPrivacy()

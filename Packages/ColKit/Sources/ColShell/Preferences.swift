@@ -251,15 +251,11 @@ enum Preferences {
         set { defaults.set(newValue.flatMap { try? JSONEncoder().encode($0) }, forKey: "weatherPlace"); changed() }
     }
 
-    /// A brief display when a Focus turns on or off, and a sign on the Live page while one is on. Asks for Focus status.
-    static var showsFocus: Bool {
-        get { bool("showsFocus", default: false) }
-        set { defaults.set(newValue, forKey: "showsFocus"); changed() }
-    }
-
     /// The keyboard backlight keys show their level in the notch, as volume and brightness do.
+    /// Until it is set, it follows Replace the volume and brightness displays, so a Mac that kept the system's displays
+    /// does not see its keys taken over.
     static var showsKeyboardBacklight: Bool {
-        get { bool("showsKeyboardBacklight", default: true) }
+        get { bool("showsKeyboardBacklight", default: replacesSystemHUD) }
         set { defaults.set(newValue, forKey: "showsKeyboardBacklight"); changed() }
     }
 
@@ -269,15 +265,16 @@ enum Preferences {
         set { defaults.set(newValue, forKey: "showsCapsLock"); changed() }
     }
 
-    /// A button mutes the microphone from the island, and the island turns red while it is muted.
+    /// A button mutes the Mac's default microphone from the island, and the island turns red while it is muted.
     static var mutesMicrophone: Bool {
         get { bool("mutesMicrophone", default: true) }
         set { defaults.set(newValue, forKey: "mutesMicrophone"); changed() }
     }
 
-    /// Control, Option, Command and M mute or unmute the microphone.
+    /// Control, Option, Command and M mute or unmute the microphone. Off by default: a shortcut in every app is the
+    /// user's to give.
     static var microphoneHotKeyEnabled: Bool {
-        get { bool("microphoneHotKeyEnabled", default: true) }
+        get { bool("microphoneHotKeyEnabled", default: false) }
         set { defaults.set(newValue, forKey: "microphoneHotKeyEnabled"); changed() }
     }
 

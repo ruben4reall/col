@@ -27,7 +27,7 @@ public final class IslandController {
     private let device = DeviceCardModel()
     private let awake = KeepAwake()
     private let downloads = DownloadsMonitor()
-    /// Your Mac at a glance (2.3): weather, Focus, Caps Lock, accessories, Pomodoro, the next meeting.
+    /// Your Mac at a glance (2.3): weather, Caps Lock, accessories, Pomodoro, the next meeting.
     private let glance: Glance
     private var hotKey: HotKey?
     /// An app covers the notch's screen in full screen: the island only shows brief displays.
@@ -859,6 +859,8 @@ public final class IslandController {
     }
 
     public func stop() {
+        // A microphone Col muted is not left muted with nothing to show it.
+        system.microphone.restoreAll()
         PrompterCenter.shared.willTerminate()
         lockScreen.stop()
         desktopLyrics.stop()

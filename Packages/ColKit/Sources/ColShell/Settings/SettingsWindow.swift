@@ -201,7 +201,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .activities: ["Music beside the camera", "Announce new tracks", "Replace the volume and brightness displays",
                            "Headphones and speakers", "Battery card for headphones", "Charging and low battery",
                            "Microphone and camera in use", "Downloads in progress", "Show on the Lock Screen",
-                           "Keyboard backlight", "Caps Lock", "Focus", "Mute the microphone from the island",
+                           "Keyboard backlight", "Caps Lock", "Mute the microphone from the island",
                            "Accessories’ batteries", "Next meeting"]
         case .music: ["Synced lyrics", "Lyrics", "Spotify", "Apple Music", "Deezer", "LRCLIB", "Your own lyrics", "Karaoke",
                       "Lyrics on the Lock Screen", "Lyrics on the desktop", "Songs with hidden lyrics", "Bars that follow the sound",
@@ -212,7 +212,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .glance: ["Weather", "Open-Meteo", "Location", "Pomodoro", "Tools for files on the shelf", "Search your copies",
                        "Graphics processor on the System page", "Convert", "Resize", "Compress", "Text"]
         case .permissions: ["Accessibility", "Device Control", "Calendars", "Reminders", "Bluetooth", "Camera", "Microphone", "Speech Recognition",
-                            "Local Network", "Downloads", "System Audio Recording", "Location", "Focus"]
+                            "Local Network", "Downloads", "System Audio Recording", "Location"]
         case .shortcuts: ["Keyboard", "Gestures", "Swipe", "Click", "Trackpad", "Right-click"]
         case .developers: ["The colctl command", "API reference", "Extensions", "Writing an extension"]
         case .about: ["Version", "Website", "Source code on GitHub", "Report a problem", "Quit Col", "Network"]

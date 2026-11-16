@@ -22,7 +22,7 @@ struct ShortcutsPane: View {
                     IconTile(symbol: "mic.slash.fill", tint: .red)
                     VStack(alignment: .leading, spacing: 1) {
                         Text("Mute or unmute the microphone", bundle: .module)
-                        Text("For every app at once, while Mute the microphone is on in Live activities.", bundle: .module)
+                        Text("Your Mac’s default microphone, while Mute the microphone is on in Live activities. Off until you turn it on.", bundle: .module)
                             .font(.callout).foregroundStyle(.secondary)
                     }
                     Spacer(minLength: 12)
