@@ -23,8 +23,22 @@ struct LivePage: View {
                     if let meeting { MeetingCard(event: meeting) }
                     if microphone { MicrophoneRow(microphone: glance.microphone) }
                     ForEach(Array(requests.enumerated()), id: \.element.id) { position, request in
-                        PermissionCard(request: request, position: position) { agents.decide(request.id, $0) }
-                            .transition(.scale(scale: 0.96).combined(with: .opacity))
+                        Group {
+                            switch request.kind {
+                            case .permission:
+                                PermissionCard(request: request, position: position) { agents.decide(request.id, $0) }
+                            case .plan(let plan, let file):
+                                PlanCard(request: request, plan: plan, file: file, position: position) { agents.decide(request.id, $0) }
+                            case .questions(let questions):
+                                QuestionCard(request: request, questions: questions, position: position) { choices in
+                                    agents.answer(request.id, choices: choices)
+                                } inTerminal: {
+                                    agents.decide(request.id, .ask)
+                                    agents.revealSession(request.sessionID)
+                                }
+                            }
+                        }
+                        .transition(.scale(scale: 0.96).combined(with: .opacity))
                     }
                     ForEach(sessions.filter { !sessionsWithRequests.contains($0.id) }) { session in
                         AgentRow(session: session) { agents.reveal(session) }
@@ -40,7 +54,7 @@ struct LivePage: View {
 }
 
 /// Which agent a session belongs to, when several are connected.
-private struct AgentTag: View {
+struct AgentTag: View {
     let name: String
 
     var body: some View {
@@ -195,6 +209,13 @@ enum PermissionCardLayout {
     static let textInset = EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8)
     /// Lines the box shows of a request too long to check here; the rest scrolls.
     static let scrollingLines = 2
+    /// Lines a plan's box shows; the rest scrolls. Its buttons sit beside the agent's name, above it.
+    static let planLines = 4
+
+    /// From the top of a plan's card to its bottom.
+    static var planBottom: CGFloat {
+        padding.top + headerHeight + spacing + textHeight(lines: planLines) + padding.bottom
+    }
 
     static func textHeight(lines: Int) -> CGFloat {
         CGFloat(lines) * lineHeight + textInset.top + textInset.bottom
@@ -212,7 +233,7 @@ enum PermissionCardLayout {
     }
 }
 
-private struct DecisionButton: View {
+struct DecisionButton: View {
     let title: Text
     let prominent: Bool
     var enabled = true

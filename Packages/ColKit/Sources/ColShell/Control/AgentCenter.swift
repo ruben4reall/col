@@ -11,6 +11,25 @@ final class AgentCenter {
         case allow, deny, ask
     }
 
+    /// What the hook hears back: the decision, and for the tools that need it (AskUserQuestion, ExitPlanMode) the
+    /// input Allow approves, which the hook hands back to the agent.
+    struct Answer: Sendable, Equatable {
+        var decision: Decision
+        var updatedInput: [String: JSONValue]? = nil
+        /// What the agent reads when it is denied.
+        var message: String? = nil
+
+        var json: [String: Any] {
+            var object: [String: Any] = ["decision": decision.rawValue]
+            if let message { object["message"] = message }
+            if let updatedInput, let data = try? JSONEncoder().encode(updatedInput),
+               let input = try? JSONSerialization.jsonObject(with: data) {
+                object["updatedInput"] = input
+            }
+            return object
+        }
+    }
+
     struct PendingRequest: Identifiable {
         var id: String
         var sessionID: String
@@ -26,11 +45,23 @@ final class AgentCenter {
         /// The tool the request is for, to recognise it once the tool has run.
         var toolName: String? = nil
         var toolInput: [String: JSONValue]? = nil
+        /// A plan to approve, or questions to answer, rather than a tool to allow.
+        var kind: Kind = .permission
+
+        enum Kind: Equatable {
+            case permission
+            /// Claude Code leaves plan mode to carry out this plan, in Markdown, kept in this file.
+            case plan(String, file: String?)
+            /// Claude Code asks the user these questions; the island answers them.
+            case questions([AgentQuestion])
+        }
     }
 
     private(set) var board = AgentBoard()
     private(set) var pending: [String: PendingRequest] = [:]
-    @ObservationIgnored private var responders: [String: @Sendable (Decision) -> Void] = [:]
+    @ObservationIgnored private var responders: [String: @Sendable (Answer) -> Void] = [:]
+    /// Where each session runs: its terminal and the processes above its hook, to bring them to the front.
+    @ObservationIgnored private(set) var origins: [String: AgentOrigin] = [:]
     @ObservationIgnored private var settleTimer: Task<Void, Never>?
     @ObservationIgnored private var timeouts: [String: Task<Void, Never>] = [:]
 
@@ -44,8 +75,17 @@ final class AgentCenter {
     var sessions: [AgentSession] { board.ordered }
 
     func receive(_ event: HookEvent, respond: @escaping @Sendable (Decision) -> Void) {
+        receive(event, origin: nil) { respond($0.decision) }
+    }
+
+    func receive(_ event: HookEvent, origin: AgentOrigin?, answer respond: @escaping @Sendable (Answer) -> Void) {
         let now = Date()
         board.apply(event, at: now)
+        if event.event == "SessionEnd" || event.event == "End" {
+            origins[event.sessionID] = nil
+        } else if let origin {
+            origins[event.sessionID] = origin
+        }
         // Only agents whose hooks wait for an answer get the buttons; the others show they are waiting for the user.
         if event.event == "PermissionRequest", event.agent?.answersPermissions ?? true {
             let requestID = UUID().uuidString
@@ -59,7 +99,9 @@ final class AgentCenter {
                 detail: event.toolDetail.map(RequestDetail.init),
                 received: now,
                 toolName: event.toolName,
-                toolInput: event.toolInput
+                toolInput: event.toolInput,
+                kind: event.plan.map { .plan($0, file: event.toolInput?["planFilePath"]?.string) }
+                    ?? event.questions.map { .questions($0) } ?? .permission
             )
             responders[requestID] = respond
             timeouts[requestID] = Task { @MainActor [weak self] in
@@ -69,7 +111,7 @@ final class AgentCenter {
             }
             onRequest?()
         } else {
-            respond(.ask)
+            respond(Answer(decision: .ask))
             if ["Stop", "SessionEnd", "UserPromptSubmit"].contains(event.event) {
                 // The session moved on: a request it left behind was answered elsewhere.
                 resolvePending(for: event.sessionID, .ask, updateBoard: false)
@@ -83,26 +125,55 @@ final class AgentCenter {
     }
 
     func decide(_ requestID: String, _ decision: Decision) {
-        // Allow approves only what the island could show whole; anything longer is answered in the terminal.
-        let allowed = pending[requestID].map(Self.canAllow) ?? false
-        resolve(requestID, decision == .allow && !allowed ? .ask : decision)
+        guard let request = pending[requestID] else { return }
+        // Allow approves only what the island could show whole; anything longer is answered in the terminal. A plan is
+        // approved as it was shown, its input handed back as it came.
+        if case .plan = request.kind, decision != .ask {
+            resolve(requestID, decision == .allow
+                ? Answer(decision: .allow, updatedInput: request.toolInput ?? [:])
+                : Answer(decision: .deny, message: "The user chose to keep planning, from Col."))
+        } else {
+            resolve(requestID, Answer(decision: decision == .allow && !Self.canAllow(request) ? .ask : decision))
+        }
         onChange?()
     }
 
+    /// Answers a request's questions with the labels chosen for each. Answers that are not among the options, or a
+    /// question left without one, leave the request waiting.
+    @discardableResult
+    func answer(_ requestID: String, choices: [String: [String]]) -> Bool {
+        guard let request = pending[requestID], case .questions = request.kind,
+              let answered = AgentQuestion.answering(request.toolInput ?? [:], with: choices)
+        else { return false }
+        resolve(requestID, Answer(decision: .allow, updatedInput: answered))
+        onChange?()
+        return true
+    }
+
     /// Whether the island may allow a request: what it approves fits the card, so it was seen whole. A request with
-    /// input the card does not show is never allowed from it; only one that carries none is.
+    /// input the card does not show is never allowed from it; only one that carries none is. A plan is shown whole, in
+    /// a box that scrolls; questions are answered, never allowed as they stand.
     static func canAllow(_ request: PendingRequest) -> Bool {
+        switch request.kind {
+        case .plan: return true
+        case .questions: return false
+        case .permission: break
+        }
         guard let detail = request.detail else { return request.toolInput?.isEmpty ?? true }
         return detail.fitsCard
     }
 
     private func resolve(_ requestID: String, _ decision: Decision, updateBoard: Bool = true) {
+        resolve(requestID, Answer(decision: decision), updateBoard: updateBoard)
+    }
+
+    private func resolve(_ requestID: String, _ answer: Answer, updateBoard: Bool = true) {
         timeouts.removeValue(forKey: requestID)?.cancel()
         guard let request = pending.removeValue(forKey: requestID),
               let respond = responders.removeValue(forKey: requestID)
         else { return }
-        respond(decision)
-        if updateBoard, decision != .ask {
+        respond(answer)
+        if updateBoard, answer.decision != .ask {
             board.apply(HookEvent(sessionID: request.sessionID, event: "PreToolUse"), at: Date())
         }
     }
@@ -136,8 +207,10 @@ final class AgentCenter {
         board.activity(now: Date(), tint: tint)
     }
 
-    /// Focuses the terminal or editor a session runs in, by its folder when possible.
+    /// Focuses the terminal or editor a session runs in: the tab of its terminal, or the window of its folder, found
+    /// from the processes its hook runs under; else the app most likely to hold it.
     func reveal(_ session: AgentSession) {
+        if let origin = origins[session.id], AgentReveal.reveal(origin) { return }
         if session.agent == CodingAgent.cursor.name,
            let cursor = NSRunningApplication.runningApplications(withBundleIdentifier: "com.todesktop.230313mzl4w4u92").first {
             cursor.activate()
@@ -154,6 +227,15 @@ final class AgentCenter {
                 NSWorkspace.shared.openApplication(at: url, configuration: NSWorkspace.OpenConfiguration()) { _, _ in }
                 return
             }
+        }
+    }
+
+    /// Brings forward the terminal or editor of the session with this id.
+    func revealSession(_ id: String) {
+        if let session = board.sessions[id] {
+            reveal(session)
+        } else if let origin = origins[id] {
+            AgentReveal.reveal(origin)
         }
     }
 
