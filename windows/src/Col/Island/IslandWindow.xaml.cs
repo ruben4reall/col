@@ -40,6 +40,7 @@ internal partial class IslandWindow : Window
     private Native.Monitor? _monitor;
     private bool _frozen;
     private uint[] _privateFormats = [];
+    private DispatcherTimer? _trim;
 
     public IslandWindow(Hub hub)
     {
@@ -398,7 +399,11 @@ internal partial class IslandWindow : Window
         var (openWidth, _) = _layout.Open;
         ExpandedLayer.Opacity = Math.Clamp((open - 0.3) / 0.7, 0, 1);
         ExpandedLayer.Clip = new RectangleGeometry(new Rect((openWidth - width) / 2, 0, width, height), radius, radius);
-        if (open <= 0.001 && _machine.State != IslandState.Expanded) ExpandedLayer.Visibility = Visibility.Collapsed;
+        if (open <= 0.001 && _machine.State != IslandState.Expanded && ExpandedLayer.Visibility == Visibility.Visible)
+        {
+            ExpandedLayer.Visibility = Visibility.Collapsed;
+            TrimLater();
+        }
 
         Bridge.Width = Math.Max(width, 40);
         Bridge.Visibility = opacity > 0.02 ? Visibility.Visible : Visibility.Collapsed;
@@ -413,6 +418,27 @@ internal partial class IslandWindow : Window
         {
             Body.Effect = null;
         }
+    }
+
+    /// <summary>
+    /// Once the island has closed and stayed closed for a while, what its pages used while open goes back to Windows:
+    /// one compacting collection, and nothing more until it opens again.
+    /// </summary>
+    private void TrimLater()
+    {
+        _trim ??= new DispatcherTimer(DispatcherPriority.ApplicationIdle, Dispatcher) { Interval = TimeSpan.FromSeconds(20) };
+        _trim.Tick -= OnTrim;
+        _trim.Tick += OnTrim;
+        _trim.Stop();
+        _trim.Start();
+    }
+
+    private void OnTrim(object? sender, EventArgs e)
+    {
+        _trim?.Stop();
+        if (_machine.State != IslandState.Collapsed) return;
+        System.Runtime.GCSettings.LargeObjectHeapCompactionMode = System.Runtime.GCLargeObjectHeapCompactionMode.CompactOnce;
+        GC.Collect(2, GCCollectionMode.Forced, blocking: true, compacting: true);
     }
 
     /// <summary>Steps aside under a full-screen app, unless something needs the user.</summary>

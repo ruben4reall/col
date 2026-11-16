@@ -15,11 +15,12 @@ using Col.Theme;
 namespace Col;
 
 /// <summary>What Col was started with.</summary>
-internal sealed record Options(DemoState? Demo, string? Language, bool Background, bool OpenSettings, string? Page, string? Link)
+internal sealed record Options(DemoState? Demo, string? Language, bool Background, bool OpenSettings, string? Page, string? Link, bool? Dark = null)
 {
     /// <summary>
     /// <c>--demo &lt;state&gt;</c> (collapsed, peek, music, lyrics, agent-permission, agents, live, volume, battery, timer,
-    /// tools, settings), <c>--lang fr</c>, <c>--background</c> at login, <c>--settings [page]</c>, <c>--page</c>, and
+    /// tools, settings), <c>--lang fr</c>, <c>--theme dark</c> or <c>light</c> whatever Windows uses,
+    /// <c>--background</c> at login, <c>--settings [page]</c>, <c>--page</c>, and
     /// a <c>col://</c> link, which Windows passes when one is opened.
     /// </summary>
     public static Options Parse(string[] arguments)
@@ -27,6 +28,7 @@ internal sealed record Options(DemoState? Demo, string? Language, bool Backgroun
         DemoState? demo = null;
         string? language = null, page = null, link = null;
         bool background = false, settings = false;
+        bool? dark = null;
         for (var index = 0; index < arguments.Length; index++)
         {
             var argument = arguments[index];
@@ -35,6 +37,7 @@ internal sealed record Options(DemoState? Demo, string? Language, bool Backgroun
             {
                 case "--demo": demo = Core.Demo.Parse(Next()); break;
                 case "--lang": language = Next(); break;
+                case "--theme": dark = Next()?.ToLowerInvariant() switch { "dark" => true, "light" => false, _ => null }; break;
                 case "--background": background = true; break;
                 case "--settings": settings = true; page = Next() ?? page; break;
                 case "--page": page = Next(); break;
@@ -43,7 +46,7 @@ internal sealed record Options(DemoState? Demo, string? Language, bool Backgroun
                     break;
             }
         }
-        return new Options(demo, language, background, settings, page, link);
+        return new Options(demo, language, background, settings, page, link, dark);
     }
 }
 
@@ -106,6 +109,7 @@ internal partial class App : Application
         var settings = options.Demo is null ? ColSettings.Load(AppPaths.Settings) : new ColSettings();
         if (firstLaunch) settings.Save(AppPaths.Settings);
         Win32.AllowDarkMenus();
+        ThemeManager.Forced = options.Dark;
         ThemeManager.Apply();
 
         _hub = new Hub(Dispatcher, settings, options.Demo);
@@ -125,23 +129,6 @@ internal partial class App : Application
         StartServices();
         if (options.Link is { } link) _hub.Open(link);
         if (options.OpenSettings || (firstLaunch && !options.Background)) OpenSettings(options.Page);
-        SettleMemory();
-    }
-
-    /// <summary>
-    /// Once Col has started, what it used only to start (reading its styles, its first layout) goes back to Windows:
-    /// one full collection, ten seconds in, and nothing after that.
-    /// </summary>
-    private void SettleMemory()
-    {
-        var later = new DispatcherTimer(DispatcherPriority.ApplicationIdle, Dispatcher) { Interval = TimeSpan.FromSeconds(10) };
-        later.Tick += (_, _) =>
-        {
-            later.Stop();
-            System.Runtime.GCSettings.LargeObjectHeapCompactionMode = System.Runtime.GCLargeObjectHeapCompactionMode.CompactOnce;
-            GC.Collect(2, GCCollectionMode.Forced, blocking: true, compacting: true);
-        };
-        later.Start();
     }
 
     private void StartServices()
