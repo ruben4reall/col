@@ -77,7 +77,7 @@ targets:
         CFBundleDisplayName: Col
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
-        CFBundleLocalizations: [en, fr]
+        CFBundleLocalizations: [en, fr, de, nl, it, es, pt-BR, ja, ko, zh-Hans, zh-Hant]
         LSMinimumSystemVersion: "14.0"
         # Lives in the notch: no Dock icon, no main menu.
         LSUIElement: true
