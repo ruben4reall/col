@@ -34,7 +34,11 @@ internal partial class HomePage : UserControl
         NextButton.Click += (_, _) => _hub?.Next();
         PlayButton.Click += (_, _) => _hub?.PlayPause();
         Scrubber.MouseLeftButtonUp += OnScrub;
-        LyricsArea.SizeChanged += (_, _) => ScrollToLine(animated: false);
+        LyricsArea.SizeChanged += (_, _) =>
+        {
+            Lines.Width = LyricsArea.ActualWidth;
+            ScrollToLine(animated: false);
+        };
         IdleGlyph.Content = Glyphs.Make("music", (Brush)FindResource("Island.Tertiary"), 22);
     }
 
@@ -122,7 +126,7 @@ internal partial class HomePage : UserControl
         };
         var showNote = lyrics is null;
         LyricsNote.Visibility = showNote ? Visibility.Visible : Visibility.Collapsed;
-        Lines.Visibility = showNote ? Visibility.Collapsed : Visibility.Visible;
+        LinesHost.Visibility = showNote ? Visibility.Collapsed : Visibility.Visible;
         NoteText.Text = note;
         NoteGlyph.Content = glyph is null ? null : Glyphs.Make(glyph, (Brush)FindResource("Island.Tertiary"), 18);
         HighlightLine(_hub.LyricIndex);

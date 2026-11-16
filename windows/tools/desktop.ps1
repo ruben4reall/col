@@ -91,7 +91,9 @@ function Initialize-Desktop([string] $Out) {
     $bitmap.Dispose()
     # SPI_SETDESKWALLPAPER, SPIF_UPDATEINIFILE | SPIF_SENDCHANGE.
     [ColDesktop]::SystemParametersInfo(0x14, 0, $wallpaper, 3) | Out-Null
-    Start-Sleep -Seconds 1
+    # The build machine's own console windows out of the way.
+    try { (New-Object -ComObject Shell.Application).MinimizeAll() } catch { Write-Host "MinimizeAll: $_" }
+    Start-Sleep -Seconds 2
 }
 
 # Why a .NET app quit: the runtime writes the exception to the Application event log.

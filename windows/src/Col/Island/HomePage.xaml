@@ -80,11 +80,14 @@
                         <GradientStop Color="#00000000" Offset="1" />
                     </LinearGradientBrush>
                 </Grid.OpacityMask>
-                <StackPanel x:Name="Lines" VerticalAlignment="Top">
-                    <StackPanel.RenderTransform>
-                        <TranslateTransform x:Name="LinesShift" />
-                    </StackPanel.RenderTransform>
-                </StackPanel>
+                <!-- On a canvas, so the lines below the area are laid out too, and come in as they roll up. -->
+                <Canvas x:Name="LinesHost">
+                    <StackPanel x:Name="Lines">
+                        <StackPanel.RenderTransform>
+                            <TranslateTransform x:Name="LinesShift" />
+                        </StackPanel.RenderTransform>
+                    </StackPanel>
+                </Canvas>
                 <StackPanel x:Name="LyricsNote" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="200">
                     <ContentPresenter x:Name="NoteGlyph" HorizontalAlignment="Center" Margin="0,0,0,6" />
                     <TextBlock x:Name="NoteText" FontSize="12" Foreground="{StaticResource Island.Secondary}" TextWrapping="Wrap"

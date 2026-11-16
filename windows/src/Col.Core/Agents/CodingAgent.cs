@@ -17,7 +17,16 @@ public enum CodingAgent
 
 public static class CodingAgents
 {
-    public static string Id(this CodingAgent agent) => agent.ToString().ToLowerInvariant();
+    /// <summary>The agent's name in hooks and in the API: written out, since colctl, compiled ahead of time, keeps no
+    /// names of enum values.</summary>
+    public static string Id(this CodingAgent agent) => agent switch
+    {
+        CodingAgent.Claude => "claude",
+        CodingAgent.Codex => "codex",
+        CodingAgent.Gemini => "gemini",
+        CodingAgent.Cursor => "cursor",
+        _ => "copilot",
+    };
 
     public static string Name(this CodingAgent agent) => agent switch
     {
@@ -55,8 +64,15 @@ public static class CodingAgents
     /// <summary>False for an agent that never says a session is over: VS Code sends no event when a Copilot chat ends.</summary>
     public static bool EndsSessions(this CodingAgent agent) => agent != CodingAgent.Copilot;
 
-    public static CodingAgent? FromId(string? id) =>
-        Enum.GetValues<CodingAgent>().Cast<CodingAgent?>().FirstOrDefault(a => a!.Value.Id() == id);
+    public static CodingAgent? FromId(string? id) => id switch
+    {
+        "claude" => CodingAgent.Claude,
+        "codex" => CodingAgent.Codex,
+        "gemini" => CodingAgent.Gemini,
+        "cursor" => CodingAgent.Cursor,
+        "copilot" => CodingAgent.Copilot,
+        _ => null,
+    };
 
     /// <summary>The agent behind a session, from the name the session keeps.</summary>
     public static CodingAgent? Named(string? name) =>

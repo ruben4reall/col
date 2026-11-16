@@ -11,9 +11,11 @@
     <ApplicationIcon>Assets\col.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Description>Col, a Dynamic Island for Windows</Description>
-    <!-- Single-file publishing, set by the release build: everything in one Col.exe. -->
-    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <!-- Single-file publishing, set by the release build: everything in one Col.exe. Not compressed: Windows maps
+         the assemblies from the file instead of unpacking them into Col's own memory. The download is compressed. -->
+    <EnableCompressionInSingleFile>false</EnableCompressionInSingleFile>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <PublishReadyToRun>true</PublishReadyToRun>
     <DebugType>embedded</DebugType>
     <TieredPGO>true</TieredPGO>
     <ServerGarbageCollector>false</ServerGarbageCollector>

@@ -67,7 +67,11 @@ internal partial class IslandWindow : Window
         HomeTab.Checked += (_, _) => ShowPage("home");
         LiveTab.Checked += (_, _) => ShowPage("live");
         ToolsTab.Checked += (_, _) => ShowPage("tools");
-        SettingsButton.Content = Glyphs.Make("gear", (Brush)FindResource("Island.Secondary"), 15);
+        SettingsButton.Content = new System.Windows.Controls.TextBlock
+        {
+            Text = "\uE713", FontFamily = new FontFamily("Segoe Fluent Icons, Segoe MDL2 Assets"), FontSize = 15,
+            Foreground = (Brush)FindResource("Island.Secondary"),
+        };
         SettingsButton.Click += (_, _) => hub.OpenSettings();
 
         MouseEnter += (_, _) => Handle(IslandEvent.PointerEntered);

@@ -23,6 +23,16 @@ public class CodingAgentTests
     }
 
     [Fact]
+    public void EveryAgentIsFoundByItsId()
+    {
+        foreach (var agent in Enum.GetValues<CodingAgent>()) Assert.Equal(agent, CodingAgents.FromId(agent.Id()));
+        Assert.Equal("claude", CodingAgent.Claude.Id());
+        Assert.Equal("codex", CodingAgent.Codex.Id());
+        Assert.Null(CodingAgents.FromId("Claude"));
+        Assert.Null(CodingAgents.FromId(null));
+    }
+
+    [Fact]
     public void CodexSpeaksLikeClaudeCode()
     {
         var @event = CodingAgent.Codex.EventFrom(Raw("""

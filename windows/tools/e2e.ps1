@@ -103,7 +103,9 @@ $watch.Restart()
 $work = Finish (Invoke-Colctl @('hook') '{"session_id":"ci","hook_event_name":"PreToolUse","cwd":"C:\\ci\\col","tool_name":"Bash","tool_input":{"command":"dotnet test"}}')
 $watch.Stop()
 $hookTimes += $watch.ElapsedMilliseconds
-Check ($work.Code -eq 0 -and $work.Output -eq '') 'a PreToolUse hook is taken in and answered with nothing'
+Check ($work.Code -eq 0 -and $work.Output -eq '') 'a PreToolUse hook is answered with nothing'
+$status = Finish (Invoke-Colctl @('status'))
+Check ($status.Output -match '1 agent sessions') 'the hook reached Col: one agent session'
 Write-Host "colctl hook with Col running: $($watch.ElapsedMilliseconds) ms"
 Start-Sleep -Seconds 1
 Save-Screen -Path (Join-Path $Out 'e2e-agent.png') -Zoom

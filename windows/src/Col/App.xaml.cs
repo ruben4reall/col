@@ -125,6 +125,23 @@ internal partial class App : Application
         StartServices();
         if (options.Link is { } link) _hub.Open(link);
         if (options.OpenSettings || (firstLaunch && !options.Background)) OpenSettings(options.Page);
+        SettleMemory();
+    }
+
+    /// <summary>
+    /// Once Col has started, what it used only to start (reading its styles, its first layout) goes back to Windows:
+    /// one full collection, ten seconds in, and nothing after that.
+    /// </summary>
+    private void SettleMemory()
+    {
+        var later = new DispatcherTimer(DispatcherPriority.ApplicationIdle, Dispatcher) { Interval = TimeSpan.FromSeconds(10) };
+        later.Tick += (_, _) =>
+        {
+            later.Stop();
+            System.Runtime.GCSettings.LargeObjectHeapCompactionMode = System.Runtime.GCLargeObjectHeapCompactionMode.CompactOnce;
+            GC.Collect(2, GCCollectionMode.Forced, blocking: true, compacting: true);
+        };
+        later.Start();
     }
 
     private void StartServices()
