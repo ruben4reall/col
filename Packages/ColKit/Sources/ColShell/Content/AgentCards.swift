@@ -3,13 +3,15 @@ import ColCore
 import SwiftUI
 
 /// Claude Code asks to leave plan mode and carry out a plan: the plan itself, read as Markdown in a box that scrolls and
-/// can be selected, with Approve and Keep Planning beside the agent's name, always in sight.
+/// can be selected, with Approve and Keep Planning beside the agent's name, always in sight. The terminal, which comes
+/// forward from here, also takes edits approved one by one, or what to change.
 struct PlanCard: View {
     let request: AgentCenter.PendingRequest
     let plan: String
     let file: String?
     let position: Int
     let decide: (AgentCenter.Decision) -> Void
+    let inTerminal: () -> Void
     @State private var armed = false
 
     private typealias Layout = PermissionCardLayout
@@ -30,6 +32,15 @@ struct PlanCard: View {
                 DecisionButton(title: Text("Approve", bundle: .module), prominent: true) { decide(.allow) }
                     .disabled(!armed)
                 DecisionButton(title: Text("Keep Planning", bundle: .module), prominent: false) { decide(.deny) }
+                Button(action: inTerminal) {
+                    Image(systemName: "apple.terminal")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(Theme.secondaryText)
+                        .frame(width: 26, height: PermissionCardLayout.buttonHeight)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(PressableStyle())
+                .help(Text("Answer in Terminal", bundle: .module))
             }
             ScrollView(.vertical) {
                 MarkdownText(markdown: plan)

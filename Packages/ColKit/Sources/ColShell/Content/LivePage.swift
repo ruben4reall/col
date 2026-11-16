@@ -28,7 +28,12 @@ struct LivePage: View {
                             case .permission:
                                 PermissionCard(request: request, position: position) { agents.decide(request.id, $0) }
                             case .plan(let plan, let file):
-                                PlanCard(request: request, plan: plan, file: file, position: position) { agents.decide(request.id, $0) }
+                                PlanCard(request: request, plan: plan, file: file, position: position) {
+                                    agents.decide(request.id, $0)
+                                } inTerminal: {
+                                    agents.decide(request.id, .ask)
+                                    agents.revealSession(request.sessionID)
+                                }
                             case .questions(let questions):
                                 QuestionCard(request: request, questions: questions, position: position) { choices in
                                     agents.answer(request.id, choices: choices)
