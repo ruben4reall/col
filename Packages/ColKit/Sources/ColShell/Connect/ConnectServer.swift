@@ -19,7 +19,7 @@ struct ConnectResponse: Sendable {
     }
 
     static let reasons = [
-        200: "OK", 400: "Bad Request", 401: "Unauthorized", 403: "Forbidden", 404: "Not Found", 405: "Method Not Allowed",
+        200: "OK", 400: "Bad Request", 401: "Unauthorized", 403: "Forbidden", 404: "Not Found", 405: "Method Not Allowed", 409: "Conflict",
         411: "Length Required", 413: "Content Too Large", 429: "Too Many Requests", 431: "Request Header Fields Too Large",
         500: "Internal Server Error", 503: "Service Unavailable",
     ]
@@ -177,9 +177,38 @@ final class ConnectServer {
         }
     }
 
+    /// The addresses of the Mac's Wi-Fi and Ethernet interfaces with their netmasks: a peer on one of their links is on
+    /// the local network, even from a global IPv6 address.
+    nonisolated static func linkAddresses() -> [(address: [UInt8], netmask: [UInt8])] {
+        var pointer: UnsafeMutablePointer<ifaddrs>?
+        guard getifaddrs(&pointer) == 0, let first = pointer else { return [] }
+        defer { freeifaddrs(pointer) }
+        var found: [(address: [UInt8], netmask: [UInt8])] = []
+        for interface in sequence(first: first, next: { $0.pointee.ifa_next }) {
+            let flags = Int32(interface.pointee.ifa_flags)
+            let name = String(cString: interface.pointee.ifa_name)
+            guard flags & IFF_UP != 0, flags & IFF_LOOPBACK == 0, name.hasPrefix("en") || name.hasPrefix("bridge"),
+                  let address = interface.pointee.ifa_addr, let netmask = interface.pointee.ifa_netmask
+            else { continue }
+            switch Int32(address.pointee.sa_family) {
+            case AF_INET:
+                let bytes = address.withMemoryRebound(to: sockaddr_in.self, capacity: 1) { withUnsafeBytes(of: $0.pointee.sin_addr) { [UInt8]($0) } }
+                let mask = netmask.withMemoryRebound(to: sockaddr_in.self, capacity: 1) { withUnsafeBytes(of: $0.pointee.sin_addr) { [UInt8]($0) } }
+                found.append((bytes, mask))
+            case AF_INET6:
+                let bytes = address.withMemoryRebound(to: sockaddr_in6.self, capacity: 1) { withUnsafeBytes(of: $0.pointee.sin6_addr) { [UInt8]($0) } }
+                let mask = netmask.withMemoryRebound(to: sockaddr_in6.self, capacity: 1) { withUnsafeBytes(of: $0.pointee.sin6_addr) { [UInt8]($0) } }
+                found.append((bytes, mask))
+            default:
+                continue
+            }
+        }
+        return found
+    }
+
     private func accept(_ connection: NWConnection) {
         guard listener != nil, let address = Self.address(of: connection),
-              LANAddress.isLocal(address.bytes) || allowsOutside()
+              LANAddress.isLocal(address.bytes) || LANAddress.isLocal(address.bytes, interfaces: Self.linkAddresses()) || allowsOutside()
         else {
             connection.cancel()
             return

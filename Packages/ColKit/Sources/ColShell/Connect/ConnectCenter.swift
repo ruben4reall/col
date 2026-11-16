@@ -24,15 +24,16 @@ final class ConnectCenter {
     private(set) var state: ConnectServer.State = .stopped
     @ObservationIgnored let server: ConnectServer
     /// Device id to token, read from the Keychain while Connect is on.
-    @ObservationIgnored private var tokens: [String: String] = [:]
+    @ObservationIgnored private var tokens: [String: String] = [:] {
+        didSet { tokenList = tokens.map { (device: $0.key, token: $0.value) } }
+    }
+    /// The same, as the server reads them for each request, made once per change rather than per request.
+    @ObservationIgnored private var tokenList: [(device: String, token: String)] = []
 
     init(server: ConnectServer = ConnectServer(), devices: [ConnectDevice] = Preferences.connectDevices) {
         self.server = server
         self.devices = devices
-        server.tokens = { [weak self] in
-            guard let self else { return [] }
-            return self.tokens.map { (device: $0.key, token: $0.value) }
-        }
+        server.tokens = { [weak self] in self?.tokenList ?? [] }
         server.allowsOutside = { Preferences.connectAllowsOutside }
         server.onSeen = { [weak self] device, address in self?.seen(device, from: address) }
         server.onStateChange = { [weak self] in

@@ -130,4 +130,24 @@ import Testing
         #expect(!LANAddress.isLocal([0x20, 0x01, 0x0d, 0xb8] + [UInt8](repeating: 0, count: 12)))
         #expect(!LANAddress.isLocal([1, 2, 3]))
     }
+
+    @Test func aGlobalIPv6AddressOfTheSameNetworkIsLocal() {
+        // The Mac's address on Wi-Fi, 2a02:1210:5c00:1a00::5/64, and a phone of the same network reaching it by its
+        // .local name from its own global address.
+        let mac: [UInt8] = [0x2a, 0x02, 0x12, 0x10, 0x5c, 0x00, 0x1a, 0x00, 0, 0, 0, 0, 0, 0, 0, 5]
+        let slash64 = [UInt8](repeating: 0xFF, count: 8) + [UInt8](repeating: 0, count: 8)
+        let phone: [UInt8] = [0x2a, 0x02, 0x12, 0x10, 0x5c, 0x00, 0x1a, 0x00, 0x18, 0x22, 0x3a, 0x9f, 0x10, 0x02, 0x7c, 0x41]
+        let elsewhere: [UInt8] = [0x2a, 0x02, 0x12, 0x10, 0x5c, 0x00, 0x1a, 0x01, 0x18, 0x22, 0x3a, 0x9f, 0x10, 0x02, 0x7c, 0x41]
+        #expect(!LANAddress.isLocal(phone))
+        #expect(LANAddress.isOnLink(phone, interface: mac, netmask: slash64))
+        #expect(!LANAddress.isOnLink(elsewhere, interface: mac, netmask: slash64))
+        #expect(LANAddress.isLocal(phone, interfaces: [(mac, slash64)]))
+        #expect(!LANAddress.isLocal(elsewhere, interfaces: [(mac, slash64)]))
+        // A /128 counts as the /64 it belongs to; a /0 never makes the whole internet a link.
+        #expect(LANAddress.isOnLink(phone, interface: mac, netmask: [UInt8](repeating: 0xFF, count: 16)))
+        #expect(!LANAddress.isOnLink(elsewhere, interface: mac, netmask: [UInt8](repeating: 0, count: 16)))
+        // IPv4 against IPv6, or the other way round, is never on link.
+        #expect(!LANAddress.isOnLink([8, 8, 8, 8], interface: mac, netmask: slash64))
+        #expect(LANAddress.isOnLink([100, 64, 3, 4], interface: [100, 64, 3, 1], netmask: [255, 255, 255, 0]))
+    }
 }

@@ -233,6 +233,28 @@ public enum LANAddress {
         }
     }
 
+    /// Whether `address` is on the same link as an address of the Mac's, given that address's netmask: a phone of the
+    /// home network reaching the Mac by its `.local` name often comes from a global IPv6 address, in the same prefix as
+    /// the Mac's own. A netmask longer than 64 bits, as some interfaces give their temporary addresses, counts as 64.
+    public static func isOnLink(_ address: [UInt8], interface: [UInt8], netmask: [UInt8]) -> Bool {
+        guard address.count == interface.count, netmask.count == interface.count, !address.isEmpty else { return false }
+        var mask = netmask
+        if mask.count == 16 {
+            let bits = mask.reduce(0) { $0 + $1.nonzeroBitCount }
+            // A /0 says nothing about a link; past /64 is a single address, not a network.
+            guard bits >= 8 else { return false }
+            if bits > 64 { mask = [UInt8](repeating: 0xFF, count: 8) + [UInt8](repeating: 0, count: 8) }
+        } else if mask.reduce(0, { $0 + $1.nonzeroBitCount }) < 8 {
+            return false
+        }
+        return zip(zip(address, interface), mask).allSatisfy { pair, byte in pair.0 & byte == pair.1 & byte }
+    }
+
+    /// Local, or on the link of one of the Mac's network interfaces (address and netmask).
+    public static func isLocal(_ bytes: [UInt8], interfaces: [(address: [UInt8], netmask: [UInt8])]) -> Bool {
+        isLocal(bytes) || interfaces.contains { isOnLink(bytes, interface: $0.address, netmask: $0.netmask) }
+    }
+
     private static func isLocalIPv4(_ bytes: [UInt8]) -> Bool {
         bytes[0] == 127 || bytes[0] == 10 || (bytes[0] == 172 && (16...31).contains(bytes[1]))
             || (bytes[0] == 192 && bytes[1] == 168) || (bytes[0] == 169 && bytes[1] == 254)

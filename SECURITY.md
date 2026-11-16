@@ -15,7 +15,7 @@ Everything Col reads, writes or runs, and why.
 |---|---|---|
 | `~/Library/Preferences/ch.rubencatalao.islet.plist` | Settings, the shelf's file bookmarks, pinned clipboard text, the songs whose lyrics you moved, chose or hid (their title, artist and LRCLIB number, never the lyrics), the weather's city if you type one, today's count of Pomodoro sessions, and the microphone Col muted until it gives it back | Always |
 | `~/Library/Application Support/Col/col.sock` | The local socket scripts and agents talk to: mode 0600 in a 0700 folder, so only your user can connect. It never listens on the network | While Col runs |
-| `~/Library/Application Support/Col/Extensions/` | Your extensions, one folder each | When you add one, or install one with `colctl extensions install`, which checks its manifest and copies it there turned off, without running anything of it |
+| `~/Library/Application Support/Col/Extensions/` | Your extensions, one folder each. A `.col-off` file inside one keeps it off | When you add one, or install one with `colctl extensions install`, which checks its manifest, copies it into a hidden folder Col never reads, marks it off and renames it into place, without running anything of it |
 | `~/Library/Application Support/Col/Widgets.json` | The widgets your scripts and devices pushed, so they are still there after a restart: mode 0600 | When a widget is pushed or removed |
 | Your login Keychain | The tokens of your AI servers, of the devices paired with Col Connect, and the headers you give widgets read from an address. Never in Col's settings | When you add one |
 | `~/Library/Application Support/Col/Scripts/` | The prompter's scripts, one Markdown file each, saved as you type. The first time, the scripts of Souffleur (the prompter's former app) are copied in from `~/Library/Application Support/Souffleur/Scripts/`, which is left as it was | When you use the prompter |
@@ -40,9 +40,10 @@ Copies that password managers mark as concealed or transient are skipped.
   playing. Since macOS 15.4 only Apple-signed processes may read the now playing information.
 - Your extensions' scripts, on the schedule each one declares, with your user's rights. macOS treats each one as a
   program of its own: it never inherits Col's Accessibility, Microphone, Camera or Calendars permissions.
-- Apple events to Terminal or iTerm2, when you click an agent's session in the island: Col selects the tab on the
-  session's terminal (found from the processes above the agent's hook) and brings it forward. macOS asks for
-  Automation the first time; refused, Col only brings the app forward. VS Code, Cursor, Windsurf and Zed are asked to
+- `/usr/bin/osascript`, when you click an agent's session in the island: a script that selects the Terminal or iTerm2
+  tab on the session's terminal (found from the processes above the agent's hook; only a terminal's name ever goes
+  in the script) and brings it forward. macOS asks for Automation the first time; refused, Col only brings the app
+  forward. VS Code, Cursor, Windsurf and Zed are asked to
   open the session's folder, which brings its window forward; other apps are only brought forward.
 - `/usr/bin/git`, when you install an extension from a repository with `colctl extensions install`: a shallow clone,
   without submodules and with hooks turned off, into a temporary folder that is removed afterwards.
@@ -84,9 +85,12 @@ Copies that password managers mark as concealed or transient are skipped.
   7584), advertised with Bonjour as `_col._tcp`, that only answers the devices you paired, each with its token. It
   stops when you turn it off. See [Col Connect](#col-connect) below.
 - The widgets you read from an address (Settings, Connect, Add a Widget from a URL): Col reads each address at the
-  interval you chose, only while the widget shows in the island, with the headers you gave, and nothing else.
-- A widget's button, when you press it: one request to its address, which the island showed you whole and asked you
-  about the first time. Only http and https.
+  interval you chose, only while the widget shows in the island, with the headers you gave, and nothing else. A
+  redirect is followed only within the same scheme, host and port, so those headers never reach another host; an
+  answer is read up to 1 MB, for 30 seconds at most.
+- A widget's button, when you press it: one request to its address, never redirected. The first time that widget's
+  button calls it, the island shows the host on its own line and the whole address, and asks. Only http and https,
+  without a user part (`name@host`), which could dress one host up as another.
 - Nothing else. No account, no telemetry, no analytics, no crash reports.
 
 ### Permissions
@@ -122,8 +126,9 @@ widgets into the island. The threat it is built against: anything else on the sa
 there, a device you paired and then lost.
 
 - **Off by default.** It listens only while Connect is on, and stops listening when you turn it off.
-- **Local network only.** Connections from addresses outside private, link-local and loopback ranges are closed at
-  once, unless you turn on Accept connections from outside this network.
+- **Local network only.** Connections from addresses outside private, link-local and loopback ranges, and outside
+  the networks of the Mac's own Wi-Fi and Ethernet interfaces (where a phone may come from a global IPv6 address), are
+  closed at once, unless you turn on Accept connections from outside this network.
 - **A token for every request.** Each paired device has its own token: 32 random bytes, kept in your Keychain,
   compared in constant time against every token. You can replace a device's token or take it back alone, at once.
   Without a paired device's token, Col answers `401` and nothing else.
@@ -136,7 +141,7 @@ there, a device you paired and then lost.
 - **Limits.** A request's head is 8 KB at most and its body 64 KB, refused before it is read; chunked bodies are
   refused; a request has five seconds to arrive; sixteen connections at once, four waiting from one address; each
   address 60 requests at once then 20 a second; after ten wrong tokens, an address waits thirty seconds for each new
-  try.
+  try. Programs and devices together keep 32 activities and 32 widgets at most: a new one past that is refused.
 - **Plain HTTP.** Requests are not encrypted: someone who can read your network's traffic can read a token. Use
   Connect on networks you trust, and take back a token you think was seen.
 - **Browsers.** A web page cannot send the token it does not know, and Col sends no CORS headers, so a page's request

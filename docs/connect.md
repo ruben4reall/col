@@ -54,6 +54,7 @@ stay on the Mac, in the island and in the terminal. A device cannot list what ru
 | `401` | No token, or not a paired device's |
 | `404`, `405` | A route Connect does not have, or a method it does not take there |
 | `411` | A chunked body: send a `Content-Length` |
+| `409` | Col already holds 32 activities, or 32 widgets, pushed by programs: remove one, or let one end. Updating one already there always works |
 | `413`, `431` | A body over 64 KB, or headers over 8 KB |
 | `429` | Too many requests from this address: 60 at once, then 20 a second. After ten wrong tokens, an address waits thirty seconds for each new try |
 
@@ -178,8 +179,9 @@ The first time, the island shows the address and asks before calling it.
 
 ## Security
 
-- Off by default. On, it answers only devices of your local network (private, link-local and loopback addresses),
-  unless you turn on **Accept connections from outside this network** for a VPN or a forwarded port.
+- Off by default. On, it answers only devices of your local network (private, link-local and loopback addresses, and
+  the global IPv6 addresses of the Mac's own Wi-Fi or Ethernet network, which a phone often uses to reach a `.local`
+  name), unless you turn on **Accept connections from outside this network** for a VPN or a forwarded port.
 - Every request needs a paired device's token, compared in constant time. Tokens are 32 random bytes, kept in your
   Keychain, never in Col's settings, and each one can be replaced or taken back on its own.
 - Requests are plain HTTP: on a network you do not trust, someone listening could read a token. Pair devices on your

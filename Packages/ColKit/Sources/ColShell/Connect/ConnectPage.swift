@@ -69,6 +69,8 @@ enum ConnectPage {
         const T = \(script);
         const $ = id => document.getElementById(id);
         const token = decodeURIComponent(location.hash.slice(1));
+        // Read once, then gone from the address: it stays out of the history, and of a bookmark or a shared link.
+        if (location.hash) history.replaceState(null, "", location.pathname + location.search);
         $("address").textContent = location.origin;
         $("token").textContent = token;
         if (!token) { $("intro").textContent = T.missing; $("test").disabled = true; }
