@@ -1,7 +1,8 @@
 import ColCore
 import SwiftUI
 
-/// Recent copies: click one to put it back on the clipboard.
+/// Recent copies: click one to put it back on the clipboard. A search field above them finds a copy by its words or
+/// the app it came from.
 struct ClipboardPage: View {
     let clipboard: ClipboardMonitor
 
@@ -21,15 +22,113 @@ struct ClipboardPage: View {
                     .multilineTextAlignment(.center)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else if Preferences.searchesClipboard {
+            let matches = clipboard.history.matching(clipboard.query)
+            VStack(spacing: 6) {
+                ClipboardSearchBar(clipboard: clipboard, first: matches.first)
+                if matches.isEmpty {
+                    Text("No copy matches “\(clipboard.query)”", bundle: .module)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundStyle(Theme.secondaryText)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    list(matches)
+                }
+            }
+            // The next time the page shows, it shows every copy again.
+            .onDisappear { clipboard.query = "" }
         } else {
-            ScrollView(.vertical, showsIndicators: false) {
-                LazyVStack(spacing: 5) {
-                    ForEach(entries) { entry in
-                        ClipRow(entry: entry, clipboard: clipboard)
-                    }
+            list(entries)
+        }
+    }
+
+    private func list(_ entries: [ClipboardHistory.Entry]) -> some View {
+        ScrollView(.vertical, showsIndicators: false) {
+            LazyVStack(spacing: 5) {
+                ForEach(entries) { entry in
+                    ClipRow(entry: entry, clipboard: clipboard)
                 }
             }
         }
+    }
+}
+
+/// The search field. Like the Ask field of the AI page, the island takes the keyboard only while it is in use, and gives
+/// it back on Escape, on Return (which copies the first match), or when it closes.
+private struct ClipboardSearchBar: View {
+    let clipboard: ClipboardMonitor
+    let first: ClipboardHistory.Entry?
+    @FocusState private var focused: Bool
+
+    var body: some View {
+        @Bindable var clipboard = clipboard
+        HStack(spacing: 6) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundStyle(Theme.secondaryText)
+            Group {
+                if clipboard.searching {
+                    TextField(text: $clipboard.query, prompt: prompt) { EmptyView() }
+                        .textFieldStyle(.plain)
+                        .focused($focused)
+                        .onSubmit(copyFirst)
+                        .onExitCommand(perform: escape)
+                } else {
+                    // A plain button until the field is needed: the island lends no keyboard before.
+                    Button(action: beginSearching) {
+                        Group {
+                            if clipboard.query.isEmpty { prompt } else { Text(verbatim: clipboard.query) }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .font(.system(size: 12, weight: .medium))
+            .foregroundStyle(.white)
+            if !clipboard.query.isEmpty {
+                Button { clipboard.query = "" } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 11))
+                        .foregroundStyle(Theme.secondaryText)
+                }
+                .buttonStyle(PressableStyle())
+                .help(Text("Clear", bundle: .module))
+            }
+        }
+        .padding(.horizontal, 10)
+        .frame(height: 26)
+        .background(Capsule().fill(Theme.fill))
+        .onAppear {
+            if clipboard.searching { DispatchQueue.main.async { focused = true } }
+        }
+    }
+
+    private var prompt: Text {
+        Text("Search your copies", bundle: .module).foregroundStyle(Theme.secondaryText)
+    }
+
+    private func beginSearching() {
+        IslandController.shared?.takeKeyboard()
+        clipboard.searching = true
+        DispatchQueue.main.async { focused = true }
+    }
+
+    private func endSearching() {
+        focused = false
+        clipboard.searching = false
+        IslandController.shared?.releaseKeyboard()
+    }
+
+    /// Escape clears what was typed, then gives the keyboard back.
+    private func escape() {
+        if clipboard.query.isEmpty { endSearching() } else { clipboard.query = "" }
+    }
+
+    private func copyFirst() {
+        if let first { clipboard.copy(first) }
+        endSearching()
     }
 }
 

@@ -6,22 +6,37 @@ struct SystemPage: View {
     let stats: SystemStatsModel
 
     var body: some View {
-        HStack(spacing: 10) {
+        // Five cards share the width once the graphics processor joins them: a little tighter.
+        let tight = stats.gpu != nil
+        HStack(spacing: tight ? 8 : 10) {
             Gauge(
                 title: Text("Processor", bundle: .module),
                 fraction: stats.cpu,
                 value: stats.cpu.formatted(.percent.precision(.fractionLength(0))),
                 detail: nil,
                 tint: Theme.accent,
-                history: stats.cpuHistory
+                history: stats.cpuHistory,
+                tight: tight
             )
+            if let gpu = stats.gpu {
+                Gauge(
+                    title: Text("Graphics", bundle: .module),
+                    fraction: gpu,
+                    value: gpu.formatted(.percent.precision(.fractionLength(0))),
+                    detail: nil,
+                    tint: RGBA.orange.color,
+                    history: stats.gpuHistory,
+                    tight: tight
+                )
+            }
             Gauge(
                 title: Text("Memory", bundle: .module),
                 fraction: stats.memoryTotal > 0 ? stats.memoryUsed / stats.memoryTotal : 0,
                 value: SystemMath.formatMemory(stats.memoryUsed),
                 detail: SystemMath.formatMemory(stats.memoryTotal),
                 tint: RGBA.purple.color,
-                history: nil
+                history: nil,
+                tight: tight
             )
             Gauge(
                 title: Text("Disk", bundle: .module),
@@ -29,7 +44,8 @@ struct SystemPage: View {
                 value: SystemMath.formatBytes(stats.diskFree),
                 detail: String(localized: "free", bundle: .module),
                 tint: RGBA.blue.color,
-                history: nil
+                history: nil,
+                tight: tight
             )
             VStack(alignment: .leading, spacing: 7) {
                 Text("Network", bundle: .module)
@@ -37,16 +53,32 @@ struct SystemPage: View {
                     .foregroundStyle(Theme.secondaryText)
                 Label(SystemMath.formatRate(stats.download), systemImage: "arrow.down")
                     .foregroundStyle(.white)
+                    .labelStyle(NetworkRateStyle(tight: tight))
                 Label(SystemMath.formatRate(stats.upload), systemImage: "arrow.up")
                     .foregroundStyle(Theme.secondaryText)
+                    .labelStyle(NetworkRateStyle(tight: tight))
             }
-            .font(.system(size: 12, weight: .semibold).monospacedDigit())
-            .padding(12)
+            .font(.system(size: tight ? 11.5 : 12, weight: .semibold).monospacedDigit())
+            .padding(tight ? 10 : 12)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
             .background(RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous).fill(Theme.fill))
         }
         .onAppear { stats.startWatching() }
         .onDisappear { stats.stopWatching() }
+    }
+}
+
+/// A rate on one line: beside the graphics processor's card, the arrow sits closer and the figure may shrink a little.
+private struct NetworkRateStyle: LabelStyle {
+    let tight: Bool
+
+    func makeBody(configuration: Configuration) -> some View {
+        HStack(spacing: tight ? 3 : 6) {
+            configuration.icon
+            configuration.title
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
+        }
     }
 }
 
@@ -57,6 +89,7 @@ private struct Gauge: View {
     let detail: String?
     let tint: Color
     let history: [Double]?
+    var tight = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -64,7 +97,9 @@ private struct Gauge: View {
                 .font(.system(size: 11, weight: .semibold))
                 .foregroundStyle(Theme.secondaryText)
             Text(value)
-                .font(.system(size: 17, weight: .semibold, design: .rounded).monospacedDigit())
+                .font(.system(size: tight ? 15.5 : 17, weight: .semibold, design: .rounded).monospacedDigit())
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
                 .foregroundStyle(.white)
                 .contentTransition(.numericText())
                 .animation(.easeOut(duration: 0.3), value: value)
@@ -87,7 +122,7 @@ private struct Gauge: View {
                 .animation(.spring(duration: 0.5, bounce: 0), value: fraction)
             }
         }
-        .padding(12)
+        .padding(tight ? 10 : 12)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .background(RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous).fill(Theme.fill))
     }

@@ -423,6 +423,7 @@ public final class IslandController {
         keyboardTaken = false
         panel.acceptsKeyboard = false
         ai.ask.editing = false
+        clipboard.searching = false
         if machine.state == .expanded, !machine.pointerInside { perform(.startExitTimer) }
     }
 

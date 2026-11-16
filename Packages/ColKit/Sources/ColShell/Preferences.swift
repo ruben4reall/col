@@ -236,4 +236,24 @@ enum Preferences {
         get { bool("hotKeyEnabled", default: true) }
         set { defaults.set(newValue, forKey: "hotKeyEnabled"); changed() }
     }
+
+    // MARK: Your Mac at a glance
+
+    /// Convert, resize, compress and read the text of files on the shelf, from their menu.
+    static var shelfTools: Bool {
+        get { bool("shelfTools", default: true) }
+        set { defaults.set(newValue, forKey: "shelfTools"); changed() }
+    }
+
+    /// A search field above the recent copies.
+    static var searchesClipboard: Bool {
+        get { bool("searchesClipboard", default: true) }
+        set { defaults.set(newValue, forKey: "searchesClipboard"); changed() }
+    }
+
+    /// The graphics processor's load on the System page.
+    static var showsGPU: Bool {
+        get { bool("showsGPU", default: true) }
+        set { defaults.set(newValue, forKey: "showsGPU"); changed() }
+    }
 }

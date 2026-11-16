@@ -31,6 +31,17 @@ public enum SystemMath {
         return String(format: gigabytes >= 100 || gigabytes.rounded() == gigabytes ? "%.0f GB" : "%.1f GB", gigabytes)
     }
 
+    /// The graphics processor's busy share, from the `PerformanceStatistics` an IOAccelerator publishes: "Device
+    /// Utilization %" on Apple silicon and most GPUs, "GPU Activity(%)" on some older ones. Nil when it gives neither.
+    public static func gpuUsage(_ statistics: [String: Any]) -> Double? {
+        for key in ["Device Utilization %", "GPU Activity(%)"] {
+            if let value = (statistics[key] as? NSNumber)?.doubleValue, value >= 0 {
+                return min(value, 100) / 100
+            }
+        }
+        return nil
+    }
+
     public static func formatBytes(_ bytes: Double) -> String {
         if bytes >= 1_000_000_000_000 { return String(format: "%.1f TB", bytes / 1_000_000_000_000) }
         if bytes >= 1_000_000_000 { return String(format: bytes >= 100_000_000_000 ? "%.0f GB" : "%.1f GB", bytes / 1_000_000_000) }

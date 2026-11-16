@@ -1,9 +1,10 @@
 import Darwin
 import Foundation
 import ColCore
+import IOKit
 import Observation
 
-/// Processor, memory, network and disk, sampled once a second only while the System page is on screen.
+/// Processor, graphics, memory, network and disk, sampled once a second only while the System page is on screen.
 @MainActor
 @Observable
 final class SystemStatsModel {
@@ -16,6 +17,9 @@ final class SystemStatsModel {
     private(set) var diskTotal: Double = 0
     /// Recent processor load, for the sparkline.
     private(set) var cpuHistory: [Double] = []
+    /// The graphics processor's load; nil when it does not say, or while it is off in the settings.
+    private(set) var gpu: Double?
+    private(set) var gpuHistory: [Double] = []
 
     @ObservationIgnored private var timer: Timer?
     @ObservationIgnored private var ticks: [[UInt64]] = []
@@ -48,6 +52,11 @@ final class SystemStatsModel {
             if cpuHistory.count > 30 { cpuHistory.removeFirst(cpuHistory.count - 30) }
         }
         ticks = now
+        gpu = Preferences.showsGPU ? Self.gpuUsage() : nil
+        if let gpu {
+            gpuHistory.append(gpu)
+            if gpuHistory.count > 30 { gpuHistory.removeFirst(gpuHistory.count - 30) }
+        }
         memoryUsed = Self.memoryUsed()
         let counters = Self.networkBytes()
         let date = Date()
@@ -61,6 +70,24 @@ final class SystemStatsModel {
             diskFree = Double(values.volumeAvailableCapacityForImportantUsage ?? 0)
             diskTotal = Double(values.volumeTotalCapacity ?? 0)
         }
+    }
+
+    /// The busiest graphics processor, from the statistics each IOAccelerator publishes in the registry.
+    private static func gpuUsage() -> Double? {
+        var iterator: io_iterator_t = 0
+        guard IOServiceGetMatchingServices(kIOMainPortDefault, IOServiceMatching("IOAccelerator"), &iterator) == KERN_SUCCESS else { return nil }
+        defer { IOObjectRelease(iterator) }
+        var busiest: Double?
+        var service = IOIteratorNext(iterator)
+        while service != 0 {
+            if let statistics = IORegistryEntryCreateCFProperty(service, "PerformanceStatistics" as CFString, kCFAllocatorDefault, 0)?
+                .takeRetainedValue() as? [String: Any], let usage = SystemMath.gpuUsage(statistics) {
+                busiest = max(busiest ?? 0, usage)
+            }
+            IOObjectRelease(service)
+            service = IOIteratorNext(iterator)
+        }
+        return busiest
     }
 
     private static func cpuTicks() -> [[UInt64]] {

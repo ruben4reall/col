@@ -15,6 +15,9 @@ final class ShelfModel {
     private(set) var items: [Item] = []
     /// True while files are dragged over the island.
     var isTargeted = false
+    /// What a tool of a file's menu is doing, or just did, said under the shelf's buttons.
+    var notice: ShelfNotice?
+    @ObservationIgnored var noticeClear: Task<Void, Never>?
     /// False while demo files stand in for the user's: nothing is saved then.
     @ObservationIgnored private var persists = true
 
