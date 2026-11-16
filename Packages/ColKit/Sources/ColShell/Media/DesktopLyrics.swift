@@ -5,17 +5,23 @@ import SwiftUI
 
 /// The line being sung on the desktop, large, with the next one small below it: above the wallpaper, below the
 /// desktop's icons and every window, on the main screen. Clicks go through it, and it never takes the focus. It shows
-/// only while music plays with synced lyrics, and fades away a few seconds after a pause. Off by default.
+/// only while music plays with synced lyrics, and fades away a few seconds after a pause. It goes while the Mac is
+/// locked, and stands still while windows cover it whole. Off by default.
 @MainActor
 final class DesktopLyrics {
     private let media: MediaController
     private let lyrics: LyricsModel
     private var window: NSPanel?
     private var observers: [NSObjectProtocol] = []
+    private var lockObservers: [NSObjectProtocol] = []
+    private var occlusionObserver: NSObjectProtocol?
     private var running = false
     private var fade: Task<Void, Never>?
-    /// The lyrics view counts as a watcher of the lyrics while the window shows.
+    /// The lyrics are followed line by line while the window shows and can be seen.
     private var watching = false
+    private var locked = false
+    /// Windows cover the lyrics whole: nothing in them moves.
+    private var covered = false
 
     /// Seconds a pause leaves the lyrics on the desktop before they fade.
     private static let pauseLinger: Duration = .seconds(4)
@@ -35,6 +41,15 @@ final class DesktopLyrics {
                 MainActor.assumeIsolated { self?.place() }
             },
         ]
+        let distributed = DistributedNotificationCenter.default()
+        for (name, value) in [("com.apple.screenIsLocked", true), ("com.apple.screenIsUnlocked", false)] {
+            lockObservers.append(distributed.addObserver(forName: NSNotification.Name(name), object: nil, queue: .main) { [weak self] _ in
+                MainActor.assumeIsolated {
+                    self?.locked = value
+                    self?.update()
+                }
+            })
+        }
         follow()
     }
 
@@ -42,6 +57,8 @@ final class DesktopLyrics {
         running = false
         observers.forEach { NotificationCenter.default.removeObserver($0) }
         observers = []
+        lockObservers.forEach { DistributedNotificationCenter.default().removeObserver($0) }
+        lockObservers = []
         close()
     }
 
@@ -63,7 +80,7 @@ final class DesktopLyrics {
     }
 
     private var wanted: Bool {
-        Preferences.showsLyrics && Preferences.showsLyricsOnDesktop && media.hasPlayer && lyrics.lyrics?.isSynced == true
+        Preferences.showsLyrics && Preferences.showsLyricsOnDesktop && !locked && media.hasPlayer && lyrics.lyrics?.isSynced == true
     }
 
     private func update() {
@@ -83,11 +100,18 @@ final class DesktopLyrics {
 
     private func preferencesChanged() {
         window?.sharingType = Preferences.hiddenFromScreenCapture ? .none : .readOnly
-        if let window, let content = window.contentView as? NSHostingView<DesktopLyricsView> {
-            content.rootView = DesktopLyricsView(lyrics: lyrics, media: media, position: Preferences.desktopLyricsPosition, size: Preferences.desktopLyricsSize)
-        }
+        refreshView()
         place()
         update()
+    }
+
+    private func makeView() -> DesktopLyricsView {
+        DesktopLyricsView(lyrics: lyrics, media: media, position: Preferences.desktopLyricsPosition,
+                          size: Preferences.desktopLyricsSize, moving: !covered)
+    }
+
+    private func refreshView() {
+        if let content = window?.contentView as? NSHostingView<DesktopLyricsView> { content.rootView = makeView() }
     }
 
     private static var screen: NSScreen? { NSScreen.screens.first }
@@ -107,18 +131,33 @@ final class DesktopLyrics {
             window.level = NSWindow.Level(rawValue: Int(CGWindowLevelForKey(.desktopWindow)) + 1)
             window.collectionBehavior = [.canJoinAllSpaces, .stationary, .ignoresCycle, .fullScreenNone]
             window.sharingType = Preferences.hiddenFromScreenCapture ? .none : .readOnly
-            window.contentView = NSHostingView(rootView: DesktopLyricsView(
-                lyrics: lyrics, media: media, position: Preferences.desktopLyricsPosition, size: Preferences.desktopLyricsSize
-            ))
+            covered = false
+            window.contentView = NSHostingView(rootView: makeView())
             window.alphaValue = 0
             window.orderFrontRegardless()
             self.window = window
-            if !watching {
-                watching = true
-                lyrics.watch()
+            occlusionObserver = NotificationCenter.default.addObserver(forName: NSWindow.didChangeOcclusionStateNotification, object: window, queue: .main) { [weak self] _ in
+                MainActor.assumeIsolated { self?.occlusionChanged() }
             }
+            setWatching(true)
         }
         animateAlpha(to: 1)
+    }
+
+    /// Covered whole by windows, the lyrics stop following the song and the fill stops; seen again, they catch up.
+    private func occlusionChanged() {
+        guard let window else { return }
+        let nowCovered = !window.occlusionState.contains(.visible)
+        guard nowCovered != covered else { return }
+        covered = nowCovered
+        setWatching(!covered)
+        refreshView()
+    }
+
+    private func setWatching(_ on: Bool) {
+        guard on != watching else { return }
+        watching = on
+        if on { lyrics.watch() } else { lyrics.unwatch() }
     }
 
     /// Fades the lyrics out, after a pause's lingering, then lets the window go.
@@ -145,13 +184,12 @@ final class DesktopLyrics {
 
     private func close() {
         fade = nil
+        if let occlusionObserver { NotificationCenter.default.removeObserver(occlusionObserver) }
+        occlusionObserver = nil
         window?.orderOut(nil)
         window?.contentView = nil
         window = nil
-        if watching {
-            watching = false
-            lyrics.unwatch()
-        }
+        setWatching(false)
     }
 
     private func place() {
@@ -167,10 +205,12 @@ struct DesktopLyricsView: View {
     let media: MediaController
     let position: DesktopLyricsPosition
     let size: DesktopLyricsSize
+    /// False while windows cover the lyrics whole: the fill and the dots stand still.
+    var moving = true
 
     var body: some View {
         if let shown = lyrics.lyrics, shown.isSynced {
-            LyricsReel(lyrics: shown, current: lyrics.current, playing: media.nowPlaying.isPlaying,
+            LyricsReel(lyrics: shown, current: lyrics.current, playing: moving && media.nowPlaying.isPlaying,
                        position: { lyrics.position(at: $0) }, before: 0, after: 1, size: size.lineSize,
                        otherScale: 0.5, alignment: alignment, anchor: 0, anchorsTop: true, spacing: size.lineSize * 0.3, onWallpaper: true)
                 .padding(.horizontal, size.lineSize * 0.4)

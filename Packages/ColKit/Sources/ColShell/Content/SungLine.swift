@@ -23,13 +23,16 @@ struct SungLine: View {
 
     var body: some View {
         if let karaoke {
-            if moving {
-                // With Reduce Motion the words light up whole: ten looks a second are plenty.
-                TimelineView(.animation(minimumInterval: reduceMotion ? 0.1 : 1.0 / 30, paused: false)) { context in
+            let now = Date()
+            let left = karaoke.end - position(now)
+            if moving, left > 0 {
+                // Until the last word is lit, then never again. With Reduce Motion the words light up whole: ten
+                // looks a second are plenty.
+                TimelineView(FillSchedule(end: now.addingTimeInterval(left + 0.05), interval: reduceMotion ? 0.1 : 1.0 / 30)) { context in
                     words(karaoke, at: position(context.date))
                 }
             } else {
-                words(karaoke, at: position(Date()))
+                words(karaoke, at: position(now))
             }
         } else {
             Text(verbatim: line.text)
@@ -51,6 +54,22 @@ struct SungLine: View {
                     .layoutValue(key: SpaceAfter.self, value: word.spaceAfter)
             }
         }
+    }
+}
+
+/// Moments to redraw a line's fill at, a set number a second, up to the moment its last word is lit: then the
+/// schedule ends, and the line is not drawn again until something else changes.
+struct FillSchedule: TimelineSchedule {
+    let end: Date
+    let interval: TimeInterval
+
+    func entries(from start: Date, mode: TimelineScheduleMode) -> [Date] {
+        guard end > start else { return [start] }
+        // A slower pace when the system asks for one (a hidden window, low power).
+        let step = mode == .lowFrequency ? max(interval, 0.5) : interval
+        var dates = Array(stride(from: start, to: end, by: step))
+        dates.append(end)
+        return dates
     }
 }
 

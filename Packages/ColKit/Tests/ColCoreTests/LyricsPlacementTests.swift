@@ -20,6 +20,21 @@ struct LyricsPlacementTests {
         #expect(abs(card.midX - screen.midX) <= 1)
     }
 
+    /// The Larger Text display modes of the same MacBooks: fewer points, the clock and the user's area as tall.
+    static let largerText: [CGSize] = [CGSize(width: 1024, height: 665), CGSize(width: 1147, height: 745),
+                                       CGSize(width: 1280, height: 800), CGSize(width: 1312, height: 848)]
+
+    @Test(arguments: largerText)
+    func largerTextKeepsTheSameRoomForTheClockAndThePasswordField(size: CGSize) {
+        let screen = CGRect(origin: .zero, size: size)
+        let card = LockScreenLayout.card(screen: screen)
+        #expect(card.minY >= LockScreenLayout.userClearance)
+        #expect(card.maxY <= screen.maxY - LockScreenLayout.clockClearance)
+        // Still room for the controls and a line.
+        #expect(card.height >= 120)
+        #expect(screen.contains(card))
+    }
+
     @Test func theCardFollowsAScreenThatIsNotAtTheOrigin() {
         let screen = CGRect(x: 1512, y: -200, width: 1728, height: 1117)
         let card = LockScreenLayout.card(screen: screen)
@@ -27,10 +42,11 @@ struct LyricsPlacementTests {
         #expect(abs(card.midX - screen.midX) <= 1)
     }
 
-    @Test func aSmallScreenStillGetsACardInsideIt() {
+    @Test func aScreenTooShortForTheCardGetsNone() {
         let screen = CGRect(x: 0, y: 0, width: 400, height: 300)
         let card = LockScreenLayout.card(screen: screen)
-        #expect(screen.contains(card))
+        #expect(card.height < LockScreenLayout.smallestCard)
+        #expect(card.minX.isFinite && card.minY.isFinite)
         #expect(card.width <= 400)
     }
 

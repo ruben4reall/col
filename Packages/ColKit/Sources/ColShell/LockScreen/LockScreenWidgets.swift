@@ -52,11 +52,13 @@ final class LockScreenWidgets {
         guard Preferences.showsOnLockScreen, window == nil,
               let screen = NSScreen.screens.first(where: { $0.safeAreaInsets.top > 0 }) ?? NSScreen.main
         else { return }
-        let withLyrics = Self.showsLyrics
+        // Between the clock and the user's picture, never over the password field; a screen too short for that keeps
+        // the plain widgets.
+        let card = LockScreenLayout.card(screen: screen.frame)
+        let withLyrics = Self.showsLyrics && card.height >= LockScreenLayout.smallestCard
         let frame: NSRect
         if withLyrics {
-            // Between the clock and the user's picture, never over the password field.
-            frame = LockScreenLayout.card(screen: screen.frame)
+            frame = card
         } else {
             let size = CGSize(width: 380, height: 150)
             frame = NSRect(x: screen.frame.midX - size.width / 2, y: screen.frame.minY + screen.frame.height * 0.16,
@@ -174,17 +176,25 @@ struct LockScreenLyricsCard: View {
 
     var body: some View {
         GeometryReader { geometry in
-            let shown = lyrics.lyrics.flatMap { $0.isSynced ? $0 : nil }
-            let size = min(max(geometry.size.width * 0.046, 24), 34)
+            // The room above the controls decides how many lines show, and how big: on the shortest screens, the
+            // line being sung alone; none when even that does not fit.
+            let room = geometry.size.height - 78
+            let shown = room >= 44 ? lyrics.lyrics.flatMap { $0.isSynced ? $0 : nil } : nil
+            let before = room >= 180 ? 1 : 0
+            let after = room >= 240 ? 3 : room >= 140 ? 1 : 0
+            // Alone, the line being sung takes the room for two rows of its words.
+            let alone = before == 0 && after == 0
+            let size = min(max(geometry.size.width * 0.046, 24), 34, max(16, room * (alone ? 0.3 : 0.16)))
             VStack(spacing: 0) {
                 if let shown {
                     LyricsReel(lyrics: shown, current: lyrics.current, playing: media.nowPlaying.isPlaying,
-                               position: { lyrics.position(at: $0) }, before: 1, after: 3, size: size, anchor: 0.36)
+                               position: { lyrics.position(at: $0) }, before: before, after: after, size: size,
+                               anchor: before > 0 ? 0.36 : after > 0 ? 0.3 : 0.5)
                         .padding(.horizontal, 32)
-                        .padding(.top, 18)
+                        .padding(.top, alone ? 8 : 18)
                         .mask(LinearGradient(stops: [
-                            .init(color: .clear, location: 0), .init(color: .black, location: 0.12),
-                            .init(color: .black, location: 0.84), .init(color: .clear, location: 1),
+                            .init(color: alone ? .black : .clear, location: 0), .init(color: .black, location: 0.12),
+                            .init(color: .black, location: 0.84), .init(color: alone ? .black : .clear, location: 1),
                         ], startPoint: .top, endPoint: .bottom))
                         .transition(.opacity)
                 }

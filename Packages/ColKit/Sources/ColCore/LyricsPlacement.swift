@@ -9,25 +9,32 @@ public enum LockScreenLayout {
     public static let clockShare = 0.34
     /// Share of the screen's height, from its bottom edge, that the user's picture, name and password field take.
     public static let userShare = 0.27
+    /// The clock and the user's area keep their size in points when a display mode makes the screen fewer points
+    /// tall (Larger Text): never less room than this for each, whatever the share.
+    public static let clockClearance = 250.0
+    public static let userClearance = 250.0
     /// Space kept free above and below the card.
     public static let margin = 14.0
 
     /// The band between the clock and the user's area, in screen coordinates with the origin at the bottom left, as
     /// AppKit counts them.
     public static func band(screen: CGRect) -> CGRect {
-        let top = screen.maxY - screen.height * clockShare
-        let bottom = screen.minY + screen.height * userShare
+        let top = screen.maxY - max(screen.height * clockShare, clockClearance)
+        let bottom = screen.minY + max(screen.height * userShare, userClearance)
         return CGRect(x: screen.minX, y: bottom, width: screen.width, height: max(0, top - bottom))
     }
 
     /// The card of lyrics and controls: centred in the band, half the screen wide (between 480 and 720 points), as
-    /// tall as the band allows up to 440 points.
+    /// tall as the band allows up to 440 points. On the shortest screens it holds the controls and a line or two.
     public static func card(screen: CGRect) -> CGRect {
-        let band = band(screen: screen).insetBy(dx: 0, dy: margin)
-        let width = min(max(screen.width * 0.5, 480), 720, screen.width - 2 * margin)
-        let height = min(band.height, 440)
-        return CGRect(x: screen.midX - width / 2, y: band.midY - height / 2, width: width, height: max(0, height)).integral
+        let band = band(screen: screen)
+        let width = min(max(screen.width * 0.5, 480), 720, max(0, screen.width - 2 * margin))
+        let height = min(max(0, band.height - 2 * margin), 440)
+        return CGRect(x: screen.midX - width / 2, y: band.midY - height / 2, width: width, height: height).integral
     }
+
+    /// The card holds at least the controls: below this height, the Lock Screen shows its plain widgets instead.
+    public static let smallestCard = 96.0
 }
 
 /// Where the lyrics show on the desktop.
