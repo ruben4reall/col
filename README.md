@@ -8,6 +8,8 @@
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-0A84FF" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/macOS-14%2B-1D1D1F" alt="macOS 14 or later">
+  <img src="https://img.shields.io/badge/Windows-10%20%7C%2011-1D1D1F" alt="Windows 10 and 11, preview">
+  <img src="https://img.shields.io/badge/Linux-Wayland-1D1D1F" alt="Linux, preview">
   <img src="https://img.shields.io/badge/Swift-6-1D1D1F" alt="Swift 6">
   <img src="https://img.shields.io/badge/memory-15%20MB-1D1D1F" alt="15 MB of memory at rest">
   <a href="https://github.com/ruben4reall/col/actions/workflows/ci.yml"><img src="https://github.com/ruben4reall/col/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
@@ -15,18 +17,18 @@
 
 # Col
 
-**The notch, made useful.**
+**The notch, made useful. On every Mac, and now on Windows and Linux.**
 
-Col was called Islet until version 2.0: the name changed, nothing you set up does.
+[Website](https://getcol.vercel.app) · [Download for Mac](https://github.com/ruben4reall/col/releases/latest/download/Col.dmg) · [Windows and Linux](#col-on-windows-and-linux) · [Changelog](CHANGELOG.md) · [API](docs/api.md)
 
-[Website](https://getcol.vercel.app) · [Download for Mac](https://github.com/ruben4reall/col/releases/latest) · [Changelog](CHANGELOG.md) · [API](docs/api.md)
+Col turns the top of your screen into a living island. While you work, it shows what matters beside the camera: the
+song playing and its lyrics, your AirPods connecting, the volume, your next meeting, a build running, an AI agent
+waiting for you. Hover or click, and it opens. On a Mac without a notch it is a small pill in the menu bar, the way
+the iPhone's island sits in its status bar.
 
-Col turns the camera cutout of your MacBook into a living island. While you work, it shows what matters beside the
-camera: the song playing, your AirPods connecting, the volume, a build running, an AI agent waiting for you. Hover or
-click, and it opens.
-
-Col is a free, open source Mac app, written in Swift. It does what the best notch apps do, then opens the notch to
-your scripts and your AI agents.
+Col is free and open source: a native Swift app on the Mac, with native editions for Windows and Linux. It does what
+the best notch apps do, then opens the notch to your scripts, your devices and your AI agents. It was called Islet
+until version 2.0.
 
 <p align="center">
   <img src="docs/images/open.webp" alt="Col open below the notch of a MacBook, playing a song: the cover, the title, a scrubber and the controls" width="800">
@@ -48,8 +50,10 @@ your scripts and your AI agents.
 - **AirPods, by model.** Col reads the model your headphones report (AirPods, AirPods Pro, AirPods Max, Beats) and
   shows each earbud and the case, or the headphones' single battery.
 - **AI agents.** Claude Code, Codex, Gemini CLI, Cursor and GitHub Copilot in VS Code show in the notch while they
-  work, each with its logo. When Claude Code or Codex asks for permission, the island opens with Allow and Deny. Col
-  never signs in to any AI service.
+  work, each with its logo. When Claude Code or Codex asks for permission, the island opens with Allow and Deny and
+  the whole command. Claude Code's questions come with their options, answered from the island, and its plans read as
+  formatted text, with Approve and Keep Planning. A click on a session brings its Terminal or iTerm2 tab, or its
+  editor, to the front. Col never signs in to any AI service.
 - **Your AI, in the island.** The AI apps of your Mac, a tap away, and your own model servers (Ollama, LM Studio,
   llama.cpp or any OpenAI-compatible server, on this Mac or another one of your network) with the model each one
   holds. Ask one a question from the island: the answer comes as it is written, and the question goes to that server
@@ -67,11 +71,15 @@ your scripts and your AI agents.
 - **Programmable.** The `colctl` command, a local API, `col://` links, Shortcuts actions and extensions put your own
   live activities and widgets in the notch. With Col Connect, your phone, Home Assistant or a build machine on your
   network push them too, each with a token of its own; and a widget can read any web address that answers JSON.
-- **Never in the way.** The wings never cover a menu or a menu bar icon, the island steps aside in full screen, and on
-  a Mac without a notch it floats just under the menu bar.
+- **Never in the way.** The wings never cover a menu or a menu bar icon, measured again the moment an icon comes or
+  goes (macOS 27's » button included), as wide as you choose. The island steps aside in full screen and in front of
+  the apps you pick. On a Mac without a notch, or an external display, it is a pill in the menu bar, Col's own notch,
+  or a capsule below the menu bar.
 - **Liquid Glass.** On macOS 26 the open island stays black where it meets the notch and melts into glass toward its
   lower edge: Liquid (a clear pane that bends the desktop behind it), Transparent, Tinted or all Black, your choice,
   as for macOS's own glass.
+- **In your language.** English, French, German, Dutch, Italian, Spanish, Brazilian Portuguese, Japanese, Korean and
+  Chinese (Simplified and Traditional), following your Mac.
 - **Yours to shape.** Compose each page of the open island from widgets, one across it or two side by side, add pages,
   reorder them, choose what the closed island shows first, the size and the speed. A short welcome asks only for the
   permissions the modules you picked need.
@@ -121,6 +129,22 @@ In Settings, AI apps, disconnect your AI agents, so their settings files forget 
 Its settings are in `~/Library/Preferences/ch.rubencatalao.islet.plist`. With Homebrew:
 `brew uninstall --cask --zap col`.
 
+## Col on Windows and Linux
+
+Col 3 brings the island to Windows and Linux as a **preview**: native apps, not a web view, built for each system and
+sharing Col's API, its `colctl` command and its agents' hooks.
+
+| | Windows 10 and 11 | Linux |
+|---|---|---|
+| Made with | C# and WPF | Vala, GTK 4 and libadwaita |
+| The island | A floating pill at the top of the screen | A floating pill, a layer-shell overlay on KDE Plasma, COSMIC, Hyprland, Sway, niri; under XWayland on GNOME |
+| In it | Now playing (system media controls) with synced lyrics, Claude Code and Codex with Allow and Deny, the volume, the battery, a timer, clipboard history, keep awake | Now playing (MPRIS) with synced lyrics, Claude Code and Codex with Allow and Deny, the volume (PipeWire or PulseAudio), the battery (UPower), a timer, clipboard history, keep awake |
+| Install | [Installer](https://github.com/ruben4reall/col/releases/latest/download/Col-windows-setup.exe), or a zip for [x64](https://github.com/ruben4reall/col/releases/latest/download/Col-windows-x64.zip) and [Arm64](https://github.com/ruben4reall/col/releases/latest/download/Col-windows-arm64.zip) | `.deb` for Ubuntu 24.04+ and Debian 13 ([amd64](https://github.com/ruben4reall/col/releases/latest/download/col_amd64.deb), [arm64](https://github.com/ruben4reall/col/releases/latest/download/col_arm64.deb)), a tarball ([x86_64](https://github.com/ruben4reall/col/releases/latest/download/Col-linux-x86_64.tar.gz), [aarch64](https://github.com/ruben4reall/col/releases/latest/download/Col-linux-aarch64.tar.gz)), an Arch PKGBUILD |
+| Details | [windows/README.md](windows/README.md) | [linux/README.md](linux/README.md) |
+
+The Windows builds are not signed yet: SmartScreen asks once, choose More info, then Run anyway. The pages you compose,
+the prompter, the shelf, the agenda and the AI page stay on the Mac for now.
+
 ## Connect your AI agents
 
 In Settings, AI apps, click Connect next to each agent, or from a terminal:
@@ -164,8 +188,8 @@ colctl widget set temp --title "Living room" --value 21.5 --unit °C --symbol th
 
 Each one only if a module you chose needs it:
 
-- **Accessibility**, to take over the volume and brightness keys and to measure the menu bar, so the island never
-  covers it.
+- **Device Control and Data Access** (Accessibility before macOS 27), to take over the volume and brightness keys and
+  to measure the menu bar, so the island never covers it. Without it, the wings stay narrow.
 - **Calendars and Reminders**, for the agenda.
 - **Bluetooth**, for the battery and the model of your headphones.
 - **Camera**, only while the mirror is open.
@@ -218,9 +242,14 @@ opens and thrown away as it closes, and the Liquid Glass under them only draws w
 
 ## Compatible Macs
 
-- macOS 14 Sonoma or later, Apple silicon and Intel.
+- macOS 14 Sonoma or later, Apple silicon and Intel, up to macOS 27.
 - **In the notch** on MacBook Pro 14 and 16 inch (2021 and later) and MacBook Air 13 and 15 inch (M2 and later).
-- **A floating island** just under the menu bar on every other Mac and on external displays.
+- **A pill in the menu bar** on every other Mac and on external displays, clear of the top edge; or Col's own notch,
+  or a capsule below the menu bar (Settings, Appearance, Shape).
+- **The MacBook Pro with Apple's own Dynamic Island** (OLED, November 2026): its top already holds Apple's island.
+  Choose Below the menu bar in Settings, Appearance, Shape, so Col floats under it. Not tested on that Mac yet.
+- Without Device Control and Data Access (Accessibility before macOS 27), Col cannot see the menu bar, and its wings
+  stay narrow so they never cover what they cannot see.
 
 ## Private macOS APIs
 
@@ -292,8 +321,9 @@ Bugs and ideas go to [issues](https://github.com/ruben4reall/col/issues); pull r
 [CONTRIBUTING.md](CONTRIBUTING.md) gives the workflow and the promises every change keeps (light, native, the rules
 tested in `ColCore`), and [SECURITY.md](SECURITY.md) how to report a vulnerability privately.
 
-Col follows the language of your Mac. Its translations were made by AI, not by native speakers: if a word sounds
-wrong in your language, please [fix it](CONTRIBUTING.md#translations).
+Col follows the language of your Mac, in eleven languages: English, French, German, Dutch, Italian, Spanish, Brazilian
+Portuguese, Japanese, Korean, Simplified and Traditional Chinese. Its translations were made by AI, not by native
+speakers: if a word sounds wrong in your language, please [fix it](CONTRIBUTING.md#translations).
 
 ## License
 
