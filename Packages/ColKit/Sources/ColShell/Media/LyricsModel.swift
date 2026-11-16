@@ -197,11 +197,18 @@ final class LyricsModel {
         let choice = overrides.choice(for: query)
         lookup = Task { @MainActor [weak self] in
             let answer = if let choice {
-                await LyricsService.shared.lyrics(choice: choice)
+                await LyricsService.shared.lyrics(choice: choice, for: query)
             } else {
                 await LyricsService.shared.lyrics(for: query)
             }
             guard let self, !Task.isCancelled, self.query == query else { return }
+            if choice != nil, answer == .notFound {
+                // LRCLIB no longer has the lyrics chosen: the choice goes, and the song's lyrics are looked up again.
+                self.shownChoice = nil
+                self.save { overrides in overrides.choose(nil, for: query) }
+                self.find(query)
+                return
+            }
             self.shownChoice = choice
             switch answer {
             case .found(let lyrics): self.setFound(lyrics)

@@ -63,7 +63,9 @@ actor LyricsService {
     }
 
     /// The lyrics the user chose for a track among LRCLIB's: read from the disk, else asked by their number alone.
-    func lyrics(choice id: Int) async -> Answer {
+    /// A `.lrc` file of the user's own still comes first. Not found means LRCLIB no longer has them.
+    func lyrics(choice id: Int, for query: LyricsQuery) async -> Answer {
+        if let local = Self.userLyrics(for: query) { return .found(local) }
         let key = Self.choiceKey(id)
         if let answer = Self.cached(key), answer != .notFound { return answer }
         if let quietUntil, quietUntil > Date() { return .unavailable }
