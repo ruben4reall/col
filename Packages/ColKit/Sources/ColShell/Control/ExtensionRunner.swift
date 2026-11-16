@@ -31,19 +31,32 @@ final class ExtensionRunner {
 
     private static var disabledKey: String { "disabledExtensions" }
 
+    /// A file inside an extension's folder that keeps it off: `colctl extensions install` puts it there, and turning
+    /// the extension on in the settings takes it away. Kept in the extension itself, it holds from the moment the
+    /// folder appears, whichever process wrote it.
+    static let offMarker = ".col-off"
+
+    /// The extensions of a folder, each on or off. Hidden folders, such as one `colctl` is still copying, are not
+    /// extensions.
+    static func scan(_ folder: URL, disabled: Set<String>) -> [Installed] {
+        let files = FileManager.default
+        let folders = (try? files.contentsOfDirectory(at: folder, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles])) ?? []
+        return folders.sorted { $0.lastPathComponent < $1.lastPathComponent }.compactMap { url in
+            let name = url.lastPathComponent
+            guard !name.hasPrefix("."), let data = try? Data(contentsOf: url.appendingPathComponent("extension.json")),
+                  let manifest = try? JSONDecoder().decode(ExtensionManifest.self, from: data).validated()
+            else { return nil }
+            let off = disabled.contains(name) || files.fileExists(atPath: url.appendingPathComponent(offMarker).path)
+            return Installed(folder: name, manifest: manifest, enabled: !off)
+        }
+    }
+
     func reload() {
         timers.values.forEach { $0.invalidate() }
         timers.removeAll()
         let previous = installed
         let disabled = Set(UserDefaults.standard.stringArray(forKey: Self.disabledKey) ?? [])
-        let folders = (try? FileManager.default.contentsOfDirectory(at: Self.folder, includingPropertiesForKeys: [.isDirectoryKey])) ?? []
-        installed = folders.sorted { $0.lastPathComponent < $1.lastPathComponent }.compactMap { url in
-            let file = url.appendingPathComponent("extension.json")
-            guard let data = try? Data(contentsOf: file),
-                  let manifest = try? JSONDecoder().decode(ExtensionManifest.self, from: data).validated()
-            else { return nil }
-            return Installed(folder: url.lastPathComponent, manifest: manifest, enabled: !disabled.contains(url.lastPathComponent))
-        }
+        installed = Self.scan(Self.folder, disabled: disabled)
         // An extension removed (`colctl extensions remove`) or turned off by another hand takes what it showed along.
         let showing = Set(previous.filter(\.enabled).map(\.folder))
         for folder in showing.subtracting(installed.filter(\.enabled).map(\.folder)) {
@@ -63,7 +76,15 @@ final class ExtensionRunner {
 
     func setEnabled(_ enabled: Bool, folder: String) {
         var disabled = Set(UserDefaults.standard.stringArray(forKey: Self.disabledKey) ?? [])
-        if enabled { disabled.remove(folder) } else { disabled.insert(folder) }
+        if enabled {
+            disabled.remove(folder)
+            // Installed off by colctl: on, at the user's word.
+            if !folder.hasPrefix("."), !folder.contains("/") {
+                try? FileManager.default.removeItem(at: Self.folder.appendingPathComponent(folder).appendingPathComponent(Self.offMarker))
+            }
+        } else {
+            disabled.insert(folder)
+        }
         UserDefaults.standard.set(Array(disabled), forKey: Self.disabledKey)
         if !enabled {
             remove?("api.ext-" + folder)

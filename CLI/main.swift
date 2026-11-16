@@ -131,9 +131,15 @@ func options(_ arguments: ArraySlice<String>) -> [String: String] {
 }
 
 func percentOrFraction(_ value: String) -> Double? {
-    if value.hasSuffix("%") { return Double(value.dropLast()).map { $0 / 100 } }
-    guard let number = Double(value) else { return nil }
+    // Infinity and NaN are numbers JSON cannot carry: refused here rather than crash the encoder.
+    if value.hasSuffix("%") { return Double(value.dropLast()).flatMap { $0.isFinite ? $0 / 100 : nil } }
+    guard let number = Double(value), number.isFinite else { return nil }
     return number > 1 ? number / 100 : number
+}
+
+/// A number of seconds, finite and not negative.
+func seconds(_ value: String) -> Double? {
+    Double(value).flatMap { $0.isFinite && $0 >= 0 ? $0 : nil }
 }
 
 // MARK: Hooks
@@ -468,8 +474,8 @@ case "push":
         body["progress"] = fraction
     }
     if let ttl = values["ttl"] {
-        guard let seconds = Double(ttl) else { fail("--ttl takes seconds") }
-        body["ttl"] = seconds
+        guard let ttl = seconds(ttl) else { fail("--ttl takes seconds") }
+        body["ttl"] = ttl
     }
     _ = run("POST", "/v1/activities", body: json(body))
 
@@ -627,8 +633,8 @@ func widgetCommand(_ rest: [String]) {
             case "--line":
                 lines.append(value(flag))
             case "--stale-after":
-                guard let seconds = Double(value(flag)) else { fail("--stale-after takes seconds") }
-                widget["staleAfter"] = seconds
+                guard let stale = seconds(value(flag)) else { fail("--stale-after takes seconds") }
+                widget["staleAfter"] = stale
             case "--activity":
                 widget["activity"] = true
             default:
@@ -663,9 +669,27 @@ func extensionsFolder() -> URL {
     URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("Library/Application Support/Col/Extensions", isDirectory: true)
 }
 
-/// Col's settings, where the extensions turned off are listed. `COL_DEFAULTS_SUITE` points elsewhere, for tests.
-func colDefaults() -> UserDefaults? {
-    UserDefaults(suiteName: ProcessInfo.processInfo.environment["COL_DEFAULTS_SUITE"] ?? "ch.rubencatalao.islet")
+/// The file that keeps an extension off, inside its own folder: Col leaves the extension alone while it is there, and
+/// removes it when the user turns the extension on. The same name as Col's (ExtensionRunner.offMarker). A function, not
+/// a constant: the commands run before this part of the file would set one.
+func offMarker() -> String { ".col-off" }
+
+/// Col's settings, read only: the extensions turned off in its window. `COL_DEFAULTS_SUITE` points elsewhere, for
+/// tests. colctl never writes them; only Col does.
+func turnedOffInCol() -> Set<String> {
+    let suite = ProcessInfo.processInfo.environment["COL_DEFAULTS_SUITE"] ?? "ch.rubencatalao.islet"
+    return Set(UserDefaults(suiteName: suite)?.stringArray(forKey: "disabledExtensions") ?? [])
+}
+
+/// Text from a file, safe to print in a terminal: control characters, which could move the cursor or change what
+/// the terminal shows, are written as escapes.
+func printable(_ text: String) -> String {
+    text.unicodeScalars.map { scalar -> String in
+        let value = scalar.value
+        let control = value < 0x20 || (0x7F...0x9F).contains(value) || (0x200B...0x200F).contains(value)
+            || (0x202A...0x202E).contains(value) || (0x2066...0x2069).contains(value)
+        return control ? String(format: "\\u{%X}", value) : String(scalar)
+    }.joined()
 }
 
 /// What an extension's manifest says, once checked as Col checks it: a name, a command, an interval of 10 seconds to
@@ -679,16 +703,18 @@ struct Manifest {
     static func read(_ folder: URL) throws -> Manifest {
         let file = folder.appendingPathComponent("extension.json")
         guard let data = FileManager.default.contents(atPath: file.path) else {
-            throw ClientError.failed("\(folder.path) has no extension.json")
+            throw ClientError.failed("\(printable(folder.path)) has no extension.json")
         }
         guard let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-            throw ClientError.failed("\(file.path) is not a JSON object")
+            throw ClientError.failed("\(printable(file.path)) is not a JSON object")
         }
         let name = (object["name"] as? String ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         let command = (object["command"] as? String ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !name.isEmpty else { throw ClientError.failed("\(file.path) needs a \"name\"") }
-        guard !command.isEmpty else { throw ClientError.failed("\(file.path) needs a \"command\"") }
-        guard let interval = object["interval"] as? Double else { throw ClientError.failed("\(file.path) needs an \"interval\" in seconds") }
+        guard !name.isEmpty else { throw ClientError.failed("\(printable(file.path)) needs a \"name\"") }
+        guard !command.isEmpty else { throw ClientError.failed("\(printable(file.path)) needs a \"command\"") }
+        guard let interval = object["interval"] as? Double, interval.isFinite else {
+            throw ClientError.failed("\(printable(file.path)) needs an \"interval\" in seconds")
+        }
         return Manifest(name: name, command: command, interval: min(max(interval, 10), 86_400), description: object["description"] as? String)
     }
 }
@@ -696,6 +722,7 @@ struct Manifest {
 /// A folder name an extension can live under: no path, nothing hidden.
 func isFolderName(_ name: String) -> Bool {
     !name.isEmpty && name.count <= 64 && !name.hasPrefix(".") && !name.contains("/") && !name.contains(":")
+        && name.unicodeScalars.allSatisfy { $0.value >= 0x20 && $0.value != 0x7F }
 }
 
 /// Asks a running Col to read its extensions folder again; nothing when Col is closed.
@@ -703,25 +730,12 @@ func reloadExtensions() {
     _ = try? request("POST", "/v1/extensions/reload", timeout: 3)
 }
 
-/// Turns an extension off or on in Col's settings; written only when that changes something.
-func setEnabled(_ enabled: Bool, folder: String) {
-    guard let defaults = colDefaults() else { return }
-    var disabled = defaults.stringArray(forKey: "disabledExtensions") ?? []
-    let isOff = disabled.contains(folder)
-    guard isOff == enabled else { return }
-    if enabled { disabled.removeAll { $0 == folder } } else { disabled.append(folder) }
-    defaults.set(disabled, forKey: "disabledExtensions")
-    defaults.synchronize()
-}
-
-/// Clones a repository into a new temporary folder: shallow, without submodules, without running any of its hooks.
-func cloneRepository(_ address: String) throws -> URL {
+/// Clones a repository into `folder`: shallow, without submodules, without running any of its hooks.
+func cloneRepository(_ address: String, into folder: URL) throws -> URL {
     let ssh = address.hasPrefix("ssh://") || (address.hasPrefix("git@") && address.contains(":"))
     guard address.hasPrefix("https://") || ssh else {
         throw ClientError.failed("only https:// and ssh git addresses can be installed")
     }
-    let folder = FileManager.default.temporaryDirectory.appendingPathComponent("colctl-\(UUID().uuidString)")
-    try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
     let target = folder.appendingPathComponent("repository")
     let process = Process()
     process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
@@ -731,11 +745,84 @@ func cloneRepository(_ address: String) throws -> URL {
     process.standardInput = FileHandle.nullDevice
     try process.run()
     process.waitUntilExit()
-    guard process.terminationStatus == 0 else {
-        try? FileManager.default.removeItem(at: folder)
-        throw ClientError.failed("git could not clone \(address)")
-    }
+    guard process.terminationStatus == 0 else { throw ClientError.failed("git could not clone \(printable(address))") }
     return target
+}
+
+/// Checks an extension and puts it in Col's folder: copied into a hidden folder Col never reads, marked off unless
+/// `on`, then renamed into place in one step, never over an extension already there. Nothing of it runs. Whatever
+/// happens, the temporary folders go. Returns what to print.
+func installExtension(_ source: String, path: String?, name chosen: String?, on: Bool) throws -> [String] {
+    let files = FileManager.default
+    let folder = extensionsFolder()
+    var temporary: [URL] = []
+    defer { temporary.forEach { try? files.removeItem(at: $0) } }
+
+    let isRemote = ["https://", "http://", "ssh://", "git@"].contains { source.hasPrefix($0) }
+    var root: URL
+    if isRemote {
+        let scratch = files.temporaryDirectory.appendingPathComponent("colctl-\(UUID().uuidString)")
+        try files.createDirectory(at: scratch, withIntermediateDirectories: true)
+        temporary.append(scratch)
+        root = try cloneRepository(source, into: scratch)
+    } else {
+        root = URL(fileURLWithPath: (source as NSString).expandingTildeInPath).standardizedFileURL
+        var isFolder: ObjCBool = false
+        guard files.fileExists(atPath: root.path, isDirectory: &isFolder), isFolder.boolValue else {
+            throw ClientError.failed("\(printable(source)) is not a folder")
+        }
+    }
+    if let path {
+        guard !path.split(separator: "/").contains("..") else { throw ClientError.failed("--path stays inside the extension's folder") }
+        root = root.appendingPathComponent(path).standardizedFileURL
+    }
+    let manifest = try Manifest.read(root)
+    var name = chosen ?? root.lastPathComponent
+    if isRemote, path == nil, chosen == nil {
+        // The repository's own name, without `.git`.
+        name = source.split(whereSeparator: { $0 == "/" || $0 == ":" }).last.map(String.init) ?? "extension"
+        if name.hasSuffix(".git") { name = String(name.dropLast(4)) }
+    }
+    guard isFolderName(name) else { throw ClientError.failed("\(printable(name)) cannot name an extension's folder: use --name") }
+    let destination = folder.appendingPathComponent(name, isDirectory: true)
+    guard !files.fileExists(atPath: destination.path) else {
+        throw ClientError.failed("\(printable(name)) is already installed: colctl extensions remove \(printable(name)) first")
+    }
+
+    // Hidden, so Col never reads it while it is being copied.
+    try files.createDirectory(at: folder, withIntermediateDirectories: true)
+    let staging = folder.appendingPathComponent(".installing-\(UUID().uuidString)", isDirectory: true)
+    temporary.append(staging)
+    do {
+        try files.copyItem(at: root, to: staging)
+    } catch {
+        throw ClientError.failed("could not copy \(printable(root.path)): \(error.localizedDescription)")
+    }
+    try? files.removeItem(at: staging.appendingPathComponent(".git"))
+    try? files.removeItem(at: staging.appendingPathComponent(offMarker()))
+    if !on {
+        guard files.createFile(atPath: staging.appendingPathComponent(offMarker()).path, contents: Data()) else {
+            throw ClientError.failed("could not mark \(printable(name)) off; nothing was installed")
+        }
+    }
+    // In place in one step, and never over a folder that appeared meanwhile.
+    guard renamex_np(staging.path, destination.path, UInt32(RENAME_EXCL)) == 0 else {
+        throw ClientError.failed("could not put \(printable(name)) in place: \(String(cString: strerror(errno)))")
+    }
+    temporary.removeAll { $0 == staging }
+    reloadExtensions()
+    var lines = [
+        "\(printable(manifest.name)) installed in \(printable(destination.path)).",
+        "Every \(Int(manifest.interval)) seconds, Col runs: \(printable(manifest.command))",
+    ]
+    if !on {
+        lines.append("It is off: read it, then turn it on in Col's settings, Developers.")
+    } else if turnedOffInCol().contains(name) {
+        lines.append("Col's settings still keep an extension of this name off: turn it on there, in Developers.")
+    } else {
+        lines.append("It is on.")
+    }
+    return lines
 }
 
 /// `colctl extensions list|install|remove`.
@@ -745,23 +832,22 @@ func extensionsCommand(_ rest: [String]) {
     switch rest.first ?? "" {
     case "list":
         let names = ((try? files.contentsOfDirectory(atPath: folder.path)) ?? []).filter { !$0.hasPrefix(".") }.sorted()
-        if names.isEmpty { print("No extensions in \(folder.path).") }
-        let disabled = Set(colDefaults()?.stringArray(forKey: "disabledExtensions") ?? [])
+        if names.isEmpty { print("No extensions in \(printable(folder.path)).") }
+        let disabled = turnedOffInCol()
         for name in names {
             do {
                 let manifest = try Manifest.read(folder.appendingPathComponent(name))
-                let state = disabled.contains(name) ? "off" : "on"
-                print("\(name)  \(manifest.name)  \(state), every \(Int(manifest.interval))s: \(manifest.command)")
+                let off = disabled.contains(name) || files.fileExists(atPath: folder.appendingPathComponent(name).appendingPathComponent(offMarker()).path)
+                print("\(printable(name))  \(printable(manifest.name))  \(off ? "off" : "on"), every \(Int(manifest.interval))s: \(printable(manifest.command))")
             } catch ClientError.failed(let reason) {
-                print("\(name)  not an extension: \(reason)")
+                print("\(printable(name))  not an extension: \(reason)")
             } catch {
-                print("\(name)  not an extension")
+                print("\(printable(name))  not an extension")
             }
         }
 
     case "install":
         guard rest.count >= 2 else { fail("extensions install needs a folder or a git address") }
-        let source = rest[1]
         var values: [String: String] = [:]
         var on = false
         var index = 2
@@ -772,52 +858,19 @@ func extensionsCommand(_ rest: [String]) {
                 guard index + 1 < rest.count else { fail("\(rest[index]) needs a value") }
                 values[String(rest[index].dropFirst(2))] = rest[index + 1]
                 index += 1
-            default: fail("unexpected argument \(rest[index])")
+            default: fail("unexpected argument \(printable(rest[index]))")
             }
             index += 1
         }
-        let isRemote = ["https://", "http://", "ssh://", "git@"].contains { source.hasPrefix($0) }
-        var cloned: URL?
-        defer { if let cloned { try? files.removeItem(at: cloned.deletingLastPathComponent()) } }
-        var root: URL
-        if isRemote {
-            do { cloned = try cloneRepository(source) } catch ClientError.failed(let reason) { fail(reason) } catch { fail("\(error)") }
-            root = cloned!
-        } else {
-            root = URL(fileURLWithPath: (source as NSString).expandingTildeInPath).standardizedFileURL
-            var isFolder: ObjCBool = false
-            guard files.fileExists(atPath: root.path, isDirectory: &isFolder), isFolder.boolValue else { fail("\(source) is not a folder") }
-        }
-        if let sub = values["path"] {
-            guard !sub.split(separator: "/").contains("..") else { fail("--path stays inside the extension's folder") }
-            root = root.appendingPathComponent(sub).standardizedFileURL
-        }
-        let manifest: Manifest
-        do { manifest = try Manifest.read(root) } catch ClientError.failed(let reason) { fail(reason) } catch { fail("\(error)") }
-        var name = values["name"] ?? root.lastPathComponent
-        if isRemote, values["path"] == nil, values["name"] == nil {
-            // The repository's own name, without `.git`.
-            name = source.split(whereSeparator: { $0 == "/" || $0 == ":" }).last.map(String.init) ?? "extension"
-            if name.hasSuffix(".git") { name = String(name.dropLast(4)) }
-        }
-        guard isFolderName(name) else { fail("\(name) cannot name an extension's folder: use --name") }
-        let destination = folder.appendingPathComponent(name, isDirectory: true)
-        guard !files.fileExists(atPath: destination.path) else {
-            fail("\(name) is already installed: colctl extensions remove \(name) first")
-        }
+        let lines: [String]
         do {
-            try files.createDirectory(at: folder, withIntermediateDirectories: true)
-            try files.copyItem(at: root, to: destination)
-            try? files.removeItem(at: destination.appendingPathComponent(".git"))
+            lines = try installExtension(rest[1], path: values["path"], name: values["name"], on: on)
+        } catch ClientError.failed(let reason) {
+            fail(reason)
         } catch {
-            fail("could not copy \(root.path): \(error.localizedDescription)")
+            fail("\(error)")
         }
-        // Off until the user has read it and turns it on, unless asked otherwise.
-        setEnabled(on, folder: name)
-        reloadExtensions()
-        print("\(manifest.name) installed in \(destination.path).")
-        print("Every \(Int(manifest.interval)) seconds, Col runs: \(manifest.command)")
-        print(on ? "It is on." : "It is off: read it, then turn it on in Col's settings, Developers.")
+        lines.forEach { print($0) }
 
     case "remove":
         guard rest.count >= 2 else { fail("extensions remove needs a name") }
@@ -825,15 +878,14 @@ func extensionsCommand(_ rest: [String]) {
         let names = ((try? files.contentsOfDirectory(atPath: folder.path)) ?? []).filter { !$0.hasPrefix(".") }
         let match = names.first { $0 == wanted }
             ?? names.first { (try? Manifest.read(folder.appendingPathComponent($0)))?.name.caseInsensitiveCompare(wanted) == .orderedSame }
-        guard let match, isFolderName(match) else { fail("no extension named \(wanted). Run `colctl extensions list`.") }
+        guard let match, isFolderName(match) else { fail("no extension named \(printable(wanted)). Run `colctl extensions list`.") }
         do {
             try files.trashItem(at: folder.appendingPathComponent(match), resultingItemURL: nil)
         } catch {
-            fail("could not move \(match) to the Trash: \(error.localizedDescription)")
+            fail("could not move \(printable(match)) to the Trash: \(error.localizedDescription)")
         }
-        setEnabled(true, folder: match)
         reloadExtensions()
-        print("\(match) moved to the Trash.")
+        print("\(printable(match)) moved to the Trash.")
 
     default:
         fail("extensions takes list, install or remove")

@@ -48,9 +48,12 @@ colctl extensions remove countdown                                # to the Trash
 ```
 
 `install` reads `extension.json` and refuses a folder whose manifest has no name, no command or no interval. It runs
-nothing of the extension: a repository is cloned without its hooks or submodules, and the extension arrives turned
-off, so you can read it first, then turn it on in Settings, Developers. `--on` turns it on at once, for an extension
-you wrote or already read. A running Col picks the change up at once.
+nothing of the extension: a repository is cloned without its hooks or submodules into a temporary folder, removed
+afterwards whatever happens. The extension is copied into a hidden folder Col never reads, then put in place in one
+step, never over an extension already there. It arrives turned off, with a `.col-off` file inside it, so you can read
+it first, then turn it on in Settings, Developers, which removes that file. `--on` turns it on at once, for an
+extension you wrote or already read. `colctl` never writes Col's settings, and a running Col picks the change up at
+once.
 
 ## Catalog
 

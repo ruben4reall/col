@@ -178,7 +178,12 @@ struct CommandTests {
         #expect(FileManager.default.fileExists(atPath: installed.appendingPathComponent("extension.json").path))
         #expect(!FileManager.default.fileExists(atPath: installed.appendingPathComponent("ran").path))
         #expect(!FileManager.default.fileExists(atPath: source.appendingPathComponent("ran").path))
-        #expect(UserDefaults(suiteName: suite)?.stringArray(forKey: "disabledExtensions") == ["countdown"])
+        // Off from the moment it is there: the file that says so came in with it, and Col's settings are left alone.
+        #expect(FileManager.default.fileExists(atPath: installed.appendingPathComponent(".col-off").path))
+        #expect(UserDefaults(suiteName: suite)?.stringArray(forKey: "disabledExtensions") == nil)
+        // Nothing of the copy is left behind.
+        let extensions = fake.home.appendingPathComponent("Library/Application Support/Col/Extensions")
+        #expect(try FileManager.default.contentsOfDirectory(atPath: extensions.path) == ["countdown"])
         // Listed as Col reads it: off, and at ten seconds at least.
         #expect(try fake.run(tool, ["extensions", "list"], environment: environment).output.contains("countdown  Countdown  off, every 10s"))
         // Never over an extension already there.
@@ -188,7 +193,30 @@ struct CommandTests {
         // Turned on when asked, under another name.
         let on = try fake.run(tool, ["extensions", "install", source.path, "--name", "timer", "--on"], environment: environment)
         #expect(on.status == 0)
-        #expect(UserDefaults(suiteName: suite)?.stringArray(forKey: "disabledExtensions") == ["countdown"])
+        #expect(on.output.contains("It is on"))
+        #expect(!FileManager.default.fileExists(atPath: extensions.appendingPathComponent("timer/.col-off").path))
+        #expect(try fake.run(tool, ["extensions", "list"], environment: environment).output.contains("timer  Countdown  on"))
+        // A name Col's settings keep off stays off, and colctl says so rather than write Col's settings.
+        UserDefaults(suiteName: suite)?.set(["clock"], forKey: "disabledExtensions")
+        let kept = try fake.run(tool, ["extensions", "install", source.path, "--name", "clock", "--on"], environment: environment)
+        #expect(kept.output.contains("still keep an extension of this name off"))
+    }
+
+    @Test func whatAManifestSaysIsPrintedHarmlessly() throws {
+        let tool = try #require(colctl)
+        let fake = try FakeHome()
+        defer { fake.remove() }
+        let source = fake.root.appendingPathComponent("sneaky")
+        try FileManager.default.createDirectory(at: source, withIntermediateDirectories: true)
+        // A name that would clear the terminal, and a command that would hide its end behind a carriage return.
+        try Data(#"{"name":"Nice\u001b[2J","command":"./ok.sh\recho hidden","interval":60}"#.utf8)
+            .write(to: source.appendingPathComponent("extension.json"))
+        let install = try fake.run(tool, ["extensions", "install", source.path])
+        #expect(install.status == 0)
+        #expect(!install.output.contains("\u{1b}"))
+        #expect(!install.output.contains("\r"))
+        #expect(install.output.contains(#"Nice\u{1B}[2J"#))
+        #expect(install.output.contains(#"./ok.sh\u{D}echo hidden"#))
     }
 
     @Test func aManifestThatIsNotRightIsRefused() throws {
@@ -222,5 +250,12 @@ struct CommandTests {
         #expect(bad.status == 1)
         #expect(bad.output.contains("is not a JSON object"))
         #expect(try fake.run(tool, ["widget", "set"]).output.contains("widget set needs an id"))
+        // Numbers JSON cannot carry are refused, never a crash.
+        let nan = try fake.run(tool, ["widget", "set", "temp", "--stale-after", "nan"])
+        #expect(nan.status == 1)
+        #expect(nan.output.contains("--stale-after takes seconds"))
+        #expect(try fake.run(tool, ["widget", "set", "temp", "--progress", "inf"]).output.contains("--progress takes"))
+        #expect(try fake.run(tool, ["push", "build", "--progress", "nan%"]).output.contains("--progress takes"))
+        #expect(try fake.run(tool, ["push", "build", "--ttl", "-inf"]).output.contains("--ttl takes seconds"))
     }
 }
