@@ -12,10 +12,10 @@ const SIZES = {
   desktop: { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false },
   phone: { width: 390, height: 844, deviceScaleFactor: 2, mobile: true },
 };
+// Each scene of col.js (its data-scene) and the moments of its timeline worth a look.
 const SCENES = {
-  shelf: [400, 1300, 2200, 2700, 3300, 4800, 6300],
-  clipboard: [400, 1000, 1500, 1850, 2300, 3200, 4400, 6600],
-  app: [500, 3300],
+  drop: [400, 1300, 2200, 2700, 3300, 4800, 6300],
+  clip: [400, 1000, 1500, 1850, 2300, 3200, 4400, 6600],
 };
 const { values } = parseArgs({ options: { only: { type: 'string' } } });
 const OUT = join(SITE_DIR, '.shots', 'frames');
@@ -31,7 +31,7 @@ try {
       const page = await chrome.newPage(size);
       await page.goto(server.url + '/');
       await sleep(400); // as a visitor would: scrolling in the very task of the load can hide the first observation
-      await page.evaluate(`document.getElementById('${scene}').querySelector('figure, .custom').scrollIntoView({ block: 'center', behavior: 'instant' })`);
+      await page.evaluate(`document.querySelector('[data-scene="${scene}"]').closest('figure').scrollIntoView({ block: 'center', behavior: 'instant' })`);
       const start = Date.now();
       for (const ms of moments) {
         await sleep(Math.max(0, ms - (Date.now() - start)));

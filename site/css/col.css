@@ -140,7 +140,8 @@ html.js .reveal.in { opacity: 1; transform: none; }
 }
 .ribbon:hover { background: rgb(255 255 255 / 0.11); text-decoration: none; }
 .ribbon b { color: var(--accent); font-weight: 600; }
-.ribbon span:last-child { padding: 3px 10px; border-radius: 980px; background: rgb(255 255 255 / 0.1); color: var(--text-2); font-size: 13px; }
+.ribbon > span:last-child { padding: 3px 10px; border-radius: 980px; background: rgb(255 255 255 / 0.1); color: var(--text-2); font-size: 13px; }
+@media (max-width: 734px) { .ribbon .more { display: none; } }
 .hero .h1 { max-width: 12ch; margin-inline: auto; }
 .hero .lead { max-width: 30em; }
 .hero-name { margin: 0 0 6px; color: var(--text-2); font-size: clamp(21px, 2.4vw, 28px); font-weight: 600; letter-spacing: -0.02em; }
@@ -178,6 +179,20 @@ html.js .reveal.in { opacity: 1; transform: none; }
 }
 .stage.lake { background-image: url('../assets/desktop-lake.webp'); }
 .frame { position: relative; overflow: hidden; border-radius: 22px; background: #000; box-shadow: 0 0 0 1px var(--edge); }
+/* Windows that are not the island, at the place Col gives them on a 1512 x 982 point screen: --x, --y and --w in
+   points, --top the first point of the screen the stage shows (the lake starts 440 points down). The stage shows the
+   middle --span points of the screen's width. */
+.stage .placed {
+  position: absolute; left: calc(100% * (var(--x) - (1512 - var(--span)) / 2) / var(--span)); top: calc(100% * (var(--y) - var(--top, 0)) / var(--rows));
+  width: calc(100% * var(--w) / var(--span)); max-width: none; height: auto;
+}
+/* The Lock Screen's card, shown in the middle of the wallpaper. */
+.stage .centered { position: absolute; left: 50%; top: 50%; width: calc(100% * var(--w) / var(--span)); max-width: none; height: auto; transform: translate(-50%, -50%); filter: drop-shadow(0 18px 40px rgb(0 0 0 / 0.35)); }
+/* On a phone, closer: the card and the line on the desktop stay readable. */
+@media (max-width: 734px) {
+  .lock-stage { --span: 780 !important; --rows: 400 !important; }
+  .desk-stage { --span: 1000 !important; }
+}
 
 /* The top of the MacBook's lid around the hero's screen: the bezel, then the screen fading into the page. */
 .lid {
@@ -269,6 +284,8 @@ html:not(.js) .pin-step { position: static; opacity: 1; transform: none; margin-
 
 /* Two columns: words beside a picture. */
 .duo { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 5vw, 72px); align-items: center; }
+/* A row of chips too wide for its column scrolls inside it, rather than widening the page. */
+.duo > * { min-width: 0; }
 .duo.flip > :first-child { order: 2; }
 @media (max-width: 834px) { .duo { grid-template-columns: 1fr; } .duo.flip > :first-child { order: 0; } }
 .duo .lead { font-size: clamp(18px, 1.7vw, 21px); }
@@ -280,14 +297,14 @@ html:not(.js) .pin-step { position: static; opacity: 1; transform: none; margin-
 /* The agent's request, live: Allow and Deny answer. */
 .ask-stage { position: relative; }
 /* Allow and Deny, laid over the capture: the island is 588 points wide on a --span-point screen, 224 tall; Allow
-   starts 86 points in and 116 down, 60 by 26; Deny starts 154 in, 58 wide. */
+   starts 86 points in and 108 down, 59 by 26; Deny starts 155.5 in, 55 wide. */
 .hotspot {
   position: absolute; z-index: 2; padding: 0; border: 0; border-radius: 980px; background: transparent; cursor: pointer;
-  top: calc(116 / var(--rows) * 100%); height: calc(26 / var(--rows) * 100%);
+  top: calc(108 / var(--rows) * 100%); height: calc(26 / var(--rows) * 100%);
   transition: box-shadow 0.25s;
 }
-.hotspot[data-answer='allow'] { left: calc(50% - 208 / var(--span) * 100%); width: calc(60.5 / var(--span) * 100%); }
-.hotspot[data-answer='deny'] { left: calc(50% - 139.5 / var(--span) * 100%); width: calc(58 / var(--span) * 100%); }
+.hotspot[data-answer='allow'] { left: calc(50% - 208 / var(--span) * 100%); width: calc(59 / var(--span) * 100%); }
+.hotspot[data-answer='deny'] { left: calc(50% - 138.5 / var(--span) * 100%); width: calc(55 / var(--span) * 100%); }
 @media (max-width: 734px) { .ask-stage { --span: 610 !important; --rows: 240 !important; } }
 .hotspot:hover { box-shadow: 0 0 0 3px rgb(41 151 255 / 0.55); }
 .hotspot:active { transform: scale(0.97); }
@@ -349,7 +366,8 @@ html:not(.js) .pin-step { position: static; opacity: 1; transform: none; margin-
   transition: transform 0.12s, box-shadow 0.12s;
 }
 .scene .keys.down kbd { transform: translateY(2px); box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.08), 0 1px 0 #0b0b0c, 0 4px 10px rgb(0 0 0 / 0.4); }
-/* A row of the real clipboard page, cut from its capture: 440 x 28 points, 74 in from the left, 42 down. */
+/* A row of the real clipboard page, cut from its capture: 440 x 28 points, 74 in from the left, 74 down (under the
+   search field). */
 .scene .flyer {
   width: calc(100% * 440 / var(--span));
   aspect-ratio: 440 / 28;
@@ -360,7 +378,7 @@ html:not(.js) .pin-step { position: static; opacity: 1; transform: none; margin-
   transform-origin: 50% 0;
   box-shadow: 0 12px 30px rgb(0 0 0 / 0.5);
 }
-.scene .flyer img { position: absolute; width: calc(100% * 588 / 440); max-width: none; left: calc(-100% * 74 / 440); top: calc(-100% * 42 / 28); }
+.scene .flyer img { position: absolute; width: calc(100% * 588 / 440); max-width: none; left: calc(-100% * 74 / 440); top: calc(-100% * 74 / 28); }
 
 /* On phones the scenes come closer: 620 points across, just wider than the open island, and taller, so the pieces
    stack under it. col.js places them for this view. */
@@ -443,6 +461,27 @@ html:not(.js) .welcome-deck img:first-child { opacity: 1; transform: none; }
 .faq details[open] summary::after { transform: rotate(45deg); }
 .faq details > div { overflow: hidden; }
 .faq details p { max-width: 40em; margin: 0; padding: 0 0 24px; color: var(--text-2); }
+
+/* Windows and Linux: real captures of each edition, taken by its build on GitHub's machines, on their own desktops. */
+.os-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 834px) { .os-tiles { grid-template-columns: 1fr; } }
+.os-tiles .tile { display: flex; flex-direction: column; grid-column: auto; }
+.os-tiles .chip-row { justify-content: flex-start; margin-top: 22px; }
+.os-shots { position: relative; display: grid; margin: 24px calc(clamp(28px, 3.4vw, 44px) * -1) 0; overflow: hidden; background: #0b0c0e; }
+.os-shots .shot { grid-area: 1 / 1; width: 100%; aspect-ratio: 18 / 7; object-fit: cover; opacity: 0; transition: opacity 0.45s var(--ease); }
+.os-shots .shot.on { opacity: 1; }
+html:not(.js) .os-shots .shot:first-child { opacity: 1; }
+.os-get { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; margin-top: auto; padding-top: 26px; }
+.os-get .btn { padding: 10px 20px; font-size: 15px; }
+.os-get a:not(.btn) { font-size: 15px; }
+.os-tiles .fine { margin-top: 14px; }
+.platform-note { max-width: 46em; margin-inline: auto; }
+
+/* A line under the hero's buttons, and the footnote of the languages. */
+.also { margin: 16px 0 0; color: var(--text-3); font-size: 15px; }
+.footnote { margin: 22px 0 0; color: var(--text-3); font-size: 14px; }
+.languages { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 0; padding: 0; list-style: none; }
+.languages li { padding: 6px 12px; border-radius: 980px; background: rgb(255 255 255 / 0.07); box-shadow: inset 0 0 0 1px var(--edge); color: var(--text); font-size: 14px; }
 
 /* Download. */
 .download { overflow: hidden; text-align: center; }

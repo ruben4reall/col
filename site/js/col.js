@@ -103,6 +103,26 @@ const sound = (() => {
   });
 })();
 
+/* Visitors on Windows or Linux get their own edition first, the Mac one click away. Without JavaScript every download
+   is the Mac's, and the Windows and Linux section offers the others. */
+(() => {
+  const mac = 'https://github.com/ruben4reall/col/releases/latest/download/Col.dmg';
+  const win = 'https://github.com/ruben4reall/col/releases/latest/download/Col-windows-setup.exe';
+  const platform = navigator.userAgentData?.platform || navigator.platform || '';
+  const android = /android/i.test(navigator.userAgent);
+  const os = /^win/i.test(platform) ? 'Windows' : /linux/i.test(platform) && !android ? 'Linux' : null;
+  if (!os) return;
+  for (const link of document.querySelectorAll('[data-download]')) {
+    link.href = os === 'Windows' ? win : '#everywhere';
+    if (!link.hasAttribute('data-short')) link.textContent = os === 'Windows' ? 'Download for Windows' : 'Get Col for Linux';
+  }
+  const others = os === 'Windows' ? [['Mac', mac], ['Linux', '#everywhere']] : [['Mac', mac], ['Windows', win]];
+  for (const line of document.querySelectorAll('[data-download-also]')) {
+    const link = ([name, href]) => Object.assign(document.createElement('a'), { href, textContent: name });
+    line.replaceChildren(`Col for ${os} is a preview. Also for `, link(others[0]), ' and ', link(others[1]), '.');
+  }
+})();
+
 // Things rise into place as they come into view.
 (() => {
   const items = document.querySelectorAll('.reveal');
@@ -367,10 +387,10 @@ for (const film of document.querySelectorAll('[data-film]')) {
   // as large as a phone allows. The notch is at the centre of each view.
   const layout = () => (phone.matches ? {
     drop: { file: [130, 400], cursorStart: [210, 480], grab: [142, 400], notch: [310, 70], airdrop: [496, 100] },
-    clip: { window: [50, 300], keys: [310, 488], flyer: [55, 399], flyerEnd: [90, 18], cursorStart: [560, 430], notch: [310, 16], row: [190, 58] },
+    clip: { window: [50, 300], keys: [310, 488], flyer: [55, 399], flyerEnd: [90, 18], cursorStart: [560, 430], notch: [310, 16], row: [190, 88] },
   } : {
     drop: { file: [250, 280], cursorStart: [340, 350], grab: [262, 280], notch: [450, 70], airdrop: [636, 100] },
-    clip: { window: [72, 228], keys: [720, 300], flyer: [77, 327], flyerEnd: [230, 18], cursorStart: [640, 330], notch: [450, 16], row: [330, 58] },
+    clip: { window: [72, 228], keys: [720, 300], flyer: [77, 327], flyerEnd: [230, 18], cursorStart: [640, 330], notch: [450, 16], row: [330, 88] },
   });
 
   function runner(stage, script, still, place) {
