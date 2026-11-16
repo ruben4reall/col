@@ -71,7 +71,10 @@ struct LiveActivitiesPane: View {
                     .onChange(of: agents) { Preferences.showsAgents = agents }
                 IconToggle(symbol: "arrow.down.circle.fill", tint: .blue, title: "Downloads in progress", detail: "Files your browser is still writing. Asks to read the Downloads folder.", isOn: $downloads)
                     .onChange(of: downloads) { Preferences.watchesDownloads = downloads }
-                IconToggle(symbol: "lock.fill", tint: .indigo, title: "Show on the Lock Screen", detail: "Beta. Takes effect the next time Col opens.", isOn: $lockScreen)
+                IconToggle(symbol: "lock.fill", tint: .indigo, title: "Show on the Lock Screen",
+                           detail: LockScreenSpace.isSupported ? "Beta. Takes effect the next time Col opens." : "Not available on this version of macOS: it relies on private functions that macOS no longer offers.",
+                           isOn: $lockScreen)
+                    .disabled(!LockScreenSpace.isSupported && !lockScreen)
                     .onChange(of: lockScreen) { Preferences.showsOnLockScreen = lockScreen }
             } header: {
                 Text("More", bundle: .module)
