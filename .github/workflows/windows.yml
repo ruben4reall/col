@@ -75,6 +75,10 @@ jobs:
             }
           }
 
+      - name: Small build runs on the installed .NET 8
+        shell: pwsh
+        run: windows/tools/smallcheck.ps1 -Rid win-x64
+
       - name: Screenshots
         shell: pwsh
         run: windows/tools/screenshots.ps1 -App artifacts/win-x64/Col.exe -Out shots
