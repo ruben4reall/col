@@ -86,4 +86,14 @@ struct WingBudgetTests {
         #expect(WingBudget.allowed(requested: 60, left: 12, right: 20) == Wings.none)
         #expect(WingBudget.allowed(requested: 0, left: 12, right: 140) == Wings.none)
     }
+
+    @Test func leavesRoomForTheEarsAndTheSwell() {
+        // macOS 27's chevron for hidden menu bar items, 26.5 points from a 14-inch MacBook Pro's notch: 18.5 points
+        // of room once the margin is kept, too little for an icon once the ears and the swell are counted.
+        let room = WingBudget.free(notchEdge: 848.5, nearestItem: 875, leftSide: false)
+        #expect(room == CGFloat(18.5))
+        #expect(WingBudget.allowed(requested: 40, left: 200, right: room, overhang: 10) == Wings(leading: 40, trailing: 0))
+        // With room enough, the wing stops where the overhang still clears the item.
+        #expect(WingBudget.allowed(requested: 80, left: 60, right: 200, overhang: 10) == Wings(50))
+    }
 }
