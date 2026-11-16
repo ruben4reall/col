@@ -4,7 +4,7 @@
 #>
 
 Add-Type -AssemblyName System.Drawing
-Add-Type -ReferencedAssemblies System.Drawing -TypeDefinition @'
+Add-Type -TypeDefinition @'
 using System;
 using System.Runtime.InteropServices;
 
@@ -48,19 +48,13 @@ public static class ColDesktop
     [DllImport("gdi32.dll")]
     public static extern bool BitBlt(IntPtr dest, int x, int y, int width, int height, IntPtr source, int sx, int sy, int operation);
 
-    /// <summary>Copies part of the screen, layered windows included (CAPTUREBLT), into a bitmap.</summary>
-    public static System.Drawing.Bitmap Capture(int x, int y, int width, int height)
+    /// <summary>Copies part of the screen, layered windows included (CAPTUREBLT), into a device context.</summary>
+    public static bool Capture(IntPtr target, int x, int y, int width, int height)
     {
-        var bitmap = new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
-        using (var graphics = System.Drawing.Graphics.FromImage(bitmap))
-        {
-            var target = graphics.GetHdc();
-            var screen = GetDC(IntPtr.Zero);
-            BitBlt(target, 0, 0, width, height, screen, x, y, 0x00CC0020 | 0x40000000);
-            ReleaseDC(IntPtr.Zero, screen);
-            graphics.ReleaseHdc(target);
-        }
-        return bitmap;
+        var screen = GetDC(IntPtr.Zero);
+        var copied = BitBlt(target, 0, 0, width, height, screen, x, y, 0x00CC0020 | 0x40000000);
+        ReleaseDC(IntPtr.Zero, screen);
+        return copied;
     }
 
     public static int SetResolution(int width, int height)
@@ -117,7 +111,12 @@ function Save-Screen([string] $Path, [switch] $Full, [switch] $Zoom) {
     if ($Full) { $x = 0; $y = 0; $w = $width; $h = $height }
     elseif ($Zoom) { $w = 720; $h = 280; $x = [int](($width - $w) / 2); $y = 0 }
     else { $x = 0; $y = 0; $w = $width; $h = 320 }
-    $bitmap = [ColDesktop]::Capture($x, $y, $w, $h)
+    $bitmap = New-Object System.Drawing.Bitmap $w, $h
+    $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+    $target = $graphics.GetHdc()
+    [ColDesktop]::Capture($target, $x, $y, $w, $h) | Out-Null
+    $graphics.ReleaseHdc($target)
+    $graphics.Dispose()
     if ($Zoom) {
         # Twice as big, without smoothing, to judge the edges pixel by pixel.
         $large = New-Object System.Drawing.Bitmap ($w * 2), ($h * 2)
