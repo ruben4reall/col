@@ -60,6 +60,11 @@ final class SoundLevels {
         evaluate()
     }
 
+    /// The user answered macOS's question: a tap made before the answer is made again, so it hears the sound.
+    func permissionChanged() {
+        if tap != nil { start() } else { evaluate() }
+    }
+
     /// Listens for a moment, so that macOS asks for the permission where its question cannot be asked directly.
     func listenOnce() {
         guard tap == nil, Self.isSupported else { return }

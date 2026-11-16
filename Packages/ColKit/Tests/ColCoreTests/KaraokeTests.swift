@@ -29,6 +29,12 @@ struct KaraokeTests {
         #expect(sung[1].words.isEmpty)
     }
 
+    @Test func aFirstWordJustAheadOfItsLineIsKept() throws {
+        let lyrics = try #require(Lyrics.parse(lrc: "[00:12.00]<00:11.96> Hello <00:12.40> world"))
+        #expect(lyrics.lines.first { !$0.isPause }?.words.count == 2)
+        #expect(lyrics.karaoke(at: lyrics.lines.firstIndex { !$0.isPause }!) != nil)
+    }
+
     @Test func wordsOutOfOrderAreNotFollowed() throws {
         let lyrics = try #require(Lyrics.parse(lrc: "[00:05.00]<00:06.00> late <00:05.10> early"))
         #expect(lyrics.lines.first { !$0.isPause }?.words.isEmpty == true)

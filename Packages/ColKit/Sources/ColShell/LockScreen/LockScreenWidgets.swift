@@ -13,6 +13,8 @@ final class LockScreenWidgets {
     private let lyrics: LyricsModel
     private var window: NSWindow?
     private var observers: [NSObjectProtocol] = []
+    /// The lyrics are followed line by line while the window shows them, and only then.
+    private var watching = false
 
     init(media: MediaController, timer: TimerModel, power: PowerMonitor, lyrics: LyricsModel) {
         self.media = media
@@ -70,11 +72,21 @@ final class LockScreenWidgets {
         window.orderFrontRegardless()
         LockScreenSpace.shared?.adopt(window)
         self.window = window
+        if withLyrics {
+            watching = true
+            lyrics.watch()
+        }
     }
 
     private func hide() {
         window?.orderOut(nil)
+        // Torn down at once: nothing of the Lock Screen keeps running once the Mac is unlocked.
+        window?.contentView = nil
         window = nil
+        if watching {
+            watching = false
+            lyrics.unwatch()
+        }
     }
 }
 
@@ -187,8 +199,6 @@ struct LockScreenLyricsCard: View {
             .frame(maxHeight: .infinity, alignment: .bottom)
             .animation(.easeInOut(duration: 0.4), value: shown == nil)
         }
-        .onAppear { lyrics.watch() }
-        .onDisappear { lyrics.unwatch() }
     }
 
     /// The cover, blurred once and darkened; a deep shade of its colour with Reduce Transparency or without a cover.

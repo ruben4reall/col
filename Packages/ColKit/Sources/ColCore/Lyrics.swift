@@ -75,8 +75,8 @@ public struct Lyrics: Equatable, Sendable {
             let (text, words, end) = wordTiming(String(rest))
             for time in times {
                 // Word times belong to the first moment the line is sung: a chorus sung again keeps its words
-                // only when they fall after it.
-                let timed = words.first.map { $0.time >= time } ?? false
+                // only when they fall with it. A first word a little ahead of its line's time still counts.
+                let timed = words.first.map { $0.time >= time - 1 } ?? false
                 lines.append(LyricLine(time: time, text: text, words: timed ? words : [], end: timed ? end : nil))
             }
         }

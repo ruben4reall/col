@@ -125,8 +125,8 @@ struct MusicPane: View {
                     .disabled(!SoundLevels.isSupported && !followsSound)
                     .onChange(of: followsSound) {
                         Preferences.barsFollowSound = followsSound
-                        // Asked when turned on, and only then.
-                        if followsSound, !permissions.isGranted(.audioCapture) { permissions.request(.audioCapture) }
+                        // Asked when turned on, and only then; once refused, the row below opens System Settings.
+                        if followsSound, permissions.canPrompt(.audioCapture) { permissions.request(.audioCapture) }
                     }
                 if followsSound, SoundLevels.isSupported, !permissions.isGranted(.audioCapture) {
                     IconRow(symbol: PermissionCenter.Permission.audioCapture.symbol, tint: PermissionCenter.Permission.audioCapture.tint,

@@ -197,7 +197,12 @@ final class PermissionCenter {
         case .audioCapture:
             // Without TCC's function, macOS asks the moment the bars first listen.
             let asked = AudioCapturePermission.request { @Sendable _ in
-                DispatchQueue.main.async { MainActor.assumeIsolated { PermissionCenter.shared.refresh() } }
+                DispatchQueue.main.async {
+                    MainActor.assumeIsolated {
+                        PermissionCenter.shared.refresh()
+                        SoundLevels.shared.permissionChanged()
+                    }
+                }
             }
             if !asked { SoundLevels.shared.listenOnce() }
         }
