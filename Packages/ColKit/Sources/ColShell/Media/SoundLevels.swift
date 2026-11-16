@@ -17,21 +17,50 @@ final class SoundLevels {
     private(set) var levels: [Float]?
     static let bands = 24
 
-    private var subscribers: [ObjectIdentifier: ([Float]?) -> Void] = [:]
+    /// The views with bars, held weakly: one that goes away without signing off stops counting.
+    private struct Subscriber {
+        weak var owner: AnyObject?
+        let handler: ([Float]?) -> Void
+    }
+
+    private var subscribers: [ObjectIdentifier: Subscriber] = [:]
     private var tap: AnyObject?
     private var tappedPID: pid_t = -1
     private var playing = false
     private var pid: pid_t = 0
     private var linger: Task<Void, Never>?
+    /// Looks again for the player's own sound, when the tap had to take the whole Mac's.
+    private var retry: Task<Void, Never>?
     /// Bumped at each start and stop, so levels a stopped tap still sends are dropped.
     private var generation = 0
     /// Levels in a row that were all silent.
     private var silentFrames = 0
-    private var observer: NSObjectProtocol?
+    /// The displays sleep, or the Mac is locked without the island on the Lock Screen: nothing with bars is seen.
+    private var asleep = false
+    private var locked = false
+    private var observers: [NSObjectProtocol] = []
 
     private init() {
-        observer = NotificationCenter.default.addObserver(forName: Preferences.didChange, object: nil, queue: .main) { _ in
+        observers.append(NotificationCenter.default.addObserver(forName: Preferences.didChange, object: nil, queue: .main) { _ in
             MainActor.assumeIsolated { SoundLevels.shared.evaluate() }
+        })
+        let workspace = NSWorkspace.shared.notificationCenter
+        for (name, value) in [(NSWorkspace.screensDidSleepNotification, true), (NSWorkspace.screensDidWakeNotification, false)] {
+            observers.append(workspace.addObserver(forName: name, object: nil, queue: .main) { _ in
+                MainActor.assumeIsolated {
+                    SoundLevels.shared.asleep = value
+                    SoundLevels.shared.evaluate()
+                }
+            })
+        }
+        let distributed = DistributedNotificationCenter.default()
+        for (name, value) in [("com.apple.screenIsLocked", true), ("com.apple.screenIsUnlocked", false)] {
+            observers.append(distributed.addObserver(forName: NSNotification.Name(name), object: nil, queue: .main) { _ in
+                MainActor.assumeIsolated {
+                    SoundLevels.shared.locked = value
+                    SoundLevels.shared.evaluate()
+                }
+            })
         }
     }
 
@@ -51,7 +80,7 @@ final class SoundLevels {
 
     /// A view with bars appeared: it gets the levels as they come, and nil when they stop.
     func subscribe(_ owner: AnyObject, _ handler: @escaping ([Float]?) -> Void) {
-        subscribers[ObjectIdentifier(owner)] = handler
+        subscribers[ObjectIdentifier(owner)] = Subscriber(owner: owner, handler: handler)
         evaluate()
     }
 
@@ -60,9 +89,10 @@ final class SoundLevels {
         evaluate()
     }
 
-    /// The user answered macOS's question: a tap made before the answer is made again, so it hears the sound.
+    /// The user answered macOS's question: a tap made before the answer is taken down, and made again if allowed.
     func permissionChanged() {
-        if tap != nil { start() } else { evaluate() }
+        stop()
+        evaluate()
     }
 
     /// Listens for a moment, so that macOS asks for the permission where its question cannot be asked directly.
@@ -77,18 +107,20 @@ final class SoundLevels {
     }
 
     private var wanted: Bool {
-        Preferences.barsFollowSound && playing && !subscribers.isEmpty && AudioCapturePermission.status != .denied
+        Preferences.barsFollowSound && playing && !subscribers.isEmpty && !asleep
+            && !(locked && !Preferences.showsOnLockScreen) && AudioCapturePermission.status != .denied
     }
 
     private func evaluate() {
+        subscribers = subscribers.filter { $0.value.owner != nil }
         if wanted {
             linger?.cancel()
             linger = nil
             if tap == nil || tappedPID != pid { start() }
         } else if tap != nil {
             // Views come and go as the island opens and closes: the tap waits a moment before it is taken down,
-            // unless the music or the setting stopped.
-            let immediately = !Preferences.barsFollowSound || !playing
+            // unless nothing will show the bars for a while: the music or the setting stopped, the screens sleep.
+            let immediately = !Preferences.barsFollowSound || !playing || asleep || locked
             linger?.cancel()
             linger = Task { @MainActor [weak self] in
                 if !immediately { try? await Task.sleep(for: .seconds(3)) }
@@ -104,15 +136,32 @@ final class SoundLevels {
         generation += 1
         let generation = generation
         tappedPID = pid
-        tap = SoundTap(pid: pid, bands: Self.bands) { levels in
+        let made = SoundTap(pid: pid, bands: Self.bands) { levels in
             DispatchQueue.main.async {
                 MainActor.assumeIsolated { SoundLevels.shared.receive(levels, generation: generation) }
+            }
+        }
+        tap = made
+        // The player had not started its sound yet, and the whole Mac is tapped: its own sound is looked for again
+        // a moment later, twice at most.
+        guard let made, made.isWholeMac, pid > 0 else { return }
+        let pid = pid
+        retry = Task { @MainActor [weak self] in
+            for delay in [1.5, 4.0] {
+                try? await Task.sleep(for: .seconds(delay))
+                guard let self, !Task.isCancelled, self.generation == generation, self.wanted else { return }
+                if !SoundTap.audioProcesses(of: pid).isEmpty {
+                    self.start()
+                    return
+                }
             }
         }
     }
 
     private func stop() {
         generation += 1
+        retry?.cancel()
+        retry = nil
         if #available(macOS 14.2, *) { (tap as? SoundTap)?.stop() }
         tap = nil
         tappedPID = -1
@@ -136,7 +185,7 @@ final class SoundLevels {
     private func publish(_ levels: [Float]?) {
         guard levels != nil || self.levels != nil else { return }
         self.levels = levels
-        for handler in subscribers.values { handler(levels) }
+        for subscriber in subscribers.values where subscriber.owner != nil { subscriber.handler(levels) }
     }
 }
 
@@ -148,6 +197,8 @@ private final class SoundTap {
     private var deviceID = AudioObjectID(kAudioObjectUnknown)
     private var procID: AudioDeviceIOProcID?
     private let queue = DispatchQueue(label: "ch.rubencatalao.col.sound", qos: .userInteractive)
+    /// True when the player's own sound could not be told apart and the whole Mac is tapped.
+    let isWholeMac: Bool
 
     /// The analysis, touched only on the audio queue.
     private final class Analysis: @unchecked Sendable {
@@ -163,6 +214,7 @@ private final class SoundTap {
     /// Nil when macOS will not make the tap.
     init?(pid: pid_t, bands: Int, deliver: @escaping @Sendable ([Float]) -> Void) {
         let processes = Self.audioProcesses(of: pid)
+        isWholeMac = processes.isEmpty
         let description = processes.isEmpty
             ? CATapDescription(monoGlobalTapButExcludeProcesses: Self.audioProcesses(of: getpid()))
             : CATapDescription(monoMixdownOfProcesses: processes)

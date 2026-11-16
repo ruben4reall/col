@@ -119,6 +119,8 @@ final class IslandStageView: NSView {
     func tearDown() {
         hoverTimer?.cancel()
         exitTimer?.cancel()
+        // The preview's bars stop listening to the sound with it.
+        island?.compact.isOnScreen = false
         island?.dismissContent()
         island?.discardContent()
         letGoOfWallpaper()
@@ -126,6 +128,7 @@ final class IslandStageView: NSView {
 
     override func viewDidMoveToWindow() {
         super.viewDidMoveToWindow()
+        island?.compact.isOnScreen = window != nil
         guard window != nil else {
             // Out of its window, the stage shows nothing: the decoded wallpaper is freed once no stage shows it.
             letGoOfWallpaper()

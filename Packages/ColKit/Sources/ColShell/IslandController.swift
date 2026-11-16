@@ -652,6 +652,7 @@ public final class IslandController {
         let steppedAside = fullScreenActive || hiddenForApp
         let visible = !prompterInNotch && (!steppedAside || urgent || machine.state == .expanded)
         if visible { panel.orderFrontRegardless() } else { panel.orderOut(nil) }
+        islandView.compact.isOnScreen = visible
     }
 
     /// The prompter came out of the notch, or went back in: the island steps aside for the take and returns after it.
@@ -969,6 +970,7 @@ public final class IslandController {
     private func place(measuringStatusItems: Bool = true) {
         guard let screen = Self.notchScreen() else {
             panel.orderOut(nil)
+            islandView.compact.isOnScreen = false
             return
         }
         self.screen = screen

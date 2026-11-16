@@ -18,6 +18,11 @@ final class CompactRenderer {
     var wingLimit: CGFloat = IslandLayout.standardWing
     /// Taking the sound's levels, for an equalizer on show.
     private var listening = false
+    /// False while the island is off the screen: stepped aside for full screen or an app, behind the prompter, or a
+    /// preview whose window closed. The bars stop listening then.
+    var isOnScreen = true {
+        didSet { if isOnScreen != oldValue { listen() } }
+    }
 
     init() {
         layer.addSublayer(leading.container)
@@ -79,7 +84,7 @@ final class CompactRenderer {
 
     /// Takes the sound's levels while an equalizer of music playing shows, and only then.
     private func listen() {
-        let wants = layer.opacity > 0 && (leading.showsPlayingEqualizer || trailing.showsPlayingEqualizer)
+        let wants = isOnScreen && layer.opacity > 0 && (leading.showsPlayingEqualizer || trailing.showsPlayingEqualizer)
         guard wants != listening else { return }
         listening = wants
         if wants {
