@@ -1,5 +1,9 @@
 # Benchmark
 
+**Col 3.0.0, 16 November 2026**, 14-inch MacBook Pro (M3 Pro), macOS 27.2.1, one minute after launch, nothing
+playing: Col 23 MB and its music helper 3.9 MB of memory footprint, 0 % of the processor (`scripts/bench.sh`). The
+tables below were measured with Col 2.0 on macOS 26.5.
+
 Idle memory footprint and CPU of Col on a 14-inch MacBook Pro (M3 Pro, macOS 26.5), Release build, measured with
 `footprint` and the kernel's CPU time counters (`proc_pid_rusage`) over 60 seconds without interaction, 20 seconds
 after launch. Helper processes count.
