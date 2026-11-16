@@ -49,7 +49,7 @@ public struct HookEvent: Decodable, Sendable, Equatable {
     static let toolLabels = [
         "run_shell_command": "Shell", "shell": "Shell", "write_file": "Write", "replace": "Edit", "read_file": "Read",
         "read_many_files": "Read", "web_fetch": "Fetch", "google_web_search": "Search", "search_file_content": "Grep",
-        "list_directory": "List", "apply_patch": "Patch",
+        "list_directory": "List", "apply_patch": "Patch", "AskUserQuestion": "Question", "ExitPlanMode": "Plan",
     ]
 
     /// The tools that run a shell command.
@@ -83,6 +83,10 @@ public struct HookEvent: Decodable, Sendable, Equatable {
             input["query"]?.string
         case "Agent", "Task":
             input["description"]?.string
+        case "AskUserQuestion":
+            AgentQuestion.questions(from: input)?.first?.question
+        case "ExitPlanMode":
+            plan.flatMap(MarkdownDocument.title)
         default:
             // Other agents' tools: the first argument that reads like a target.
             firstLine("command") ?? file("file_path") ?? file("absolute_path") ?? file("path") ?? input["pattern"]?.string
@@ -102,6 +106,21 @@ public struct HookEvent: Decodable, Sendable, Equatable {
               let line = command.split(separator: "\n").first(where: { !$0.allSatisfy(\.isWhitespace) })
         else { return label }
         return "\(label) · \(String(line.trimmingCharacters(in: .whitespaces).prefix(70)))"
+    }
+
+    /// The plan Claude Code asks to carry out as it leaves plan mode (ExitPlanMode), in Markdown. Claude Code reads it
+    /// from the plan's file and puts it in the tool's input before calling its hooks.
+    public var plan: String? {
+        guard toolName == "ExitPlanMode", let plan = toolInput?["plan"]?.string,
+              !plan.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        else { return nil }
+        return plan
+    }
+
+    /// The questions Claude Code asks with its AskUserQuestion tool.
+    public var questions: [AgentQuestion]? {
+        guard toolName == "AskUserQuestion" else { return nil }
+        return AgentQuestion.questions(from: toolInput)
     }
 
     /// What a permission request approves, whole: the command for a shell, the file for the tools that read or change
