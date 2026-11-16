@@ -185,20 +185,7 @@ private final class SoundTap {
         let channels = Int(max(format.mChannelsPerFrame, 1))
         let interleaved = format.mFormatFlags & kAudioFormatFlagIsNonInterleaved == 0
 
-        let properties: [String: Any] = [
-            kAudioAggregateDeviceNameKey: "Col",
-            kAudioAggregateDeviceUIDKey: "ch.rubencatalao.col.sound.\(UUID().uuidString)",
-            kAudioAggregateDeviceIsPrivateKey: true,
-            kAudioAggregateDeviceIsStackedKey: false,
-            kAudioAggregateDeviceTapAutoStartKey: true,
-            kAudioAggregateDeviceSubDeviceListKey: [[String: Any]](),
-            kAudioAggregateDeviceTapListKey: [[kAudioSubTapUIDKey: description.uuid.uuidString, kAudioSubTapDriftCompensationKey: true]],
-        ]
-        guard AudioHardwareCreateAggregateDevice(properties as CFDictionary, &deviceID) == noErr, deviceID != kAudioObjectUnknown else {
-            stop()
-            return nil
-        }
-        let status = AudioDeviceCreateIOProcIDWithBlock(&procID, deviceID, queue) { _, input, _, _, _ in
+        let block: AudioDeviceIOBlock = { _, input, _, _, _ in
             let buffers = UnsafeMutableAudioBufferListPointer(UnsafeMutablePointer(mutating: input))
             guard let first = buffers.first, let data = first.mData else { return }
             let samples = data.assumingMemoryBound(to: Float.self)
@@ -212,10 +199,51 @@ private final class SoundTap {
             }
             if due { analysis.deliver(analysis.analyzer.analyze()) }
         }
-        guard status == noErr, let procID, AudioDeviceStart(deviceID, procID) == noErr else {
+        // The tap alone first. Should macOS want a clock beside it, the output device lends its own, but only a device
+        // without inputs: an input of the aggregate would open a microphone (AirPods, a headset).
+        let clocks: [String?] = [nil] + [Self.outputWithoutInputs()].compactMap { $0 }
+        guard clocks.contains(where: { open(tap: description.uuid, clock: $0, block: block) }) else {
             stop()
             return nil
         }
+    }
+
+    /// Makes the aggregate device around the tap and starts reading it; false, with nothing left behind, when macOS
+    /// refuses.
+    private func open(tap: UUID, clock: String?, block: @escaping AudioDeviceIOBlock) -> Bool {
+        var properties: [String: Any] = [
+            kAudioAggregateDeviceNameKey: "Col",
+            kAudioAggregateDeviceUIDKey: "ch.rubencatalao.col.sound.\(UUID().uuidString)",
+            kAudioAggregateDeviceIsPrivateKey: true,
+            kAudioAggregateDeviceIsStackedKey: false,
+            kAudioAggregateDeviceTapAutoStartKey: true,
+            kAudioAggregateDeviceSubDeviceListKey: clock.map { [[kAudioSubDeviceUIDKey: $0] as [String: Any]] } ?? [],
+            kAudioAggregateDeviceTapListKey: [[kAudioSubTapUIDKey: tap.uuidString, kAudioSubTapDriftCompensationKey: true]],
+        ]
+        if let clock { properties[kAudioAggregateDeviceMainSubDeviceKey] = clock }
+        guard AudioHardwareCreateAggregateDevice(properties as CFDictionary, &deviceID) == noErr, deviceID != kAudioObjectUnknown else {
+            deviceID = AudioObjectID(kAudioObjectUnknown)
+            return false
+        }
+        if AudioDeviceCreateIOProcIDWithBlock(&procID, deviceID, queue, block) == noErr, let procID, AudioDeviceStart(deviceID, procID) == noErr {
+            return true
+        }
+        if let procID { AudioDeviceDestroyIOProcID(deviceID, procID) }
+        procID = nil
+        AudioHardwareDestroyAggregateDevice(deviceID)
+        deviceID = AudioObjectID(kAudioObjectUnknown)
+        return false
+    }
+
+    /// The UID of the default output device, when it has no input streams.
+    private static func outputWithoutInputs() -> String? {
+        guard let device = CoreAudioObject.get(CoreAudioObject.system, CoreAudioObject.address(kAudioHardwarePropertyDefaultOutputDevice),
+                                               as: AudioObjectID.self, default: 0), device != kAudioObjectUnknown
+        else { return nil }
+        var address = CoreAudioObject.address(kAudioDevicePropertyStreams, kAudioObjectPropertyScopeInput)
+        var size: UInt32 = 0
+        guard AudioObjectGetPropertyDataSize(device, &address, 0, nil, &size) == noErr, size == 0 else { return nil }
+        return CoreAudioObject.string(device, kAudioDevicePropertyDeviceUID)
     }
 
     func stop() {
