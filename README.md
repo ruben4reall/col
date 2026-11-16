@@ -11,7 +11,7 @@
   <img src="https://img.shields.io/badge/Windows-10%20%7C%2011-1D1D1F" alt="Windows 10 and 11, preview">
   <img src="https://img.shields.io/badge/Linux-Wayland-1D1D1F" alt="Linux, preview">
   <img src="https://img.shields.io/badge/Swift-6-1D1D1F" alt="Swift 6">
-  <img src="https://img.shields.io/badge/memory-15%20MB-1D1D1F" alt="15 MB of memory at rest">
+  <img src="https://img.shields.io/badge/memory-27%20MB-1D1D1F" alt="27 MB of memory at rest on a Mac">
   <a href="https://github.com/ruben4reall/col/actions/workflows/ci.yml"><img src="https://github.com/ruben4reall/col/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
 </p>
 
@@ -229,10 +229,11 @@ Each one only if a module you chose needs it:
 
 | | Col | Notch app A | Notch app B | Notch app C |
 |---|---|---|---|---|
-| Memory at rest | **15 MB** | 56 MB | 71 MB | 106 MB |
-| Processor at rest | **0.004 %** | 0.01 % | 3.9 % | 6.8 % |
+| Memory at rest | **27 MB** | 56 MB | 71 MB | 106 MB |
+| Processor at rest | **< 0.01 %** | 0.01 % | 3.9 % | 6.8 % |
 
-One minute idle after launch, helper processes included, on a 14-inch MacBook Pro (M3 Pro), macOS 26.5. While you use
+One minute idle after launch, helper processes included, on a 14-inch MacBook Pro (M3 Pro): Col 3.0 on macOS 27.2, the
+other apps on macOS 26.5. Col 3 does much more than Col 2 (15 MB), and still sleeps at rest. While you use
 the Mac, clipboard history checks the pasteboard every two seconds and Col uses about 0.013 %. How it is measured:
 [docs/benchmark.md](docs/benchmark.md).
 
