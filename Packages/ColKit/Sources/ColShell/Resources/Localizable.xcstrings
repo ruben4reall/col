@@ -1143,16 +1143,6 @@
         }
       }
     },
-    "Col never asks for Screen Recording, Full Disk Access or Input Monitoring. It sees when another app uses the microphone without listening to it, and listens itself only while the prompter follows your voice.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Col ne demande jamais l’Enregistrement de l’écran, l’Accès complet au disque ni la Surveillance de l’entrée. Il voit quand une autre app utilise le micro sans l’écouter, et n’écoute lui-même que pendant que le prompteur suit votre voix."
-          }
-        }
-      }
-    },
     "Colors": {
       "localizations": {
         "fr": {
@@ -5039,6 +5029,446 @@
           "stringUnit": {
             "state": "translated",
             "value": "Avec l’Accessibilité, ses ailes ne couvrent jamais un menu ni une icône. D’ici là, elles restent étroites."
+          }
+        }
+      }
+    },
+    "Bars that follow the sound": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Barres qui suivent le son"
+          }
+        }
+      }
+    },
+    "Beyond the island": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Au-delà de l’île"
+          }
+        }
+      }
+    },
+    "Centre": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Centre"
+          }
+        }
+      }
+    },
+    "Choose the Lyrics": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisir les paroles"
+          }
+        }
+      }
+    },
+    "Col": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col"
+          }
+        }
+      }
+    },
+    "Col never asks for Screen Recording, Full Disk Access or Input Monitoring. It sees when another app uses the microphone without listening to it, and listens itself only while the prompter follows your voice. System Audio Recording is asked only if you turn on Bars that follow the sound.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col ne demande jamais l’Enregistrement de l’écran, l’Accès complet au disque ni la Surveillance de l’entrée. Il voit quand une autre app utilise le micro sans l’écouter, et n’écoute lui-même que pendant que le prompteur suit votre voix. L’Enregistrement audio du système n’est demandé que si vous activez Barres qui suivent le son."
+          }
+        }
+      }
+    },
+    "Device Control": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contrôle de l’appareil"
+          }
+        }
+      }
+    },
+    "Equalizer": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Égaliseur"
+          }
+        }
+      }
+    },
+    "Hide Lyrics for This Song": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masquer les paroles de ce morceau"
+          }
+        }
+      }
+    },
+    "Instrumental": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instrumental"
+          }
+        }
+      }
+    },
+    "Large, under the clock, while music plays, with the controls. It relies on private macOS functions, like Show on the Lock Screen.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En grand, sous l’heure, pendant la lecture, avec les commandes. Repose sur des fonctions privées de macOS, comme Afficher sur l’écran verrouillé."
+          }
+        }
+      }
+    },
+    "Lets the bars beside the camera follow the music itself. The sound is analysed on your Mac, never recorded or sent. Without it, the bars dance on their own.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permet aux barres à côté de la caméra de suivre la musique elle-même. Le son est analysé sur votre Mac, jamais enregistré ni envoyé. Sans elle, les barres dansent toutes seules."
+          }
+        }
+      }
+    },
+    "Lower centre": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En bas au centre"
+          }
+        }
+      }
+    },
+    "Lower left": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En bas à gauche"
+          }
+        }
+      }
+    },
+    "Lower right": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En bas à droite"
+          }
+        }
+      }
+    },
+    "LRCLIB cannot be reached. Try again in a moment.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LRCLIB est injoignable. Réessayez dans un instant."
+          }
+        }
+      }
+    },
+    "LRCLIB has no other lyrics for this song.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LRCLIB n’a pas d’autres paroles pour ce morceau."
+          }
+        }
+      }
+    },
+    "Lyrics a little early or late, or not the right ones? The ⋯ button on the lyrics in the island moves them half a second at a time, lets you choose others among LRCLIB’s, or hides them for that song. Lyrics timed word by word fill as they are sung.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Des paroles un peu en avance ou en retard, ou pas les bonnes ? Le bouton ⋯ sur les paroles dans l’île les décale d’une demi-seconde à la fois, en propose d’autres parmi celles de LRCLIB ou les masque pour ce morceau. Les paroles minutées mot à mot se remplissent à mesure qu’elles sont chantées."
+          }
+        }
+      }
+    },
+    "Lyrics on the desktop": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les paroles sur le bureau"
+          }
+        }
+      }
+    },
+    "Lyrics on the desktop follow Hide the island from screenshots and recordings, in General.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les paroles sur le bureau suivent Masquer l’île des captures et des enregistrements, dans Général."
+          }
+        }
+      }
+    },
+    "Lyrics on the Lock Screen": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les paroles sur l’écran verrouillé"
+          }
+        }
+      }
+    },
+    "Needs macOS 14.2 or later.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nécessite macOS 14.2 ou ultérieur."
+          }
+        }
+      }
+    },
+    "Not available on this version of macOS: it relies on private functions that macOS no longer offers.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Indisponible sur cette version de macOS : repose sur des fonctions privées que macOS n’offre plus."
+          }
+        }
+      }
+    },
+    "Not synced": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non synchronisées"
+          }
+        }
+      }
+    },
+    "Not the Right Lyrics?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pas les bonnes paroles ?"
+          }
+        }
+      }
+    },
+    "Position": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Position"
+          }
+        }
+      }
+    },
+    "Reset Timing": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rétablir le minutage"
+          }
+        }
+      }
+    },
+    "Show Lyrics": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher les paroles"
+          }
+        }
+      }
+    },
+    "Show Lyrics 0.5 s Later": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher les paroles 0,5 s plus tard"
+          }
+        }
+      }
+    },
+    "Show Lyrics 0.5 s Sooner": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher les paroles 0,5 s plus tôt"
+          }
+        }
+      }
+    },
+    "Show on the Lock Screen is off": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher sur l’écran verrouillé est désactivé"
+          }
+        }
+      }
+    },
+    "Songs with hidden lyrics": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Morceaux aux paroles masquées"
+          }
+        }
+      }
+    },
+    "Sound": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Son"
+          }
+        }
+      }
+    },
+    "Spectrum": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spectre"
+          }
+        }
+      }
+    },
+    "Synced": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Synchronisées"
+          }
+        }
+      }
+    },
+    "System Audio Recording": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrement audio du système"
+          }
+        }
+      }
+    },
+    "The bars beside the camera and a spectrum in the player move with the music itself. Asks to record system audio: the sound is analysed on your Mac as it plays, never recorded or sent.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les barres à côté de la caméra et un spectre dans le lecteur bougent avec la musique elle-même. Demande l’enregistrement audio du système : le son est analysé sur votre Mac pendant la lecture, jamais enregistré ni envoyé."
+          }
+        }
+      }
+    },
+    "The line being sung, large, above your wallpaper and below every window, while music plays. Clicks go through it.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La ligne chantée, en grand, au-dessus de votre fond d’écran et sous toutes les fenêtres, pendant la lecture. Les clics passent au travers."
+          }
+        }
+      }
+    },
+    "The lyrics need it. It is in Live activities.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les paroles en ont besoin. Ce réglage est dans Activités en direct."
+          }
+        }
+      }
+    },
+    "Timing": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Minutage"
+          }
+        }
+      }
+    },
+    "Timing: %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Minutage : %@"
+          }
+        }
+      }
+    },
+    "Turn On": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activer"
+          }
+        }
+      }
+    },
+    "Until you allow it, the bars dance on their own, as before.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tant que vous ne l’autorisez pas, les barres dansent toutes seules, comme avant."
+          }
+        }
+      }
+    },
+    "Use the Lyrics Found First": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Utiliser les paroles trouvées en premier"
           }
         }
       }

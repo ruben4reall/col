@@ -2,7 +2,7 @@
 
 Each release's section is what Col's update window and the GitHub release show. Dates are in ISO format.
 
-## 2.2.0 (unreleased)
+## 2.2.0 (2026-11-16)
 
 - **Lyrics on the Lock Screen**: while the Mac is locked and music plays, the lyrics show large under the clock, the
   line being sung bright, the one before and the ones to come dim around it, each line gliding into place as the song
@@ -32,6 +32,9 @@ Each release's section is what Col's update window and the GitHub release show. 
   and music plays, and use about 1.5 % of one core then. macOS asks for System Audio Recording when you turn it on,
   and only then; until you allow it, the bars dance on their own, as before. Off by default; Settings, Music and
   lyrics. Needs macOS 14.2 or later.
+- **When Col cannot see the menu bar**: without Device Control and Data Access (Accessibility before macOS 27), Col
+  cannot tell where the menus and icons are. The wings now stay narrow then, room for an icon, instead of reaching
+  over what they cannot see, and the island says so once, with a button that opens the right place in System Settings.
 
 ## 2.1.0 (2026-11-16)
 
