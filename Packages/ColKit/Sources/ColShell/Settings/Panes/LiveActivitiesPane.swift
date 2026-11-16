@@ -15,6 +15,13 @@ struct LiveActivitiesPane: View {
     @State private var agents = Preferences.showsAgents
     @State private var lockScreen = Preferences.showsOnLockScreen
     @State private var ranking = Preferences.activityRanking
+    @State private var backlight = Preferences.showsKeyboardBacklight
+    @State private var capsLock = Preferences.showsCapsLock
+    @State private var mute = Preferences.mutesMicrophone
+    @State private var accessories = Preferences.showsAccessoryBatteries
+    @State private var meeting = Preferences.showsNextMeeting
+    @State private var meetingLead = Preferences.meetingLeadMinutes
+    @State private var permissions = PermissionCenter.shared
 
     var body: some View {
         PaneScaffold(pane: .activities) {
@@ -63,8 +70,39 @@ struct LiveActivitiesPane: View {
                     .onChange(of: battery) { Preferences.showsBattery = battery }
                 IconToggle(symbol: "mic.fill", tint: .orange, title: "Microphone and camera in use", detail: "Which app is listening or filming.", isOn: $privacy)
                     .onChange(of: privacy) { Preferences.showsMicrophoneAndCamera = privacy }
+                IconToggle(symbol: "mic.slash.fill", tint: .red, title: "Mute the microphone from the island",
+                           detail: "A Mute button on the Live page mutes your Mac’s default microphone, and the island shows it in red while it stays muted. Turning this off, or quitting Col, unmutes it.", isOn: $mute)
+                    .onChange(of: mute) { Preferences.mutesMicrophone = mute }
+                IconToggle(symbol: "light.max", tint: .gray, title: "Keyboard backlight",
+                           detail: backlightDetail, isOn: $backlight)
+                    .onChange(of: backlight) { Preferences.showsKeyboardBacklight = backlight }
+                IconToggle(symbol: "capslock.fill", tint: .green, title: "Caps Lock",
+                           detail: capsLockDetail, isOn: $capsLock)
+                    .onChange(of: capsLock) {
+                        Preferences.showsCapsLock = capsLock
+                        if capsLock, !permissions.isGranted(.accessibility) { permissions.request(.accessibility) }
+                    }
+                IconToggle(symbol: "magicmouse.fill", tint: .gray, title: "Accessories’ batteries",
+                           detail: "Your mouse, keyboard and trackpad in the Devices widget, and a word when one falls under 15 %.", isOn: $accessories)
+                    .onChange(of: accessories) { Preferences.showsAccessoryBatteries = accessories }
             } header: {
                 Text("System", bundle: .module)
+            }
+            Section {
+                IconToggle(symbol: "calendar", tint: .red, title: "Next meeting",
+                           detail: "A countdown in its calendar’s colour before an event starts, and Join on the Live page when it has a call link. Uses the agenda’s access to Calendars.", isOn: $meeting)
+                    .onChange(of: meeting) {
+                        Preferences.showsNextMeeting = meeting
+                        if meeting, permissions.canPrompt(.calendars) { permissions.request(.calendars) }
+                    }
+                if meeting {
+                    Stepper(value: $meetingLead, in: MeetingCountdown.leadRange) {
+                        Text("Starts \(meetingLead) min before", bundle: .module)
+                    }
+                    .onChange(of: meetingLead) { Preferences.meetingLeadMinutes = meetingLead }
+                }
+            } header: {
+                Text("Calendar", bundle: .module)
             }
             Section {
                 IconToggle(symbol: "sparkles", tint: SettingsPane.aiApps.tint, title: "AI apps", detail: "Sessions at work and the requests that wait for you.", isOn: $agents)
@@ -94,6 +132,7 @@ extension ActivitySource {
     var title: LocalizedStringResource {
         switch self {
         case .privacy: LocalizedStringResource("Microphone and camera in use", bundle: .settings)
+        case .meetings: LocalizedStringResource("Next meeting", bundle: .settings)
         case .agents: LocalizedStringResource("AI apps at work", bundle: .settings)
         case .timers: LocalizedStringResource("Timers", bundle: .settings)
         case .downloads: LocalizedStringResource("Downloads in progress", bundle: .settings)
@@ -106,6 +145,7 @@ extension ActivitySource {
     var symbol: String {
         switch self {
         case .privacy: "mic.fill"
+        case .meetings: "calendar"
         case .agents: "sparkles"
         case .timers: "timer"
         case .downloads: "arrow.down.circle.fill"
@@ -118,6 +158,7 @@ extension ActivitySource {
     var tint: Color {
         switch self {
         case .privacy: .orange
+        case .meetings: .red
         case .agents: SettingsPane.aiApps.tint
         case .timers: .orange
         case .downloads: .blue
@@ -133,4 +174,16 @@ private var needsAccessibility: LocalizedStringKey {
     ProcessInfo.processInfo.isOperatingSystemAtLeast(OperatingSystemVersion(majorVersion: 27, minorVersion: 0, patchVersion: 0))
         ? "Needs Device Control and Data Access."
         : "Needs Accessibility."
+}
+
+private var backlightDetail: LocalizedStringKey {
+    ProcessInfo.processInfo.isOperatingSystemAtLeast(OperatingSystemVersion(majorVersion: 27, minorVersion: 0, patchVersion: 0))
+        ? "The level, as for brightness, on the Macs with backlight keys. Needs Device Control and Data Access."
+        : "The level, as for brightness, on the Macs with backlight keys. Needs Accessibility."
+}
+
+private var capsLockDetail: LocalizedStringKey {
+    ProcessInfo.processInfo.isOperatingSystemAtLeast(OperatingSystemVersion(majorVersion: 27, minorVersion: 0, patchVersion: 0))
+        ? "On or off, for a moment. Col sees the modifier keys only, never what you type. Needs Device Control and Data Access."
+        : "On or off, for a moment. Col sees the modifier keys only, never what you type. Needs Accessibility."
 }

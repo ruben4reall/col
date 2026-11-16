@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ShortcutsPane: View {
     @State private var hotKey = Preferences.hotKeyEnabled
+    @State private var microphone = Preferences.microphoneHotKeyEnabled
 
     var body: some View {
         PaneScaffold(pane: .shortcuts) {
@@ -16,6 +17,18 @@ struct ShortcutsPane: View {
                     KeyCaps(keys: ["⌃", "⌥", "⌘", "I"]).opacity(hotKey ? 1 : 0.4)
                     Toggle(String(), isOn: $hotKey).labelsHidden().toggleStyle(.switch)
                         .onChange(of: hotKey) { Preferences.hotKeyEnabled = hotKey }
+                }
+                HStack(spacing: 12) {
+                    IconTile(symbol: "mic.slash.fill", tint: .red)
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text("Mute or unmute the microphone", bundle: .module)
+                        Text("Your Mac’s default microphone, while Mute the microphone is on in Live activities. Off until you turn it on.", bundle: .module)
+                            .font(.callout).foregroundStyle(.secondary)
+                    }
+                    Spacer(minLength: 12)
+                    KeyCaps(keys: ["⌃", "⌥", "⌘", "M"]).opacity(microphone && Preferences.mutesMicrophone ? 1 : 0.4)
+                    Toggle(String(), isOn: $microphone).labelsHidden().toggleStyle(.switch)
+                        .onChange(of: microphone) { Preferences.microphoneHotKeyEnabled = microphone }
                 }
             } header: {
                 Text("Keyboard", bundle: .module)

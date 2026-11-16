@@ -11,6 +11,11 @@ public enum SystemGlyphs {
         level < 0.5 ? "sun.min.fill" : "sun.max.fill"
     }
 
+    /// The keyboard backlight, as the system draws it.
+    public static func keyboardBacklight(level: Double) -> String {
+        level < 0.5 ? "light.min" : "light.max"
+    }
+
     public enum Transport: Sendable, Equatable {
         case builtIn, bluetooth, usb, airPlay, display, other
     }
@@ -57,6 +62,10 @@ public struct MediaKeyPress: Equatable, Sendable {
         case brightnessUp = 2
         case brightnessDown = 3
         case mute = 7
+        /// The keyboard backlight keys of the Macs that have them.
+        case illuminationUp = 21
+        case illuminationDown = 22
+        case illuminationToggle = 23
     }
 
     public var key: Key
@@ -71,6 +80,24 @@ public struct MediaKeyPress: Equatable, Sendable {
         self.key = key
         isDown = (flags & 0xFF00) >> 8 == 0x0A
         isRepeat = flags & 0x1 == 1
+    }
+
+    /// Only a key going down may be kept from macOS. A key coming up always reaches it: since macOS 27.2, Control
+    /// Center and the apps that saw a press begin wait for its release, and misbehave when it never comes.
+    public var mayBeSwallowed: Bool { isDown }
+}
+
+/// What the closed island shows for the microphone and the camera: what is in use, and a muted microphone in red,
+/// even while nobody listens.
+public enum PrivacyIndicator {
+    public static func presentation(microphone: Bool, camera: Bool, muted: Bool, appIcon: Bool) -> CompactPresentation? {
+        guard microphone || camera || muted else { return nil }
+        let mic: CompactItem = muted ? .symbol("mic.slash.fill", tint: .red) : .symbol("mic.fill", tint: .orange)
+        let app: CompactItem? = appIcon ? .image(key: "privacy.app") : nil
+        if camera {
+            return CompactPresentation(leading: .symbol("video.fill", tint: .green), trailing: microphone || muted ? mic : app)
+        }
+        return CompactPresentation(leading: mic, trailing: microphone ? app : nil)
     }
 }
 

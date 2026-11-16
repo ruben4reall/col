@@ -29,6 +29,8 @@ struct IslandServices {
     let device: DeviceCardModel
     let audio: AudioMonitor
     let awake: KeepAwake
+    /// Weather, Pomodoro, the next meeting, the microphone's mute and the accessories' batteries.
+    let glance: Glance
     let openSettings: () -> Void
 
     /// The same models with pages of their own, for a second island such as the one in the settings; agents of its own
@@ -37,7 +39,7 @@ struct IslandServices {
         IslandServices(
             media: media, lyrics: lyrics, ai: ai, agents: agents ?? self.agents, custom: custom, navigation: navigation, power: power, shelf: shelf,
             clipboard: clipboard, timer: timer, picker: picker, mirror: mirror, calendar: calendar, stats: stats,
-            device: device, audio: audio, awake: awake, openSettings: openSettings
+            device: device, audio: audio, awake: awake, glance: glance, openSettings: openSettings
         )
     }
 }
@@ -54,6 +56,7 @@ struct IslandContentView: View {
                 navigation: services.navigation,
                 agents: services.agents,
                 custom: services.custom,
+                glance: services.glance,
                 power: services.power,
                 notchWidth: model.notchWidth,
                 openSettings: services.openSettings
@@ -87,7 +90,7 @@ struct IslandContentView: View {
                         .id(id)
                 }
             case .live:
-                LivePage(agents: services.agents, custom: services.custom)
+                LivePage(agents: services.agents, custom: services.custom, glance: services.glance)
                     .transition(slide(direction))
             case .drop:
                 ShelfPage(shelf: services.shelf)

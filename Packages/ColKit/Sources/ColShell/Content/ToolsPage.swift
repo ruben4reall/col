@@ -2,16 +2,17 @@
 import ColCore
 import SwiftUI
 
-/// Small tools: a timer, a colour picker, and a mirror.
+/// Small tools: a timer or a Pomodoro, a colour picker, and a mirror.
 struct ToolsPage: View {
     let timer: TimerModel
     let picker: ColorPickerModel
     let mirror: MirrorModel
     let awake: KeepAwake
+    let pomodoro: PomodoroModel
 
     var body: some View {
         HStack(spacing: 10) {
-            TimerCard(timer: timer)
+            TimerCard(timer: timer, pomodoro: pomodoro)
                 .frame(maxWidth: .infinity)
             ColorCard(picker: picker)
                 .frame(width: 92)
@@ -65,10 +66,23 @@ private struct Card<Content: View>: View {
 
 private struct TimerCard: View {
     let timer: TimerModel
+    let pomodoro: PomodoroModel
+    /// The card's other face: "timer" or "pomodoro", kept between openings.
+    @AppStorage("toolsTimerFace") private var face = "timer"
+
+    /// What runs shows; when both or neither run, the face chosen last.
+    private var showsPomodoro: Bool {
+        guard Preferences.showsPomodoro else { return false }
+        if pomodoro.session != nil, timer.countdown == nil { return true }
+        if timer.countdown != nil, pomodoro.session == nil { return false }
+        return face == "pomodoro"
+    }
 
     var body: some View {
         Card {
-            if let countdown = timer.countdown {
+            if showsPomodoro {
+                PomodoroCard(pomodoro: pomodoro, header: AnyView(faces))
+            } else if let countdown = timer.countdown {
                 TimelineView(.periodic(from: .now, by: 1)) { context in
                     HStack(spacing: 14) {
                         ZStack {
@@ -94,9 +108,7 @@ private struct TimerCard: View {
                 }
             } else {
                 VStack(alignment: .leading, spacing: 6) {
-                    Label { Text("Timer", bundle: .module) } icon: { Image(systemName: "timer") }
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundStyle(Theme.secondaryText)
+                    faces
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: 2), spacing: 5) {
                         ForEach(TimerModel.presets, id: \.self) { minutes in
                             Button {
@@ -116,6 +128,36 @@ private struct TimerCard: View {
                 .padding(10)
             }
         }
+    }
+}
+
+extension TimerCard {
+    /// Timer and Pomodoro, side by side at the top of the card: the one on show is bright. Pomodoro only while it is
+    /// on in the settings.
+    @ViewBuilder var faces: some View {
+        HStack(spacing: 10) {
+            if Preferences.showsPomodoro {
+                faceButton("timer", title: Text("Timer", bundle: .module))
+                faceButton("pomodoro", title: Text("Pomodoro", bundle: .module))
+            } else {
+                Label { Text("Timer", bundle: .module) } icon: { Image(systemName: "timer") }
+                    .foregroundStyle(Theme.secondaryText)
+            }
+        }
+        .font(.system(size: 11, weight: .semibold))
+    }
+
+    private func faceButton(_ id: String, title: Text) -> some View {
+        let selected = (id == "pomodoro") == showsPomodoro
+        return Button {
+            withAnimation(.easeOut(duration: 0.2)) { face = id }
+        } label: {
+            title
+                .foregroundStyle(selected ? Color.white : Theme.tertiaryText)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(PressableStyle())
+        .lineLimit(1)
     }
 }
 

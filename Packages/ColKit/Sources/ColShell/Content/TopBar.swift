@@ -6,6 +6,7 @@ struct TopBar: View {
     let navigation: IslandNavigation
     let agents: AgentCenter
     let custom: CustomActivities
+    let glance: Glance
     let power: PowerMonitor
     let notchWidth: CGFloat
     let openSettings: () -> Void
@@ -49,7 +50,7 @@ struct TopBar: View {
     }
 
     private var hasLive: Bool {
-        !agents.sessions.isEmpty || !custom.entries.isEmpty
+        !agents.sessions.isEmpty || !custom.entries.isEmpty || glance.meetings.current != nil || MicrophoneRow.shows(glance.microphone)
     }
 
     private func tab(_ route: IslandRoute, symbol: String, title: String) -> some View {

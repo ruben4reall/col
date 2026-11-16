@@ -1,7 +1,9 @@
 import AppKit
+import ColCore
 import SwiftUI
 
-/// Files dropped on the island. Drag them back out, open them, or send them all with AirDrop.
+/// Files dropped on the island. Drag them back out, open them, or send them all with AirDrop; from a file's menu,
+/// convert or resize an image, compress files, or copy the text of an image.
 struct ShelfPage: View {
     let shelf: ShelfModel
 
@@ -27,15 +29,21 @@ struct ShelfPage: View {
                 }
                 VStack(spacing: 8) {
                     AirDropButton(enabled: shelf.canAirDrop) { shelf.airDrop() }
-                    Button {
-                        withAnimation(.spring(duration: 0.35)) { shelf.clear() }
-                    } label: {
-                        Text("Clear", bundle: .module)
-                            .font(.system(size: 11, weight: .medium))
-                            .foregroundStyle(Theme.secondaryText)
+                    if let notice = shelf.notice {
+                        ShelfNoticeView(notice: notice)
+                            .transition(.opacity)
+                    } else {
+                        Button {
+                            withAnimation(.spring(duration: 0.35)) { shelf.clear() }
+                        } label: {
+                            Text("Clear", bundle: .module)
+                                .font(.system(size: 11, weight: .medium))
+                                .foregroundStyle(Theme.secondaryText)
+                        }
+                        .buttonStyle(PressableStyle())
                     }
-                    .buttonStyle(PressableStyle())
                 }
+                .frame(width: 70)
             }
         }
     }
@@ -111,10 +119,67 @@ private struct ShelfTile: View {
         .contextMenu {
             Button { shelf.open(item) } label: { Text("Open", bundle: .module) }
             Button { shelf.reveal(item) } label: { Text("Show in Finder", bundle: .module) }
+            if Preferences.shelfTools {
+                ShelfToolsMenu(item: item, shelf: shelf)
+            }
             Divider()
             Button { shelf.remove(item) } label: { Text("Remove from shelf", bundle: .module) }
         }
         .help(item.url.path)
+    }
+}
+
+/// The tools of a file's menu: what can be done with this file, and nothing that cannot.
+private struct ShelfToolsMenu: View {
+    let item: ShelfModel.Item
+    let shelf: ShelfModel
+
+    var body: some View {
+        Divider()
+        let conversions = ShelfTools.conversions(for: item.url)
+        if !conversions.isEmpty {
+            Menu {
+                ForEach(conversions, id: \.self) { format in
+                    Button { shelf.convert(item, to: format) } label: { Text(verbatim: format.name) }
+                }
+            } label: {
+                Text("Convert to", bundle: .module)
+            }
+            Menu {
+                Button { shelf.resize(item, .half) } label: { Text("Half the Size (50 %)", bundle: .module) }
+                Button { shelf.resize(item, .pointSize) } label: { Text("Retina Capture to 1x", bundle: .module) }
+            } label: {
+                Text("Resize", bundle: .module)
+            }
+            Button { shelf.copyText(item) } label: { Text("Copy Text from Image", bundle: .module) }
+        }
+        Button { shelf.compress([item]) } label: { Text("Compress", bundle: .module) }
+        if shelf.items.count > 1 {
+            Button { shelf.compress(shelf.items) } label: { Text("Compress All \(shelf.items.count) Files", bundle: .module) }
+        }
+    }
+}
+
+/// What a tool is doing, or what it did, in place of Clear for a moment.
+private struct ShelfNoticeView: View {
+    let notice: ShelfNotice
+
+    var body: some View {
+        VStack(spacing: 3) {
+            if notice.working {
+                ProgressView().controlSize(.mini)
+            } else {
+                Image(systemName: notice.failed ? "exclamationmark.circle.fill" : "checkmark.circle.fill")
+                    .foregroundStyle(notice.failed ? RGBA.orange.color : Theme.accent)
+            }
+            Text(verbatim: notice.text)
+                .lineLimit(2)
+                .minimumScaleFactor(0.85)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .font(.system(size: 10, weight: .medium))
+        .foregroundStyle(Theme.secondaryText)
     }
 }
 

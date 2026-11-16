@@ -121,6 +121,35 @@ final class CalendarModel {
             }
     }
 
+    /// Timed events from a few minutes ago to `hours` ahead, for the meeting countdown: never canceled ones, nor those
+    /// the user declined. Empty without access to the calendars.
+    func upcomingEvents(hours: Int) -> [Event] {
+        status = EKEventStore.authorizationStatus(for: .event)
+        guard isAuthorized else { return [] }
+        if store == nil { store = EKEventStore() }
+        guard let store else { return [] }
+        let now = Date()
+        let predicate = store.predicateForEvents(withStart: now.addingTimeInterval(-10 * 60), end: now.addingTimeInterval(TimeInterval(hours) * 3600), calendars: nil)
+        return store.events(matching: predicate)
+            .filter { event in
+                !event.isAllDay && event.status != .canceled && event.startDate > now.addingTimeInterval(-10 * 60)
+                    && event.attendees?.first(where: \.isCurrentUser)?.participantStatus != .declined
+            }
+            .sorted { $0.startDate < $1.startDate }
+            .prefix(20)
+            .map { event in
+                Event(
+                    id: event.eventIdentifier ?? UUID().uuidString,
+                    title: event.title ?? "",
+                    start: event.startDate,
+                    end: event.endDate,
+                    isAllDay: event.isAllDay,
+                    color: event.calendar.color ?? .systemBlue,
+                    meeting: MeetingLink.find(in: [event.url?.absoluteString, event.location, event.notes])
+                )
+            }
+    }
+
     func openCalendar() {
         NSWorkspace.shared.open(URL(fileURLWithPath: "/System/Applications/Calendar.app"))
     }

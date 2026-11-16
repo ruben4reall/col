@@ -236,4 +236,95 @@ enum Preferences {
         get { bool("hotKeyEnabled", default: true) }
         set { defaults.set(newValue, forKey: "hotKeyEnabled"); changed() }
     }
+
+    // MARK: Your Mac at a glance
+
+    /// The weather, from Open-Meteo. Off by default: it goes online, and asks for the location unless a city is typed.
+    static var showsWeather: Bool {
+        get { bool("showsWeather", default: false) }
+        set { defaults.set(newValue, forKey: "showsWeather"); changed() }
+    }
+
+    /// The city typed in the settings; nil follows the Mac's location.
+    static var weatherPlace: WeatherPlace? {
+        get { defaults.data(forKey: "weatherPlace").flatMap { try? JSONDecoder().decode(WeatherPlace.self, from: $0) } }
+        set { defaults.set(newValue.flatMap { try? JSONEncoder().encode($0) }, forKey: "weatherPlace"); changed() }
+    }
+
+    /// The keyboard backlight keys show their level in the notch, as volume and brightness do.
+    /// Until it is set, it follows Replace the volume and brightness displays, so a Mac that kept the system's displays
+    /// does not see its keys taken over.
+    static var showsKeyboardBacklight: Bool {
+        get { bool("showsKeyboardBacklight", default: replacesSystemHUD) }
+        set { defaults.set(newValue, forKey: "showsKeyboardBacklight"); changed() }
+    }
+
+    /// Caps Lock turning on or off shows in the notch. Off by default: it watches the modifier keys.
+    static var showsCapsLock: Bool {
+        get { bool("showsCapsLock", default: false) }
+        set { defaults.set(newValue, forKey: "showsCapsLock"); changed() }
+    }
+
+    /// A button mutes the Mac's default microphone from the island, and the island turns red while it is muted.
+    static var mutesMicrophone: Bool {
+        get { bool("mutesMicrophone", default: true) }
+        set { defaults.set(newValue, forKey: "mutesMicrophone"); changed() }
+    }
+
+    /// Control, Option, Command and M mute or unmute the microphone. Off by default: a shortcut in every app is the
+    /// user's to give.
+    static var microphoneHotKeyEnabled: Bool {
+        get { bool("microphoneHotKeyEnabled", default: false) }
+        set { defaults.set(newValue, forKey: "microphoneHotKeyEnabled"); changed() }
+    }
+
+    /// A countdown in the closed island before the next event of the calendar.
+    static var showsNextMeeting: Bool {
+        get { bool("showsNextMeeting", default: true) }
+        set { defaults.set(newValue, forKey: "showsNextMeeting"); changed() }
+    }
+
+    /// How many minutes before an event its countdown starts.
+    static var meetingLeadMinutes: Int {
+        get {
+            let saved = defaults.integer(forKey: "meetingLeadMinutes")
+            return saved == 0 ? 5 : min(max(saved, MeetingCountdown.leadRange.lowerBound), MeetingCountdown.leadRange.upperBound)
+        }
+        set { defaults.set(newValue, forKey: "meetingLeadMinutes"); changed() }
+    }
+
+    /// The battery of Bluetooth mice, keyboards and trackpads, and a word when one runs low.
+    static var showsAccessoryBatteries: Bool {
+        get { bool("showsAccessoryBatteries", default: true) }
+        set { defaults.set(newValue, forKey: "showsAccessoryBatteries"); changed() }
+    }
+
+    /// Pomodoro in the Tools page and as a widget.
+    static var showsPomodoro: Bool {
+        get { bool("showsPomodoro", default: true) }
+        set { defaults.set(newValue, forKey: "showsPomodoro"); changed() }
+    }
+
+    static var pomodoroPlan: PomodoroPlan {
+        get { defaults.data(forKey: "pomodoroPlan").flatMap { try? JSONDecoder().decode(PomodoroPlan.self, from: $0) } ?? .standard }
+        set { defaults.set(try? JSONEncoder().encode(newValue), forKey: "pomodoroPlan"); changed() }
+    }
+
+    /// Convert, resize, compress and read the text of files on the shelf, from their menu.
+    static var shelfTools: Bool {
+        get { bool("shelfTools", default: true) }
+        set { defaults.set(newValue, forKey: "shelfTools"); changed() }
+    }
+
+    /// A search field above the recent copies.
+    static var searchesClipboard: Bool {
+        get { bool("searchesClipboard", default: true) }
+        set { defaults.set(newValue, forKey: "searchesClipboard"); changed() }
+    }
+
+    /// The graphics processor's load on the System page.
+    static var showsGPU: Bool {
+        get { bool("showsGPU", default: true) }
+        set { defaults.set(newValue, forKey: "showsGPU"); changed() }
+    }
 }

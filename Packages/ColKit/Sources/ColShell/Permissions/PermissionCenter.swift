@@ -14,7 +14,7 @@ final class PermissionCenter {
     static let shared = PermissionCenter()
 
     enum Permission: String, CaseIterable, Identifiable {
-        case accessibility, calendars, bluetooth, camera, microphone, speech, audioCapture
+        case accessibility, calendars, bluetooth, camera, microphone, speech, audioCapture, location
         var id: String { rawValue }
 
         var title: LocalizedStringResource {
@@ -30,6 +30,7 @@ final class PermissionCenter {
             case .microphone: LocalizedStringResource("Microphone", bundle: .settings)
             case .speech: LocalizedStringResource("Speech Recognition", bundle: .settings)
             case .audioCapture: LocalizedStringResource("System Audio Recording", bundle: .settings)
+            case .location: LocalizedStringResource("Location", bundle: .settings)
             }
         }
 
@@ -43,6 +44,7 @@ final class PermissionCenter {
             case .microphone: LocalizedStringResource("Lets the prompter roll while you speak and wait when you stop. The sound stays on your Mac and is never recorded.", bundle: .settings)
             case .speech: LocalizedStringResource("Lets Voice Follow keep your place word by word. Recognition runs on your Mac.", bundle: .settings)
             case .audioCapture: LocalizedStringResource("Lets the bars beside the camera follow the music itself. The sound is analysed on your Mac, never recorded or sent. Without it, the bars dance on their own.", bundle: .settings)
+            case .location: LocalizedStringResource("Finds the weather where you are, to about a kilometre: only that rounded position goes to Open-Meteo. Without it, type a city in Settings.", bundle: .settings)
             }
         }
 
@@ -55,6 +57,7 @@ final class PermissionCenter {
             case .camera: LocalizedStringResource("Mirror", bundle: .settings)
             case .microphone, .speech: LocalizedStringResource("Prompter", bundle: .settings)
             case .audioCapture: LocalizedStringResource("Bars that follow the sound", bundle: .settings)
+            case .location: LocalizedStringResource("Weather", bundle: .settings)
             }
         }
 
@@ -67,6 +70,7 @@ final class PermissionCenter {
             case .microphone: "mic.fill"
             case .speech: "waveform"
             case .audioCapture: "speaker.wave.3.fill"
+            case .location: "location.fill"
             }
         }
 
@@ -79,6 +83,7 @@ final class PermissionCenter {
             case .microphone: .orange
             case .speech: .purple
             case .audioCapture: .pink
+            case .location: .blue
             }
         }
 
@@ -93,6 +98,7 @@ final class PermissionCenter {
             case .speech: "Privacy_SpeechRecognition"
             // System audio recording is listed with screen recording.
             case .audioCapture: "Privacy_ScreenCapture"
+            case .location: "Privacy_LocationServices"
             }
         }
     }
@@ -128,6 +134,7 @@ final class PermissionCenter {
         case .microphone: microphone == .authorized
         case .speech: speech == .authorized
         case .audioCapture: audioCapture == .granted
+        case .location: LocationAccess.shared.isAllowed
         }
     }
 
@@ -141,6 +148,7 @@ final class PermissionCenter {
         case .microphone: microphone == .notDetermined
         case .speech: speech == .notDetermined
         case .audioCapture: audioCapture == .unknown
+        case .location: LocationAccess.shared.canAsk
         }
     }
 
@@ -205,6 +213,8 @@ final class PermissionCenter {
                 }
             }
             if !asked { SoundLevels.shared.listenOnce() }
+        case .location:
+            LocationAccess.shared.request()
         }
     }
 

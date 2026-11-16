@@ -33,6 +33,13 @@ struct SystemGlyphsTests {
         #expect(MediaKeyPress(data1: 16 << 16) == nil)
     }
 
+    @Test func keyUpsAlwaysReachMacOS() {
+        // Col may keep a key's press from macOS, never its release: Control Center waits for it.
+        #expect(MediaKeyPress(data1: (2 << 16) | (0x0A << 8))?.mayBeSwallowed == true)
+        #expect(MediaKeyPress(data1: (2 << 16) | (0x0B << 8))?.mayBeSwallowed == false)
+        #expect(MediaKeyPress(data1: (0 << 16) | (0x0B << 8))?.mayBeSwallowed == false)
+    }
+
     @Test func stepsLikeTheSystem() {
         #expect(LevelStep.apply(to: 0.5, up: true, fine: false) == 0.5625)
         #expect(LevelStep.apply(to: 0.51, up: true, fine: false) == 0.5625)

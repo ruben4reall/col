@@ -13,13 +13,14 @@ Everything Col reads, writes or runs, and why.
 
 | Path | What | When |
 |---|---|---|
-| `~/Library/Preferences/ch.rubencatalao.islet.plist` | Settings, the shelf's file bookmarks, pinned clipboard text, and the songs whose lyrics you moved, chose or hid (their title, artist and LRCLIB number, never the lyrics) | Always |
+| `~/Library/Preferences/ch.rubencatalao.islet.plist` | Settings, the shelf's file bookmarks, pinned clipboard text, the songs whose lyrics you moved, chose or hid (their title, artist and LRCLIB number, never the lyrics), the weather's city if you type one, today's count of Pomodoro sessions, and the microphone Col muted until it gives it back | Always |
 | `~/Library/Application Support/Col/col.sock` | The local socket scripts and agents talk to: mode 0600 in a 0700 folder, so only your user can connect. It never listens on the network | While Col runs |
 | `~/Library/Application Support/Col/Extensions/` | Your extensions, one folder each | When you add one |
 | `~/Library/Application Support/Col/Scripts/` | The prompter's scripts, one Markdown file each, saved as you type. The first time, the scripts of Souffleur (the prompter's former app) are copied in from `~/Library/Application Support/Souffleur/Scripts/`, which is left as it was | When you use the prompter |
 | `~/Library/Preferences/ch.rubencatalao.souffleur.plist` | Read once: the settings made in Souffleur (pace, mode, light, text, shortcuts, the phone remote's pairing) are copied into Col's, except those already set in Col. Whether the remote was on is not copied: it stays off until you turn it on in Col. The file is left as it was | Once, the first time Col runs |
 | `~/Library/Application Support/com.apple.wallpaper/Store/Index.plist` and the picture it names | Read only: your wallpaper, so the settings previews are drawn on it. A picture in Desktop, Documents, iCloud Drive or on another volume is skipped for the Mac's default wallpaper, so nothing asks for a permission | While a settings pane shows a preview |
 | `~/Downloads` | Read only: the names of the files a browser is still writing, to show their progress | While Downloads in progress is on |
+| Beside a file on the shelf, or `~/Library/Caches/Col/Shelf/` when its folder cannot be written | What the shelf's tools make: a converted or resized image, a .zip, never over an existing file. A .zip of several files is made from copies in a temporary folder (clones on the same volume), removed at once | When you choose a tool from a file's menu |
 | `~/.local/bin/colctl` | A link to the `colctl` command inside the app, or to Homebrew's link to it when Homebrew installed Col, never to a file that cannot run | When you install the command or connect an agent, and on the first launch after an update from Islet if Islet had installed its command. At each launch, a link left leading nowhere or into Islet.app leads to Col again |
 | `~/.local/bin/islet` | The command's name before Islet became Col: hooks installed then still call it, so it now links to `colctl` | Only if Islet had installed it: on the first launch after the update, when you connect an agent, and at each launch if it leads nowhere or into Islet.app |
 | `~/.claude/settings.json`, `~/.codex/hooks.json`, `~/.gemini/settings.json`, `~/.cursor/hooks.json`, `~/.copilot/hooks/col.json` | Col's hooks, added next to yours; the previous file is kept as `<file>.col-backup`, readable by you only | Read to show which agents are connected; written when you connect one, and disconnecting removes them |
@@ -66,6 +67,11 @@ Copies that password managers mark as concealed or transient are skipped.
 - The prompter's phone remote, off until you turn it on in Settings, Prompter: a small web server on your local
   network (port 7575 to 7579) that only answers a phone carrying the pairing code of the QR code you scanned. It
   stops when you turn the remote off. Nothing goes to the internet.
+- The weather, off until you turn it on in Settings, Weather and tools: [Open-Meteo](https://open-meteo.com), which
+  needs no key and no account, is asked for the forecast at `api.open-meteo.com` with a position rounded to two
+  decimals (about a kilometre): the city you typed, or where the Mac is. It is asked at most every 30 minutes, and
+  only while the Weather widget or the Lock Screen shows it; nothing is fetched while the island sits closed. Typing
+  a city sends that name to `geocoding-api.open-meteo.com` when you search. No cookies, no cache on disk.
 - Nothing else. No account, no telemetry, no analytics, no crash reports.
 
 ### Permissions
@@ -81,6 +87,18 @@ private aggregate device with no other input, so no microphone is ever opened; i
 a second into the bars' heights, then dropped, never recorded or sent). The colour picker uses the system's own
 sampler, which asks for nothing.
 
+Also, only if you turn on what needs it: Location, for the weather where you are, asked when you turn the weather on
+without typing a city, and read once per refresh at the accuracy of a town. Caps Lock, when you turn it on, uses the
+same Accessibility permission to watch the modifier keys only: never what you type, and nothing is held back. The
+batteries of your accessories are read from IOKit's registry, and the text of an image on the shelf is read by
+Vision on your Mac.
+
+The microphone's mute (the Live page's button, or ⌃⌥⌘M once you turn it on) sets the default microphone's own mute,
+or turns its input volume to zero when it has none, and needs no permission. What Col muted is written in its
+settings (`microphoneMuteLedger`: each device's Core Audio UID, how it was muted, the volume it had), so that Col
+always gives it back: when you unmute, when you turn the setting off, and when Col quits. If Col stops without
+quitting (a crash, a forced quit), the microphone stays muted until Col opens again, which unmutes it first thing.
+
 ### Login item
 
 When you choose Open at Login, Col registers itself with `SMAppService`. It shows in System Settings, General,
@@ -95,3 +113,5 @@ Screen and its lyrics, off by default) and TCC (whether System Audio Recording i
 Bars that follow the sound, off by default). Each is looked up at run time: if a macOS update
 removes one, its feature turns off and nothing crashes. The [README](README.md#private-macos-apis) says why each is
 needed.
+
+CoreBrightness's `KeyboardBrightnessClient` (the keyboard backlight's level, for its keys) is looked up the same way.

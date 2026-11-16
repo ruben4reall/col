@@ -1,14 +1,15 @@
 import AppKit
 import ColCore
 
-/// Turns what the Mac is doing into live activities: volume and brightness, the sound output, the battery, and the
-/// microphone and camera in use.
+/// Turns what the Mac is doing into live activities: volume, brightness and the keyboard backlight, the sound output,
+/// the battery, and the microphone and camera in use, or the microphone muted.
 @MainActor
 final class SystemActivities {
     let audio = AudioMonitor()
     let power = PowerMonitor()
     let camera = CameraMonitor()
     let keys = MediaKeyTap()
+    let microphone = MicrophoneMute()
 
     var post: ((Activity) -> Void)?
     var remove: ((String) -> Void)?
@@ -24,8 +25,10 @@ final class SystemActivities {
         audio.onOutputChange = { [weak self] output in self?.showOutput(output) }
         audio.onMicrophoneChange = { [weak self] apps in
             self?.microphoneApps = apps
+            self?.microphone.users = apps.compactMap(\.localizedName)
             self?.refreshPrivacy()
         }
+        microphone.onChange = { [weak self] _ in self?.refreshPrivacy() }
         camera.onChange = { [weak self] _ in self?.refreshPrivacy() }
         power.onChange = { [weak self] state, previous in self?.powerChanged(state, previous: previous) }
         keys.handler = { [weak self] press, fine in self?.handle(press, fine: fine) ?? false }
@@ -33,6 +36,9 @@ final class SystemActivities {
         audio.start()
         power.start()
         camera.start()
+        // A mute Col could not undo before it stopped is undone now, whatever the setting.
+        microphone.recover()
+        if Preferences.mutesMicrophone { microphone.start() }
         startKeyTapIfAllowed()
         // Granting Accessibility in System Settings takes effect without a relaunch.
         trustObserver = DistributedNotificationCenter.default().addObserver(
@@ -45,7 +51,14 @@ final class SystemActivities {
     }
 
     func startKeyTapIfAllowed() {
-        if Preferences.replacesSystemHUD, MediaKeyTap.isTrusted { keys.start() } else { keys.stop() }
+        let wanted = Preferences.replacesSystemHUD || (Preferences.showsKeyboardBacklight && KeyboardBacklight.isAvailable)
+        if wanted, MediaKeyTap.isTrusted { keys.start() } else { keys.stop() }
+    }
+
+    /// The microphone's mute was turned on or off in the settings: off, the microphone Col muted is unmuted.
+    func microphoneSettingChanged() {
+        if Preferences.mutesMicrophone { microphone.start() } else { microphone.stop() }
+        refreshPrivacy()
     }
 
     // MARK: Volume and brightness
@@ -77,8 +90,26 @@ final class SystemActivities {
         ))
     }
 
-    /// Applies a volume or brightness key. Returns false to let macOS handle a key Col cannot.
+    private func showKeyboardBacklight(_ level: Double) {
+        post?(Activity(
+            id: "hud",
+            priority: .transient,
+            compact: CompactPresentation(
+                leading: .symbol(SystemGlyphs.keyboardBacklight(level: level)),
+                trailing: .level(level)
+            ),
+            expires: Date().addingTimeInterval(1.6),
+            updated: Date()
+        ))
+    }
+
+    /// Applies a volume, brightness or keyboard backlight key. Returns false to let macOS handle a key Col cannot.
     private func handle(_ press: MediaKeyPress, fine: Bool) -> Bool {
+        if [.illuminationUp, .illuminationDown, .illuminationToggle].contains(press.key) {
+            return handleBacklight(press, fine: fine)
+        }
+        // The tap may run for the keyboard backlight alone.
+        guard Preferences.replacesSystemHUD else { return false }
         switch press.key {
         case .soundUp, .soundDown:
             guard audio.canSetVolume else { return false }
@@ -102,7 +133,24 @@ final class SystemActivities {
             guard Brightness.set(next) else { return false }
             showBrightness(next)
             return true
+        case .illuminationUp, .illuminationDown, .illuminationToggle:
+            return false
         }
+    }
+
+    private func handleBacklight(_ press: MediaKeyPress, fine: Bool) -> Bool {
+        guard Preferences.showsKeyboardBacklight, let level = KeyboardBacklight.level else { return false }
+        guard press.isDown else { return true }
+        if press.key == .illuminationToggle {
+            guard !press.isRepeat else { return true }
+            guard let next = KeyboardBacklight.toggle() else { return false }
+            showKeyboardBacklight(next)
+            return true
+        }
+        let next = LevelStep.apply(to: level, up: press.key == .illuminationUp, fine: fine)
+        guard KeyboardBacklight.set(next) else { return false }
+        showKeyboardBacklight(next)
+        return true
     }
 
     // MARK: Sound output
@@ -159,30 +207,32 @@ final class SystemActivities {
     // MARK: Microphone and camera
 
     private func refreshPrivacy() {
-        guard Preferences.showsMicrophoneAndCamera else {
-            remove?("privacy")
-            return
-        }
-        let microphone = !microphoneApps.isEmpty
-        let cameraOn = camera.inUse
-        guard microphone || cameraOn else {
-            remove?("privacy")
-            return
-        }
-        let app = microphoneApps.first
+        let shows = Preferences.showsMicrophoneAndCamera
+        let microphoneInUse = shows && !microphoneApps.isEmpty
+        let cameraOn = shows && camera.inUse
+        let muted = Preferences.mutesMicrophone && microphone.isMuted
+        let app = microphoneInUse ? microphoneApps.first : nil
         registerImage?(app?.icon.flatMap(Self.bitmap(of:)), "privacy.app")
-        let leading: CompactItem = cameraOn ? .symbol("video.fill", tint: .green) : .symbol("mic.fill", tint: .orange)
-        let trailing: CompactItem? = if cameraOn && microphone {
-            .symbol("mic.fill", tint: .orange)
-        } else if app != nil {
-            .image(key: "privacy.app")
-        } else {
-            nil
+        guard let presentation = PrivacyIndicator.presentation(microphone: microphoneInUse, camera: cameraOn, muted: muted, appIcon: app != nil) else {
+            remove?("privacy")
+            return
         }
+        post?(Activity(id: "privacy", priority: .standard, compact: presentation, updated: Date()))
+    }
+
+    /// Mutes or unmutes the microphone, from the island or the shortcut, and says so for a moment.
+    func toggleMicrophone() {
+        guard Preferences.mutesMicrophone, microphone.isAvailable else { return }
+        microphone.toggle()
+        let muted = microphone.isMuted
         post?(Activity(
-            id: "privacy",
-            priority: .standard,
-            compact: CompactPresentation(leading: leading, trailing: trailing),
+            id: "hud",
+            priority: .transient,
+            compact: CompactPresentation(
+                leading: .symbol(muted ? "mic.slash.fill" : "mic.fill", tint: muted ? .red : .white),
+                trailing: .text(muted ? String(localized: "Muted", bundle: .module) : String(localized: "Microphone on", bundle: .module), tint: muted ? .red : .white)
+            ),
+            expires: Date().addingTimeInterval(1.6),
             updated: Date()
         ))
     }

@@ -1,21 +1,27 @@
 import ColCore
 import SwiftUI
 
-/// Everything running: agent sessions, their permission requests, and activities pushed by other programs.
+/// Everything running: agent sessions, their permission requests, and activities pushed by other programs; the next
+/// meeting with its Join button, and the microphone with its mute.
 struct LivePage: View {
     let agents: AgentCenter
     let custom: CustomActivities
+    let glance: Glance
 
     var body: some View {
         let sessions = agents.sessions
         // Oldest first: a request that arrives goes below the others, never under the pointer about to answer one.
         let requests = agents.pending.values.sorted { ($0.received, $0.id) < ($1.received, $1.id) }
         let sessionsWithRequests = Set(requests.map(\.sessionID))
-        if sessions.isEmpty && custom.entries.isEmpty {
+        let meeting = glance.meetings.current
+        let microphone = MicrophoneRow.shows(glance.microphone)
+        if sessions.isEmpty && custom.entries.isEmpty && meeting == nil && !microphone {
             EmptyLive()
         } else {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 8) {
+                    if let meeting { MeetingCard(event: meeting) }
+                    if microphone { MicrophoneRow(microphone: glance.microphone) }
                     ForEach(Array(requests.enumerated()), id: \.element.id) { position, request in
                         PermissionCard(request: request, position: position) { agents.decide(request.id, $0) }
                             .transition(.scale(scale: 0.96).combined(with: .opacity))

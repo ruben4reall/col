@@ -3,14 +3,19 @@ import ColCore
 import CoreImage
 import SwiftUI
 
-/// Widgets under the clock of the Lock Screen: what is playing, a running timer, the battery while charging, and,
-/// when chosen, the lyrics of the song, large. The window exists only while the Mac is locked.
+/// Widgets under the clock of the Lock Screen: what is playing, a running timer, the battery while charging, the
+/// weather when it is on, and, when chosen, the lyrics of the song, large. The window exists only while the Mac is
+/// locked.
 @MainActor
 final class LockScreenWidgets {
     private let media: MediaController
     private let timer: TimerModel
     private let power: PowerMonitor
     private let lyrics: LyricsModel
+    var weather: WeatherModel?
+    /// The weather is kept fresh while the window shows, asked from show() and hide() once per lock, as the lyrics
+    /// are: a view's own appear and disappear do not follow a window ordered out.
+    private var watchesWeather = false
     private var window: NSWindow?
     private var observers: [NSObjectProtocol] = []
     /// The lyrics are followed line by line while the window shows them, and only then.
@@ -70,13 +75,17 @@ final class LockScreenWidgets {
         window.hasShadow = false
         window.level = .screenSaver
         window.collectionBehavior = [.canJoinAllSpaces, .stationary, .fullScreenAuxiliary, .ignoresCycle]
-        window.contentView = NSHostingView(rootView: LockScreenWidgetView(media: media, timer: timer, power: power, lyrics: withLyrics ? lyrics : nil))
+        window.contentView = NSHostingView(rootView: LockScreenWidgetView(media: media, timer: timer, power: power, lyrics: withLyrics ? lyrics : nil, weather: weather))
         window.orderFrontRegardless()
         LockScreenSpace.shared?.adopt(window)
         self.window = window
         if withLyrics {
             watching = true
             lyrics.watch()
+        }
+        if Preferences.showsWeather, let weather, !watchesWeather {
+            watchesWeather = true
+            weather.watch()
         }
     }
 
@@ -89,6 +98,10 @@ final class LockScreenWidgets {
             watching = false
             lyrics.unwatch()
         }
+        if watchesWeather {
+            watchesWeather = false
+            weather?.unwatch()
+        }
     }
 }
 
@@ -98,6 +111,7 @@ struct LockScreenWidgetView: View {
     let power: PowerMonitor
     /// The lyrics to show, large, when the user chose them on the Lock Screen.
     var lyrics: LyricsModel?
+    var weather: WeatherModel?
 
     var body: some View {
         VStack(spacing: 8) {
@@ -130,6 +144,9 @@ struct LockScreenWidgetView: View {
                 Label(state.level.formatted(.percent.precision(.fractionLength(0))), systemImage: "bolt.fill")
                     .padding(.horizontal, 12).frame(height: 30)
                     .background(Capsule().fill(.black.opacity(0.35)))
+            }
+            if let weather, Preferences.showsWeather {
+                LockScreenWeather(weather: weather)
             }
         }
         .font(.system(size: 13, weight: .semibold).monospacedDigit())
@@ -255,5 +272,21 @@ extension Color {
         func blend(_ x: CGFloat, _ y: CGFloat) -> Double { Double(x + (y - x) * amount) }
         return Color(.sRGB, red: blend(a.redComponent, b.redComponent), green: blend(a.greenComponent, b.greenComponent),
                      blue: blend(a.blueComponent, b.blueComponent))
+    }
+}
+
+/// The temperature and the sky, once a report has come.
+private struct LockScreenWeather: View {
+    let weather: WeatherModel
+
+    var body: some View {
+        if let report = weather.report {
+            HStack(spacing: 6) {
+                Image(systemName: report.symbol).symbolRenderingMode(.multicolor)
+                Text(WeatherFormat.temperature(report.temperature))
+            }
+            .padding(.horizontal, 12).frame(height: 30)
+            .background(Capsule().fill(.black.opacity(0.35)))
+        }
     }
 }

@@ -106,13 +106,14 @@ public struct Activity: Equatable, Sendable, Identifiable {
 /// Where an activity that is not urgent comes from. The user orders these sources to choose what the closed island
 /// shows first when several things run at once.
 public enum ActivitySource: String, CaseIterable, Codable, Sendable {
-    case privacy, agents, timers, downloads, scripts, music, keepAwake
+    case privacy, meetings, agents, timers, downloads, scripts, music, keepAwake
 
     /// The source of an activity, from its identifier; nil for one that belongs to none (brief displays, alerts).
     public init?(activityID id: String) {
         if id == "privacy" { self = .privacy }
+        else if id == "meeting" { self = .meetings }
         else if id == "agents" { self = .agents }
-        else if id == "timer" { self = .timers }
+        else if id == "timer" || id == "pomodoro" { self = .timers }
         else if id.hasPrefix("download.") { self = .downloads }
         else if id.hasPrefix("api.") { self = .scripts }
         else if id == "media" || id.hasPrefix("media.") { self = .music }
@@ -120,10 +121,21 @@ public enum ActivitySource: String, CaseIterable, Codable, Sendable {
         else { return nil }
     }
 
-    /// The order a source list is read in: the user's, with any source it does not mention added at the end.
+    /// The order a source list is read in: the user's, with each source it does not mention right after the source
+    /// before it in `allCases` when the list ranks that one, else at the end. A list saved before a source existed
+    /// thus keeps the user's order and finds the new source beside its neighbour.
     public static func completed(_ ranking: [ActivitySource]) -> [ActivitySource] {
         var order: [ActivitySource] = []
-        for source in ranking + allCases where !order.contains(source) { order.append(source) }
+        for source in ranking where !order.contains(source) { order.append(source) }
+        var anchored = Set(order)
+        for (index, source) in allCases.enumerated() where !order.contains(source) {
+            if index > 0, anchored.contains(allCases[index - 1]), let neighbour = order.firstIndex(of: allCases[index - 1]) {
+                order.insert(source, at: neighbour + 1)
+                anchored.insert(source)
+            } else {
+                order.append(source)
+            }
+        }
         return order
     }
 }
