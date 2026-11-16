@@ -15,7 +15,7 @@ struct WhatsNewView: View {
     static let items: [Item] = [
         Item(symbol: "capsule.fill", tint: .indigo, title: "A pill on every Mac"),
         Item(symbol: "quote.bubble.fill", tint: .pink, title: "Lyrics on the Lock Screen"),
-        Item(symbol: "cloud.sun.fill", tint: .cyan, title: "Weather and Focus"),
+        Item(symbol: "cloud.sun.fill", tint: .cyan, title: "Weather and Pomodoro"),
         Item(symbol: "dot.radiowaves.up.forward", tint: .orange, title: "Col Connect"),
         Item(symbol: "pc", tint: .green, title: "On Windows and Linux"),
     ]

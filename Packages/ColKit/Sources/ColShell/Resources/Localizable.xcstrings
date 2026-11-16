@@ -7683,22 +7683,22 @@
         }
       }
     },
-    "Weather and Focus": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Météo et Concentration"
-          }
-        }
-      }
-    },
     "On Windows and Linux": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Sur Windows et Linux"
+          }
+        }
+      }
+    },
+    "Weather and Pomodoro": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Météo et Pomodoro"
           }
         }
       }
