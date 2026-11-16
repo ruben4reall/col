@@ -154,6 +154,109 @@ struct FloatingIslandTests {
         #expect(notched.shape(for: .collapsed).gap == 0)
     }
 
+@Suite struct MenuBarClearanceTests {
+    let notch = NotchMetrics(width: 185, height: 32, centerX: 756, isHardware: true)
+
+    /// How far past the notch's edges a shape reaches, on its wider side.
+    func reach(_ shape: IslandShape) -> CGFloat {
+        shape.outerWidth / 2 + abs(shape.offset) - notch.width / 2
+    }
+
+    @Test func wingsAndTheirSwellStayInsideTheRoomTheyWereGiven() {
+        let layout = IslandLayout(notch: notch)
+        for room in [CGFloat(40), 60, 90, 140] {
+            let wings = WingBudget.allowed(requested: 120, left: room, right: room, overhang: layout.wingOverhang)
+            guard !wings.isEmpty else { continue }
+            #expect(reach(layout.shape(for: .collapsed, wings: wings)) <= room + 0.001)
+            #expect(reach(layout.shape(for: .peek, wings: wings)) <= room + 0.001)
+        }
+    }
+
+    @Test func aBareIslandSwellsOnlyAsFarAsTheMenuBarLetsIt() {
+        var layout = IslandLayout(notch: notch, sideRoom: 9)
+        #expect(reach(layout.shape(for: .peek)) <= 9 + 0.001)
+        #expect(layout.shape(for: .peek).height > layout.shape(for: .collapsed).height)
+        layout.sideRoom = 0
+        #expect(layout.shape(for: .peek).width == notch.width)
+        layout.sideRoom = nil
+        #expect(layout.shape(for: .peek).width == notch.width + 18)
+    }
+
+    @Test func theCanvasDoesNotDependOnTheRoom() {
+        #expect(IslandLayout(notch: notch, sideRoom: 3).canvasSize == IslandLayout(notch: notch).canvasSize)
+    }
+}
+
+struct PillIslandTests {
+    let notch = NotchMetrics.resolve(screenWidth: 1920, safeAreaTop: 0, leftAreaWidth: nil, rightAreaWidth: nil, menuBarHeight: 24, floating: .pill)
+    var layout: IslandLayout { IslandLayout(notch: notch, floating: .pill) }
+
+    @Test func restsInsideTheMenuBarClearOfTheTopEdge() {
+        let closed = layout.shape(for: .collapsed)
+        #expect(closed.isFloating)
+        #expect(closed.gap > 0)
+        #expect(closed.gap + closed.height <= 24 - closed.gap + 0.001)
+        #expect(closed.cornerRadius == closed.height / 2)
+        #expect(closed.width == NotchMetrics.pillWidth)
+        // The window hugs the pill, so the rest of the menu bar keeps its clicks.
+        #expect(layout.windowSize(for: .collapsed).height <= 24)
+    }
+
+    @Test func opensAsACardWithFourRoundCorners() {
+        let open = layout.shape(for: .expanded)
+        #expect(open.isFloating)
+        #expect(open.earRadius == 0)
+        #expect(open.width >= IslandSize.standard.open.width)
+        let canvas = CGRect(origin: .zero, size: layout.canvasSize)
+        #expect(canvas.contains(layout.frame(for: .expanded)))
+    }
+
+    @Test func wingItemsSitOnTheMenuBarsMiddleLine() {
+        #expect(layout.wingCenter(leading: true, wings: 30).y == 12)
+    }
+
+    @Test func sharesTheMenuBarAndHasNoEars() {
+        #expect(layout.sharesMenuBar)
+        #expect(layout.wingOverhang == 0)
+        #expect(!IslandLayout(notch: notch, floating: .below).sharesMenuBar)
+    }
+
+    @Test func everyStateMorphsWithTheSameSegments() {
+        func kinds(_ state: IslandState) -> [CGPathElementType] {
+            var list: [CGPathElementType] = []
+            IslandPath.make(layout.shape(for: state, wings: 20), centerX: 0).applyWithBlock { list.append($0.pointee.type) }
+            return list
+        }
+        #expect(kinds(.collapsed) == kinds(.expanded))
+        #expect(kinds(.peek) == kinds(.expanded))
+    }
+}
+
+struct DrawnNotchTests {
+    @Test func hangsFromTheTopEdgeLikeARealNotch() {
+        let notch = NotchMetrics.resolve(screenWidth: 2560, safeAreaTop: 0, leftAreaWidth: nil, rightAreaWidth: nil, menuBarHeight: 25, floating: .notch)
+        let layout = IslandLayout(notch: notch, floating: .notch)
+        let closed = layout.shape(for: .collapsed)
+        #expect(closed.gap == 0)
+        #expect(closed.height == 25)
+        #expect(closed.width == 180)
+        #expect(layout.sharesMenuBar)
+    }
+
+    @Test func aRealNotchIgnoresTheStyle() {
+        let notch = NotchMetrics(width: 185, height: 32, centerX: 756, isHardware: true)
+        #expect(IslandLayout(notch: notch, floating: .pill).shape(for: .collapsed) == IslandLayout(notch: notch).shape(for: .collapsed))
+        #expect(IslandLayout(notch: notch, floating: .notch).shape(for: .collapsed) == IslandLayout(notch: notch).shape(for: .collapsed))
+    }
+
+    @Test func aRealNotchCanStillFloatBelowTheMenuBar() {
+        let notch = NotchMetrics(width: 185, height: 32, centerX: 756, isHardware: true)
+        let below = IslandLayout(notch: notch, floating: .below)
+        #expect(below.shape(for: .collapsed).gap == CGFloat(38))
+        #expect(!below.sharesMenuBar)
+    }
+}
+
 @Suite struct OneSidedWingTests {
     let layout = IslandLayout(notch: NotchMetrics(width: 190, height: 32, centerX: 756, isHardware: true))
 
@@ -182,6 +285,9 @@ struct FloatingIslandTests {
         #expect(music.fitted(to: Wings(leading: 40, trailing: 0)) == CompactPresentation(leading: .equalizer(tint: .white, playing: true)))
         #expect(music.fitted(to: Wings(40)) == music)
         #expect(music.fitted(to: .none) == nil)
+        let build = CompactPresentation(leading: .symbol("hammer.fill", tint: .orange), trailing: .text("Building", tint: .orange))
+        #expect(build.fitted(to: Wings(leading: 32, trailing: 0)) == CompactPresentation(leading: .symbol("hammer.fill", tint: .orange)))
+        #expect(build.fitted(to: Wings(leading: 0, trailing: 90)) == CompactPresentation(trailing: .text("Building", tint: .orange)))
         let alone = CompactPresentation(leading: .symbol("mic.fill", tint: .orange))
         #expect(alone.fitted(to: Wings(leading: 0, trailing: 40)) == CompactPresentation(trailing: .symbol("mic.fill", tint: .orange)))
     }

@@ -39,6 +39,13 @@ public final class IslandController {
     /// Free width beside the notch before the app's menus (left) and the status items (right); nil when unknown.
     private var freeLeft: CGFloat?
     private var freeRight: CGFloat?
+    /// A pill or a drawn notch on a screen without a notch, with the app's menus reaching where it rests: it stays
+    /// out of the way until the island is opened.
+    private var restBlocked = false
+    /// Says when a status item comes or goes, so the wings are measured again right then.
+    private let menuBarWatcher = MenuBarWatcher()
+    /// The frontmost app is one the island steps aside for (Settings, Island).
+    private var hiddenForApp = false
     let extensions = ExtensionRunner()
     private lazy var lockScreen = LockScreenWidgets(media: media, timer: timer, power: system.power)
     private var api: ControlAPI!
@@ -459,6 +466,18 @@ public final class IslandController {
         NSHapticFeedbackManager.defaultPerformer.perform(.alignment, performanceTime: .now)
     }
 
+    /// Opens the island from a link, on the page asked for, or closes it.
+    private func showFromLink(open: Bool, page: String?) {
+        if open {
+            if let page { navigation.show(page == "live" ? .live : .page(page)) } else { navigation.showHome() }
+            openedByRequest = true
+            if machine.state != .expanded { send(.requested) }
+        } else if machine.state == .expanded {
+            openedByRequest = false
+            send(.dismissed)
+        }
+    }
+
     private func toggleFromShortcut() {
         if machine.state == .expanded {
             openedByRequest = false
@@ -486,32 +505,72 @@ public final class IslandController {
     }
 
     /// Measures the menu bar around the notch: the app's menus each time the frontmost app changes, the status items
-    /// only when asked, since they change when apps launch or quit rather than with the frontmost app.
+    /// when one comes or goes. Islands that rest in the menu bar row without a notch (a pill, a drawn notch) are
+    /// measured the same way, from their own edges.
     private func measureMenuBar(statusItems: Bool = false) {
-        guard let screen, let layout, layout.notch.isHardware else { freeLeft = nil; freeRight = nil; return }
+        guard let screen, let layout, layout.sharesMenuBar else {
+            freeLeft = nil; freeRight = nil; restBlocked = false
+            applySideRoom()
+            return
+        }
         // `-ColMenuBarFree 132` lends each wing that much room whatever the menu bar holds, so screenshots and films do
         // not depend on the apps of the Mac they are taken on.
         let lent = UserDefaults.standard.double(forKey: "ColMenuBarFree")
-        if lent > 0 { freeLeft = lent; freeRight = lent; return }
+        if lent > 0 {
+            freeLeft = lent; freeRight = lent; restBlocked = false
+            applySideRoom()
+            return
+        }
         let notchLeft = screen.frame.minX + layout.notch.centerX - layout.notch.width / 2
         let notchRight = notchLeft + layout.notch.width
+        // Accessibility measures from the top left of the main screen.
+        let primaryHeight = NSScreen.screens.first?.frame.height ?? screen.frame.height
+        let top = primaryHeight - screen.frame.maxY
         if statusItems || statusItemsEdge == nil {
-            statusItemsEdge = MenuBarSpace.statusItemsLeftEdge(after: notchRight)
+            statusItemsEdge = MenuBarSpace.statusItemsLeftEdge(after: notchRight, top: top, span: screen.frame.minX...screen.frame.maxX)
         }
         let menus = MenuBarSpace.appMenus(notchCenter: notchLeft + layout.notch.width / 2)
         freeLeft = WingBudget.free(notchEdge: notchLeft, nearestItem: menus?.leftEnd, leftSide: true)
         // On the right, the nearest of the app's overflowing menus and the status items.
         let rightItems = [menus?.rightStart, statusItemsEdge].compactMap { $0 }
         freeRight = WingBudget.free(notchEdge: notchRight, nearestItem: rightItems.min(), leftSide: false)
-        if UserDefaults.standard.bool(forKey: "ColDebug") {
-            FileHandle.standardError.write(Data("menu bar: app \(NSWorkspace.shared.frontmostApplication?.localizedName ?? "?") free left \(String(describing: freeLeft)) right \(String(describing: freeRight))\n".utf8))
+        // Without a notch, menus can reach the middle of the menu bar on a small screen: the resting island then
+        // keeps out of their way.
+        if layout.notch.isHardware {
+            restBlocked = false
+        } else {
+            let leftReach = (menus?.leftEnd ?? -.greatestFiniteMagnitude) + WingBudget.margin
+            let rightReach = (rightItems.min() ?? .greatestFiniteMagnitude) - WingBudget.margin
+            restBlocked = leftReach > notchLeft || rightReach < notchRight
         }
+        applySideRoom()
+        if UserDefaults.standard.bool(forKey: "ColDebug") {
+            FileHandle.standardError.write(Data("menu bar: app \(NSWorkspace.shared.frontmostApplication?.localizedName ?? "?") free left \(String(describing: freeLeft)) right \(String(describing: freeRight)) status items \(String(describing: statusItemsEdge)) blocked \(restBlocked)\n".utf8))
+        }
+    }
+
+    /// Hands the tighter side's room to the layout, so the island swells under the pointer only as far as it may.
+    private func applySideRoom() {
+        guard var layout else { return }
+        let room = [freeLeft, freeRight].compactMap { $0 }.min()
+        guard layout.sideRoom != room else { return }
+        layout.sideRoom = room
+        self.layout = layout
+        islandView.updateLayout(layout)
+        islandView.restVisible = Preferences.showsIslandAtRest && !restBlocked
+        if machine.state == .peek { reshape(from: .peek) }
     }
 
     /// Spaces and the frontmost app changed: follow the active screen, and step aside in full screen.
     private func environmentChanged() {
         // A copy is often followed by a switch to another app: look at the pasteboard now rather than at the next check.
         if Preferences.keepsClipboardHistory { clipboard.check() }
+        let frontmost = NSWorkspace.shared.frontmostApplication?.bundleIdentifier
+        let hidden = frontmost.map(Preferences.hiddenInApps.contains) ?? false
+        if hidden != hiddenForApp {
+            hiddenForApp = hidden
+            updateVisibility()
+        }
         // Menus change with the app; let them settle before measuring.
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
             MainActor.assumeIsolated {
@@ -554,7 +613,8 @@ public final class IslandController {
     /// prompter is out of the notch, it does not show at all.
     private func updateVisibility() {
         let urgent = (shownActivity?.priority ?? .ambient) >= .alert
-        let visible = !prompterInNotch && (!fullScreenActive || urgent || machine.state == .expanded)
+        let steppedAside = fullScreenActive || hiddenForApp
+        let visible = !prompterInNotch && (!steppedAside || urgent || machine.state == .expanded)
         if visible { panel.orderFrontRegardless() } else { panel.orderOut(nil) }
     }
 
@@ -583,11 +643,14 @@ public final class IslandController {
         environmentChanged()
         machine.opensOnHover = Preferences.opensOnHover
         system.startKeyTapIfAllowed()
+        menuBarWatcher.start()
         navigation.reloadDeck()
         board.ranking = Preferences.activityRanking
         panel.sharingType = Preferences.hiddenFromScreenCapture ? .none : .readOnly
         islandView.setGlass(Preferences.islandGlass)
-        if layout?.size != Preferences.islandSize {
+        let style = layout.map { $0.notch.isHardware ? Preferences.notchStyle : Preferences.floatingStyle }
+        islandView.restVisible = Preferences.showsIslandAtRest && !restBlocked
+        if layout?.size != Preferences.islandSize || layout?.floating != style {
             _ = machine.handle(.dismissed)
             islandView.dismissContent()
             islandView.discardContent()
@@ -642,6 +705,7 @@ public final class IslandController {
         system.start()
         api.start()
         clipboard.start()
+        api.showIsland = { [weak self] open, page in self?.showFromLink(open: open, page: page) }
         extensions.push = { [weak self] request in self?.api.push(request) }
         extensions.remove = { [weak self] id in
             self?.custom.remove(String(id.dropFirst(4)))
@@ -658,6 +722,11 @@ public final class IslandController {
                 MainActor.assumeIsolated { self?.environmentChanged() }
             })
         }
+        menuBarWatcher.onChange = { [weak self] in
+            self?.measureMenuBar(statusItems: true)
+            self?.refreshActivity()
+        }
+        menuBarWatcher.start()
         for name in [NSWorkspace.didLaunchApplicationNotification, NSWorkspace.didTerminateApplicationNotification] {
             observers.append(workspace.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
@@ -758,11 +827,19 @@ public final class IslandController {
 
         let requested = islandView.compact.wingWidth(for: current?.compact, notchHeight: layout.notch.height)
         // Never over the menu bar: the wings shrink to the free space, or wait in the open island when none is left.
-        let newWings = layout.notch.isHardware ? WingBudget.allowed(requested: requested, left: freeLeft, right: freeRight) : Wings(requested)
+        // Never over the menu bar, ears and swell included. A resting pill that menus reach shows nothing at all.
+        let newWings: Wings
+        if restBlocked {
+            newWings = .none
+        } else if layout.sharesMenuBar {
+            newWings = WingBudget.allowed(requested: requested, left: freeLeft, right: freeRight, overhang: layout.wingOverhang)
+        } else {
+            newWings = Wings(requested)
+        }
         let presentation = current?.compact.fitted(to: newWings)
         islandView.showCompact(presentation, wings: newWings)
         shownActivity = current
-        if fullScreenActive { updateVisibility() }
+        if fullScreenActive || hiddenForApp { updateVisibility() }
         if newWings != wings {
             wings = newWings
             if machine.state != .expanded { reshape(from: machine.state) }
@@ -849,19 +926,26 @@ public final class IslandController {
             return
         }
         self.screen = screen
-        let notch = NotchMetrics.resolve(
+        var notch = NotchMetrics.resolve(
             screenWidth: screen.frame.width,
             // `-ColNoNotch YES` draws the floating island even on a notched screen, to work on it.
             safeAreaTop: UserDefaults.standard.bool(forKey: "ColNoNotch") ? 0 : screen.safeAreaInsets.top,
             leftAreaWidth: screen.auxiliaryTopLeftArea?.width,
             rightAreaWidth: screen.auxiliaryTopRightArea?.width,
-            menuBarHeight: screen.frame.maxY - screen.visibleFrame.maxY
+            menuBarHeight: screen.frame.maxY - screen.visibleFrame.maxY,
+            floating: Preferences.floatingStyle
         )
-        let layout = IslandLayout(notch: notch, size: Preferences.islandSize)
+        // `-ColCenterX 300` moves an island without a notch along the menu bar, so a notched Mac can show and film it
+        // away from its camera housing (with `-ColNoNotch YES`).
+        let shift = UserDefaults.standard.double(forKey: "ColCenterX")
+        if !notch.isHardware, shift > 0 { notch.centerX = shift }
+        let style = notch.isHardware ? Preferences.notchStyle : Preferences.floatingStyle
+        let layout = IslandLayout(notch: notch, size: Preferences.islandSize, floating: style, sideRoom: self.layout?.sideRoom)
         self.layout = layout
         panel.sharingType = Preferences.hiddenFromScreenCapture ? .none : .readOnly
 
         let state = machine.state
+        islandView.restVisible = Preferences.showsIslandAtRest && !restBlocked
         islandView.configure(layout, state: state, wings: effectiveWings, scale: screen.backingScaleFactor)
         islandView.setGlass(Preferences.islandGlass)
         resizeWindow(to: layout.windowSize(for: state, wings: effectiveWings))

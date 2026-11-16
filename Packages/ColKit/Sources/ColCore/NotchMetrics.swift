@@ -18,15 +18,19 @@ public struct NotchMetrics: Equatable, Sendable {
 
     static let fallbackWidth: CGFloat = 180
     static let fallbackHeight: CGFloat = 24
+    /// The pill's resting width: about the proportions of the iPhone's island, at the height of the menu bar.
+    static let pillWidth: CGFloat = 72
 
     /// Reads the notch from what `NSScreen` reports: the safe area's top inset and the two menu bar areas that flank
-    /// the camera. A screen without a notch gets an island the size of a notch, centred in its menu bar.
+    /// the camera. A screen without a notch gets an island centred in its menu bar: the size of a notch, or a small
+    /// pill.
     public static func resolve(
         screenWidth: CGFloat,
         safeAreaTop: CGFloat,
         leftAreaWidth: CGFloat?,
         rightAreaWidth: CGFloat?,
-        menuBarHeight: CGFloat
+        menuBarHeight: CGFloat,
+        floating: FloatingStyle = .below
     ) -> NotchMetrics {
         if safeAreaTop > 0, let left = leftAreaWidth, let right = rightAreaWidth {
             let width = screenWidth - left - right
@@ -35,6 +39,7 @@ public struct NotchMetrics: Equatable, Sendable {
             }
         }
         let height = menuBarHeight > 0 ? menuBarHeight : fallbackHeight
-        return NotchMetrics(width: fallbackWidth, height: height, centerX: screenWidth / 2, isHardware: false)
+        let width = floating == .pill ? pillWidth : fallbackWidth
+        return NotchMetrics(width: width, height: height, centerX: screenWidth / 2, isHardware: false)
     }
 }
