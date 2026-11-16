@@ -61,7 +61,9 @@ public struct KaraokeLine: Equatable, Sendable {
         guard !shown.isEmpty else { return nil }
 
         // Each timed piece lasts until the next one starts; the last until the line closes.
-        var pieces = line.words.map { (start: $0.time, end: $0.time, letters: Array($0.text.filter { !$0.isWhitespace })) }
+        // Letters are counted word by word: joined, two words can fuse into one letter (two flags, an Indic
+        // consonant after a virama) and the counts would no longer agree.
+        var pieces = line.words.map { (start: $0.time, end: $0.time, letters: Self.letters($0.text)) }
         for index in pieces.indices.dropLast() { pieces[index].end = pieces[index + 1].start }
         let last = pieces[pieces.count - 1]
         var lastEnd = line.end ?? last.start + Self.lastWordLength(String(last.letters))
@@ -80,7 +82,7 @@ public struct KaraokeLine: Equatable, Sendable {
 
         // The timed letters must spell the end of the line. Letters before them are sung from the line's start.
         let timed = pieces.flatMap(\.letters)
-        let all = Array(shown.joined())
+        let all = shown.flatMap { Array($0) }
         guard !timed.isEmpty, timed.count <= all.count, Array(all.suffix(timed.count)) == timed else { return nil }
         let untimed = all.count - timed.count
         if untimed > 0 {
@@ -97,6 +99,8 @@ public struct KaraokeLine: Equatable, Sendable {
             }
         }
 
+        // One moment per shown letter, or the timing does not belong to this text.
+        guard moments.count == shown.reduce(0, { $0 + $1.count }) else { return nil }
         var result: [Word] = []
         var offset = 0
         for word in shown {
@@ -111,6 +115,11 @@ public struct KaraokeLine: Equatable, Sendable {
             result.append(Word(text: word, stops: Self.simplified(stops)))
         }
         words = result
+    }
+
+    /// The letters of a piece of text, word by word, without the spaces.
+    static func letters(_ text: String) -> [Character] {
+        text.split(whereSeparator: \.isWhitespace).flatMap { Array($0) }
     }
 
     public init(words: [Word]) {

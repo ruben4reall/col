@@ -99,6 +99,37 @@ struct KaraokeTests {
         #expect(zip(karaoke.fills(at: 0.6), [1, 0.5, 0, 0]).allSatisfy { close($0, $1) })
     }
 
+    @Test func lettersThatFuseWhenJoinedNeverBreakTheFill() throws {
+        // Two regional indicators a space apart are two letters; joined, they would be one flag.
+        let flags = try #require(Lyrics.parse(lrc: "[00:10.00] 🇫 🇷 <00:11.00>hello"))
+        let index = try #require(flags.lines.firstIndex { !$0.isPause })
+        let karaoke = try #require(flags.karaoke(at: index))
+        #expect(karaoke.words.map(\.text) == ["🇫", "🇷", "hello"])
+        #expect(karaoke.fills(at: 10.5).allSatisfy { $0 >= 0 && $0 <= 1 })
+        #expect(karaoke.fills(at: 13) == [1, 1, 1])
+
+        // A virama and the consonant of the next word fuse the same way.
+        let hindi = LyricLine(time: 0, text: "जगत् में", words: [LyricWord(time: 0, text: "जगत्"), LyricWord(time: 1, text: "में")], end: 2)
+        let sung = try #require(KaraokeLine(line: hindi))
+        #expect(sung.words.map(\.text) == ["जगत्", "में"])
+        #expect(sung.fills(at: 1) == [1, 0])
+        #expect(sung.fills(at: 2) == [1, 1])
+
+        // A timed piece across a space keeps its words apart.
+        let across = LyricLine(time: 0, text: "🇫 🇷", words: [LyricWord(time: 0, text: "🇫 🇷")], end: 1)
+        #expect(KaraokeLine(line: across)?.words.map(\.text) == ["🇫", "🇷"])
+    }
+
+    @Test func linesWithoutSpacesAndAnUntimedStartStillFill() throws {
+        let line = LyricLine(time: 0, text: "あの日見た花", words: [
+            LyricWord(time: 0.5, text: "日"), LyricWord(time: 1, text: "見"), LyricWord(time: 1.5, text: "た"), LyricWord(time: 2, text: "花"),
+        ], end: 2.5)
+        let karaoke = try #require(KaraokeLine(line: line))
+        #expect(karaoke.words.count == 1)
+        #expect(karaoke.words[0].fill(at: 0.25) > 0)
+        #expect(karaoke.words[0].fill(at: 2.5) == 1)
+    }
+
     @Test func shiftingMovesEveryTime() throws {
         let lyrics = try #require(Lyrics.parse(lrc: "[00:10.00]<00:10.00> a <00:11.00> b <00:12.00>\n[00:20.00] c"))
         let later = lyrics.shifted(by: 1.5)
