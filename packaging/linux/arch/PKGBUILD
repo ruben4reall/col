@@ -1,0 +1,31 @@
+# Maintainer: Ruben Catalao <ruben.ctlo@protonmail.com>
+#
+# Col for Linux, built from the release's source. For the AUR; not published there yet.
+
+pkgname=col
+pkgver=3.0.0
+pkgrel=1
+pkgdesc='The island at the top of your screen: music and synced lyrics, coding agents with Allow and Deny, volume, timer'
+arch=('x86_64' 'aarch64')
+url='https://getcol.vercel.app'
+license=('MIT')
+depends=('gtk4' 'libadwaita' 'gtk4-layer-shell' 'json-glib' 'libsoup3' 'libpulse' 'wayland' 'libx11' 'gdk-pixbuf2')
+makedepends=('meson' 'vala' 'wayland')
+checkdepends=('desktop-file-utils' 'appstream')
+optdepends=('xdg-desktop-portal: open the lyrics folder from the settings')
+source=("$pkgname-$pkgver.tar.gz::https://github.com/ruben4reall/col/archive/refs/tags/v$pkgver.tar.gz")
+sha256sums=('SKIP')
+
+build() {
+  arch-meson "$pkgname-$pkgver/linux" build
+  meson compile -C build
+}
+
+check() {
+  meson test -C build --suite col --print-errorlogs
+}
+
+package() {
+  meson install -C build --destdir "$pkgdir"
+  install -Dm644 "$pkgname-$pkgver/LICENSE" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}
