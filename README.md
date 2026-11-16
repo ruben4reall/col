@@ -54,12 +54,15 @@ your scripts and your AI agents.
   llama.cpp or any OpenAI-compatible server, on this Mac or another one of your network) with the model each one
   holds. Ask one a question from the island: the answer comes as it is written, and the question goes to that server
   only.
-- **Volume and brightness.** A quiet gauge in the notch instead of the big square in the middle of the screen.
-- **Files, clipboard, agenda.** A shelf for files with AirDrop, a clipboard history kept in memory (only the copies you
-  pin are saved), the next events of your day with a Join button for calls, and today's reminders.
-- **Tools.** A timer that counts down in the wings, a colour picker, a camera mirror, system stats, keep awake,
-  downloads.
-- **Privacy at a glance.** The app using your microphone or camera, right where the camera is.
+- **Volume and brightness.** A quiet gauge in the notch instead of the big square in the middle of the screen, for the
+  keyboard backlight too, and Caps Lock or a Focus turning on if you like.
+- **Files, clipboard, agenda.** A shelf for files with AirDrop that converts, resizes and compresses them and copies
+  the text of an image, a searchable clipboard history kept in memory (only the copies you pin are saved), the next
+  events of your day with a countdown before a meeting and a Join button for calls, and today's reminders.
+- **Tools.** A timer that counts down in the wings, Pomodoro, the weather, a colour picker, a camera mirror, system
+  stats with the graphics processor, the battery of your mouse, keyboard and trackpad, keep awake, downloads.
+- **Privacy at a glance.** The app using your microphone or camera, right where the camera is, and a button and
+  ⌃⌥⌘M to mute the microphone for every app.
 - **Programmable.** The `colctl` command, a local API, `col://` links, Shortcuts actions and extensions put your own
   live activities in the notch.
 - **Never in the way.** The wings never cover a menu or a menu bar icon, the island steps aside in full screen, and on
@@ -162,6 +165,8 @@ Each one only if a module you chose needs it:
   recorded.
 - **Speech Recognition**, for the prompter's Voice Follow, on your Mac only.
 - **Local Network**, for the prompter's phone remote and the AI servers you add on another machine.
+- **Location**, only for the weather where you are, if you turn the weather on without typing a city.
+- **Focus**, only if you turn on Focus in Live activities, to say when one turns on or off.
 - **Downloads folder**, only if you turn on Downloads in progress, to show the files your browser is still writing.
 - **System Audio Recording**, only if you turn on Bars that follow the sound, so the bars move with the music. The
   sound is analysed on your Mac as it plays and never recorded or sent.
@@ -178,6 +183,8 @@ Each one only if a module you chose needs it:
   - The AI servers you add yourself, and the Ollama or LM Studio installed on this Mac, which Col asks on this Mac
     only (localhost). Your questions go only to the server you picked.
   - The prompter's phone remote, which listens on your local network only while you turn it on.
+  - [Open-Meteo](https://open-meteo.com), for the weather, once you turn it on (Settings, Weather and tools). Only a
+    position rounded to about a kilometre is sent, at most every 30 minutes and only while the weather shows.
 - The clipboard history lives in memory and skips copies that password managers mark as private. Only the copies you
   pin are saved, in Col's settings.
 - Scripts and agents reach Col through a socket in your user folder, mode 0600, which never listens on the network.
@@ -207,13 +214,14 @@ opens and thrown away as it closes, and the Liquid Glass under them only draws w
 
 ## Private macOS APIs
 
-Col uses private macOS functions for seven features. Each is looked up at runtime: if a macOS update removes one, its
+Col uses private macOS functions for eight features. Each is looked up at runtime: if a macOS update removes one, its
 feature turns off and nothing crashes.
 
 | Feature | Functions | Why |
 |---|---|---|
 | Now playing | `MRMediaRemoteGetNowPlayingInfo`, `MRMediaRemoteSendCommand` and neighbours (MediaRemote) | Since macOS 15.4 only Apple-signed processes may read them: Col's helper runs inside `/usr/bin/perl`. Approach from [ungive/mediaremote-adapter](https://github.com/ungive/mediaremote-adapter) (BSD 3-Clause), rewritten. |
 | Brightness | `DisplayServicesGetBrightness`, `DisplayServicesSetBrightness` | Reading and setting the built-in display's brightness. |
+| Keyboard backlight | `KeyboardBrightnessClient` (CoreBrightness): `brightnessForKeyboard:`, `setBrightness:forKeyboard:` | Reading and setting the backlight when its keys are pressed, so the island shows its level. |
 | Headphone battery and model | `batteryPercentLeft`, `batteryPercentCase`, `productID` on `IOBluetoothDevice` | AirPods report them through properties IOBluetooth does not document. |
 | Liquid glass of the open island | The `glassBackground` filter of `NSGlassEffectView` (Core Animation): its refraction and blur inputs | Liquid Glass can bend what lies behind it like a lens, but macOS turns that off on large panels and frosts them. Only inputs that exist are set: otherwise the glass stays Apple's own. |
 | Transparent glass of the open island | `CABackdropLayer`, `CAFilter` (Core Animation) | A light blur of the desktop with a set strength: Liquid Glass has no setting clear enough to see through a panel this size. Without them, Transparent uses Liquid Glass. |

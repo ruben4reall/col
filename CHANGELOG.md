@@ -2,6 +2,35 @@
 
 Each release's section is what Col's update window and the GitHub release show. Dates are in ISO format.
 
+## 2.3.0 (unreleased)
+
+- **The weather**: now, today's high and low and the next hours, with the sky drawn by SF Symbols, in a Weather widget
+  you can put on any page, and beside the clock of the Lock Screen when the island shows there. Where you are, or in
+  a city you type. It comes from Open-Meteo, which needs no account: Col sends it a position rounded to about a
+  kilometre, at most every 30 minutes and only while the weather shows. Off until you turn it on in Settings,
+  Weather and tools.
+- **Your next meeting**: a few minutes before an event, a countdown in its calendar's colour beside the camera, then
+  "Now" as it starts, and Join on the Live page when the event has a call link. Five minutes by default, from one to
+  thirty (Settings, Live activities). It takes its place in the order you give the closed island.
+- **Mute your microphone from the island**: a Mute button on the Live page while an app listens, and ⌃⌥⌘M anywhere.
+  It mutes the microphone for every app at once, and the closed island shows a red microphone as long as it stays
+  muted.
+- **Focus, Caps Lock and the keyboard backlight**: a word beside the camera when a Focus turns on or off, and a sign
+  on the Live page while one is on; Caps Lock on or off; the keyboard backlight's level as you press its keys, like
+  volume and brightness. Focus and Caps Lock are off until you turn them on.
+- **Your accessories' batteries**: a Devices widget shows your mouse, keyboard, trackpad and game controller with
+  their battery, and the island says so when one falls under 15 %.
+- **Pomodoro**: focus, then a break, counted in the wings like the timer, with a gentle sound when each ends and
+  today's sessions counted. In the Tools page beside the timer, or as a widget. 25 and 5 minutes, or your own.
+- **Tools for files on the shelf**: from a file's menu, convert an image to PNG, JPEG or HEIC, halve it or bring a
+  Retina capture to 1x, compress files into a .zip, or copy the text of an image. Everything runs on your Mac, and
+  what the tools make lands beside the original and on the shelf.
+- **Search your copies**: a search field above the clipboard history finds a copy by its words or the app it came
+  from. The island takes the keyboard only while you type, and Return copies the first match.
+- **The graphics processor** on the System page, beside the processor, measured only while you look.
+- **Keys let go as they should**: when Col shows the volume or brightness, the key's release now always reaches
+  macOS, so Control Center and other apps no longer wait for it.
+
 ## 2.2.0 (2026-11-16)
 
 - **Lyrics on the Lock Screen**: while the Mac is locked and music plays, the lyrics show large under the clock, the
