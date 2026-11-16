@@ -1,0 +1,8 @@
+# Build output of Col for Windows
+bin/
+obj/
+publish/
+artifacts/
+*.user
+.vs/
+TestResults/

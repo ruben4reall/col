@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Written by windows/tools/strings.py: edit the words there. -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Island_Home" xml:space="preserve"><value>Home</value></data>
+  <data name="Island_Live" xml:space="preserve"><value>Live</value></data>
+  <data name="Island_Tools" xml:space="preserve"><value>Tools</value></data>
+  <data name="Island_Settings" xml:space="preserve"><value>Settings</value></data>
+  <data name="Home_NothingPlaying" xml:space="preserve"><value>Nothing is playing</value></data>
+  <data name="Home_NothingPlaying_Detail" xml:space="preserve"><value>Play a song in Spotify, your browser or any player, and it shows here.</value></data>
+  <data name="Lyrics_Off" xml:space="preserve"><value>Lyrics are off. Turn them on in Settings, Music and lyrics.</value></data>
+  <data name="Lyrics_Looking" xml:space="preserve"><value>Looking for the words…</value></data>
+  <data name="Lyrics_Instrumental" xml:space="preserve"><value>Instrumental</value></data>
+  <data name="Lyrics_Unavailable" xml:space="preserve"><value>LRCLIB cannot be reached right now.</value></data>
+  <data name="Lyrics_NotFound" xml:space="preserve"><value>No lyrics for this song.</value></data>
+  <data name="Live_Empty" xml:space="preserve"><value>Nothing running</value></data>
+  <data name="Live_Empty_Detail" xml:space="preserve"><value>Claude Code, Codex and your scripts show here while they work.</value></data>
+  <data name="Agent_Waiting" xml:space="preserve"><value>Waiting for you</value></data>
+  <data name="Agent_Working" xml:space="preserve"><value>Working</value></data>
+  <data name="Agent_Done" xml:space="preserve"><value>Done</value></data>
+  <data name="Agent_Idle" xml:space="preserve"><value>Idle</value></data>
+  <data name="Card_Heading" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="Card_AnAgent" xml:space="preserve"><value>An agent</value></data>
+  <data name="Card_Tool" xml:space="preserve"><value>Tool</value></data>
+  <data name="Card_More" xml:space="preserve"><value>+{0} waiting</value></data>
+  <data name="Card_Allow" xml:space="preserve"><value>Allow</value></data>
+  <data name="Card_Deny" xml:space="preserve"><value>Deny</value></data>
+  <data name="Card_TooLong" xml:space="preserve"><value>Too long to check here: answer in the terminal.</value></data>
+  <data name="Tools_Timer" xml:space="preserve"><value>Timer</value></data>
+  <data name="Tools_Start" xml:space="preserve"><value>Start</value></data>
+  <data name="Tools_Pause" xml:space="preserve"><value>Pause</value></data>
+  <data name="Tools_Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Tools_Minutes" xml:space="preserve"><value>{0} minutes</value></data>
+  <data name="Tools_KeepAwake" xml:space="preserve"><value>Keep awake</value></data>
+  <data name="Tools_Clipboard" xml:space="preserve"><value>Clipboard</value></data>
+  <data name="Tools_Clear" xml:space="preserve"><value>Clear</value></data>
+  <data name="Tools_Clipboard_Empty" xml:space="preserve"><value>Copied text shows here, kept in memory only.</value></data>
+  <data name="Tools_Clipboard_Off" xml:space="preserve"><value>Clipboard history is off.</value></data>
+  <data name="Tools_Pin" xml:space="preserve"><value>Pin</value></data>
+  <data name="Tools_Unpin" xml:space="preserve"><value>Unpin</value></data>
+  <data name="Tools_CopyAgain" xml:space="preserve"><value>Copy again</value></data>
+  <data name="Timer_Done" xml:space="preserve"><value>Done</value></data>
+  <data name="State_On" xml:space="preserve"><value>On</value></data>
+  <data name="State_Off" xml:space="preserve"><value>Off</value></data>
+  <data name="Menu_Open" xml:space="preserve"><value>Open the island</value></data>
+  <data name="Menu_Settings" xml:space="preserve"><value>Settings…</value></data>
+  <data name="Menu_Quit" xml:space="preserve"><value>Quit Col</value></data>
+  <data name="Settings_Title" xml:space="preserve"><value>Col Settings</value></data>
+  <data name="Settings_Preview" xml:space="preserve"><value>Preview</value></data>
+  <data name="Nav_General" xml:space="preserve"><value>General</value></data>
+  <data name="Nav_Music" xml:space="preserve"><value>Music and lyrics</value></data>
+  <data name="Nav_Agents" xml:space="preserve"><value>Agents</value></data>
+  <data name="Nav_About" xml:space="preserve"><value>About</value></data>
+  <data name="General_Launch" xml:space="preserve"><value>Open Col when you sign in</value></data>
+  <data name="General_Launch_Detail" xml:space="preserve"><value>Col starts with Windows and waits at the top of the screen.</value></data>
+  <data name="General_Island" xml:space="preserve"><value>Island</value></data>
+  <data name="General_AtRest" xml:space="preserve"><value>Show the island when nothing happens</value></data>
+  <data name="General_AtRest_Detail" xml:space="preserve"><value>Off, the island only comes out when something happens, or when you rest the pointer at the top edge of the screen.</value></data>
+  <data name="General_Hover" xml:space="preserve"><value>Open on hover</value></data>
+  <data name="General_Hover_Detail" xml:space="preserve"><value>Rest the pointer on the island to open it. Off, a click opens it.</value></data>
+  <data name="General_Size" xml:space="preserve"><value>Size</value></data>
+  <data name="General_Size_Detail" xml:space="preserve"><value>How big the island is, closed and open.</value></data>
+  <data name="Size_Compact" xml:space="preserve"><value>Compact</value></data>
+  <data name="Size_Standard" xml:space="preserve"><value>Standard</value></data>
+  <data name="Size_Large" xml:space="preserve"><value>Large</value></data>
+  <data name="General_Display" xml:space="preserve"><value>Display</value></data>
+  <data name="General_Display_Detail" xml:space="preserve"><value>The island sits at the top centre of this display.</value></data>
+  <data name="General_Display_Primary" xml:space="preserve"><value>Main display</value></data>
+  <data name="General_Display_Number" xml:space="preserve"><value>Display {0}, {1} × {2}</value></data>
+  <data name="General_Display_IsPrimary" xml:space="preserve"><value>main</value></data>
+  <data name="General_Shows" xml:space="preserve"><value>What the island shows</value></data>
+  <data name="General_Volume" xml:space="preserve"><value>Volume</value></data>
+  <data name="General_Volume_Detail" xml:space="preserve"><value>A gauge in the island when the volume changes. Windows' own volume flyout still shows.</value></data>
+  <data name="General_Battery" xml:space="preserve"><value>Battery and charging</value></data>
+  <data name="General_Battery_Detail" xml:space="preserve"><value>When the charger is plugged in or out, and when the battery runs low.</value></data>
+  <data name="General_Clipboard" xml:space="preserve"><value>Clipboard history</value></data>
+  <data name="General_Clipboard_Detail" xml:space="preserve"><value>Your last text copies on the Tools page, kept in memory only and never written to disk. Copies that password managers mark as private are skipped.</value></data>
+  <data name="Music_NowPlaying" xml:space="preserve"><value>Now playing</value></data>
+  <data name="Music_NowPlaying_Detail" xml:space="preserve"><value>The song playing in Spotify, your browser or any app in Windows' media controls, with its cover and controls.</value></data>
+  <data name="Music_Lyrics" xml:space="preserve"><value>Lyrics</value></data>
+  <data name="Music_SyncedLyrics" xml:space="preserve"><value>Synced lyrics</value></data>
+  <data name="Music_SyncedLyrics_Detail" xml:space="preserve"><value>The words of the song beside the player, line by line. Col asks LRCLIB, an open lyrics database: only the title, the artist, the album and the length of the song are sent, and the answer is kept on this PC.</value></data>
+  <data name="Music_LineClosed" xml:space="preserve"><value>Current line in the closed island</value></data>
+  <data name="Music_LineClosed_Detail" xml:space="preserve"><value>The line being sung, between the cover and the equalizer.</value></data>
+  <data name="Music_Cache" xml:space="preserve"><value>Lyrics kept on this PC</value></data>
+  <data name="Music_Cache_Detail" xml:space="preserve"><value>{0} songs, {1} KB</value></data>
+  <data name="Music_Clear" xml:space="preserve"><value>Clear</value></data>
+  <data name="Agents_Intro" xml:space="preserve"><value>Claude Code and Codex show in the island while they work. When one asks for permission, the island opens with the whole command, Allow and Deny. Col never signs in to any AI service.</value></data>
+  <data name="Agents_Connect" xml:space="preserve"><value>Connect</value></data>
+  <data name="Agents_Disconnect" xml:space="preserve"><value>Disconnect</value></data>
+  <data name="Agents_Connected" xml:space="preserve"><value>Connected</value></data>
+  <data name="Agents_NotConnected" xml:space="preserve"><value>Not connected</value></data>
+  <data name="Agents_NotFound" xml:space="preserve"><value>Not found on this PC</value></data>
+  <data name="Agents_Backup" xml:space="preserve"><value>Col adds its hooks beside yours, keeps a copy of the file it edits (.col-backup) and leaves the rest untouched. Codex asks you to trust new hooks once, with /hooks.</value></data>
+  <data name="Agents_Scripts" xml:space="preserve"><value>Scripts and other agents</value></data>
+  <data name="Agents_Colctl_Detail" xml:space="preserve"><value>Your scripts put their own live activities in the island with the colctl command, from PowerShell, cmd or Git Bash.</value></data>
+  <data name="Agents_Colctl_Path" xml:space="preserve"><value>Installed at {0}</value></data>
+  <data name="Agents_Colctl_Missing" xml:space="preserve"><value>colctl.exe is not beside Col.exe: reinstall Col to connect agents.</value></data>
+  <data name="About_Name" xml:space="preserve"><value>Col for Windows</value></data>
+  <data name="About_Version" xml:space="preserve"><value>Version {0}, preview</value></data>
+  <data name="About_Tagline" xml:space="preserve"><value>A Dynamic Island at the top of your screen.</value></data>
+  <data name="About_License" xml:space="preserve"><value>Free and open source, under the MIT License.</value></data>
+  <data name="About_Website" xml:space="preserve"><value>Website</value></data>
+  <data name="About_Source" xml:space="preserve"><value>Source code</value></data>
+  <data name="About_Changelog" xml:space="preserve"><value>What's new</value></data>
+  <data name="About_Issues" xml:space="preserve"><value>Report a problem</value></data>
+  <data name="About_Privacy" xml:space="preserve"><value>Privacy</value></data>
+  <data name="About_Privacy_Detail" xml:space="preserve"><value>No account, no telemetry, no analytics. Col only goes on the network to ask LRCLIB for lyrics, while synced lyrics are on. Scripts and agents reach Col through a pipe only your account can open.</value></data>
+  <data name="About_Unsigned" xml:space="preserve"><value>An unsigned preview</value></data>
+  <data name="About_Unsigned_Detail" xml:space="preserve"><value>This preview is not signed with a code-signing certificate yet, so Windows SmartScreen may warn before the first launch: choose More info, then Run anyway.</value></data>
+  <data name="About_Credits" xml:space="preserve"><value>The logos of coding agents come from LobeHub Icons (MIT) and belong to their owners.</value></data>
+</root>

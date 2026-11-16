@@ -1,0 +1,20 @@
+<Project>
+  <!-- Shared by every project of Col for Windows. The version is the one of the whole edition. -->
+  <PropertyGroup>
+    <Version>3.0.0</Version>
+    <InformationalVersion>$(Version)</InformationalVersion>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <Product>Col</Product>
+    <Company>Ruben Catalao</Company>
+    <Authors>Ruben Catalao</Authors>
+    <Copyright>Copyright (c) 2026 Ruben Catalao. MIT License.</Copyright>
+    <LangVersion>12</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Deterministic>true</Deterministic>
+    <SatelliteResourceLanguages>en;fr</SatelliteResourceLanguages>
+    <NeutralLanguage>en</NeutralLanguage>
+    <!-- The Windows projects also build on a Mac or Linux machine, for the tests and the compiler's checks. -->
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+  </PropertyGroup>
+</Project>

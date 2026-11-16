@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Col.exe: the island, its settings and the tray icon. WPF on .NET 8, no web view. -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>Col</AssemblyName>
+    <RootNamespace>Col</RootNamespace>
+    <StartupObject>Col.Program</StartupObject>
+    <ApplicationIcon>Assets\col.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Description>Col, a Dynamic Island for Windows</Description>
+    <!-- Single-file publishing, set by the release build: everything in one Col.exe. Not compressed: Windows maps
+         the assemblies from the file instead of unpacking them into Col's own memory. The download is compressed. -->
+    <EnableCompressionInSingleFile>false</EnableCompressionInSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <DebugType>embedded</DebugType>
+    <TieredPGO>true</TieredPGO>
+    <ServerGarbageCollector>false</ServerGarbageCollector>
+    <ConcurrentGarbageCollection>false</ConcurrentGarbageCollection>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Col.Core/Col.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- ReadyToRun for Col's own code; the Windows API projection is large and Col calls little of it. -->
+    <PublishReadyToRunExclude Include="Microsoft.Windows.SDK.NET.dll" />
+    <PublishReadyToRunExclude Include="WinRT.Runtime.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\col.ico" />
+    <Resource Include="Assets\col-64.png" />
+    <Resource Include="Assets\col-256.png" />
+    <Resource Include="Assets\Marks\*.png" />
+  </ItemGroup>
+  <!-- Less memory at rest: the heap stays small and is given back to Windows. -->
+  <ItemGroup>
+    <RuntimeHostConfigurationOption Include="System.GC.ConserveMemory" Value="7" />
+    <RuntimeHostConfigurationOption Include="System.GC.RetainVM" Value="false" />
+  </ItemGroup>
+</Project>
