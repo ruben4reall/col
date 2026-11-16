@@ -177,7 +177,7 @@ public final class IslandController {
                 let inside = self.islandView.containsPointer
                 if inside != self.machine.pointerInside {
                     self.send(inside ? .pointerEntered : .pointerExited)
-                } else if !inside, self.machine.state == .expanded, self.openedByRequest, self.agents.pending.isEmpty {
+                } else if !inside, self.machine.state == .expanded, self.openedByRequest, self.agents.pending.isEmpty, !self.showingNote {
                     self.openedByRequest = false
                     self.send(.dismissed)
                 }
@@ -787,8 +787,9 @@ public final class IslandController {
         } else {
             removeActivity("agents")
         }
-        // Once the user has answered, an island that opened by itself closes by itself.
-        if agents.pending.isEmpty, openedByRequest {
+        // Once the user has answered, an island that opened by itself closes by itself. A note the island opened on
+        // (what's new, the welcome's hello, a card) keeps its own time: an agent at work elsewhere does not cut it short.
+        if agents.pending.isEmpty, openedByRequest, !showingNote {
             openedByRequest = false
             if machine.state == .expanded, !machine.pointerInside { send(.dismissed) }
         }
@@ -1114,6 +1115,12 @@ public final class IslandController {
             width: size.width,
             height: size.height
         )
+    }
+
+    /// The island is open on a note that closes on its own schedule: the hello, what's new, a card, a word about the
+    /// menu bar or Souffleur.
+    private var showingNote: Bool {
+        [.greeting, .whatsNew, .menuBarAccess, .souffleur, .device].contains(navigation.route)
     }
 
     /// The open island has no wings; its content replaces them.
