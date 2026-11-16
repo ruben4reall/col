@@ -1,6 +1,8 @@
 ﻿; Col for Windows: a per-user installer, no administrator rights needed.
 ;   iscc /DVersion=3.0.0 /DSource=..\..\artifacts windows\installer\Col.iss
-; Source holds win-x64\ and win-arm64\, each with Col.exe and colctl.exe; the PC's architecture picks one.
+; Source holds win-x64\ and win-arm64\, each with Col.exe and colctl.exe, and win-x64-small\ and win-arm64-small\,
+; the same without .NET inside. The PC's architecture picks one pair; the small Col.exe goes in when the .NET 8 Desktop
+; Runtime is on the PC, the full one otherwise, or when the setup is run with /SELFCONTAINED=yes.
 
 #ifndef Version
   #define Version "3.0.0"
@@ -56,9 +58,11 @@ french.Options=Options :
 Name: "startup"; Description: "{cm:StartAtLogin}"; GroupDescription: "{cm:Options}"
 
 [Files]
-Source: "{#Source}\win-x64\Col.exe"; DestDir: "{app}"; Check: not IsArm64; Flags: ignoreversion
+Source: "{#Source}\win-x64-small\Col.exe"; DestDir: "{app}"; Check: (not IsArm64) and UseSmall; Flags: ignoreversion
+Source: "{#Source}\win-x64\Col.exe"; DestDir: "{app}"; Check: (not IsArm64) and (not UseSmall); Flags: ignoreversion
 Source: "{#Source}\win-x64\colctl.exe"; DestDir: "{app}"; Check: not IsArm64; Flags: ignoreversion
-Source: "{#Source}\win-arm64\Col.exe"; DestDir: "{app}"; Check: IsArm64; Flags: ignoreversion
+Source: "{#Source}\win-arm64-small\Col.exe"; DestDir: "{app}"; Check: IsArm64 and UseSmall; Flags: ignoreversion
+Source: "{#Source}\win-arm64\Col.exe"; DestDir: "{app}"; Check: IsArm64 and (not UseSmall); Flags: ignoreversion
 Source: "{#Source}\win-arm64\colctl.exe"; DestDir: "{app}"; Check: IsArm64; Flags: ignoreversion
 Source: "..\..\LICENSE"; DestDir: "{app}"; DestName: "LICENSE.txt"; Flags: ignoreversion
 
@@ -89,6 +93,22 @@ Filename: "{sys}\taskkill.exe"; Parameters: "/IM Col.exe /F"; Flags: runhidden w
 Type: filesandordirs; Name: "{localappdata}\Col"
 
 [Code]
+// The .NET 8 Desktop Runtime, where Windows' own .NET installer puts it for this PC's architecture.
+function HasDesktopRuntime: Boolean;
+var
+  Found: TFindRec;
+begin
+  Result := FindFirst(ExpandConstant('{commonpf64}\dotnet\shared\Microsoft.WindowsDesktop.App\8.*'), Found);
+  if Result then
+    FindClose(Found);
+end;
+
+// The small Col.exe, without .NET inside, when this PC has the runtime it needs and the full one was not asked for.
+function UseSmall: Boolean;
+begin
+  Result := HasDesktopRuntime and (CompareText(ExpandConstant('{param:SELFCONTAINED|no}'), 'yes') <> 0);
+end;
+
 function NeedsAddPath(Folder: string): Boolean;
 var
   Path: string;

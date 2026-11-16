@@ -64,7 +64,15 @@ jobs:
             }
             Copy-Item "artifacts/colctl-$rid/colctl.exe" "artifacts/$rid/colctl.exe"
             Remove-Item "artifacts/$rid/*.pdb" -ErrorAction SilentlyContinue
-            Get-ChildItem "artifacts/$rid" | ForEach-Object { "{0,-12} {1,-12} {2,8:N1} MB" -f $rid, $_.Name, ($_.Length / 1MB) }
+            # The small build: the same app without .NET inside, for a PC that has the .NET 8 Desktop Runtime.
+            dotnet publish windows/src/Col/Col.csproj -c Release -r $rid --self-contained false -p:PublishSingleFile=true `
+              -p:Version=$env:VERSION -o "artifacts/$rid-small"
+            if ($LASTEXITCODE -ne 0) { throw "Col $rid small" }
+            Copy-Item "artifacts/colctl-$rid/colctl.exe" "artifacts/$rid-small/colctl.exe"
+            Remove-Item "artifacts/$rid-small/*.pdb" -ErrorAction SilentlyContinue
+            foreach ($folder in $rid, "$rid-small") {
+              Get-ChildItem "artifacts/$folder" | ForEach-Object { "{0,-16} {1,-12} {2,8:N1} MB" -f $folder, $_.Name, ($_.Length / 1MB) }
+            }
           }
 
       - name: Screenshots
@@ -99,13 +107,30 @@ jobs:
           Write-Host "At login: $run"
           if (-not ($path -split ';' -contains $folder)) { throw 'colctl is not on the PATH' }
           & "$folder\colctl.exe" --version
-          Start-Process -FilePath "$folder\unins000.exe" -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART' -Wait
-          Start-Sleep -Seconds 3
+          # This machine has the .NET 8 Desktop Runtime: the setup installs the small build, which runs on it.
+          $size = (Get-Item "$folder\Col.exe").Length / 1MB
+          Write-Host ("Installed Col.exe: {0:N1} MB" -f $size)
+          if ($size -gt 80) { throw 'the setup did not pick the small build although .NET 8 is here' }
+          $col = Start-Process -FilePath "$folder\Col.exe" -ArgumentList '--demo', 'collapsed' -PassThru
+          Start-Sleep -Seconds 6
+          if ($col.HasExited) { throw "the small build quit with code $($col.ExitCode)" }
+          Stop-Process -Id $col.Id -Force
+          function Uninstall {
+            Start-Process -FilePath "$folder\unins000.exe" -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART' -Wait
+            Start-Sleep -Seconds 3
+          }
+          Uninstall
           if (Test-Path "$folder\Col.exe") { throw 'not uninstalled' }
           if (Test-Path 'HKCU:\Software\Classes\col') { throw 'col:// left behind' }
           $path = (Get-ItemProperty 'HKCU:\Environment').Path
           if ($path -split ';' -contains $folder) { throw 'PATH left behind' }
-          Write-Host 'Installed and uninstalled cleanly'
+          # Asked for, the full build, with .NET inside.
+          Start-Process -FilePath $setup -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SELFCONTAINED=yes' -Wait
+          $size = (Get-Item "$folder\Col.exe").Length / 1MB
+          Write-Host ("Installed with /SELFCONTAINED=yes: {0:N1} MB" -f $size)
+          if ($size -lt 150) { throw 'the setup did not install the full build when asked' }
+          Uninstall
+          Write-Host 'Installed and uninstalled cleanly, both builds'
 
       - name: Archives
         shell: pwsh
@@ -114,6 +139,8 @@ jobs:
           foreach ($arch in 'x64', 'arm64') {
             Copy-Item LICENSE "artifacts/win-$arch/LICENSE.txt"
             Compress-Archive -Path "artifacts/win-$arch/*" -DestinationPath "artifacts/Col-$env:VERSION-windows-$arch.zip" -Force
+            Copy-Item LICENSE "artifacts/win-$arch-small/LICENSE.txt"
+            Compress-Archive -Path "artifacts/win-$arch-small/*" -DestinationPath "artifacts/Col-$env:VERSION-windows-$arch-small.zip" -Force
           }
           Get-ChildItem artifacts -File | ForEach-Object { "{0,-40} {1,8:N1} MB" -f $_.Name, ($_.Length / 1MB) }
 
@@ -130,6 +157,8 @@ jobs:
           path: |
             artifacts/Col-*-windows-x64.zip
             artifacts/Col-*-windows-arm64.zip
+            artifacts/Col-*-windows-x64-small.zip
+            artifacts/Col-*-windows-arm64-small.zip
             artifacts/Col-*-windows-setup.exe
 
   release:
