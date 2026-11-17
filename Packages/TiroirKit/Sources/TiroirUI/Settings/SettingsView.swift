@@ -3,7 +3,7 @@ import SwiftUI
 import TiroirCore
 import TiroirSystem
 
-/// Settings (spec 6.3): one dark window with a sidebar, in the family of Pli and Islet.
+/// The drawers' settings (spec 6.3): one dark window with a sidebar, opened from Col's Settings, Menu Bar.
 @available(macOS 26, *)
 public struct SettingsView: View {
     @Bindable var model: InterfaceModel
@@ -48,7 +48,6 @@ public struct SettingsView: View {
         case .behavior: BehaviorPane(model: model)
         case .shortcuts: ShortcutsPane(model: model)
         case .general: GeneralPane(model: model)
-        case .about: AboutPane(model: model)
         }
     }
 
@@ -62,7 +61,6 @@ public struct SettingsView: View {
         case .behavior: Strings.behavior
         case .shortcuts: Strings.shortcuts
         case .general: Strings.general
-        case .about: Strings.about
         }
     }
 
@@ -76,7 +74,6 @@ public struct SettingsView: View {
         case .behavior: "cursorarrow.click.2"
         case .shortcuts: "command"
         case .general: "gearshape"
-        case .about: "info.circle"
         }
     }
 }
@@ -91,10 +88,7 @@ struct EngineBanner: View {
         case .ready:
             EmptyView()
         case .needsAccessibility:
-            banner(Strings.needsAccessibilityBanner, button: Strings.openSystemSettings) {
-                model.actions.requestAccessibility()
-                model.actions.openAccessibilitySettings()
-            }
+            banner(Strings.needsAccessibilityBanner, button: Strings.openSystemSettings) { model.actions.requestAccessibility() }
         case .needsApplicationsFolder:
             banner(Strings.needsApplicationsBanner, button: Strings.moveToApplications) { model.actions.moveToApplications() }
         case .unavailable(let detail):

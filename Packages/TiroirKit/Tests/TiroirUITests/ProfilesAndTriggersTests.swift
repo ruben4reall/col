@@ -213,7 +213,7 @@ func row(_ id: IconID, name: String, category: CategoryID = .other, kind: IconKi
     }
 
     @Test func thePanesComeInTheirOrder() {
-        #expect(SettingsPane.allCases == [.layout, .drawers, .profiles, .triggers, .appearance, .behavior, .shortcuts, .general, .about])
+        #expect(SettingsPane.allCases == [.layout, .drawers, .profiles, .triggers, .appearance, .behavior, .shortcuts, .general])
         let view = SettingsView(model: InterfaceModel())
         #expect(view.title(.profiles) == "Profiles")
         #expect(view.title(.triggers) == "Triggers")

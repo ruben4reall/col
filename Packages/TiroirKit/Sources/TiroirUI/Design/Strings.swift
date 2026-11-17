@@ -1,16 +1,20 @@
 import Foundation
 import TiroirCore
 
-/// Every word the interface shows. Each one is a key of `Resources/Localizable.xcstrings`, so another language needs no
+/// Every word the drawers show. Each one is a key of `Resources/Localizable.xcstrings`, so another language needs no
 /// code change, and views never write a user-facing literal: `StringCatalogTests` checks both. Strings with a value
-/// use a format key (`%lld`, `%@`) filled with `String(format:)`.
+/// use a format key (`%lld`, `%@`) filled with `String(format:)`. The drawers are part of Col: they speak of Col.
 @available(macOS 26, *)
 public enum Strings {
-    // MARK: Tiroir
+    /// macOS 27 calls Accessibility "Device Control and Data Access": the texts that name it say it its way.
+    static let permissionIsRenamed = ProcessInfo.processInfo.isOperatingSystemAtLeast(
+        OperatingSystemVersion(majorVersion: 27, minorVersion: 0, patchVersion: 0))
 
-    public static let appName = String(localized: "Tiroir", bundle: .module)
+    // MARK: The drawers
+
     public static let tagline = String(localized: "Your menu bar, in drawers.", bundle: .module)
-    public static let signature = String(localized: "A place for every icon.", bundle: .module)
+    /// The spoken name of Col's own icon in the menu bar, which opens every drawer.
+    public static let allDrawersLabel = String(localized: "All Drawers", bundle: .module)
 
     // MARK: Common
 
@@ -62,8 +66,6 @@ public enum Strings {
     public static let endFocus = String(localized: "End Focus", bundle: .module)
     public static let editDrawerMenuItem = String(localized: "Edit Drawer…", bundle: .module)
     public static let settingsMenuItem = String(localized: "Settings…", bundle: .module)
-    public static let checkForUpdates = String(localized: "Check for Updates…", bundle: .module)
-    public static let quitTiroir = String(localized: "Quit Tiroir", bundle: .module)
     public static let focusIsOnHelp = String(localized: "Focus is on: only the clock and Control Center show. Click to end it.", bundle: .module)
     public static let tiroirIconHelp = String(localized: "Click for every drawer. Right-click for more.", bundle: .module)
 
@@ -89,10 +91,12 @@ public enum Strings {
     public static let noHiddenIcons = String(localized: "Nothing hidden and no drawers yet.", bundle: .module)
 
     public static func couldNotOpen(_ name: String) -> String {
-        String(format: String(localized: "Tiroir could not open %@.", bundle: .module), name)
+        String(format: String(localized: "Col could not open %@.", bundle: .module), name)
     }
 
-    public static let needsAccessibilityToOpen = String(localized: "Tiroir needs Accessibility to open icons.", bundle: .module)
+    public static let needsAccessibilityToOpen = permissionIsRenamed
+        ? String(localized: "Col needs Device Control and Data Access to open icons.", bundle: .module)
+        : String(localized: "Col needs Accessibility to open icons.", bundle: .module)
 
     // MARK: Search
 
@@ -104,25 +108,30 @@ public enum Strings {
 
     // MARK: Welcome
 
-    public static let welcomeWindowTitle = String(localized: "Welcome to Tiroir", bundle: .module)
-    public static let welcomeTitle = String(localized: "Welcome to Tiroir", bundle: .module)
-    public static let welcomeBody = String(localized: "Tiroir sorts the icons of your menu bar into drawers, each one a single icon. The menu bar keeps what you look at all day; everything else waits in a drawer, one click away.", bundle: .module)
+    public static let welcomeWindowTitle = String(localized: "Menu Bar Drawers", bundle: .module)
+    public static let welcomeTitle = tagline
+    public static let welcomeBody = String(localized: "Col sorts the icons of your menu bar into drawers, each one a single icon. The menu bar keeps what you look at all day; everything else waits in a drawer, one click away, and the island gets more room beside the notch.", bundle: .module)
     public static let permissionTitle = String(localized: "One permission", bundle: .module)
-    public static let permissionBody = String(localized: "Tiroir needs Accessibility to see which app owns each icon and to open them for you. It never records your screen and never goes online, except to check for updates.", bundle: .module)
-    public static let permissionWaiting = String(localized: "Waiting for Accessibility…", bundle: .module)
-    public static let permissionGranted = String(localized: "Accessibility is on.", bundle: .module)
-    public static let permissionSteps = String(localized: "In System Settings, turn on Tiroir under Privacy & Security, Accessibility.", bundle: .module)
-    public static let tahoePointerNote = String(localized: "On macOS 26, Tiroir arranges icons with Command-drags, as you would: the pointer may blink while it works.", bundle: .module)
+    public static let permissionBody = permissionIsRenamed
+        ? String(localized: "Col needs Device Control and Data Access to see which app owns each icon and to open them for you. It never records your screen.", bundle: .module)
+        : String(localized: "Col needs Accessibility to see which app owns each icon and to open them for you. It never records your screen.", bundle: .module)
+    public static let permissionWaiting = permissionIsRenamed
+        ? String(localized: "Waiting for Device Control and Data Access…", bundle: .module)
+        : String(localized: "Waiting for Accessibility…", bundle: .module)
+    public static let permissionGranted = permissionIsRenamed
+        ? String(localized: "Device Control and Data Access is on.", bundle: .module)
+        : String(localized: "Accessibility is on.", bundle: .module)
+    public static let permissionSteps = permissionIsRenamed
+        ? String(localized: "In System Settings, turn on Col under Privacy & Security, Device Control and Data Access.", bundle: .module)
+        : String(localized: "In System Settings, turn on Col under Privacy & Security, Accessibility.", bundle: .module)
+    public static let tahoePointerNote = String(localized: "On macOS 26, Col arranges icons with Command-drags, as you would: the pointer may blink while it works.", bundle: .module)
     public static let applicationsFolderNote = String(localized: "macOS 27 lets only apps in the Applications folder change the menu bar.", bundle: .module)
     public static let moveToApplications = String(localized: "Move to Applications", bundle: .module)
     public static let skipForNow = String(localized: "Skip for Now", bundle: .module)
-    public static let moveToApplicationsQuestion = String(localized: "Move Tiroir to the Applications folder?", bundle: .module)
-    public static let moveToApplicationsReason = String(localized: "Tiroir works best from Applications: it can open at login and update itself there, and macOS 27 lets only apps there change the menu bar.", bundle: .module)
-    public static let notNow = String(localized: "Not Now", bundle: .module)
     public static let smartSortTitle = String(localized: "Smart Sort", bundle: .module)
 
     public static func smartSortFound(_ count: Int) -> String {
-        String(format: String(localized: "Tiroir found %lld icons. Here is a tidier menu bar.", bundle: .module), count)
+        String(format: String(localized: "Col found %lld icons. Here is a tidier menu bar.", bundle: .module), count)
     }
 
     public static let byPurpose = String(localized: "By Purpose", bundle: .module)
@@ -152,26 +161,23 @@ public enum Strings {
         String(format: String(localized: "Click a drawer in the menu bar to open it, and search any icon with %@.", bundle: .module), search)
     }
 
-    public static let readyBodyWithoutShortcut = String(localized: "Click a drawer in the menu bar to open it, and Tiroir's own icon for all of them.", bundle: .module)
-    public static let openAtLogin = String(localized: "Open at Login", bundle: .module)
-    public static let keepUpToDate = String(localized: "Keep Tiroir Up to Date", bundle: .module)
-    public static let noIconsFound = String(localized: "Tiroir does not see any icon to sort yet. Your drawers will fill as apps add theirs.", bundle: .module)
+    public static let readyBodyWithoutShortcut = String(localized: "Click a drawer in the menu bar to open it, and Col's own icon for all of them.", bundle: .module)
+    public static let noIconsFound = String(localized: "Col does not see any icon to sort yet. Your drawers will fill as apps add theirs.", bundle: .module)
 
     // MARK: Settings
 
-    public static let settingsWindowTitle = String(localized: "Tiroir Settings", bundle: .module)
+    public static let settingsWindowTitle = String(localized: "Menu Bar Drawers", bundle: .module)
     public static let layout = String(localized: "Layout", bundle: .module)
     public static let drawers = String(localized: "Drawers", bundle: .module)
     public static let appearance = String(localized: "Appearance", bundle: .module)
     public static let behavior = String(localized: "Behavior", bundle: .module)
     public static let shortcuts = String(localized: "Shortcuts", bundle: .module)
     public static let general = String(localized: "General", bundle: .module)
-    public static let about = String(localized: "About", bundle: .module)
 
     // MARK: Layout
 
     public static let layoutSubtitle = String(localized: "Drag icons between the menu bar, your drawers and Hidden.", bundle: .module)
-    public static let hiddenSubtitle = String(localized: "Out of the menu bar. Reach them from search or Tiroir's icon.", bundle: .module)
+    public static let hiddenSubtitle = String(localized: "Out of the menu bar. Reach them from search or Col's icon.", bundle: .module)
     public static let menuBarSubtitle = String(localized: "Always in the menu bar.", bundle: .module)
     public static let smartSortButton = String(localized: "Smart Sort…", bundle: .module)
     public static let newDrawer = String(localized: "New Drawer", bundle: .module)
@@ -194,18 +200,20 @@ public enum Strings {
     public static let appleIconsStayOn27 = String(localized: "On macOS 27, Apple's own icons cannot be hidden.", bundle: .module)
 
     public static func mixedAppOn27(_ name: String) -> String {
-        String(format: String(localized: "On macOS 27, Tiroir hides whole apps: %@ has icons in two places, so it stays in the menu bar.", bundle: .module), name)
+        String(format: String(localized: "On macOS 27, Col hides whole apps: %@ has icons in two places, so it stays in the menu bar.", bundle: .module), name)
     }
 
     public static func couldNotMoveIcon(_ name: String) -> String {
-        String(format: String(localized: "Tiroir could not move %@. Try again, or move it with Command-drag.", bundle: .module), name)
+        String(format: String(localized: "Col could not move %@. Try again, or move it with Command-drag.", bundle: .module), name)
     }
 
-    public static let needsAccessibilityBanner = String(localized: "Tiroir needs Accessibility to see and arrange your icons.", bundle: .module)
-    public static let needsApplicationsBanner = String(localized: "Move Tiroir to the Applications folder: macOS 27 only lets apps there change the menu bar.", bundle: .module)
+    public static let needsAccessibilityBanner = permissionIsRenamed
+        ? String(localized: "Col needs Device Control and Data Access to see and arrange your icons.", bundle: .module)
+        : String(localized: "Col needs Accessibility to see and arrange your icons.", bundle: .module)
+    public static let needsApplicationsBanner = String(localized: "Move Col to the Applications folder: macOS 27 only lets apps there change the menu bar.", bundle: .module)
 
     public static func unavailableBanner(_ detail: String) -> String {
-        String(format: String(localized: "This version of macOS changed what Tiroir relies on (%@). Everything stays in the menu bar.", bundle: .module), detail)
+        String(format: String(localized: "This version of macOS changed what Col relies on (%@). Everything stays in the menu bar.", bundle: .module), detail)
     }
 
     public static let tryAgain = String(localized: "Try Again", bundle: .module)
@@ -276,12 +284,12 @@ public enum Strings {
     public static let hoverDelay = String(localized: "Delay", bundle: .module)
     public static let returnIconsAfter = String(localized: "Put opened icons back after", bundle: .module)
     public static let returnIconsNote = String(localized: "An icon opened from a drawer goes back once its menu has been closed this long.", bundle: .module)
-    public static let optionClickShowsEverything = String(localized: "Option-click Tiroir's icon to show every icon", bundle: .module)
-    public static let showTiroirIcon = String(localized: "Show Tiroir's icon in the menu bar", bundle: .module)
+    public static let optionClickShowsEverything = String(localized: "Option-click Col's icon to show every icon", bundle: .module)
+    public static let showTiroirIcon = String(localized: "Show Col's icon in the menu bar", bundle: .module)
     public static let showTiroirIconNote = String(localized: "Without it, right-click any drawer for Settings.", bundle: .module)
     public static let engine = String(localized: "Menu bar engine", bundle: .module)
-    public static let engineTahoe = String(localized: "macOS 26: Tiroir moves icons behind an invisible divider.", bundle: .module)
-    public static let engineGoldenGate = String(localized: "macOS 27: Tiroir asks macOS to hide whole apps.", bundle: .module)
+    public static let engineTahoe = String(localized: "macOS 26: Col moves icons behind an invisible divider.", bundle: .module)
+    public static let engineGoldenGate = String(localized: "macOS 27: Col asks macOS to hide whole apps.", bundle: .module)
     public static let engineDemo = String(localized: "Demo: generic icons, nothing in your menu bar moves.", bundle: .module)
     public static let goldenGateSideEffects = String(localized: "While icons are hidden, macOS 27 also hides Focus and the camera and microphone indicators.", bundle: .module)
 
@@ -303,47 +311,13 @@ public enum Strings {
 
     // MARK: General
 
-    public static let loginNeedsApproval = String(localized: "Allow Tiroir in System Settings, General, Login Items & Extensions.", bundle: .module)
-    public static let updates = String(localized: "Updates", bundle: .module)
-    public static let checkAutomatically = String(localized: "Check for updates automatically", bundle: .module)
-    public static let checkNow = String(localized: "Check Now", bundle: .module)
-    public static let accessibility = String(localized: "Accessibility", bundle: .module)
+    public static let accessibility = permissionIsRenamed
+        ? String(localized: "Device Control and Data Access", bundle: .module)
+        : String(localized: "Accessibility", bundle: .module)
     public static let on = String(localized: "On", bundle: .module)
     public static let off = String(localized: "Off", bundle: .module)
-    public static let memory = String(localized: "Memory", bundle: .module)
 
-    public static func memoryInUse(_ amount: String) -> String {
-        String(format: String(localized: "%@ in use", bundle: .module), amount)
-    }
-
-    public static let pauseTiroir = String(localized: "Show every icon and pause Tiroir", bundle: .module)
+    public static let pauseTiroir = String(localized: "Show every icon and pause the drawers", bundle: .module)
     public static let resetLayout = String(localized: "Reset Layout…", bundle: .module)
-    public static let resetLayoutQuestion = String(localized: "Reset your layout? Every icon goes back to the menu bar and Tiroir shows its welcome again.", bundle: .module)
-
-    // MARK: Main menu
-
-    public static let aboutTiroir = String(localized: "About Tiroir", bundle: .module)
-    public static let editMenu = String(localized: "Edit", bundle: .module)
-    public static let undo = String(localized: "Undo", bundle: .module)
-    public static let redo = String(localized: "Redo", bundle: .module)
-    public static let cut = String(localized: "Cut", bundle: .module)
-    public static let copy = String(localized: "Copy", bundle: .module)
-    public static let paste = String(localized: "Paste", bundle: .module)
-    public static let selectAll = String(localized: "Select All", bundle: .module)
-    public static let windowMenu = String(localized: "Window", bundle: .module)
-    public static let close = String(localized: "Close", bundle: .module)
-    public static let minimize = String(localized: "Minimize", bundle: .module)
-
-    // MARK: About
-
-    public static func version(_ value: String) -> String {
-        String(format: String(localized: "Version %@", bundle: .module), value)
-    }
-
-    public static let freeAndOpenSource = String(localized: "Free and open source, under the MIT License.", bundle: .module)
-    public static let website = String(localized: "Website", bundle: .module)
-    public static let sourceCode = String(localized: "Source Code", bundle: .module)
-    public static let reportIssue = String(localized: "Report an Issue", bundle: .module)
-    public static let creditsLine = String(localized: "Updates by Sparkle. Techniques from Hidden Bar, MenuBarHider and Ellipsis, rewritten for Tiroir.", bundle: .module)
-    public static let notAffiliated = String(localized: "Tiroir is not affiliated with Apple.", bundle: .module)
+    public static let resetLayoutQuestion = String(localized: "Reset your layout? Every icon goes back to the menu bar and the drawers' welcome shows again.", bundle: .module)
 }

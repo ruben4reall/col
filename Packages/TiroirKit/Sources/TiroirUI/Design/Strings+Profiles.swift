@@ -8,7 +8,7 @@ extension Strings {
 
     public static let profiles = String(localized: "Profiles", bundle: .module)
     public static let profilesSubtitle = String(localized: "A profile keeps a whole setup of the menu bar: its drawers, where each icon goes, and the appearance.", bundle: .module)
-    public static let noProfilesYet = String(localized: "No profiles yet. Save your current setup to come back to it in one click, from Tiroir's menu or a shortcut.", bundle: .module)
+    public static let noProfilesYet = String(localized: "No profiles yet. Save your current setup to come back to it in one click, with a right-click on a drawer or a shortcut.", bundle: .module)
     public static let saveCurrentAsProfile = String(localized: "Save Current Setup as Profile", bundle: .module)
     public static let activeProfileBadge = String(localized: "Active", bundle: .module)
     public static let switchButton = String(localized: "Switch", bundle: .module)

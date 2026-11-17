@@ -18,21 +18,26 @@ public final class WelcomeModel {
     public var proposal: Layout = .empty
     public var isSorting = false
     public var report: ApplyReport?
-    public var openAtLogin = true
-    public var keepUpToDate = true
+    /// Col already has the permission (it asks in its own welcome and settings): the welcome goes from hello to Smart Sort.
+    public var skipsPermission = false
 
     public init(step: Step = .hello) {
         self.step = step
     }
 
+    /// The steps shown, in order.
+    public var steps: [Step] {
+        Step.allCases.filter { $0 != .permission || !skipsPermission }
+    }
+
     public func next() {
-        guard let following = Step(rawValue: step.rawValue + 1) else { return }
-        step = following
+        guard let index = steps.firstIndex(of: step), steps.indices.contains(index + 1) else { return }
+        step = steps[index + 1]
     }
 
     public func previous() {
-        guard let preceding = Step(rawValue: step.rawValue - 1) else { return }
-        step = preceding
+        guard let index = steps.firstIndex(of: step), index > 0 else { return }
+        step = steps[index - 1]
     }
 
     /// Icons the proposal takes out of the menu bar.

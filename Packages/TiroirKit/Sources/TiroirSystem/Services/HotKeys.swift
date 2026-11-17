@@ -83,7 +83,9 @@ public final class ShortcutCenter {
     }
 }
 
-/// The real registrar: Carbon's RegisterEventHotKey, and one handler on the app's event target for its presses.
+/// The real registrar: Carbon's RegisterEventHotKey, and one handler on the app's event target for its presses. Col
+/// has a handler of its own on the same target, for its shortcut: a press of a shortcut that is not one of these goes
+/// on to it. The handler goes with the registrar, when the option is turned off.
 @available(macOS 26, *)
 @MainActor
 public final class CarbonHotKeyRegistrar: HotKeyRegistrar {
@@ -114,9 +116,16 @@ public final class CarbonHotKeyRegistrar: HotKeyRegistrar {
         presses[registration.id] = nil
     }
 
-    fileprivate func pressed(_ id: EventHotKeyID) {
-        guard id.signature == Self.signature else { return }
-        presses[id.id]?()
+    /// Whether the press was one of these shortcuts.
+    func pressed(_ id: EventHotKeyID) -> Bool {
+        guard id.signature == Self.signature, let press = presses[id.id] else { return false }
+        press()
+        return true
+    }
+
+    isolated deinit {
+        for ref in refs.values { UnregisterEventHotKey(ref) }
+        if let handler { RemoveEventHandler(handler) }
     }
 
     static func carbonModifiers(_ modifiers: Shortcut.Modifiers) -> UInt32 {
@@ -140,8 +149,8 @@ public final class CarbonHotKeyRegistrar: HotKeyRegistrar {
                                          MemoryLayout<EventHotKeyID>.size, nil, &id)
             guard read == noErr else { return read }
             let registrar = Unmanaged<CarbonHotKeyRegistrar>.fromOpaque(context).takeUnretainedValue()
-            MainActor.assumeIsolated { registrar.pressed(id) }
-            return noErr
+            let handled = MainActor.assumeIsolated { registrar.pressed(id) }
+            return handled ? noErr : OSStatus(eventNotHandledErr)
         }, 1, &type, context, &handler)
         return status == noErr
     }

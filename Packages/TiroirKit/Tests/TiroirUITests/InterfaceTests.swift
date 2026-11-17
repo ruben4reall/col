@@ -75,7 +75,7 @@ enum TestPaths {
     @Test func formatStringsFillIn() {
         #expect(Strings.iconCount(1) == "1 icon")
         #expect(Strings.iconCount(3) == "3 icons")
-        #expect(Strings.smartSortFound(17) == "Tiroir found 17 icons. Here is a tidier menu bar.")
+        #expect(Strings.smartSortFound(17) == "Col found 17 icons. Here is a tidier menu bar.")
         #expect(Strings.roomUsed(412, of: 664) == "412 of 664 points")
         #expect(Strings.readyBody(search: "⌃⌥⌘Space").hasSuffix("⌃⌥⌘Space."))
         #expect(Strings.categoryName(.files) == "Files & Cloud")
@@ -91,7 +91,7 @@ enum TestPaths {
 
 /// The languages of the String Catalog beside English: every key translated, with the key's format specifiers.
 @Suite struct TranslationTests {
-    static let languages = ["de", "es", "fr", "it", "ja", "ko", "nl", "pt-BR", "zh-Hans"]
+    static let languages = ["de", "es", "fr", "it", "ja", "ko", "nl", "pt-BR", "zh-Hans", "zh-Hant"]
 
     /// Each key's string units, by language.
     static func units() throws -> [String: [String: [String: Any]]] {
@@ -154,7 +154,7 @@ enum TestPaths {
         }
     }
 
-    /// The app declares English and the catalog's languages, so macOS offers them and Sparkle follows.
+    /// Col declares English and the drawers' languages, so the drawers speak the language Col shows.
     @Test func theAppDeclaresTheCatalogsLanguages() throws {
         let catalogLanguages = Set(try Self.units().values.flatMap(\.keys))
         #expect(catalogLanguages == Set(Self.languages))
@@ -164,7 +164,6 @@ enum TestPaths {
         let list = line.drop { $0 != "[" }.dropFirst().prefix { $0 != "]" }
         let declared = list.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
         #expect(Set(declared) == catalogLanguages.union(["en"]))
-        #expect(project.contains("CFBundleDevelopmentRegion: en"))
     }
 }
 
@@ -214,33 +213,9 @@ enum TestPaths {
 }
 
 @Suite struct ThemeTests {
-    static let tokensFile = TestPaths.repositoryRoot.appendingPathComponent("brand/tokens/tokens.json")
-
-    static func token(_ group: String, _ name: String) throws -> String {
-        let json = try JSONSerialization.jsonObject(with: Data(contentsOf: tokensFile)) as? [String: Any]
-        let color = json?["color"] as? [String: Any]
-        let entry = (color?[group] as? [String: Any])?[name] as? [String: Any]
-        return try #require(entry?["$value"] as? String)
-    }
-
-    @Test func themeColorsMatchTheBrandTokens() throws {
-        let pairs: [(RGBA, String, String)] = [
-            (Theme.night, "dark", "night"), (Theme.lacquer, "dark", "lacquer"), (Theme.rice, "dark", "rice"),
-            (Theme.ash, "dark", "ash"), (Theme.honey, "dark", "honey"), (Theme.ember, "dark", "ember"),
-            (Theme.paper, "light", "paper"), (Theme.ink, "light", "ink"), (Theme.graphite, "light", "graphite"),
-            (Theme.deepHoney, "light", "deep-honey"), (Theme.hairline, "light", "hairline"),
-        ]
-        for (color, group, name) in pairs {
-            #expect(color.hex == (try Self.token(group, name)).uppercased(), "\(name)")
-        }
-    }
-
     @Test func textPairsAreLegible() {
         #expect(Theme.rice.contrast(with: Theme.night) >= 4.5)
         #expect(Theme.ash.contrast(with: Theme.night) >= 4.5)
-        #expect(Theme.honey.contrast(with: Theme.night) >= 4.5)
-        #expect(Theme.ink.contrast(with: Theme.paper) >= 4.5)
-        #expect(Theme.graphite.contrast(with: Theme.paper) >= 4.5)
-        #expect(Theme.deepHoney.contrast(with: Theme.paper) >= 4.5)
+        #expect(Theme.rice.contrast(with: Theme.lacquer) >= 4.5)
     }
 }

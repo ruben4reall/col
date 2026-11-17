@@ -1,5 +1,4 @@
 import AppKit
-import ServiceManagement
 import TiroirCore
 
 /// Tells when apps launch or quit, once per burst: an app often starts helpers along with it, and its icon appears
@@ -31,8 +30,15 @@ public final class AppObserver {
         }
     }
 
-    isolated deinit {
+    public func stop() {
+        pending?.cancel()
+        pending = nil
         for observer in observers { NSWorkspace.shared.notificationCenter.removeObserver(observer) }
+        observers.removeAll()
+    }
+
+    isolated deinit {
+        stop()
     }
 }
 
@@ -51,39 +57,16 @@ public final class DisplayObserver {
             forName: NSWorkspace.didWakeNotification, object: nil, queue: .main
         ) { [weak self] _ in Task { @MainActor in self?.onChange?() } })
     }
-}
 
-@available(macOS 26, *)
-public enum LoginItemStatus: Sendable, Equatable {
-    case enabled
-    case disabled
-    /// Registered, waiting for the person to allow it in System Settings, General, Login Items & Extensions.
-    case needsApproval
-    case unavailable
-}
-
-/// Open at Login through SMAppService: macOS lists Tiroir in Login Items & Extensions, where it can also be removed.
-@available(macOS 26, *)
-@MainActor
-public final class LoginItem {
-    private let service: SMAppService
-
-    public init(service: SMAppService = .mainApp) {
-        self.service = service
+    public func stop() {
+        guard observers.count == 2 else { return }
+        NotificationCenter.default.removeObserver(observers[0])
+        NSWorkspace.shared.notificationCenter.removeObserver(observers[1])
+        observers.removeAll()
     }
 
-    public var status: LoginItemStatus {
-        switch service.status {
-        case .enabled: .enabled
-        case .notRegistered: .disabled
-        case .requiresApproval: .needsApproval
-        case .notFound: .unavailable
-        @unknown default: .unavailable
-        }
-    }
-
-    public func setEnabled(_ enabled: Bool) throws {
-        if enabled { try service.register() } else { try service.unregister() }
+    isolated deinit {
+        stop()
     }
 }
 
@@ -98,20 +81,5 @@ public enum EngineFactory {
             return GoldenGateEngine(icons: icons)
         }
         return TahoeEngine(icons: icons, poster: SystemEventPoster())
-    }
-}
-
-/// Memory footprint of this process, for Settings, General (the same measure as Activity Monitor's "Memory").
-@available(macOS 26, *)
-public enum MemoryUse {
-    public static func footprintBytes() -> UInt64? {
-        var info = task_vm_info_data_t()
-        var count = mach_msg_type_number_t(MemoryLayout<task_vm_info_data_t>.size / MemoryLayout<integer_t>.size)
-        let result = withUnsafeMutablePointer(to: &info) { pointer in
-            pointer.withMemoryRebound(to: integer_t.self, capacity: Int(count)) {
-                task_info(mach_task_self_, task_flavor_t(TASK_VM_INFO), $0, &count)
-            }
-        }
-        return result == KERN_SUCCESS ? info.phys_footprint : nil
     }
 }

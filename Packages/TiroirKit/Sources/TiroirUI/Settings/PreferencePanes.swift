@@ -208,38 +208,15 @@ struct GeneralPane: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
             SettingsGroup {
-                SettingRow(title: Strings.openAtLogin, note: model.loginItemStatus == .needsApproval ? Strings.loginNeedsApproval : nil) {
-                    Toggle(Strings.openAtLogin, isOn: Binding(get: { model.loginItemStatus == .enabled || model.loginItemStatus == .needsApproval },
-                                             set: { model.actions.setOpenAtLogin($0) }))
-                        .labelsHidden().toggleStyle(.switch)
-                }
                 SettingRow(title: Strings.accessibility) {
                     HStack(spacing: 10) {
                         Text(verbatim: model.accessibilityTrusted ? Strings.on : Strings.off)
                             .foregroundStyle(model.accessibilityTrusted ? Color.green : Theme.warning)
                         if !model.accessibilityTrusted {
-                            Button(Strings.openSystemSettings) {
-                                model.actions.requestAccessibility()
-                                model.actions.openAccessibilitySettings()
-                            }
-                            .buttonStyle(PillButtonStyle(.primary))
+                            Button(Strings.openSystemSettings) { model.actions.requestAccessibility() }
+                                .buttonStyle(PillButtonStyle(.primary))
                         }
                     }
-                }
-                SettingRow(title: Strings.memory) {
-                    Text(verbatim: model.memoryBytes.map { Strings.memoryInUse(ByteCountFormatter.string(fromByteCount: Int64($0), countStyle: .memory)) } ?? "")
-                        .monospacedDigit().foregroundStyle(Theme.secondaryText)
-                }
-            }
-            SettingsGroup(title: Strings.updates) {
-                SettingRow(title: Strings.checkAutomatically) {
-                    Toggle(Strings.checkAutomatically, isOn: Binding(get: { model.automaticUpdates }, set: { model.actions.setAutomaticUpdates($0) }))
-                        .labelsHidden().toggleStyle(.switch)
-                }
-                SettingRow(title: Strings.version(model.appVersion)) {
-                    Button(Strings.checkNow) { model.actions.checkForUpdates() }
-                        .buttonStyle(PillButtonStyle(.secondary))
-                        .disabled(!model.canCheckForUpdates)
                 }
             }
             SettingsGroup(title: Strings.settingsFileSection) {
@@ -265,49 +242,11 @@ struct GeneralPane: View {
             HStack(spacing: 10) {
                 Button(Strings.resetLayout) { confirmingReset = true }.buttonStyle(PillButtonStyle(.destructive))
                 Spacer()
-                Button(Strings.quitTiroir) { model.actions.quit() }.buttonStyle(PillButtonStyle(.secondary))
             }
         }
         .confirmationDialog(Strings.resetLayoutQuestion, isPresented: $confirmingReset) {
             Button(Strings.reset, role: .destructive) { model.actions.resetLayout() }
             Button(Strings.cancel, role: .cancel) {}
         }
-        .task {
-            while !Task.isCancelled {
-                model.actions.refreshMemory()
-                try? await Task.sleep(for: .seconds(2))
-            }
-        }
-    }
-}
-
-/// Settings, About (spec 6.3).
-@available(macOS 26, *)
-struct AboutPane: View {
-    let model: InterfaceModel
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack(spacing: 16) {
-                Image(nsImage: NSApp.applicationIconImage).resizable().frame(width: 72, height: 72)
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(verbatim: Strings.appName).font(.system(size: 22, weight: .semibold))
-                    Text(verbatim: Strings.tagline).foregroundStyle(Theme.secondaryText)
-                    Text(verbatim: Strings.version(model.appVersion)).font(.system(size: 12)).foregroundStyle(Theme.tertiaryText)
-                }
-            }
-            Text(verbatim: Strings.freeAndOpenSource).font(.system(size: 13))
-            HStack(spacing: 10) {
-                Link(Strings.website, destination: TiroirInfo.website)
-                Link(Strings.sourceCode, destination: TiroirInfo.repository)
-                Link(Strings.reportIssue, destination: TiroirInfo.issues)
-            }
-            .font(.system(size: 13, weight: .medium))
-            Text(verbatim: Strings.creditsLine).font(.system(size: 11)).foregroundStyle(Theme.tertiaryText)
-            Text(verbatim: Strings.notAffiliated).font(.system(size: 11)).foregroundStyle(Theme.tertiaryText)
-        }
-        .padding(18)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .card()
     }
 }

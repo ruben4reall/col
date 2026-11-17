@@ -8,14 +8,17 @@ import TiroirUI
 /// change of the layout saves the settings and asks the engine to make the menu bar match, once per burst of changes.
 /// Triggers reach the engine through the same plan: what they show is planned on top of the layout, which they never
 /// rewrite; only a trigger's profile switch changes the settings, as a switch by hand would.
+///
+/// It runs inside Col, from the moment the menu bar option is turned on until it is turned off or Col quits. `shutdown()`
+/// gives every icon back and stops every observer, monitor, timer and shortcut it started: once it returns, nothing of
+/// the drawers runs.
 @available(macOS 26, *)
 @MainActor
 public final class Coordinator {
     public let interface: InterfaceModel
-    /// The app target's way to move Tiroir to /Applications (it owns that code).
-    public var moveToApplicationsHandler: (() -> Void)?
 
     private let options: LaunchOptions
+    private let host: DrawersHost
     private let store: SettingsStore
     private let engine: MenuBarEngine
     private let directory = AppDirectory()
@@ -29,10 +32,10 @@ public final class Coordinator {
     private let appObserver = AppObserver()
     private let displayObserver = DisplayObserver()
     private let reveal = RevealController()
-    private let loginItem = LoginItem()
     private let triggerSensors = TriggerSensors()
     private var shortcuts: ShortcutCenter?
-    private var updater: UpdateChecking?
+    /// Set by `shutdown()`: nothing touches the menu bar after it, even a scan or an arrangement still on its way.
+    public private(set) var isShutDown = false
 
     private var snapshot = MenuBarSnapshot.empty
     private var categories: [IconID: CategoryID] = [:]
@@ -52,14 +55,14 @@ public final class Coordinator {
     private var welcome: WelcomeModel?
     private var backdrop: NSWindow?
 
-    public init(options: LaunchOptions, updater: UpdateChecking?) {
+    public init(options: LaunchOptions, host: DrawersHost) {
         self.options = options
-        self.updater = updater
+        self.host = host
         // Demo mode never reads or writes the person's settings. A suite also searches the app's own domain, so the
         // demo keeps its settings under a key of its own, which the person's settings never have.
-        let defaults = options.demo ? (UserDefaults(suiteName: "ch.rubencatalao.tiroir.demo") ?? .standard) : .standard
-        if options.demo { defaults.removePersistentDomain(forName: "ch.rubencatalao.tiroir.demo") }
-        store = SettingsStore(defaults: defaults, key: options.demo ? "demoSettings" : "settings")
+        let defaults = options.demo ? (UserDefaults(suiteName: Self.demoDomain) ?? host.defaults) : host.defaults
+        if options.demo { defaults.removePersistentDomain(forName: Self.demoDomain) }
+        store = SettingsStore(defaults: defaults, key: options.demo ? "demoSettings" : host.settingsKey)
         let loaded = store.load()
         if case .unreadable = loaded.outcome { Log.app.error("settings unreadable: using the defaults") }
         if case .newerVersion(let version) = loaded.outcome { Log.app.error("settings from a newer Tiroir (schema \(version))") }
@@ -69,13 +72,16 @@ public final class Coordinator {
         if options.demo { directory.overrides = DemoEngine.directoryOverrides() }
         windows.isQuiet = options.quiet
         panels.isQuiet = options.quiet
+        windows.onWindowOpened = host.windowOpened
+        windows.onWindowClosed = host.windowClosed
     }
+
+    static let demoDomain = "ch.rubencatalao.islet.drawers-demo"
 
     // MARK: Launch
 
     public func start() async {
         if options.demo, let path = options.backdrop { backdrop = Backdrop.show(imageAt: path) }
-        NSApp.mainMenu = MainMenu.make { [weak self] in self?.openSettings(nil) }
         wireActions()
         wireMenuBar()
         wireReveal()
@@ -92,23 +98,22 @@ public final class Coordinator {
         }
         engine.onStatusChange = { [weak self] status in self?.interface.engineStatus = status }
         triggerSensors.onChange = { [weak self] in self?.evaluateTriggers() }
-        updater?.start()
 
         await engine.start()
+        // Turned off while it started: `shutdown()` already gave everything back.
+        guard !isShutDown else { return }
         interface.engineKind = engine.kind
         interface.engineStatus = engine.status
         interface.accessibilityTrusted = options.demo || permission.isTrusted
         interface.isInApplications = GoldenGateEngine.runsFromApplications()
-        interface.appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0.0"
-        interface.loginItemStatus = loginItem.status
+        interface.appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "3.1.0"
         interface.iconSpacing = IconSpacing.current()
-        interface.automaticUpdates = updater?.automaticallyChecksForUpdates ?? false
-        interface.canCheckForUpdates = updater?.canCheckForUpdates ?? false
         applyBehavior()
         syncTriggerSensors()
         evaluateTriggers(apply: false)
 
         await refresh(apply: interface.settings.hasCompletedWelcome)
+        guard !isShutDown else { return }
         if options.demo, options.welcomeStep == nil, interface.settings.layout.drawers.isEmpty {
             // Demo mode starts sorted, so pictures of drawers and Settings have something to show.
             let layout = propose(.purpose)
@@ -126,11 +131,13 @@ public final class Coordinator {
         if let pane = options.settingsPane { openSettings(pane) }
         if let index = options.openDrawer {
             try? await Task.sleep(for: .milliseconds(500))
+            guard !isShutDown else { return }
             let drawers = interface.settings.layout.drawers
             if index < 0 { openDrawer(.all) } else if drawers.indices.contains(index) { openDrawer(.drawer(drawers[index].id)) }
         }
         if let query = options.search {
             try? await Task.sleep(for: .milliseconds(500))
+            guard !isShutDown else { return }
             openSearch(query: query)
         }
     }
@@ -155,15 +162,32 @@ public final class Coordinator {
         settings.triggers = triggers
     }
 
-    /// On quit: the menu bar goes back to what macOS would show without Tiroir.
+    /// When the option is turned off and when Col quits: the menu bar goes back to what macOS would show without the
+    /// drawers, at once and synchronously, and everything the drawers watched or listened to stops. A crash needs none of
+    /// this: the divider and the restriction belong to Col's process and end with it.
     public func shutdown() {
+        guard !isShutDown else { return }
+        isShutDown = true
         pendingApply?.cancel()
+        pendingApply = nil
+        welcome = nil
         panels.close()
+        windows.closeAll()
+        toast.hide()
         engine.restore()
         statusItems.removeAll()
         overlay.removeAll()
         shortcuts?.unregisterAll()
+        shortcuts = nil
         triggerSensors.stopAll()
+        reveal.stop()
+        permission.stop()
+        appObserver.stop()
+        displayObserver.stop()
+        backdrop?.close()
+        backdrop = nil
+        Log.app.info("drawers stopped")
+        host.menuBarChanged()
     }
 
     // MARK: Reading the menu bar
@@ -171,7 +195,9 @@ public final class Coordinator {
     /// Scans the menu bar, names every icon, places icons Tiroir sees for the first time, and applies the layout if
     /// asked.
     func refresh(apply: Bool) async {
+        guard !isShutDown else { return }
         snapshot = await engine.scan()
+        guard !isShutDown else { return }
         interface.accessibilityTrusted = options.demo || permission.isTrusted
         var rows: [IconRow] = []
         var found: [IconID: CategoryID] = [:]
@@ -268,6 +294,7 @@ public final class Coordinator {
     /// request that comes meanwhile runs right after it.
     func scheduleApply(after delay: Duration = .milliseconds(350)) {
         pendingApply?.cancel()
+        guard !isShutDown else { return }
         let task = Task { [weak self] in
             try? await Task.sleep(for: delay)
             guard !Task.isCancelled, let self else { return }
@@ -279,6 +306,7 @@ public final class Coordinator {
 
     @discardableResult
     func applyNow() async -> ApplyReport {
+        guard !isShutDown else { return .nothing }
         if isApplyingNow {
             needsAnotherApply = true
             return .nothing
@@ -295,12 +323,15 @@ public final class Coordinator {
             interface.isApplying = true
             report = await engine.apply(plan)
             interface.isApplying = false
+            guard !isShutDown else { return .nothing }
             interface.failedMoves = report.failed
             interface.conflicts = plan.conflicts
             if !report.moved.isEmpty { await refresh(apply: false) }
         } while needsAnotherApply
         // The engine asked to try again: once the person pauses, or a while after a move failed.
         if let wait = report.tryAgainIn { scheduleApply(after: wait) }
+        // The island measures the room beside the notch again.
+        host.menuBarChanged()
         return report
     }
 
@@ -316,6 +347,7 @@ public final class Coordinator {
     }
 
     private func syncStatusItems() {
+        guard !isShutDown else { return }
         let layout = interface.settings.layout
         var counts: [UUID: Int] = [:]
         for drawer in layout.drawers { counts[drawer.id] = interface.members(of: drawer.id).count }
@@ -324,6 +356,7 @@ public final class Coordinator {
         statusItems.update(drawers: layout.drawers, counts: counts, showsMain: interface.settings.behavior.showsTiroirIcon,
                            isFocusOn: planned == .focus, isShowingEverything: planned == .showEverything,
                            keepsAtRightEnd: interface.settings.behavior.keepsItemsAtRightEnd)
+        host.menuBarChanged()
     }
 
     /// What the planner is given: the person's mode, or the triggers' Focus and shown icons when the person has none.
@@ -391,11 +424,6 @@ public final class Coordinator {
         if !interface.settings.profiles.isEmpty { menu.addItem(profilesItem()) }
         menu.addItem(.separator())
         menu.addItem(ActionItem(title: Strings.settingsMenuItem) { [weak self] in self?.openSettings(nil) })
-        if updater != nil {
-            menu.addItem(ActionItem(title: Strings.checkForUpdates) { [weak self] in self?.updater?.checkForUpdates() })
-        }
-        menu.addItem(.separator())
-        menu.addItem(ActionItem(title: Strings.quitTiroir) { NSApp.terminate(nil) })
         return menu
     }
 
@@ -442,6 +470,7 @@ public final class Coordinator {
 
     func open(_ id: IconID, from target: StatusItemsController.Target?) {
         panels.close()
+        guard !isShutDown else { return }
         let anchor = target.flatMap { statusItems.anchor(for: $0) }
         Task {
             do {
@@ -577,11 +606,15 @@ public final class Coordinator {
 
     func openSettings(_ pane: SettingsPane?) {
         panels.close()
+        guard !isShutDown else { return }
         windows.showSettings(model: interface, pane: pane)
     }
 
     func showWelcome(step: WelcomeModel.Step) {
-        let model = WelcomeModel(step: step)
+        guard !isShutDown else { return }
+        // Col asks for the permission in its own settings and welcome: once it is granted, this step has nothing to say.
+        let model = WelcomeModel(step: step == .permission && permission.isTrusted ? .sort : step)
+        model.skipsPermission = permission.isTrusted || options.demo
         model.proposal = propose(interface.settings.sortStrategy)
         welcome = model
         windows.showWelcome(model: interface, welcomeModel: model) { [weak self] in self?.finishWelcome() }
@@ -690,19 +723,12 @@ public final class Coordinator {
         actions.openIcon = { [weak self] id, drawer in self?.open(id, from: drawer.map { .drawer($0) }) }
         actions.propose = { [weak self] strategy in self?.propose(strategy) ?? .empty }
         actions.applySmartSort = { [weak self] layout, strategy in await self?.applySmartSort(layout, strategy: strategy) ?? .nothing }
-        actions.requestAccessibility = { [weak self] in self?.permission.request(); self?.permission.waitForGrant() }
-        actions.openAccessibilitySettings = { [weak self] in self?.permission.openSettings() }
-        actions.moveToApplications = { [weak self] in self?.moveToApplicationsHandler?() }
-        actions.setOpenAtLogin = { [weak self] enabled in
-            guard let self else { return }
-            do { try loginItem.setEnabled(enabled) } catch { Log.app.error("login item: \(error.localizedDescription, privacy: .public)") }
-            interface.loginItemStatus = loginItem.status
+        // Col's own request: the prompt and System Settings, the same as in its Permissions settings.
+        actions.requestAccessibility = { [weak self] in
+            self?.host.requestAccessibility()
+            self?.permission.waitForGrant()
         }
-        actions.setAutomaticUpdates = { [weak self] enabled in
-            self?.updater?.automaticallyChecksForUpdates = enabled
-            self?.interface.automaticUpdates = enabled
-        }
-        actions.checkForUpdates = { [weak self] in self?.updater?.checkForUpdates() }
+        actions.moveToApplications = { [weak self] in self?.host.moveToApplications() }
         actions.toggleFocus = { [weak self] in self?.toggleFocus() }
         actions.toggleShowEverything = { [weak self] in self?.toggleShowEverything() }
         actions.resetLayout = { [weak self] in self?.resetLayout() }
@@ -714,8 +740,6 @@ public final class Coordinator {
                   let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: row.id.bundleID) else { return }
             NSWorkspace.shared.activateFileViewerSelecting([url])
         }
-        actions.refreshMemory = { [weak self] in self?.interface.memoryBytes = MemoryUse.footprintBytes() }
-        actions.quit = { NSApp.terminate(nil) }
         actions.switchProfile = { [weak self] id in self?.switchProfile(to: id) }
         actions.exportSettings = { [weak self] in
             guard let self else { return }

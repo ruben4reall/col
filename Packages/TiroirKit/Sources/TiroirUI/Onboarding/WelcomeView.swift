@@ -81,11 +81,8 @@ public struct WelcomeView: View {
             .font(.system(size: 13, weight: .medium))
             .foregroundStyle(model.accessibilityTrusted ? Color.green : Theme.secondaryText)
             if !model.accessibilityTrusted {
-                Button(Strings.openSystemSettings) {
-                    model.actions.requestAccessibility()
-                    model.actions.openAccessibilitySettings()
-                }
-                .buttonStyle(PillButtonStyle(.primary))
+                Button(Strings.openSystemSettings) { model.actions.requestAccessibility() }
+                    .buttonStyle(PillButtonStyle(.primary))
                 Text(verbatim: Strings.permissionSteps).font(.system(size: 12)).foregroundStyle(Theme.tertiaryText)
             }
             if model.engineKind == .goldenGate, !model.isInApplications {
@@ -176,14 +173,6 @@ public struct WelcomeView: View {
                 Text(verbatim: model.settings.shortcuts.search.map { Strings.readyBody(search: $0.display) } ?? Strings.readyBodyWithoutShortcut)
                     .font(.system(size: 15)).foregroundStyle(Theme.secondaryText).multilineTextAlignment(.center).frame(maxWidth: 460)
             }
-            VStack(alignment: .leading, spacing: 10) {
-                Toggle(Strings.openAtLogin, isOn: $welcome.openAtLogin)
-                Toggle(Strings.keepUpToDate, isOn: $welcome.keepUpToDate)
-            }
-            .toggleStyle(.switch)
-            .font(.system(size: 13))
-            .padding(16)
-            .card()
             Spacer(minLength: 0)
         }
     }
@@ -193,7 +182,7 @@ public struct WelcomeView: View {
     private var footer: some View {
         HStack(spacing: 10) {
             HStack(spacing: 6) {
-                ForEach(WelcomeModel.Step.allCases, id: \.self) { step in
+                ForEach(welcome.steps, id: \.self) { step in
                     Circle().fill(step == welcome.step ? Theme.accent : Color.white.opacity(0.18)).frame(width: 6, height: 6)
                 }
             }
@@ -230,11 +219,7 @@ public struct WelcomeView: View {
                     .disabled(!model.accessibilityTrusted && model.engineKind != .demo)
                 }
             case .ready:
-                Button(Strings.done) {
-                    model.actions.setOpenAtLogin(welcome.openAtLogin)
-                    model.actions.setAutomaticUpdates(welcome.keepUpToDate)
-                    onFinish()
-                }
+                Button(Strings.done) { onFinish() }
                 .buttonStyle(PillButtonStyle(.primary))
                 .keyboardShortcut(.defaultAction)
             }

@@ -20,13 +20,13 @@ import TiroirUI
         #expect(!options.quiet)
     }
 
-    /// The command line gives text (`-TiroirOpenDrawer 0`), `defaults write` gives numbers: both work.
+    /// The command line gives text (`-ColDrawersOpen 0`), `defaults write` gives numbers: both work.
     @Test func numbersArriveAsTextOrNumbers() {
         let scratch = Scratch()
-        scratch.defaults.set("2", forKey: "TiroirWelcomeStep")
-        scratch.defaults.set(0, forKey: "TiroirOpenDrawer")
-        scratch.defaults.set("appearance", forKey: "TiroirSettingsPane")
-        scratch.defaults.set(true, forKey: "TiroirDemo")
+        scratch.defaults.set("2", forKey: "ColDrawersWelcomeStep")
+        scratch.defaults.set(0, forKey: "ColDrawersOpen")
+        scratch.defaults.set("appearance", forKey: "ColDrawersPane")
+        scratch.defaults.set(true, forKey: "ColDrawersDemo")
         let options = LaunchOptions.current(scratch.defaults)
         #expect(options.welcomeStep == 2)
         #expect(options.openDrawer == 0)
@@ -36,7 +36,7 @@ import TiroirUI
 
     @Test func allOpensTheAllDrawer() {
         let scratch = Scratch()
-        scratch.defaults.set("all", forKey: "TiroirOpenDrawer")
+        scratch.defaults.set("all", forKey: "ColDrawersOpen")
         #expect(LaunchOptions.current(scratch.defaults).openDrawer == -1)
     }
 }

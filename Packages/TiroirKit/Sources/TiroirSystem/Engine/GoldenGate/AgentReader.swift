@@ -16,6 +16,9 @@ public struct AgentLayout: Sendable {
         public var pid: pid_t
         public var element: AXElement?
         public var isOverflowButton: Bool
+        /// The app's own words for the icon, and its identifier when it gives one.
+        public var label: String? = nil
+        public var identifier: String? = nil
     }
 
     public struct Display: Sendable {
@@ -67,7 +70,7 @@ public enum AgentReader {
         let agentPID = agent.processIdentifier
         let application = AXElement.application(agentPID, timeout: 1)
         guard let windows: [AXUIElement] = application.attribute(kAXWindowsAttribute) else { return nil }
-        let displays = windows.map(AXElement.init).map { window -> AgentLayout.Display in
+        let displays = barsOnScreen(windows.map(AXElement.init)).map { window -> AgentLayout.Display in
             let items = window.children.compactMap { slot -> AgentLayout.Item? in
                 guard let frame = slot.frame else { return nil }
                 guard let owner = slot.children.first else {
@@ -80,11 +83,43 @@ public enum AgentReader {
                     return AgentLayout.Item(bundleID: nil, systemIdentifier: identifier, frame: frame, pid: pid, element: owner, isOverflowButton: false)
                 }
                 let bundleID = NSRunningApplication(processIdentifier: pid)?.bundleIdentifier
-                return AgentLayout.Item(bundleID: bundleID, systemIdentifier: nil, frame: frame, pid: pid, element: owner, isOverflowButton: false)
+                let label = [owner.descriptionText, owner.title, owner.help]
+                    .compactMap { $0?.trimmingCharacters(in: .whitespacesAndNewlines) }
+                    .first { !$0.isEmpty }
+                return AgentLayout.Item(bundleID: bundleID, systemIdentifier: nil, frame: frame, pid: pid, element: owner,
+                                        isOverflowButton: false, label: label, identifier: owner.identifier)
             }
             return AgentLayout.Display(frame: window.frame ?? .zero, items: items)
         }
         return AgentLayout(displays: displays, agentPID: agentPID)
+    }
+
+    /// One bar per display. macOS 27.2 keeps several windows over the same display (three on a MacBook Pro with one
+    /// screen, all with the menu bar's frame): the one on screen holds the apps' live buttons, the others stand-ins for
+    /// the apps (their application element). Of windows with the same frame, the one with the most live buttons wins;
+    /// on a tie, the first.
+    static func barsOnScreen(_ windows: [AXElement]) -> [AXElement] {
+        let described = windows.map { window -> (frame: CGRect?, live: Int) in
+            let live = window.children.reduce(0) { count, slot in
+                slot.children.first?.role == kAXApplicationRole ? count : count + 1
+            }
+            return (window.frame, live)
+        }
+        return chooseBars(described).map { windows[$0] }
+    }
+
+    /// The indices of the windows `barsOnScreen` keeps, from each window's frame and count of live buttons.
+    static func chooseBars(_ windows: [(frame: CGRect?, live: Int)]) -> [Int] {
+        var chosen: [(frame: CGRect, index: Int, live: Int)] = []
+        for (index, window) in windows.enumerated() {
+            guard let frame = window.frame else { continue }
+            if let existing = chosen.firstIndex(where: { $0.frame == frame }) {
+                if window.live > chosen[existing].live { chosen[existing] = (frame, index, window.live) }
+            } else {
+                chosen.append((frame, index, window.live))
+            }
+        }
+        return chosen.map(\.index)
     }
 
     /// Reads until two reads in a row agree: MenuBarAgent keeps moving icons for a moment after a restriction changes.

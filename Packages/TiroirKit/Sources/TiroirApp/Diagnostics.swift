@@ -5,15 +5,15 @@ import TiroirSystem
 import TiroirUI
 
 /// A plain text report for a bug report (Settings, General). It holds what a maintainer needs to understand a
-/// problem: the Mac, macOS, the engine, what Tiroir sees in the menu bar (bundle identifiers, never labels or window
-/// titles) and Tiroir's own recent log messages. It never leaves the Mac by itself.
+/// problem: the Mac, macOS, the engine, what the drawers see in the menu bar (bundle identifiers, never labels or window
+/// titles) and the drawers' own recent log messages. It never leaves the Mac by itself.
 @available(macOS 26, *)
 @MainActor
 enum Diagnostics {
     static func report(interface: InterfaceModel, engine: MenuBarEngine, snapshot: MenuBarSnapshot) -> String {
         let settings = interface.settings
         var lines = [
-            "Tiroir \(interface.appVersion)",
+            "Col \(interface.appVersion), menu bar drawers",
             "macOS \(ProcessInfo.processInfo.operatingSystemVersionString)",
             "Mac: \(hardwareModel())",
             "Engine: \(engine.kind.rawValue), \(engine.status)",
@@ -69,7 +69,7 @@ enum Diagnostics {
         #endif
     }
 
-    /// Tiroir's own log of the last half hour, newest last, at most 80 lines.
+    /// The drawers' own log of the last half hour, newest last, at most 80 lines.
     private static func recentMessages() -> [String] {
         guard let store = try? OSLogStore(scope: .currentProcessIdentifier) else { return [] }
         let since = store.position(date: Date().addingTimeInterval(-1800))

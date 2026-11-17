@@ -1,8 +1,9 @@
 import AppKit
 import ApplicationServices
 
-/// The one permission Tiroir needs (spec 6.1): Accessibility, to see which app owns each icon, to open icons and, on
-/// macOS 26, to move them. Tiroir never asks for Screen Recording.
+/// The one permission the drawers need (spec 6.1): Accessibility, Device Control and Data Access on macOS 27, to see which
+/// app owns each icon, to open icons and, on macOS 26, to move them. It is Col's own permission: Col asks for it, in its
+/// welcome and its settings; this only hears when it changes. The drawers never ask for Screen Recording.
 @available(macOS 26, *)
 @MainActor
 public final class AccessibilityPermission {
@@ -35,20 +36,6 @@ public final class AccessibilityPermission {
         onChange?(trusted)
     }
 
-    /// Shows the system's Accessibility prompt once, which also adds Tiroir to the list in System Settings.
-    public func request() {
-        // The value of kAXTrustedCheckOptionPrompt, spelled out: the global is not concurrency-safe in Swift 6.
-        let options = ["AXTrustedCheckOptionPrompt": true] as CFDictionary
-        isTrusted = AXIsProcessTrustedWithOptions(options)
-    }
-
-    /// Opens System Settings at Privacy & Security, Accessibility.
-    public func openSettings() {
-        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
-            NSWorkspace.shared.open(url)
-        }
-    }
-
     /// While the welcome or Settings waits for the grant, checks once a second as well: the distributed notification
     /// does not always arrive when an app is added with the plus button. Stops by itself once granted.
     public func waitForGrant() {
@@ -61,5 +48,13 @@ public final class AccessibilityPermission {
     public func stopWaiting() {
         pollTimer?.invalidate()
         pollTimer = nil
+    }
+
+    /// Stops listening, for good: the drawers were turned off.
+    public func stop() {
+        stopWaiting()
+        if let observer { DistributedNotificationCenter.default().removeObserver(observer) }
+        observer = nil
+        onChange = nil
     }
 }

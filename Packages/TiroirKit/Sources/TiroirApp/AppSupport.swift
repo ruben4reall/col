@@ -1,8 +1,8 @@
 import AppKit
 import TiroirUI
 
-/// Switches read at launch from the command line or the defaults (`-TiroirDemo YES`). They let scripts photograph the
-/// real app for the website and the README, and never touch the person's own menu bar in demo mode.
+/// Switches read when the drawers start, from the command line or the defaults (`-ColDrawersDemo YES`). They let scripts
+/// photograph the real drawers for the website and the README, and never touch the person's own menu bar in demo mode.
 @available(macOS 26, *)
 public struct LaunchOptions: Sendable {
     /// Generic icons instead of the menu bar's.
@@ -15,23 +15,23 @@ public struct LaunchOptions: Sendable {
     public var openDrawer: Int?
     /// Open search with this text.
     public var search: String?
-    /// Show windows without taking the keyboard or bringing Tiroir to the front, for captures while someone works.
+    /// Show windows without taking the keyboard or bringing Col to the front, for captures while someone works.
     public var quiet: Bool
-    /// In demo mode, a picture to show behind Tiroir's windows, so the glass of captures shows it and nothing else.
+    /// In demo mode, a picture to show behind the drawers' windows, so the glass of captures shows it and nothing else.
     public var backdrop: String?
 
     public static func current(_ defaults: UserDefaults = .standard) -> LaunchOptions {
         LaunchOptions(
-            demo: defaults.bool(forKey: "TiroirDemo"),
-            welcomeStep: integer("TiroirWelcomeStep", in: defaults),
-            settingsPane: defaults.string(forKey: "TiroirSettingsPane").flatMap(SettingsPane.init(rawValue:)),
-            openDrawer: defaults.string(forKey: "TiroirOpenDrawer") == "all" ? -1 : integer("TiroirOpenDrawer", in: defaults),
-            search: defaults.string(forKey: "TiroirSearch"),
-            quiet: defaults.bool(forKey: "TiroirQuiet"),
-            backdrop: defaults.string(forKey: "TiroirBackdrop"))
+            demo: defaults.bool(forKey: "ColDrawersDemo"),
+            welcomeStep: integer("ColDrawersWelcomeStep", in: defaults),
+            settingsPane: defaults.string(forKey: "ColDrawersPane").flatMap(SettingsPane.init(rawValue:)),
+            openDrawer: defaults.string(forKey: "ColDrawersOpen") == "all" ? -1 : integer("ColDrawersOpen", in: defaults),
+            search: defaults.string(forKey: "ColDrawersSearch"),
+            quiet: defaults.bool(forKey: "ColDrawersQuiet"),
+            backdrop: defaults.string(forKey: "ColDrawersBackdrop"))
     }
 
-    /// A number given on the command line arrives as text (`-TiroirOpenDrawer 0`), one set with `defaults write` as a
+    /// A number given on the command line arrives as text (`-ColDrawersOpen 0`), one set with `defaults write` as a
     /// number: both count, and an absent key stays nil rather than zero.
     static func integer(_ key: String, in defaults: UserDefaults) -> Int? {
         if let number = defaults.object(forKey: key) as? Int { return number }
@@ -39,7 +39,7 @@ public struct LaunchOptions: Sendable {
     }
 }
 
-/// A still picture behind Tiroir's windows, for captures in demo mode only: the glass then shows the picture, never
+/// A still picture behind the drawers' windows, for captures in demo mode only: the glass then shows the picture, never
 /// the windows of whoever runs the capture.
 @available(macOS 26, *)
 @MainActor
@@ -60,55 +60,35 @@ enum Backdrop {
     }
 }
 
-/// Software updates, which the app target provides with Sparkle; this package never imports it.
+/// What Col gives the drawers, which run in its process: where their settings live, Col's own way to ask for the one
+/// permission and to move itself to /Applications, a Dock icon while one of their windows is open, and a word each time
+/// the menu bar changed, so the island measures the room beside the notch again.
 @available(macOS 26, *)
 @MainActor
-public protocol UpdateChecking: AnyObject {
-    var automaticallyChecksForUpdates: Bool { get set }
-    var canCheckForUpdates: Bool { get }
-    func start()
-    func checkForUpdates()
-}
+public struct DrawersHost {
+    /// The preferences the settings live in, under `settingsKey`.
+    public var defaults: UserDefaults
+    public var settingsKey: String
+    /// Asks for Accessibility (Device Control and Data Access on macOS 27) the way Col does everywhere else.
+    public var requestAccessibility: () -> Void
+    /// Moves Col to /Applications and opens it from there: macOS 27 honours only apps there.
+    public var moveToApplications: () -> Void
+    /// A window of the drawers opened, or closed.
+    public var windowOpened: (NSWindow) -> Void
+    public var windowClosed: (NSWindow) -> Void
+    /// Icons moved, hid or came back, or the drawers' own items changed.
+    public var menuBarChanged: () -> Void
 
-/// The menu bar of Tiroir's own windows: About, Settings and Quit, the editing commands text fields need, and Close.
-@available(macOS 26, *)
-@MainActor
-enum MainMenu {
-    static func make(onSettings: @escaping () -> Void) -> NSMenu {
-        let main = NSMenu()
-
-        let app = NSMenu()
-        app.addItem(withTitle: Strings.aboutTiroir, action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)), keyEquivalent: "")
-        app.addItem(.separator())
-        let settings = ActionItem(title: Strings.settingsMenuItem, key: ",", action: onSettings)
-        app.addItem(settings)
-        app.addItem(.separator())
-        app.addItem(withTitle: Strings.quitTiroir, action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
-        main.addItem(submenu(app, title: Strings.appName))
-
-        let edit = NSMenu()
-        edit.addItem(withTitle: Strings.undo, action: Selector(("undo:")), keyEquivalent: "z")
-        edit.addItem(withTitle: Strings.redo, action: Selector(("redo:")), keyEquivalent: "Z")
-        edit.addItem(.separator())
-        edit.addItem(withTitle: Strings.cut, action: #selector(NSText.cut(_:)), keyEquivalent: "x")
-        edit.addItem(withTitle: Strings.copy, action: #selector(NSText.copy(_:)), keyEquivalent: "c")
-        edit.addItem(withTitle: Strings.paste, action: #selector(NSText.paste(_:)), keyEquivalent: "v")
-        edit.addItem(withTitle: Strings.selectAll, action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
-        main.addItem(submenu(edit, title: Strings.editMenu))
-
-        let window = NSMenu()
-        window.addItem(withTitle: Strings.close, action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w")
-        window.addItem(withTitle: Strings.minimize, action: #selector(NSWindow.performMiniaturize(_:)), keyEquivalent: "m")
-        main.addItem(submenu(window, title: Strings.windowMenu))
-        NSApp.windowsMenu = window
-        return main
-    }
-
-    private static func submenu(_ menu: NSMenu, title: String) -> NSMenuItem {
-        let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
-        menu.title = title
-        item.submenu = menu
-        return item
+    public init(defaults: UserDefaults, settingsKey: String, requestAccessibility: @escaping () -> Void = {},
+                moveToApplications: @escaping () -> Void = {}, windowOpened: @escaping (NSWindow) -> Void = { _ in },
+                windowClosed: @escaping (NSWindow) -> Void = { _ in }, menuBarChanged: @escaping () -> Void = {}) {
+        self.defaults = defaults
+        self.settingsKey = settingsKey
+        self.requestAccessibility = requestAccessibility
+        self.moveToApplications = moveToApplications
+        self.windowOpened = windowOpened
+        self.windowClosed = windowClosed
+        self.menuBarChanged = menuBarChanged
     }
 }
 

@@ -34,6 +34,16 @@ final class RevealController {
         if !behavior.hidesAgainAutomatically { countdown?.cancel() }
     }
 
+    /// Stops every monitor and the countdown: the drawers were turned off.
+    func stop() {
+        watcher.stop()
+        countdown?.cancel()
+        countdown = nil
+        onReveal = nil
+        onToggle = nil
+        onHideAgain = nil
+    }
+
     /// Every icon started or stopped showing in the menu bar.
     func everythingShows(_ shows: Bool) {
         countdown?.cancel()

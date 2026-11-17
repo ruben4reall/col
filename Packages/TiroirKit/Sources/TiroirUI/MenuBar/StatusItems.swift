@@ -56,7 +56,7 @@ public final class StatusItemsController {
             if main == nil { main = makeItem(autosaveName: Self.mainAutosaveName, position: 0, target: .all) }
             main?.button?.image = TiroirGlyph.image(isFocusOn ? .focus : (isShowingEverything ? .open : .closed))
             main?.button?.toolTip = isFocusOn ? Strings.focusIsOnHelp : Strings.tiroirIconHelp
-            main?.button?.setAccessibilityLabel(Strings.appName)
+            main?.button?.setAccessibilityLabel(Strings.allDrawersLabel)
         } else if let main {
             NSStatusBar.system.removeStatusItem(main)
             self.main = nil

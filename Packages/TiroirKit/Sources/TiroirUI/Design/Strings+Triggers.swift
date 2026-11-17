@@ -132,7 +132,7 @@ extension Strings {
     }
 
     public static let batteryLevelNote = String(localized: "Plugged in or not.", bundle: .module)
-    public static let cameraOrMicrophoneNote = String(localized: "Tiroir only reads whether a camera or a microphone runs; it never records anything and needs no permission.", bundle: .module)
+    public static let cameraOrMicrophoneNote = String(localized: "Col only reads whether a camera or a microphone runs; it never records anything and needs no permission.", bundle: .module)
     public static let profile = String(localized: "Profile", bundle: .module)
 
     /// "iStat Menus, CPU": an icon told apart from its app's other icons.
@@ -143,6 +143,6 @@ extension Strings {
     public static let drawer = String(localized: "Drawer", bundle: .module)
     public static let needsAProfile = String(localized: "Save a profile first, in Profiles.", bundle: .module)
     public static let needsADrawer = String(localized: "Make a drawer first, in Drawers.", bundle: .module)
-    public static let needsAnIcon = String(localized: "Tiroir sees no icon to show yet.", bundle: .module)
+    public static let needsAnIcon = String(localized: "Col sees no icon to show yet.", bundle: .module)
     public static let profileEndsNote = String(localized: "When the condition ends, the profile you had before comes back.", bundle: .module)
 }

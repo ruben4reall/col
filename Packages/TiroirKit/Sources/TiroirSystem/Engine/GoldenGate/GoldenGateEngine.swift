@@ -94,8 +94,8 @@ public final class GoldenGateEngine: MenuBarEngine {
     public func scan() async -> MenuBarSnapshot {
         refreshStatus()
         guard status == .ready || status == .needsApplicationsFolder else { return .empty }
-        let found = await icons.find()
         let agent = readAgent()
+        let found = Self.adding(agent, to: await icons.find())
         lastAgent = agent
         let running = Set(runningBundleIDs())
 
@@ -127,6 +127,31 @@ public final class GoldenGateEngine: MenuBarEngine {
         knownIcons = result
         pressers = presses
         return MenuBarSnapshot(icons: Array(result.values))
+    }
+
+    /// What apps say over Accessibility, completed with what MenuBarAgent draws. On macOS 27.2 most apps no longer
+    /// describe their icons themselves (no `AXExtrasMenuBar`): MenuBarAgent's slots are the only place they show, with
+    /// the app's process and its button. Apple's own items come from MenuBarAgent's own description, already found.
+    static func adding(_ agent: AgentLayout?, to found: [FoundIcon], ownPID: pid_t = getpid()) -> [FoundIcon] {
+        guard let agent else { return found }
+        let described = Set(found.map(\.app.bundleID))
+        var result = found
+        // Each display has its own bar with every app on it: an app's icons are counted on the first bar that has them.
+        var taken = Set<String>()
+        for display in agent.displays {
+            let apps = Set(display.items.filter { $0.pid != ownPID }.compactMap(\.bundleID)).subtracting(described).subtracting(taken)
+            taken.formUnion(apps)
+            for item in display.items where !item.isOverflowButton && item.pid != ownPID {
+                guard let bundleID = item.bundleID, apps.contains(bundleID) else { continue }
+                let running = NSRunningApplication(processIdentifier: item.pid)
+                let app = RunningApp(pid: item.pid, bundleID: bundleID, name: running?.localizedName ?? bundleID,
+                                     bundleURL: running?.bundleURL)
+                let element = item.element
+                result.append(FoundIcon(app: app, frame: item.frame, identifier: item.identifier, label: item.label,
+                                        press: { element?.press() ?? false }))
+            }
+        }
+        return result
     }
 
     // MARK: Hiding

@@ -251,6 +251,8 @@ public final class TahoeEngine: MenuBarEngine {
                 }
                 let moves = dividerWindow().map { LayoutPlanner.moves(plan: plan, snapshot: snapshot, dividerFrame: $0.frame) } ?? []
                 for (index, move) in moves.enumerated() {
+                    // The drawers were turned off meanwhile: every icon is back, nothing more moves.
+                    guard self.divider != nil else { break }
                     do {
                         try await carry(move, in: snapshot)
                     } catch EngineError.personIsBusy {

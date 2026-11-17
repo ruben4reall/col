@@ -2,14 +2,16 @@ import AppKit
 import SwiftUI
 import TiroirCore
 
-/// Hosts the welcome and Settings in dark windows. Tiroir shows in the Dock and the app switcher only while one of
-/// them is open, the way menu bar apps do.
+/// Hosts the welcome and the drawers' settings in dark windows. Col shows in the Dock and the app switcher while one of
+/// them is open, as it does for its own windows: it hears of them through `onWindowOpened` and `onWindowClosed`.
 @available(macOS 26, *)
 @MainActor
 public final class WindowPresenter: NSObject, NSWindowDelegate {
     private var welcome: NSWindow?
     private var settings: NSWindow?
     public var onWelcomeClosed: (() -> Void)?
+    public var onWindowOpened: (NSWindow) -> Void = { _ in }
+    public var onWindowClosed: (NSWindow) -> Void = { _ in }
     /// Shows windows without taking the keyboard or bringing Tiroir to the front (captures).
     public var isQuiet = false
 
@@ -71,7 +73,7 @@ public final class WindowPresenter: NSObject, NSWindowDelegate {
             window.orderFrontRegardless()
             return
         }
-        NSApp.setActivationPolicy(.regular)
+        onWindowOpened(window)
         window.makeKeyAndOrderFront(nil)
         NSApp.activate()
     }
@@ -83,9 +85,7 @@ public final class WindowPresenter: NSObject, NSWindowDelegate {
             onWelcomeClosed?()
         }
         if window === settings { settings = nil }
-        if welcome == nil, settings == nil, !isQuiet {
-            NSApp.setActivationPolicy(.accessory)
-        }
+        onWindowClosed(window)
     }
 }
 
@@ -129,9 +129,15 @@ public final class Toast {
         hideTask = Task { [weak self] in
             try? await Task.sleep(for: .seconds(3))
             guard !Task.isCancelled else { return }
-            self?.panel?.orderOut(nil)
-            self?.panel = nil
+            self?.hide()
         }
+    }
+
+    public func hide() {
+        hideTask?.cancel()
+        hideTask = nil
+        panel?.orderOut(nil)
+        panel = nil
     }
 }
 

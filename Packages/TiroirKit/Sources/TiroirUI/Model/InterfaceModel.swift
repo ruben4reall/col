@@ -58,12 +58,9 @@ public struct InterfaceActions {
     public var openIcon: (IconID, UUID?) -> Void = { _, _ in }
     public var propose: (SortStrategy) -> Layout = { _ in .empty }
     public var applySmartSort: (Layout, SortStrategy) async -> ApplyReport = { _, _ in .nothing }
+    /// Col's request: its prompt, then System Settings at the right list.
     public var requestAccessibility: () -> Void = {}
-    public var openAccessibilitySettings: () -> Void = {}
     public var moveToApplications: () -> Void = {}
-    public var setOpenAtLogin: (Bool) -> Void = { _ in }
-    public var setAutomaticUpdates: (Bool) -> Void = { _ in }
-    public var checkForUpdates: () -> Void = {}
     public var toggleFocus: () -> Void = {}
     public var toggleShowEverything: () -> Void = {}
     public var resetLayout: () -> Void = {}
@@ -71,8 +68,6 @@ public struct InterfaceActions {
     public var openSettings: (SettingsPane) -> Void = { _ in }
     public var finishWelcome: () -> Void = {}
     public var showInFinder: (IconID) -> Void = { _ in }
-    public var refreshMemory: () -> Void = {}
-    public var quit: () -> Void = {}
     /// Switches to a profile by hand; the menu bar follows at once.
     public var switchProfile: (UUID) -> Void = { _ in }
     public var exportSettings: () -> Void = {}
@@ -87,7 +82,7 @@ public struct InterfaceActions {
 /// Settings' sections.
 @available(macOS 26, *)
 public enum SettingsPane: String, CaseIterable, Identifiable, Sendable {
-    case layout, drawers, profiles, triggers, appearance, behavior, shortcuts, general, about
+    case layout, drawers, profiles, triggers, appearance, behavior, shortcuts, general
     public var id: String { rawValue }
 }
 
@@ -110,10 +105,6 @@ public final class InterfaceModel {
     public var isShowingEverything = false
     public var isApplying = false
     public var applyProgress: (done: Int, total: Int)?
-    public var memoryBytes: UInt64?
-    public var loginItemStatus: LoginItemStatus = .disabled
-    public var automaticUpdates = true
-    public var canCheckForUpdates = true
     public var accessibilityTrusted = false
     public var isInApplications = true
     public var appVersion = "1.0.0"

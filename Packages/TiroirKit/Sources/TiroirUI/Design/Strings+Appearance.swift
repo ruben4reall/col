@@ -16,7 +16,7 @@ extension Strings {
         }
     }
 
-    public static let splitNote = String(localized: "On a display without a notch, Split follows the app menus and the icons. Until Tiroir can measure them, the bar floats.", bundle: .module)
+    public static let splitNote = String(localized: "On a display without a notch, Split follows the app menus and the icons. Until Col can measure them, the bar floats.", bundle: .module)
 
     // MARK: Dark Mode
 

@@ -5,10 +5,7 @@ import Testing
 @Suite struct GuardTests {
     static let packageRoot = URL(fileURLWithPath: #filePath)
         .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-    /// The repository: the app shell lives in `App/`, two levels above the package.
-    static let repositoryRoot = packageRoot.deletingLastPathComponent().deletingLastPathComponent()
     static let privateAPIFile = "/Sources/TiroirSystem/PrivateAPI.swift"
-    static let updaterFile = "/App/SparkleUpdater.swift"
 
     static func sources(in directory: String, under root: URL = packageRoot) -> [(path: String, text: String)] {
         let base = root.appendingPathComponent(directory)
@@ -18,9 +15,9 @@ import Testing
             .compactMap { url in (try? String(contentsOf: url, encoding: .utf8)).map { (url.path, $0) } }
     }
 
-    /// Shipped code: the package's sources and the app shell.
+    /// Shipped code: the package's sources, which Col links.
     static var shipped: [(path: String, text: String)] {
-        sources(in: "Sources") + sources(in: "App", under: repositoryRoot)
+        sources(in: "Sources")
     }
 
     /// The frameworks the core may use: no interface, nothing that needs a window server.
@@ -41,7 +38,6 @@ import Testing
 
     @Test func thereAreSourcesToCheck() {
         #expect(Self.sources(in: "Sources").count >= 4)
-        #expect(!Self.sources(in: "App", under: Self.repositoryRoot).isEmpty)
     }
 
     @Test func theImportCheckSeesEveryKindOfImport() {
@@ -69,16 +65,16 @@ import Testing
         }
     }
 
-    /// The only connection Tiroir makes is Sparkle's update check.
-    @Test func noNetworkingOutsideTheUpdater() {
-        for file in Self.shipped where !file.path.hasSuffix(Self.updaterFile) {
+    /// The drawers never go online: Col's update check is Col's own, outside this package.
+    @Test func noNetworking() {
+        for file in Self.shipped {
             for forbidden in ["URLSession", "NWConnection", "import Network", "NSURLConnection", "CFNetwork", "WebSocket"] {
                 #expect(!file.text.contains(forbidden), "\(file.path) contains \(forbidden)")
             }
         }
     }
 
-    /// Tiroir never takes a picture of the screen or of the menu bar, and never asks for Screen Recording.
+    /// The drawers never take a picture of the screen or of the menu bar, and never ask for Screen Recording.
     @Test func noScreenCapture() {
         for file in Self.shipped {
             for forbidden in [
@@ -99,17 +95,14 @@ import Testing
         }
     }
 
-    @Test func onlyTheUpdaterUsesSparkle() {
-        for file in Self.shipped where file.text.contains("import Sparkle") {
-            #expect(file.path.hasSuffix(Self.updaterFile), "\(file.path) imports Sparkle")
+    /// Updates are Col's: the drawers never bring an updater of their own.
+    @Test func noUpdaterInTheDrawers() {
+        for file in Self.shipped {
+            #expect(!file.text.contains("import Sparkle"), "\(file.path) imports Sparkle")
         }
     }
 
-    @Test func theOnlyExternalDependencyIsSparkle() throws {
-        let project = try String(contentsOf: Self.repositoryRoot.appendingPathComponent("project.yml"), encoding: .utf8)
-        let urls = project.split(whereSeparator: \.isNewline).filter { $0.contains("url:") }
-        #expect(urls.count == 1)
-        #expect(urls.first?.contains("github.com/sparkle-project/Sparkle") == true)
+    @Test func theDrawersDependOnNoOtherPackage() throws {
         let manifest = try String(contentsOf: Self.packageRoot.appendingPathComponent("Package.swift"), encoding: .utf8)
         #expect(!manifest.contains(".package("), "TiroirKit must not depend on other packages")
     }
