@@ -21,6 +21,7 @@ public final class GoldenGateEngine: MenuBarEngine {
     private let clock: ClockZoneGuard
     private let isInApplications: @MainActor () -> Bool
     private let runningBundleIDs: @MainActor () -> [String]
+    private let frontmostBundleID: @MainActor () -> String?
     private let readAgent: @Sendable () -> AgentLayout?
     private let readSettled: @Sendable (AgentLayout?) async -> AgentLayout?
     private let pause: @Sendable (Duration) async -> Void
@@ -45,6 +46,7 @@ public final class GoldenGateEngine: MenuBarEngine {
         icons: IconSource, restriction: RestrictionControlling = MenuBarRestriction(),
         windows: StatusWindowSource = SystemStatusWindows(), clock: ClockZoneGuard = ClockZoneGuard(),
         isInApplications: @escaping @MainActor () -> Bool = { GoldenGateEngine.runsFromApplications() },
+        frontmostBundleID: @escaping @MainActor () -> String? = { NSWorkspace.shared.frontmostApplication?.bundleIdentifier },
         runningBundleIDs: @escaping @MainActor () -> [String] = {
             NSWorkspace.shared.runningApplications.compactMap(\.bundleIdentifier)
         },
@@ -58,6 +60,7 @@ public final class GoldenGateEngine: MenuBarEngine {
         self.clock = clock
         self.isInApplications = isInApplications
         self.runningBundleIDs = runningBundleIDs
+        self.frontmostBundleID = frontmostBundleID
         self.readAgent = readAgent
         self.readSettled = readSettled
         self.pause = pause
@@ -199,14 +202,17 @@ public final class GoldenGateEngine: MenuBarEngine {
         shown?.task.cancel()
         shown = nil
         if let presser = pressers[id], let agent = readAgent(), agent.drawnItem(of: bundleID) != nil {
+            Log.engine.notice("open: \(bundleID, privacy: .public) already shows")
             _ = presser()
             return
         }
+        Log.engine.notice("open: letting \(bundleID, privacy: .public) through")
         // Let the app through, wait for MenuBarAgent to lay the bar out, then press its icon.
         let before = readAgent()
         _ = await enforce(hiding: hiddenApps.subtracting([bundleID]))
         var agent = await waitUntilDrawn(bundleID, after: await readSettled(before))
         if agent?.drawnItem(of: bundleID) == nil {
+            Log.engine.notice("open: \(bundleID, privacy: .public) not drawn, \(Self.describe(agent, bundleID), privacy: .public); showing it alone")
             // Beside the notch, the icon may not fit: show only this app for the time its menu is open.
             let others = Set(runningBundleIDs()).subtracting(Self.alwaysAllowed).subtracting([bundleID])
             _ = await enforce(hiding: others.subtracting(Bundle.main.bundleIdentifier.map { [$0] } ?? []))
@@ -215,6 +221,7 @@ public final class GoldenGateEngine: MenuBarEngine {
         // MenuBarAgent's slot presses the icon where it is drawn; the app's own element is the fallback. What the press
         // opens is what the app raises on top of the windows it had just before.
         guard let item = agent?.drawnItem(of: bundleID) else {
+            Log.engine.error("open: \(bundleID, privacy: .public) never drawn, \(Self.describe(agent, bundleID), privacy: .public)")
             _ = await enforce(hiding: hiddenApps)
             throw EngineError.cannotOpen(id)
         }
@@ -222,10 +229,21 @@ public final class GoldenGateEngine: MenuBarEngine {
         if let agentPID = lastAgent?.agentPID { owners.insert(agentPID) }
         let raised = windows.raisedWindows(ownerPIDs: owners)
         guard item.element?.press() == true || pressers[id]?() == true else {
+            Log.engine.error("open: \(bundleID, privacy: .public) refused the press")
             _ = await enforce(hiding: hiddenApps)
             throw EngineError.cannotOpen(id)
         }
+        Log.engine.notice("open: pressed \(bundleID, privacy: .public) at x \(Int(item.frame.minX))")
         watchUntilClosed(bundleID: bundleID, owners: owners, opened: raised)
+    }
+
+    /// Where MenuBarAgent has an app's icon, for the log: its slot, or none.
+    static func describe(_ layout: AgentLayout?, _ bundleID: String) -> String {
+        guard let layout else { return "MenuBarAgent unread" }
+        let items = layout.displays.flatMap(\.items)
+        let slots = items.filter { $0.bundleID == bundleID }.map { "x \(Int($0.frame.minX)) w \(Int($0.frame.width))" }
+        let overflow = items.first(where: \.isOverflowButton).map { ", » at x \(Int($0.frame.minX))" } ?? ""
+        return (slots.isEmpty ? "no slot" : "slot " + slots.joined(separator: ", ")) + overflow
     }
 
     /// MenuBarAgent lays the bar out at once when the restriction changes, but an app let through draws its icon a
@@ -250,7 +268,10 @@ public final class GoldenGateEngine: MenuBarEngine {
             var closedSince: ContinuousClock.Instant?
             let started = ContinuousClock.now
             while !Task.isCancelled {
+                // A menu, a popover or a panel; or, seen with Google Drive on macOS 27.2, an ordinary window that makes
+                // the app the one in front: its icon stays while the app does.
                 let open = !self.windows.raisedWindows(ownerPIDs: owners).subtracting(before).isEmpty
+                    || self.frontmostBundleID() == bundleID
                 if open {
                     closedSince = nil
                 } else if let since = closedSince {
@@ -262,6 +283,7 @@ public final class GoldenGateEngine: MenuBarEngine {
                 await self.pause(.milliseconds(250))
             }
             guard !Task.isCancelled else { return }
+            Log.engine.notice("open: \(bundleID, privacy: .public) closed, hidden again")
             self.shown = nil
             _ = await self.enforce(hiding: self.hiddenApps)
         }

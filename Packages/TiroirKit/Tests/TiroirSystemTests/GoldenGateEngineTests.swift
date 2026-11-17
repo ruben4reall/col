@@ -97,7 +97,7 @@ final class NoWindows: StatusWindowSource, @unchecked Sendable {
         agent.restriction = restriction
         return GoldenGateEngine(
             icons: icons, restriction: restriction, windows: windows, clock: clock,
-            isInApplications: { inApplications }, runningBundleIDs: { self.running },
+            isInApplications: { inApplications }, frontmostBundleID: { nil }, runningBundleIDs: { self.running },
             readAgent: { agent.layout() }, readSettled: { _ in await MainActor.run { agent.layout() } }, pause: instant)
     }
 
@@ -216,6 +216,37 @@ final class NoWindows: StatusWindowSource, @unchecked Sendable {
         clock.stop()
     }
 
+    /// Seen with Google Drive on macOS 27.2: its icon opens an ordinary window, which brings the app in front. The icon
+    /// stays while the app does, and goes back once another app comes in front.
+    @Test func anIconThatOpensAWindowStaysWhileItsAppIsInFront() async throws {
+        let restriction = self.restriction
+        let agent = self.agent
+        final class Front: @unchecked Sendable { var bundleID: String? }
+        let front = Front()
+        let engine = GoldenGateEngine(
+            icons: icons, restriction: restriction, windows: windows, clock: clock,
+            isInApplications: { true }, frontmostBundleID: { front.bundleID }, runningBundleIDs: { self.running },
+            readAgent: { agent.layout() }, readSettled: { _ in await MainActor.run { agent.layout() } }, pause: instant)
+        agent.apps = ["com.google.drivefs", "com.protonmail.bridge", "com.anthropic.claudefordesktop"]
+        agent.restriction = restriction
+        engine.rehideDelay = 0
+        await engine.start()
+        _ = await engine.scan()
+        _ = await engine.apply(plan(hiding: ["com.google.drivefs", "com.protonmail.bridge"]))
+        icons.onPress = { bundleID in front.bundleID = bundleID }
+        try await engine.open(IconID(bundleID: "com.google.drivefs"), anchor: nil)
+        for _ in 0..<20 { await Task.yield() }
+        #expect(restriction.appliedAllowList?.contains("com.google.drivefs") == true, "still shown while Drive is in front")
+        front.bundleID = "com.apple.finder"
+        for _ in 0..<80 where restriction.appliedAllowList?.contains("com.google.drivefs") == true {
+            await Task.yield()
+            try await Task.sleep(for: .milliseconds(5))
+        }
+        #expect(restriction.appliedAllowList?.contains("com.google.drivefs") == false, "hidden again once another app is in front")
+        engine.restore()
+        clock.stop()
+    }
+
     /// Seen on macOS 27.2: MenuBarAgent lays the bar out at once, and the app let through draws its icon a moment later.
     /// The engine waits for it instead of giving up on a bar that only looked settled.
     @Test func anIconDrawnLateIsStillOpened() async throws {
@@ -225,7 +256,7 @@ final class NoWindows: StatusWindowSource, @unchecked Sendable {
         let reads = Reads()
         let engine = GoldenGateEngine(
             icons: icons, restriction: restriction, windows: windows, clock: clock,
-            isInApplications: { true }, runningBundleIDs: { self.running },
+            isInApplications: { true }, frontmostBundleID: { nil }, runningBundleIDs: { self.running },
             readAgent: {
                 // The first reads after the restriction lets Drive through do not show it yet.
                 MainActor.assumeIsolated {
