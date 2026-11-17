@@ -174,6 +174,9 @@ public struct DrawerView: View {
                 let index = flatRows.firstIndex(of: row)
                 IconTile(row: row, isSelected: index != nil && index == selection)
                     .onTapGesture { onOpen(row.id) }
+                    // VoiceOver and other assistive apps open the icon as a click would.
+                    .accessibilityAddTraits(.isButton)
+                    .accessibilityAction { onOpen(row.id) }
                     .contextMenu { contextMenu(for: row) }
             }
         }
@@ -210,6 +213,8 @@ public struct DrawerView: View {
                         IconTile(row: row, size: 28, isSelected: index != nil && index == selection, showsSubtitle: false)
                             .frame(width: Self.chestTileWidth)
                             .onTapGesture { onOpen(row.id) }
+                            .accessibilityAddTraits(.isButton)
+                            .accessibilityAction { onOpen(row.id) }
                             .contextMenu { contextMenu(for: row) }
                     }
                 }

@@ -77,6 +77,16 @@ public final class ExtrasReader: @unchecked Sendable {
         }
     }
 
+    static let overflowIndicator = "menu-bar-overflow-indicator"
+
+    /// On macOS 27.2 MenuBarAgent describes Apple's own items (the clock, Wi-Fi, Sound…) each inside a hosting view,
+    /// without identifier: the item itself, with its identifier and its name, is the view's one child.
+    static func menuExtra(in slot: AXElement) -> AXElement {
+        guard slot.role == kAXGroupRole, slot.identifier?.isEmpty ?? true, let item = slot.children.first,
+              item.role == kAXMenuBarItemRole else { return slot }
+        return item
+    }
+
     /// Reads one app. `answered` is false when the app did not reply in time.
     static func items(of app: RunningApp, timeout: Float) -> (items: [ExtraItem], answered: Bool) {
         let application = AXUIElementCreateApplication(app.pid)
@@ -87,7 +97,10 @@ public final class ExtrasReader: @unchecked Sendable {
             return ([], error != .cannotComplete)
         }
         let bar = AXElement(value as! AXUIElement) // checked by the type identifier above
-        let items = bar.children.compactMap { child -> ExtraItem? in
+        let items = bar.children.compactMap { slot -> ExtraItem? in
+            let child = Self.menuExtra(in: slot)
+            // macOS 27's » button, which shows the icons that do not fit: no icon of its own.
+            guard child.identifier != Self.overflowIndicator else { return nil }
             guard let frame = child.frame, frame.width > 0, frame.height > 0 else { return nil }
             let label = [child.descriptionText, child.title, child.help]
                 .compactMap { $0?.trimmingCharacters(in: .whitespacesAndNewlines) }

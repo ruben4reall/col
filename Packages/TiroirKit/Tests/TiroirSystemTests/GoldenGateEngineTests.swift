@@ -215,4 +215,47 @@ final class NoWindows: StatusWindowSource, @unchecked Sendable {
         #expect(restriction.appliedAllowList?.contains("com.google.drivefs") == false, "hidden again once the menu closed")
         clock.stop()
     }
+
+    /// Seen on macOS 27.2: MenuBarAgent lays the bar out at once, and the app let through draws its icon a moment later.
+    /// The engine waits for it instead of giving up on a bar that only looked settled.
+    @Test func anIconDrawnLateIsStillOpened() async throws {
+        let restriction = self.restriction
+        let agent = self.agent
+        final class Reads: @unchecked Sendable { var count = 0 }
+        let reads = Reads()
+        let engine = GoldenGateEngine(
+            icons: icons, restriction: restriction, windows: windows, clock: clock,
+            isInApplications: { true }, runningBundleIDs: { self.running },
+            readAgent: {
+                // The first reads after the restriction lets Drive through do not show it yet.
+                MainActor.assumeIsolated {
+                    // No restriction at all lets Drive through too.
+                    if restriction.appliedAllowList.map({ $0.contains("com.google.drivefs") }) ?? true { reads.count += 1 }
+                    let layout = agent.layout()
+                    guard reads.count < 4 else { return layout }
+                    var hidden = layout
+                    hidden.displays[0].items.removeAll { $0.bundleID == "com.google.drivefs" }
+                    return hidden
+                }
+            },
+            readSettled: { _ in
+                await MainActor.run {
+                    var layout = agent.layout()
+                    layout.displays[0].items.removeAll { $0.bundleID == "com.google.drivefs" }
+                    return layout
+                }
+            },
+            pause: instant)
+        agent.apps = ["com.google.drivefs", "com.protonmail.bridge", "com.anthropic.claudefordesktop"]
+        agent.restriction = restriction
+        engine.rehideDelay = 0
+        await engine.start()
+        _ = await engine.scan()
+        _ = await engine.apply(plan(hiding: ["com.google.drivefs"]))
+        try await engine.open(IconID(bundleID: "com.google.drivefs"), anchor: nil)
+        #expect(icons.pressed == ["com.google.drivefs"])
+        #expect(restriction.appliedAllowList.map { $0.contains("com.protonmail.bridge") } ?? true, "no need to hide the others")
+        engine.restore()
+        clock.stop()
+    }
 }

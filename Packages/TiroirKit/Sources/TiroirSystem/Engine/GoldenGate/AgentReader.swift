@@ -64,11 +64,12 @@ public struct AgentLayout: Sendable {
 public enum AgentReader {
     public static let agentBundleID = "com.apple.MenuBarAgent"
 
-    /// Reads MenuBarAgent, or nil when it is not running (macOS 26) or refuses (no Accessibility).
-    public static func read() -> AgentLayout? {
+    /// Reads MenuBarAgent, or nil when it is not running (macOS 26) or refuses (no Accessibility). `timeout` caps each
+    /// question to MenuBarAgent, in seconds.
+    public static func read(timeout: Float = 1) -> AgentLayout? {
         guard let agent = NSRunningApplication.runningApplications(withBundleIdentifier: agentBundleID).first else { return nil }
         let agentPID = agent.processIdentifier
-        let application = AXElement.application(agentPID, timeout: 1)
+        let application = AXElement.application(agentPID, timeout: timeout)
         guard let windows: [AXUIElement] = application.attribute(kAXWindowsAttribute) else { return nil }
         let displays = barsOnScreen(windows.map(AXElement.init)).map { window -> AgentLayout.Display in
             let items = window.children.compactMap { slot -> AgentLayout.Item? in

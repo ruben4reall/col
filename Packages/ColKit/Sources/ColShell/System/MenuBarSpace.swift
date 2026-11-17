@@ -1,5 +1,6 @@
 import AppKit
 import ApplicationServices
+import TiroirSystem
 
 /// Where the menu bar's items are, so the island's wings never cover them. Coordinates are global, top-left, as
 /// Accessibility and the window server use.
@@ -66,6 +67,14 @@ enum MenuBarSpace {
                 edge = min(edge ?? frame.minX, frame.minX)
             }
         }
+        // macOS 27.2 describes only Apple's own items in MenuBarAgent's extras menu bar: every other app's icon, and
+        // Col's drawers, show only in its windows, one slot per icon.
+        if owners.first?.bundleIdentifier == menuBarAgentID, #available(macOS 26, *), let layout = AgentReader.read(timeout: 0.1) {
+            let displays = layout.displays.map { display in
+                (frame: display.frame, items: display.items.map { (frame: $0.frame, isOverflow: $0.isOverflowButton) })
+            }
+            if let drawn = drawnLeftEdge(of: displays, after: x, top: top, span: span) { edge = min(edge ?? drawn, drawn) }
+        }
         // Since macOS 27 MenuBarAgent draws Col's items too; before, they are Col's own windows.
         if owners.first?.bundleIdentifier != menuBarAgentID {
             let primaryHeight = NSScreen.screens.first?.frame.height ?? 0
@@ -74,6 +83,23 @@ enum MenuBarSpace {
                 let itemTop = primaryHeight - item.maxY
                 guard item.minX > x, span.contains(item.minX), abs(itemTop - top) < 4 else { continue }
                 edge = min(edge ?? item.minX, item.minX)
+            }
+        }
+        return edge
+    }
+
+    /// The left edge of the first icon MenuBarAgent draws right of `x` on the bar whose top is at `top`: icons that do
+    /// not fit beside the notch wait undrawn, stacked left of the » button, which is drawn.
+    nonisolated static func drawnLeftEdge(of displays: [(frame: CGRect, items: [(frame: CGRect, isOverflow: Bool)])], after x: CGFloat,
+                                          top: CGFloat, span: ClosedRange<CGFloat>) -> CGFloat? {
+        var edge: CGFloat?
+        for display in displays where abs(display.frame.minY - top) < 4 && span.contains(display.frame.midX) {
+            let overflow = display.items.first(where: \.isOverflow)?.frame.minX
+            for item in display.items where item.frame.width > 0 {
+                let minX = item.frame.minX
+                if let overflow, !item.isOverflow, minX < overflow { continue }
+                guard minX > x, span.contains(minX) else { continue }
+                edge = min(edge ?? minX, minX)
             }
         }
         return edge

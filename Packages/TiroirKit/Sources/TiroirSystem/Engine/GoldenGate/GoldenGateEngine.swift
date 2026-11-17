@@ -205,12 +205,12 @@ public final class GoldenGateEngine: MenuBarEngine {
         // Let the app through, wait for MenuBarAgent to lay the bar out, then press its icon.
         let before = readAgent()
         _ = await enforce(hiding: hiddenApps.subtracting([bundleID]))
-        var agent = await readSettled(before)
+        var agent = await waitUntilDrawn(bundleID, after: await readSettled(before))
         if agent?.drawnItem(of: bundleID) == nil {
             // Beside the notch, the icon may not fit: show only this app for the time its menu is open.
             let others = Set(runningBundleIDs()).subtracting(Self.alwaysAllowed).subtracting([bundleID])
             _ = await enforce(hiding: others.subtracting(Bundle.main.bundleIdentifier.map { [$0] } ?? []))
-            agent = await readSettled(agent)
+            agent = await waitUntilDrawn(bundleID, after: await readSettled(agent))
         }
         // MenuBarAgent's slot presses the icon where it is drawn; the app's own element is the fallback. What the press
         // opens is what the app raises on top of the windows it had just before.
@@ -226,6 +226,21 @@ public final class GoldenGateEngine: MenuBarEngine {
             throw EngineError.cannotOpen(id)
         }
         watchUntilClosed(bundleID: bundleID, owners: owners, opened: raised)
+    }
+
+    /// MenuBarAgent lays the bar out at once when the restriction changes, but an app let through draws its icon a
+    /// moment later: about half a second on macOS 27.2, longer for a busy app. Reads until the icon is drawn twice at
+    /// the same place, for 1.5 seconds at most.
+    private func waitUntilDrawn(_ bundleID: String, after settled: AgentLayout?, attempts: Int = 12) async -> AgentLayout? {
+        var last = settled
+        var previous = settled?.drawnItem(of: bundleID)?.frame
+        for _ in 0..<attempts {
+            if let frame = last?.drawnItem(of: bundleID)?.frame, frame == previous { return last }
+            previous = last?.drawnItem(of: bundleID)?.frame
+            await pause(.milliseconds(120))
+            last = readAgent() ?? last
+        }
+        return last
     }
 
     private func watchUntilClosed(bundleID: String, owners: Set<pid_t>, opened before: Set<UInt32>) {
