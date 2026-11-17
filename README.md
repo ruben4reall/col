@@ -192,6 +192,10 @@ colctl widget set temp --title "Living room" --value 21.5 --unit °C --symbol th
 Beside the notch there is room for about a dozen icons, and the rest vanish behind it. Turn on Settings, Menu Bar,
 Tidy the menu bar into drawers, and Col sorts them for you.
 
+<p align="center">
+  <img src="docs/images/drawers.webp" alt="The All drawer of the menu bar: twelve icons sorted into Files and Cloud, Security and VPN, Messages, AI, Developer and Other" width="456">
+</p>
+
 - **Drawers.** Each drawer is one icon in the menu bar. A click opens it right under it, and a click on an app opens
   that app's own menu, as if its icon had been there all along. The clock, Control Center, the battery, Wi-Fi and
   Sound stay in view.

@@ -966,7 +966,7 @@ public final class IslandController {
             glance.pomodoro.showDemo(Pomodoro(phase: .focus, plan: .standard, starting: Date().addingTimeInterval(-9 * 60)), completed: 2)
         case "privacy":
             // An app listening, as when you dictate to an assistant: `-ColDemoApp` names the app whose icon shows.
-            let path = UserDefaults.standard.string(forKey: "ColDemoApp") ?? "/System/Applications/Voice Memos.app"
+            let path = UserDefaults.standard.string(forKey: "ColDemoApp") ?? "/System/Applications/FaceTime.app"
             var rect = CGRect(x: 0, y: 0, width: 64, height: 64)
             islandView.compact.register(NSWorkspace.shared.icon(forFile: path).cgImage(forProposedRect: &rect, context: nil, hints: nil), for: "privacy.app")
             if let presentation = PrivacyIndicator.presentation(microphone: true, camera: false, muted: false, appIcon: true) {
