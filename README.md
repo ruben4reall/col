@@ -73,10 +73,11 @@ until version 2.0.
   network push them too, each with a token of its own; and a widget can read any web address that answers JSON.
 - **A tidy menu bar.** One switch tidies the icons of your menu bar into drawers, each one a single icon, and gives
   the island more room beside the notch. Smart Sort proposes the drawers; search finds any icon.
-- **Never in the way.** The wings never cover a menu or a menu bar icon, measured again the moment an icon comes or
-  goes (macOS 27's » button included), as wide as you choose. The island steps aside in full screen and in front of
-  the apps you pick. On a Mac without a notch, or an external display, it is a pill in the menu bar, Col's own notch,
-  or a capsule below the menu bar.
+- **Never in the way.** Each wing is only as wide as what it shows, and never covers a menu or a menu bar icon,
+  measured again the moment an icon comes or goes (macOS 27's » button included). When the menu bar leaves no room
+  beside the notch, the activity slips into a slim strip beneath the camera, then tucks back into the notch. The
+  island steps aside in full screen and in front of the apps you pick. On a Mac without a notch, or an external
+  display, it is a pill in the menu bar, Col's own notch, or a capsule below the menu bar.
 - **Liquid Glass.** On macOS 26 the open island stays black where it meets the notch and melts into glass toward its
   lower edge: Liquid (a clear pane that bends the desktop behind it), Transparent, Tinted or all Black, your choice,
   as for macOS's own glass.
@@ -191,6 +192,10 @@ colctl widget set temp --title "Living room" --value 21.5 --unit °C --symbol th
 Beside the notch there is room for about a dozen icons, and the rest vanish behind it. Turn on Settings, Menu Bar,
 Tidy the menu bar into drawers, and Col sorts them for you.
 
+<p align="center">
+  <img src="docs/images/drawers.webp" alt="The All drawer of the menu bar: twelve icons sorted into Files and Cloud, Security and VPN, Messages, AI, Developer and Other" width="456">
+</p>
+
 - **Drawers.** Each drawer is one icon in the menu bar. A click opens it right under it, and a click on an app opens
   that app's own menu, as if its icon had been there all along. The clock, Control Center, the battery, Wi-Fi and
   Sound stay in view.
@@ -215,7 +220,7 @@ Each one only if a module you chose needs it:
 
 - **Device Control and Data Access** (Accessibility before macOS 27), to take over the volume and brightness keys and
   to measure the menu bar, so the island never covers it, and, if you turn them on, for the drawers to see which app
-  owns each icon and open it. Without it, the wings stay narrow and every icon stays in the menu bar.
+  owns each icon and open it. Without it, activities show beneath the camera and every icon stays in the menu bar.
 - **Calendars and Reminders**, for the agenda.
 - **Bluetooth**, for the battery and the model of your headphones.
 - **Camera**, only while the mirror is open.
@@ -275,8 +280,8 @@ opens and thrown away as it closes, and the Liquid Glass under them only draws w
   or a capsule below the menu bar (Settings, Appearance, Shape).
 - **The MacBook Pro with Apple's own Dynamic Island** (OLED, November 2026): its top already holds Apple's island.
   Choose Below the menu bar in Settings, Appearance, Shape, so Col floats under it. Not tested on that Mac yet.
-- Without Device Control and Data Access (Accessibility before macOS 27), Col cannot see the menu bar, and its wings
-  stay narrow so they never cover what they cannot see.
+- Without Device Control and Data Access (Accessibility before macOS 27), Col cannot see the menu bar, so activities
+  show beneath the camera rather than over what it cannot see.
 
 ## Private macOS APIs
 

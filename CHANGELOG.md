@@ -2,7 +2,7 @@
 
 Each release's section is what Col's update window and the GitHub release show. Dates are in ISO format.
 
-## 3.1.0 (unreleased)
+## 3.1.0 (2026-11-17)
 
 - **A tidy menu bar**: one switch in Settings, Menu Bar, tidies the icons of your menu bar into drawers, each one a
   single icon, and gives the island more room beside the notch. Smart Sort proposes the drawers the first time; a
@@ -26,7 +26,8 @@ Each release's section is what Col's update window and the GitHub release show. 
   stays in sight.
 - **Fixed**: Col read the menus of the frontmost app even when an alert agent without menus came to the front, and
   could then spread its wings over another app's menus. It now reads the app that owns the menu bar, measures again
-  whenever that app changes or Accessibility is granted, and treats a menu bar it cannot read as full.
+  whenever that app changes or Accessibility is granted, and treats a menu bar it cannot read as full. On macOS 27.2
+  it also counts every app's icon beside the notch, where it used to see only Apple's own.
 
 ## 3.0.0 (2026-11-16)
 

@@ -966,7 +966,7 @@ public final class IslandController {
             glance.pomodoro.showDemo(Pomodoro(phase: .focus, plan: .standard, starting: Date().addingTimeInterval(-9 * 60)), completed: 2)
         case "privacy":
             // An app listening, as when you dictate to an assistant: `-ColDemoApp` names the app whose icon shows.
-            let path = UserDefaults.standard.string(forKey: "ColDemoApp") ?? "/System/Applications/Voice Memos.app"
+            let path = UserDefaults.standard.string(forKey: "ColDemoApp") ?? "/System/Applications/FaceTime.app"
             var rect = CGRect(x: 0, y: 0, width: 64, height: 64)
             islandView.compact.register(NSWorkspace.shared.icon(forFile: path).cgImage(forProposedRect: &rect, context: nil, hints: nil), for: "privacy.app")
             if let presentation = PrivacyIndicator.presentation(microphone: true, camera: false, muted: false, appIcon: true) {
@@ -1083,10 +1083,11 @@ public final class IslandController {
         }
     }
 
-    /// An ambient or running activity beneath the camera shows for a few seconds when it arrives, then tucks into the
-    /// notch, where hovering or opening the island finds it. What needs the user, and brief displays, stay.
+    /// An ambient or running activity sent beneath the camera for want of room shows for a few seconds when it
+    /// arrives, then tucks into the notch, where hovering or opening the island finds it. What needs the user, brief
+    /// displays, and every activity of someone who chose to keep them beneath the camera, stay.
     private func tuckedBeneath(_ wings: Wings, current: Activity?, now: Date) -> Wings {
-        guard wings.beneath, let current, current.priority < .alert else {
+        guard wings.beneath, !Preferences.activitiesBeneath, let current, current.priority < .alert else {
             if !wings.beneath { beneathSince = nil }
             beneathTimer?.cancel()
             return wings

@@ -17,7 +17,7 @@ DESKTOP="${COL_DESKTOP:?set COL_DESKTOP to a 3024 x 1964 PNG of a macOS desktop}
 OUT=.build/site-shots
 TMP=$(mktemp -d)
 touch "$TMP/start"
-PARTS=" ${COL_PARTS:-island films textedit welcome settings readme} "
+PARTS=" ${COL_PARTS:-island drawers films textedit welcome settings readme} "
 part() { [[ "$PARTS" == *" $1 "* ]]; }
 mkdir -p "$OUT"
 [ -d "$APP" ] || scripts/build.sh >/dev/null
@@ -216,6 +216,9 @@ sleep 0.8; shoot island whats-new
 run -ColNoNotch YES -floatingStyle pill; sleep 3; shoot island pill-rest
 player; sleep 2
 player; run; sleep 3; shoot island music-compact
+# Col 3.1: when the menu bar leaves no room beside the notch, the activity goes beneath the camera.
+player; run -activitiesBeneath YES; sleep 3; shoot island beneath-music
+run -activitiesBeneath YES -ColDemo privacy; sleep 2; shoot island beneath-privacy
 # A short line, whole in the wing, whatever room the menu bar leaves it.
 player; LYRICS_CLOSED=YES run; sleep 4; shoot island lyrics-compact
 player; run -ColOpen YES; sleep 3; shoot island home-open
@@ -323,16 +326,31 @@ for pane in appearance pages prompter aiApps; do player; run -ColSettings "$pane
 run -ColSettings connect; sleep 1; widgets; sleep 2; front; shoot window settings-connect
 fi
 
+if part drawers; then
+# Col 3.1: the menu bar's drawers, in demo mode (generic icons, nothing of this Mac's menu bar), the All drawer open
+# over the website's desktop.
+run -tidiesMenuBar YES -ColDrawersDemo YES -ColDrawersOpen all -ColDrawersQuiet YES -ColDrawersBackdrop "$DESKTOP"; sleep 6
+line=$(windows | awk '$2==3' | head -1)
+if [ -n "$line" ]; then
+  screencapture -x -l "${line%% *}" "$OUT/drawers.png" && echo "  drawers"
+else
+  echo "  drawers: no window"
+fi
+fi
+
 echo "Website and README images:"
 mkdir -p site/assets/island site/assets/app site/assets/film site/assets/macos docs/images
 # Only what this run photographed.
 taken() { [ "$OUT/$1.png" -nt "$TMP/start" ]; }
-for s in rest music-compact lyrics-compact home-open airpods-pro airpods-max push-build agent-request claude-working agents-compact \
+for s in rest music-compact beneath-music beneath-privacy lyrics-compact home-open airpods-pro airpods-max push-build agent-request claude-working agents-compact \
   live-agents ai-page ask prompter shelf-drop shelf-one clipboard tools size-compact size-large \
   glass-liquid glass-transparent glass-tinted glass-black meeting-compact meeting-live weather devices widgets whats-new \
   pill-rest pill-music pill-open drawn-music below-music agent-question agent-plan lock-lyrics desktop-lyrics; do
   taken "$s" && cwebp -quiet -q 90 -alpha_q 100 -exact "$OUT/$s.png" -o "site/assets/island/$s.webp"
 done
+mkdir -p site/assets/menubar
+taken drawers && cwebp -quiet -q 90 -alpha_q 100 -exact "$OUT/drawers.png" -o site/assets/menubar/drawers.webp \
+  && cp site/assets/menubar/drawers.webp docs/images/drawers.webp
 for s in welcome-discover welcome-island welcome-gestures welcome-ready settings-appearance settings-pages settings-prompter settings-aiApps \
   settings-connect; do
   taken "$s" && cwebp -quiet -q 88 -alpha_q 100 "$OUT/$s.png" -o "site/assets/app/$s.webp"
