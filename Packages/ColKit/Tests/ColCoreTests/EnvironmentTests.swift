@@ -97,3 +97,61 @@ struct WingBudgetTests {
         #expect(WingBudget.allowed(requested: 80, left: 60, right: 200, overhang: 10) == Wings(50))
     }
 }
+
+@Suite struct ActivityPlacementTests {
+    let strip = Wings.beneath(leading: 15, trailing: 40)
+
+    @Test func besideTheCameraWhenTheMenuBarLeavesRoom() {
+        #expect(WingBudget.placement(leading: 32, trailing: 32, beneath: strip, left: 120, right: 90, canHangBeneath: true) == Wings(32))
+        // One side only still keeps a wing there.
+        #expect(WingBudget.placement(leading: 32, trailing: 32, beneath: strip, left: 120, right: 10, canHangBeneath: true) == Wings(leading: 32, trailing: 0))
+    }
+
+    @Test func beneathWhenThereIsNoRoomOrNoWayToSee() {
+        // Menus against the notch on both sides, as with a browser whose menus run past the notch.
+        #expect(WingBudget.placement(leading: 32, trailing: 32, beneath: strip, left: 2.5, right: 1.5, canHangBeneath: true) == strip)
+        // Without Accessibility the menu bar cannot be read: beneath, never over what Col cannot see.
+        #expect(WingBudget.placement(leading: 32, trailing: 32, beneath: strip, left: nil, right: nil, readable: false, canHangBeneath: true) == strip)
+        // Asked for in Settings.
+        #expect(WingBudget.placement(leading: 32, trailing: 32, beneath: strip, left: 200, right: 200, canHangBeneath: true, prefersBeneath: true) == strip)
+    }
+
+    @Test func aSideThatCouldNotBeMeasuredDoesNotLimitItsWing() {
+        #expect(WingBudget.placement(leading: 32, trailing: 32, beneath: strip, left: nil, right: 90, canHangBeneath: true) == Wings(32))
+    }
+
+    @Test func aPillKeepsANarrowWingWhenItCannotSee() {
+        let wings = WingBudget.placement(leading: 80, trailing: 80, beneath: strip, left: nil, right: nil, readable: false, canHangBeneath: false)
+        #expect(wings == Wings(WingBudget.unknownRoom))
+        #expect(WingBudget.placement(leading: 80, trailing: 80, beneath: strip, left: 10, right: 10, canHangBeneath: false).isEmpty)
+    }
+
+    @Test func nothingToShowShowsNothing() {
+        #expect(WingBudget.placement(leading: 0, trailing: 0, beneath: strip, left: nil, right: nil, readable: false, canHangBeneath: true) == .none)
+    }
+
+    @Test func eachWingIsAsWideAsItsOwnItem() {
+        // An icon beside a line of text: the icon's wing stays narrow.
+        #expect(WingBudget.allowed(leading: 32, trailing: 100, left: 200, right: 200) == Wings(leading: 32, trailing: 100))
+        // The text side shrinks to its room, the icon keeps its own.
+        #expect(WingBudget.allowed(leading: 32, trailing: 100, left: 200, right: 60) == Wings(leading: 32, trailing: 60))
+        // A single item takes a single wing.
+        #expect(WingBudget.allowed(leading: 0, trailing: 32, left: 200, right: 200) == Wings(leading: 0, trailing: 32))
+        // Its own side blocked, it moves to the other.
+        #expect(WingBudget.allowed(leading: 0, trailing: 32, left: 200, right: 5) == Wings(leading: 32, trailing: 0))
+        // One item cannot have its side: a single wing shows the value, at the value's width.
+        #expect(WingBudget.allowed(leading: 100, trailing: 32, left: 50, right: 5) == Wings(leading: 32, trailing: 0))
+        #expect(WingBudget.allowed(leading: 32, trailing: 54, left: 200, right: 10) == Wings(leading: 54, trailing: 0))
+        #expect(WingBudget.allowed(leading: 32, trailing: 32, left: 5, right: 5).isEmpty)
+    }
+
+    @Test func smallItemsKeepTheirWingOnASmallMenuBar() {
+        // A 24-point menu bar: an icon asks for 28 points, under the minimum, and still gets its wing.
+        #expect(WingBudget.allowed(leading: 28, trailing: 28, left: 200, right: 200) == Wings(28))
+        #expect(WingBudget.allowed(requested: 28, left: 200, right: 200) == Wings(28))
+        // A short count beside an icon keeps its own short wing.
+        #expect(WingBudget.allowed(leading: 32, trailing: 23, left: 200, right: 200) == Wings(leading: 32, trailing: 23))
+        // But a wing squeezed below what it holds is no wing.
+        #expect(WingBudget.allowed(leading: 28, trailing: 28, left: 20, right: 20).isEmpty)
+    }
+}

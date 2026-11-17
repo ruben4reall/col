@@ -254,18 +254,29 @@ struct GlanceSystemTests {
 
     @Test func aMutedMicrophoneShowsInRed() {
         let red = CompactItem.symbol("mic.slash.fill", tint: .red)
+        let orange = CompactItem.symbol("mic.fill", tint: .orange)
+        let video = CompactItem.symbol("video.fill", tint: .green)
         #expect(PrivacyIndicator.presentation(microphone: false, camera: false, muted: false, appIcon: false) == nil)
-        // Muted while nobody listens: the island still says so.
-        #expect(PrivacyIndicator.presentation(microphone: false, camera: false, muted: true, appIcon: false) == CompactPresentation(leading: red))
+        // Muted while nobody listens: the island still says so, on the side a single wing keeps.
+        #expect(PrivacyIndicator.presentation(microphone: false, camera: false, muted: true, appIcon: false) == CompactPresentation(trailing: red))
         #expect(PrivacyIndicator.presentation(microphone: true, camera: false, muted: true, appIcon: true)
-            == CompactPresentation(leading: red, trailing: .image(key: "privacy.app")))
+            == CompactPresentation(leading: .image(key: "privacy.app"), trailing: red))
         #expect(PrivacyIndicator.presentation(microphone: true, camera: true, muted: true, appIcon: true)
-            == CompactPresentation(leading: .symbol("video.fill", tint: .green), trailing: red))
-        // As before when nothing is muted.
+            == CompactPresentation(leading: video, trailing: red))
+        // The app that listens on the left, the microphone on the right.
         #expect(PrivacyIndicator.presentation(microphone: true, camera: false, muted: false, appIcon: true)
-            == CompactPresentation(leading: .symbol("mic.fill", tint: .orange), trailing: .image(key: "privacy.app")))
+            == CompactPresentation(leading: .image(key: "privacy.app"), trailing: orange))
         #expect(PrivacyIndicator.presentation(microphone: false, camera: true, muted: false, appIcon: false)
-            == CompactPresentation(leading: .symbol("video.fill", tint: .green)))
+            == CompactPresentation(trailing: video))
+    }
+
+    @Test func dictationThatStartsAndStopsIsAnnouncedOnce() {
+        let now = Date(timeIntervalSinceReferenceDate: 1_000_000)
+        #expect(PrivacyIndicator.fresh(["com.anthropic.claude"], announced: [:], now: now) == ["com.anthropic.claude"])
+        let announced = ["com.anthropic.claude": now]
+        #expect(PrivacyIndicator.fresh(["com.anthropic.claude"], announced: announced, now: now.addingTimeInterval(30)).isEmpty)
+        #expect(PrivacyIndicator.fresh(["com.anthropic.claude", "camera"], announced: announced, now: now.addingTimeInterval(30)) == ["camera"])
+        #expect(PrivacyIndicator.fresh(["com.anthropic.claude"], announced: announced, now: now.addingTimeInterval(16 * 60)) == ["com.anthropic.claude"])
     }
 
     @Test func aRankingSavedBeforeMeetingsFindsThemBesideTheirNeighbour() {

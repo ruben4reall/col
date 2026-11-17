@@ -27859,70 +27859,6 @@
         }
       }
     },
-    "Which app is listening or filming.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Quelle app écoute ou filme."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Welche App zuhört oder filmt."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Welke app luistert of filmt."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Quale app sta ascoltando o riprendendo."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Qué app está escuchando o grabando."
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Qual app está ouvindo ou filmando."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "どのアプリが音声を聞いているか、撮影しているか。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "어떤 앱이 듣거나 촬영하고 있는지 표시합니다."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "哪个 App 正在聆听或拍摄。"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "哪個 App 正在聆聽或拍攝。"
-          }
-        }
-      }
-    },
     "While the prompter is open, Page Down moves on a line, or starts a paused take, and Page Up goes back. The rest of the time these keys work as usual.": {
       "localizations": {
         "fr": {
@@ -30867,70 +30803,6 @@
         }
       }
     },
-    "Lets Col take over the volume and brightness keys, and keep its wings clear of the menus and icons of the menu bar. Without it, macOS shows its own display too, and the wings guess.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Permet à Col de prendre en charge les touches volume et luminosité, et de garder ses ailes à l’écart des menus et des icônes de la barre des menus. Sans elle, macOS affiche aussi le sien, et les ailes devinent."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Damit kann Col die Lautstärke- und Helligkeitstasten übernehmen und seine Flügel von den Menüs und Symbolen der Menüleiste fernhalten. Ohne diese Berechtigung zeigt macOS zusätzlich seine eigene Anzeige, und die Flügel müssen raten."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hiermee kan Col de volume- en helderheidstoetsen overnemen en zijn vleugels weghouden van de menu’s en symbolen in de menubalk. Zonder deze toestemming toont macOS ook zijn eigen weergave en moeten de vleugels gokken."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Permette a Col di gestire i tasti del volume e della luminosità, e di tenere le sue ali lontane dai menu e dalle icone della barra dei menu. Senza questa autorizzazione, macOS mostra anche il proprio indicatore, e le ali vanno a intuito."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Permite a Col encargarse de las teclas de volumen y brillo, y mantener sus alas lejos de los menús e iconos de la barra de menús. Sin este permiso, macOS también muestra su propio indicador, y las alas tienen que adivinar."
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Permite que o Col assuma as teclas de volume e brilho e mantenha as asas longe dos menus e ícones da barra de menus. Sem essa permissão, o macOS também mostra o próprio indicador, e as asas precisam adivinhar."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Colが音量キーと明るさキーを引き継ぎ、ウイングがメニューバーのメニューやアイコンに重ならないようにします。許可しないと、macOS独自の表示も出てしまい、ウイングの幅は推測になります。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Col이 음량 및 밝기 키를 대신 처리하고, 날개가 메뉴 막대의 메뉴와 아이콘을 가리지 않도록 합니다. 이 권한이 없으면 macOS 자체의 표시도 함께 나타나고, 날개의 위치는 추정됩니다."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "让 Col 接管音量和亮度键，并让两翼避开菜单栏中的菜单和图标。没有此权限，macOS 也会显示它自己的指示，两翼的位置只能靠推测。"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "讓 Col 接管音量和亮度鍵，並讓兩翼避開選單列中的選單和圖像。沒有此權限，macOS 也會顯示它自己的指示，兩翼的位置只能靠推測。"
-          }
-        }
-      }
-    },
     "Narrow": {
       "localizations": {
         "fr": {
@@ -31311,134 +31183,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "謝謝：兩翼現在會避開所有選單和圖像。"
-          }
-        }
-      }
-    },
-    "With Device Control and Data Access, its wings never cover a menu or an icon. Until then they stay narrow.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Avec Contrôle de l’appareil et accès aux données, ses ailes ne couvrent jamais un menu ni une icône. D’ici là, elles restent étroites."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mit „Gerätesteuerung und Datenzugriff“ verdecken seine Flügel nie ein Menü oder ein Symbol. Bis dahin bleiben sie schmal."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Met Apparaatbeheer en gegevenstoegang bedekken de vleugels nooit een menu of een symbool. Tot die tijd blijven ze smal."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Con Controllo del dispositivo e accesso ai dati, le sue ali non coprono mai un menu o un’icona. Fino ad allora restano strette."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Con Control de dispositivos y acceso a datos, sus alas nunca tapan un menú ni un icono. Hasta entonces, se mantienen estrechas."
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Com Controle do Dispositivo e Acesso a Dados, as asas nunca cobrem um menu ou um ícone. Até lá, elas ficam estreitas."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "「デバイスの制御とデータへのアクセス」を許可すると、ウイングがメニューやアイコンを覆うことはありません。それまでは狭いままです。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "기기 제어 및 데이터 접근 권한이 있으면 날개가 메뉴나 아이콘을 가리지 않습니다. 그 전까지는 좁게 유지됩니다."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "获得“设备控制和数据访问”权限后，两翼绝不会遮挡菜单或图标。在此之前，两翼会保持较窄。"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "取得「裝置控制和資料取用」權限後，兩翼絕不會遮擋選單或圖像。在此之前，兩翼會保持較窄。"
-          }
-        }
-      }
-    },
-    "With Accessibility, its wings never cover a menu or an icon. Until then they stay narrow.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Avec l’Accessibilité, ses ailes ne couvrent jamais un menu ni une icône. D’ici là, elles restent étroites."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mit „Bedienungshilfen“ verdecken seine Flügel nie ein Menü oder ein Symbol. Bis dahin bleiben sie schmal."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Met Toegankelijkheid bedekken de vleugels nooit een menu of een symbool. Tot die tijd blijven ze smal."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Con Accessibilità, le sue ali non coprono mai un menu o un’icona. Fino ad allora restano strette."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Con Accesibilidad, sus alas nunca tapan un menú ni un icono. Hasta entonces, se mantienen estrechas."
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Com Acessibilidade, as asas nunca cobrem um menu ou um ícone. Até lá, elas ficam estreitas."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "アクセシビリティを許可すると、ウイングがメニューやアイコンを覆うことはありません。それまでは狭いままです。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "손쉬운 사용 권한이 있으면 날개가 메뉴나 아이콘을 가리지 않습니다. 그 전까지는 좁게 유지됩니다."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "获得“辅助功能”权限后，两翼绝不会遮挡菜单或图标。在此之前，两翼会保持较窄。"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "取得「輔助使用」權限後，兩翼絕不會遮擋選單或圖像。在此之前，兩翼會保持較窄。"
           }
         }
       }
@@ -48655,6 +48399,518 @@
           "stringUnit": {
             "state": "translated",
             "value": "天氣和番茄鐘"
+          }
+        }
+      }
+    },
+    "Always show activities beneath the camera": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toujours afficher les activités sous la caméra"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktivitäten immer unter der Kamera anzeigen"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activiteiten altijd onder de camera tonen"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostra sempre le attività sotto la videocamera"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar siempre las actividades bajo la cámara"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sempre mostrar as atividades abaixo da câmera"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アクティビティを常にカメラの下に表示"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "활동을 항상 카메라 아래에 표시"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "始终在摄像头下方显示活动"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一律在相機下方顯示活動"
+          }
+        }
+      }
+    },
+    "Col already puts them there when the menu bar leaves no room beside the notch, so they never cover a menu or an icon.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col les y place déjà quand la barre des menus ne laisse pas de place à côté de l’encoche : elles ne couvrent jamais un menu ni une icône."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col zeigt sie dort bereits, wenn die Menüleiste neben der Notch keinen Platz lässt. So verdecken sie nie ein Menü oder ein Symbol."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col zet ze daar al neer als de menubalk naast de notch geen ruimte laat. Zo bedekken ze nooit een menu of een symbool."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col le mette già lì quando la barra dei menu non lascia spazio accanto al notch: così non coprono mai un menu o un’icona."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col ya las coloca ahí cuando la barra de menús no deja espacio junto a la muesca, así nunca tapan un menú ni un icono."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Col já as coloca ali quando a barra de menus não deixa espaço ao lado do notch, assim elas nunca cobrem um menu ou um ícone."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "メニューバーのノッチ横に余裕がないとき、Colはすでにそこに表示します。メニューやアイコンを覆うことはありません。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "메뉴 막대의 노치 옆에 공간이 없으면 Col이 이미 그곳에 표시하므로 메뉴나 아이콘을 가리지 않습니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当菜单栏在刘海旁没有空间时，Col 已会把它们放在那里，绝不遮挡菜单或图标。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "當選單列在瀏海旁沒有空間時，Col 已會把它們放在那裡，絕不遮擋選單或圖像。"
+          }
+        }
+      }
+    },
+    "For a few seconds, which app started listening or filming. macOS keeps its own indicator in the menu bar.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pendant quelques secondes, l’app qui s’est mise à écouter ou à filmer. macOS garde son propre indicateur dans la barre des menus."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für einige Sekunden, welche App zu hören oder zu filmen begonnen hat. macOS behält seine eigene Anzeige in der Menüleiste."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Een paar seconden lang welke app begon te luisteren of te filmen. macOS houdt zijn eigen indicator in de menubalk."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Per qualche secondo, quale app ha iniziato ad ascoltare o a riprendere. macOS mantiene il proprio indicatore nella barra dei menu."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Durante unos segundos, qué app empezó a escuchar o a grabar. macOS mantiene su propio indicador en la barra de menús."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Por alguns segundos, qual app começou a ouvir ou filmar. O macOS mantém o próprio indicador na barra de menus."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "数秒間、どのアプリが音声の取得や撮影を始めたかを表示します。メニューバーにはmacOS独自のインジケータが残ります。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "몇 초 동안 어떤 앱이 듣거나 촬영하기 시작했는지 표시합니다. 메뉴 막대에는 macOS 자체 표시기가 계속 나타납니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在几秒内显示哪个 App 开始聆听或拍摄。菜单栏中仍保留 macOS 自己的指示器。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在幾秒內顯示哪個 App 開始聆聽或拍攝。選單列中仍保留 macOS 自己的指示器。"
+          }
+        }
+      }
+    },
+    "Keep them in the island while in use": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les garder dans l’île pendant leur utilisation"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Während der Nutzung in der Insel behalten"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tijdens gebruik in het eiland houden"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tienili nell’isola durante l’uso"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mantenerlos en la isla mientras se usan"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mantê-los na ilha enquanto estiverem em uso"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用中はアイランドに表示し続ける"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "사용 중에는 아일랜드에 계속 표시"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用期间一直显示在岛中"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用期間一直顯示在島中"
+          }
+        }
+      }
+    },
+    "The island then shows the microphone or the camera for as long as an app uses it.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’île montre alors le micro ou la caméra tant qu’une app les utilise."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Insel zeigt dann das Mikrofon oder die Kamera, solange eine App sie nutzt."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Het eiland toont dan de microfoon of de camera zolang een app die gebruikt."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’isola mostra allora il microfono o la videocamera finché un’app li usa."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La isla muestra entonces el micrófono o la cámara mientras una app los use."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A ilha mostra então o microfone ou a câmera enquanto um app os usar."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アプリが使用している間、アイランドにマイクやカメラを表示します。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱이 사용하는 동안 아일랜드에 마이크나 카메라를 표시합니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "只要有 App 在使用，岛就会显示麦克风或摄像头。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "只要有 App 在使用，島就會顯示麥克風或相機。"
+          }
+        }
+      }
+    },
+    "Lets Col take over the volume and brightness keys, and keep its wings clear of the menus and icons of the menu bar. Without it, macOS shows its own display too, and activities show beneath the camera.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permet à Col de prendre en charge les touches volume et luminosité, et de garder ses ailes à l’écart des menus et des icônes de la barre des menus. Sans elle, macOS affiche aussi le sien, et les activités s’affichent sous la caméra."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Damit kann Col die Lautstärke- und Helligkeitstasten übernehmen und seine Flügel von den Menüs und Symbolen der Menüleiste fernhalten. Ohne diese Berechtigung zeigt macOS zusätzlich seine eigene Anzeige, und Aktivitäten erscheinen unter der Kamera."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hiermee kan Col de volume- en helderheidstoetsen overnemen en zijn vleugels weghouden van de menu’s en symbolen in de menubalk. Zonder deze toestemming toont macOS ook zijn eigen weergave en verschijnen activiteiten onder de camera."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permette a Col di gestire i tasti del volume e della luminosità, e di tenere le sue ali lontane dai menu e dalle icone della barra dei menu. Senza questa autorizzazione, macOS mostra anche il proprio indicatore, e le attività appaiono sotto la videocamera."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permite a Col encargarse de las teclas de volumen y brillo, y mantener sus alas lejos de los menús e iconos de la barra de menús. Sin este permiso, macOS también muestra su propio indicador, y las actividades aparecen bajo la cámara."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permite que o Col assuma as teclas de volume e brilho e mantenha as asas longe dos menus e ícones da barra de menus. Sem essa permissão, o macOS também mostra o próprio indicador, e as atividades aparecem abaixo da câmera."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Colが音量キーと明るさキーを引き継ぎ、ウイングがメニューバーのメニューやアイコンに重ならないようにします。許可しないと、macOS独自の表示も出てしまい、アクティビティはカメラの下に表示されます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col이 음량 및 밝기 키를 대신 처리하고, 날개가 메뉴 막대의 메뉴와 아이콘을 가리지 않도록 합니다. 이 권한이 없으면 macOS 자체의 표시도 함께 나타나고, 활동은 카메라 아래에 표시됩니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "让 Col 接管音量和亮度键，并让两翼避开菜单栏中的菜单和图标。没有此权限，macOS 也会显示它自己的指示，活动会显示在摄像头下方。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "讓 Col 接管音量和亮度鍵，並讓兩翼避開選單列中的選單和圖像。沒有此權限，macOS 也會顯示它自己的指示，活動會顯示在相機下方。"
+          }
+        }
+      }
+    },
+    "With Device Control and Data Access, its wings use the room beside the notch and never cover a menu or an icon. Until then, activities show beneath the camera.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avec Contrôle de l’appareil et accès aux données, ses ailes profitent de la place à côté de l’encoche sans jamais couvrir un menu ni une icône. D’ici là, les activités s’affichent sous la caméra."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit „Gerätesteuerung und Datenzugriff“ nutzen seine Flügel den Platz neben der Notch und verdecken nie ein Menü oder ein Symbol. Bis dahin erscheinen Aktivitäten unter der Kamera."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Met Apparaatbeheer en gegevenstoegang gebruiken de vleugels de ruimte naast de notch en bedekken ze nooit een menu of een symbool. Tot die tijd verschijnen activiteiten onder de camera."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Con Controllo del dispositivo e accesso ai dati, le sue ali usano lo spazio accanto al notch e non coprono mai un menu o un’icona. Fino ad allora, le attività appaiono sotto la videocamera."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Con Control de dispositivos y acceso a datos, sus alas usan el espacio junto a la muesca y nunca tapan un menú ni un icono. Hasta entonces, las actividades aparecen bajo la cámara."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Com Controle do Dispositivo e Acesso a Dados, as asas usam o espaço ao lado do notch e nunca cobrem um menu ou um ícone. Até lá, as atividades aparecem abaixo da câmera."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「デバイスの制御とデータへのアクセス」を許可すると、ウイングはノッチ横の余白を使い、メニューやアイコンを覆うことはありません。それまでは、アクティビティはカメラの下に表示されます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기기 제어 및 데이터 접근 권한이 있으면 날개가 노치 옆 공간을 활용하며 메뉴나 아이콘을 가리지 않습니다. 그 전까지는 활동이 카메라 아래에 표시됩니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "获得“设备控制和数据访问”权限后，两翼会利用刘海旁的空间，绝不遮挡菜单或图标。在此之前，活动会显示在摄像头下方。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取得「裝置控制和資料取用」權限後，兩翼會利用瀏海旁的空間，絕不遮擋選單或圖像。在此之前，活動會顯示在相機下方。"
+          }
+        }
+      }
+    },
+    "With Accessibility, its wings use the room beside the notch and never cover a menu or an icon. Until then, activities show beneath the camera.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avec l’Accessibilité, ses ailes profitent de la place à côté de l’encoche sans jamais couvrir un menu ni une icône. D’ici là, les activités s’affichent sous la caméra."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit „Bedienungshilfen“ nutzen seine Flügel den Platz neben der Notch und verdecken nie ein Menü oder ein Symbol. Bis dahin erscheinen Aktivitäten unter der Kamera."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Met Toegankelijkheid gebruiken de vleugels de ruimte naast de notch en bedekken ze nooit een menu of een symbool. Tot die tijd verschijnen activiteiten onder de camera."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Con Accessibilità, le sue ali usano lo spazio accanto al notch e non coprono mai un menu o un’icona. Fino ad allora, le attività appaiono sotto la videocamera."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Con Accesibilidad, sus alas usan el espacio junto a la muesca y nunca tapan un menú ni un icono. Hasta entonces, las actividades aparecen bajo la cámara."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Com Acessibilidade, as asas usam o espaço ao lado do notch e nunca cobrem um menu ou um ícone. Até lá, as atividades aparecem abaixo da câmera."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アクセシビリティを許可すると、ウイングはノッチ横の余白を使い、メニューやアイコンを覆うことはありません。それまでは、アクティビティはカメラの下に表示されます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "손쉬운 사용 권한이 있으면 날개가 노치 옆 공간을 활용하며 메뉴나 아이콘을 가리지 않습니다. 그 전까지는 활동이 카메라 아래에 표시됩니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "获得“辅助功能”权限后，两翼会利用刘海旁的空间，绝不遮挡菜单或图标。在此之前，活动会显示在摄像头下方。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取得「輔助使用」權限後，兩翼會利用瀏海旁的空間，絕不遮擋選單或圖像。在此之前，活動會顯示在相機下方。"
           }
         }
       }

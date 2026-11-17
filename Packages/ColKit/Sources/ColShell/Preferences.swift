@@ -50,6 +50,13 @@ enum Preferences {
         set { defaults.set(newValue, forKey: "showsMicrophoneAndCamera"); changed() }
     }
 
+    /// The microphone and camera stay in the island as long as they are in use. Off (the default), the island says
+    /// which app started for a few seconds, and macOS's own indicator in the menu bar carries on.
+    static var keepsPrivacyIndicator: Bool {
+        get { bool("keepsPrivacyIndicator", default: false) }
+        set { defaults.set(newValue, forKey: "keepsPrivacyIndicator"); changed() }
+    }
+
     static var showsBattery: Bool {
         get { bool("showsBattery", default: true) }
         set { defaults.set(newValue, forKey: "showsBattery"); changed() }
@@ -207,10 +214,24 @@ enum Preferences {
     }
 
     /// How far the closed island may reach on each side of the camera, at most: it never covers a menu or an icon
-    /// anyway. 96, 132 (the default) or 160 points.
+    /// anyway. 64, 100 (the default) or 140 points.
     static var wingLimit: CGFloat {
-        get { defaults.object(forKey: "wingLimit") == nil ? IslandLayout.standardWing : CGFloat(defaults.double(forKey: "wingLimit")) }
+        get {
+            guard defaults.object(forKey: "wingLimit") != nil else { return IslandLayout.standardWing }
+            // Col 3.0 offered 96, 132 and 160: each choice keeps its meaning among the slimmer widths of 3.1.
+            let stored = CGFloat(defaults.double(forKey: "wingLimit"))
+            if stored <= 96 { return IslandLayout.narrowWing }
+            if stored < IslandLayout.wideWing { return IslandLayout.standardWing }
+            return IslandLayout.wideWing
+        }
         set { defaults.set(Double(newValue), forKey: "wingLimit"); changed() }
+    }
+
+    /// Activities always sit beneath the camera, even when the menu bar leaves room beside it. Off, they go beneath
+    /// only when it leaves none or cannot be read.
+    static var activitiesBeneath: Bool {
+        get { bool("activitiesBeneath", default: false) }
+        set { defaults.set(newValue, forKey: "activitiesBeneath"); changed() }
     }
 
     /// Apps in front of which the island steps aside, as in full screen: brief displays and alerts still show.

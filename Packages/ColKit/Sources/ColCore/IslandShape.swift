@@ -42,13 +42,27 @@ public struct IslandShape: Equatable, Sendable {
 
 /// How far the compact island reaches on each side of the camera. Both sides match unless the menu bar leaves room on
 /// one side only: then the activity keeps a single wing instead of disappearing.
+///
+/// When the menu bar leaves no room beside the camera, or cannot be read, the activity goes beneath it instead: the
+/// island grows down by a slim strip and never reaches a menu or an icon. `leading` and `trailing` then give the
+/// width of the two items inside that strip.
 public struct Wings: Equatable, Sendable, ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral {
     public var leading: CGFloat
     public var trailing: CGFloat
+    /// The activity sits in a strip beneath the camera rather than beside it.
+    public var beneath: Bool
 
     public init(leading: CGFloat, trailing: CGFloat) {
         self.leading = leading
         self.trailing = trailing
+        self.beneath = false
+    }
+
+    /// The strip beneath the camera, holding items this wide.
+    public static func beneath(leading: CGFloat, trailing: CGFloat) -> Wings {
+        var wings = Wings(leading: max(leading, 0), trailing: max(trailing, 0))
+        wings.beneath = true
+        return wings
     }
 
     public init(_ both: CGFloat) { self.init(leading: both, trailing: both) }
@@ -57,13 +71,14 @@ public struct Wings: Equatable, Sendable, ExpressibleByFloatLiteral, Expressible
 
     public static let none = Wings(0)
 
-    public var isEmpty: Bool { leading <= 0 && trailing <= 0 }
+    public var isEmpty: Bool { !beneath && leading <= 0 && trailing <= 0 }
     /// Only one side has a wing.
-    public var isOneSided: Bool { (leading > 0) != (trailing > 0) }
+    public var isOneSided: Bool { !beneath && (leading > 0) != (trailing > 0) }
 
-    /// Each side kept between zero and the widest a wing may grow.
+    /// Each side kept between zero and the widest a wing may grow. The strip beneath keeps its items as they are.
     func clamped(to maximum: CGFloat) -> Wings {
-        Wings(leading: min(max(leading, 0), maximum), trailing: min(max(trailing, 0), maximum))
+        if beneath { return self }
+        return Wings(leading: min(max(leading, 0), maximum), trailing: min(max(trailing, 0), maximum))
     }
 }
 
@@ -106,7 +121,10 @@ public struct IslandLayout: Equatable, Sendable {
     /// Widest a wing of the compact island may ever grow, whatever the setting: the canvas makes room for it.
     public static let maximumWing: CGFloat = 160
     /// Widest a wing grows by default, so a long title never swallows the menu bar.
-    public static let standardWing: CGFloat = 132
+    public static let standardWing: CGFloat = 100
+    /// The narrow and wide widths offered in Settings, Appearance.
+    public static let narrowWing: CGFloat = 64
+    public static let wideWing: CGFloat = 140
     /// Widest a wing may grow on this screen, as the user chose (Settings, Appearance), up to `maximumWing`.
     public let wingLimit: CGFloat
     static let shadowMargin: CGFloat = 40
@@ -130,6 +148,19 @@ public struct IslandLayout: Equatable, Sendable {
     /// The island sits in the menu bar row, where menus and icons around it must stay clear: under a real notch, as a
     /// drawn notch, or as a pill.
     public var sharesMenuBar: Bool { style != .below }
+
+    /// The island hangs from the top edge, as a real or a drawn notch: an activity with no room beside the camera can
+    /// go beneath it.
+    public var canHangBeneath: Bool { style == nil || style == .notch }
+
+    /// Height of the strip beneath the camera, its items' height, and how far they keep from its rounded corners.
+    public static let beneathHeight: CGFloat = 22
+    public static let beneathItem: CGFloat = 15
+    public static let beneathInset: CGFloat = 13
+    /// Room between the two items of the strip.
+    public static let beneathGap: CGFloat = 8
+    /// Widest the two items of the strip may be together, the gap between them included.
+    public var beneathRoom: CGFloat { max(0, notch.width - Self.beneathInset * 2) }
 
     /// How far the island reaches past its wings on each side, at most: its ears, and its swell under the pointer.
     /// Wings leave this much of their room free.
@@ -187,6 +218,16 @@ public struct IslandLayout: Equatable, Sendable {
 
     private func attachedShape(for state: IslandState, wings: Wings) -> IslandShape {
         let wings = wings.clamped(to: wingLimit)
+        if wings.beneath, state != .expanded, canHangBeneath {
+            // As wide as the camera, a little taller: the island grows down, never over the menu bar.
+            let peek = state == .peek
+            return IslandShape(
+                width: notch.width,
+                height: notch.height + Self.beneathHeight + (peek ? 4 : 0),
+                earRadius: Self.wingEar,
+                cornerRadius: peek ? 14 : 12
+            )
+        }
         let span = wings.leading + wings.trailing
         let offset = (wings.trailing - wings.leading) / 2
         switch state {
@@ -242,6 +283,13 @@ public struct IslandLayout: Equatable, Sendable {
     /// Where a wing's item sits, centred in the wing beside the camera, top-left origin.
     public func wingCenter(leading: Bool, wings: Wings) -> CGPoint {
         let wings = wings.clamped(to: wingLimit)
+        if wings.beneath, canHangBeneath {
+            // The items of the strip sit against its two ends, below the camera.
+            let collapsed = shape(for: .collapsed, wings: wings)
+            let half = notch.width / 2 - Self.beneathInset
+            let x = leading ? -half + wings.leading / 2 : half - wings.trailing / 2
+            return CGPoint(x: canvasSize.width / 2 + x, y: collapsed.gap + notch.height + Self.beneathHeight / 2)
+        }
         let offset = notch.width / 2 + (leading ? wings.leading : wings.trailing) / 2
         let collapsed = shape(for: .collapsed, wings: wings)
         return CGPoint(x: canvasSize.width / 2 + (leading ? -offset : offset), y: collapsed.gap + collapsed.height / 2)

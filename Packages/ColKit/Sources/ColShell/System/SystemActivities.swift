@@ -206,18 +206,52 @@ final class SystemActivities {
 
     // MARK: Microphone and camera
 
+    /// When each app (or the camera) was last seen in use, when the running announcement ends, and what it shows.
+    private var privacySeen: [String: Date] = [:]
+    private var privacyAnnouncementEnds: Date?
+    private var privacyShown: String?
+
+    /// Says which app started listening or filming for a few seconds, then lets macOS's own indicator in the menu bar
+    /// carry on, unless the user keeps it in the island. A muted microphone stays in sight as long as it is muted.
     private func refreshPrivacy() {
         let shows = Preferences.showsMicrophoneAndCamera
         let microphoneInUse = shows && !microphoneApps.isEmpty
         let cameraOn = shows && camera.inUse
         let muted = Preferences.mutesMicrophone && microphone.isMuted
-        let app = microphoneInUse ? microphoneApps.first : nil
-        registerImage?(app?.icon.flatMap(Self.bitmap(of:)), "privacy.app")
+        let now = Date()
+        let id: (NSRunningApplication) -> String = { $0.bundleIdentifier ?? $0.localizedName ?? "app" }
+        let users = (microphoneInUse ? microphoneApps.map(id) : []) + (cameraOn ? ["camera"] : [])
+        let fresh = PrivacyIndicator.fresh(users, announced: privacySeen, now: now)
+        // The app named is the one that just started, if one did.
+        let app = microphoneInUse ? (microphoneApps.first { fresh.contains(id($0)) } ?? microphoneApps.first) : nil
+        // Every app in use is seen now: a long dictation is not announced again when it ends and starts anew.
+        for user in users { privacySeen[user] = now }
         guard let presentation = PrivacyIndicator.presentation(microphone: microphoneInUse, camera: cameraOn, muted: muted, appIcon: app != nil) else {
             remove?("privacy")
+            privacyShown = nil
+            privacyAnnouncementEnds = nil
             return
         }
-        post?(Activity(id: "privacy", priority: .standard, compact: presentation, updated: Date()))
+        let keeps = muted || Preferences.keepsPrivacyIndicator
+        let shown = "\(keeps)|\(muted)|" + users.sorted().joined(separator: ",")
+        if keeps {
+            privacyShown = shown
+            registerImage?(app?.icon.flatMap(Self.bitmap(of:)), "privacy.app")
+            post?(Activity(id: "privacy", priority: .standard, compact: presentation, updated: now))
+            return
+        }
+        // Nothing new since the last announcement: it ran, or is still running.
+        guard shown != privacyShown else { return }
+        privacyShown = shown
+        guard !fresh.isEmpty else {
+            // A running announcement finishes; a kept indicator that is no longer kept goes.
+            if (privacyAnnouncementEnds ?? .distantPast) <= now { remove?("privacy") }
+            return
+        }
+        let ends = now.addingTimeInterval(PrivacyIndicator.announcement)
+        privacyAnnouncementEnds = ends
+        registerImage?(app?.icon.flatMap(Self.bitmap(of:)), "privacy.app")
+        post?(Activity(id: "privacy", priority: .standard, compact: presentation, expires: ends, updated: now))
     }
 
     /// Mutes or unmutes the microphone, from the island or the shortcut, and says so for a moment.

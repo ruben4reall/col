@@ -11,6 +11,7 @@ struct AppearancePane: View {
     @State private var floatingStyle = Preferences.floatingStyle
     @State private var showsAtRest = Preferences.showsIslandAtRest
     @State private var wingLimit = Preferences.wingLimit
+    @State private var activitiesBeneath = Preferences.activitiesBeneath
     /// This Mac has a screen with a notch.
     private let hasNotch = NSScreen.screens.contains { $0.safeAreaInsets.top > 0 }
     /// Replays the opening of the island in the stage after a change.
@@ -98,9 +99,9 @@ struct AppearancePane: View {
                     changed()
                 }
                 Picker(selection: $wingLimit) {
-                    Text("Narrow", bundle: .module).tag(CGFloat(96))
+                    Text("Narrow", bundle: .module).tag(IslandLayout.narrowWing)
                     Text("Standard", bundle: .module).tag(IslandLayout.standardWing)
-                    Text("Wide", bundle: .module).tag(IslandLayout.maximumWing)
+                    Text("Wide", bundle: .module).tag(IslandLayout.wideWing)
                 } label: {
                     VStack(alignment: .leading, spacing: 1) {
                         Text("Wings", bundle: .module)
@@ -113,6 +114,15 @@ struct AppearancePane: View {
                 .onChange(of: wingLimit) {
                     Preferences.wingLimit = wingLimit
                     changed()
+                }
+                if (hasNotch && notchStyle == .notch) || floatingStyle == .notch {
+                    IconToggle(symbol: "rectangle.bottomhalf.inset.filled", tint: .teal, title: "Always show activities beneath the camera",
+                               detail: "Col already puts them there when the menu bar leaves no room beside the notch, so they never cover a menu or an icon.",
+                               isOn: $activitiesBeneath)
+                        .onChange(of: activitiesBeneath) {
+                            Preferences.activitiesBeneath = activitiesBeneath
+                            changed()
+                        }
                 }
                 IconToggle(symbol: "capsule.fill", tint: .indigo, title: "Show the island when nothing happens",
                            detail: "Without a notch to hide behind, the resting island stays in sight as a small pill or a notch. Off, it appears only when something happens.",

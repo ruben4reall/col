@@ -11,6 +11,7 @@ struct LiveActivitiesPane: View {
     @State private var deviceCard = Preferences.showsDeviceCard
     @State private var battery = Preferences.showsBattery
     @State private var privacy = Preferences.showsMicrophoneAndCamera
+    @State private var keepsPrivacy = Preferences.keepsPrivacyIndicator
     @State private var downloads = Preferences.watchesDownloads
     @State private var agents = Preferences.showsAgents
     @State private var lockScreen = Preferences.showsOnLockScreen
@@ -68,8 +69,13 @@ struct LiveActivitiesPane: View {
                     .onChange(of: deviceCard) { Preferences.showsDeviceCard = deviceCard }
                 IconToggle(symbol: "battery.100.bolt", tint: .green, title: "Charging and low battery", detail: "When you plug in, and at 20 % and 10 %.", isOn: $battery)
                     .onChange(of: battery) { Preferences.showsBattery = battery }
-                IconToggle(symbol: "mic.fill", tint: .orange, title: "Microphone and camera in use", detail: "Which app is listening or filming.", isOn: $privacy)
+                IconToggle(symbol: "mic.fill", tint: .orange, title: "Microphone and camera in use", detail: "For a few seconds, which app started listening or filming. macOS keeps its own indicator in the menu bar.", isOn: $privacy)
                     .onChange(of: privacy) { Preferences.showsMicrophoneAndCamera = privacy }
+                if privacy {
+                    IconToggle(symbol: "pin.fill", tint: .orange, title: "Keep them in the island while in use",
+                               detail: "The island then shows the microphone or the camera for as long as an app uses it.", isOn: $keepsPrivacy)
+                        .onChange(of: keepsPrivacy) { Preferences.keepsPrivacyIndicator = keepsPrivacy }
+                }
                 IconToggle(symbol: "mic.slash.fill", tint: .red, title: "Mute the microphone from the island",
                            detail: "A Mute button on the Live page mutes your Mac’s default microphone, and the island shows it in red while it stays muted. Turning this off, or quitting Col, unmutes it.", isOn: $mute)
                     .onChange(of: mute) { Preferences.mutesMicrophone = mute }

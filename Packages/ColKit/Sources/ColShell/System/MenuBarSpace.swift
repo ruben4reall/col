@@ -13,9 +13,14 @@ enum MenuBarSpace {
     }
 
     /// Where the frontmost app's menus end on each side of the notch. With many menus macOS moves the last ones to
-    /// the right of the notch, so both sides can hold menus. Needs Accessibility; nil without it.
+    /// the right of the notch, so both sides can hold menus. Needs Accessibility; nil without it, or when the menus
+    /// cannot be read.
+    ///
+    /// The menus are those of the app that owns the menu bar, which is not always the frontmost one: an alert agent
+    /// such as UserNotificationCenter can come to the front with no menus of its own while the previous app's stay.
     static func appMenus(notchCenter: CGFloat) -> (leftEnd: CGFloat?, rightStart: CGFloat?)? {
-        guard AXIsProcessTrusted(), let app = NSWorkspace.shared.frontmostApplication else { return nil }
+        guard AXIsProcessTrusted(),
+              let app = NSWorkspace.shared.menuBarOwningApplication ?? NSWorkspace.shared.frontmostApplication else { return nil }
         let element = AXUIElementCreateApplication(app.processIdentifier)
         AXUIElementSetMessagingTimeout(element, 0.1)
         var bar: CFTypeRef?

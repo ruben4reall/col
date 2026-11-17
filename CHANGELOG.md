@@ -2,6 +2,24 @@
 
 Each release's section is what Col's update window and the GitHub release show. Dates are in ISO format.
 
+## 3.1.0 (unreleased)
+
+- **A smaller island**: each wing is now only as wide as what it shows, so an icon keeps an icon's width beside a
+  line of text, and the default reach beside the camera is narrower (Narrow, Standard and Wide are now 64, 100 and
+  140 points). Icons and spacing in the wings are a little tighter too.
+- **Beneath the camera**: when the menu bar leaves no room beside the notch, as with an app whose menus run past it,
+  or when Col cannot read the menu bar yet, an activity now shows in a slim strip beneath the camera instead of over
+  menus and icons. Music, timers and other running activities show there for a few seconds, then tuck into the notch
+  so the top of your window stays free; what needs you stays until you answer. Settings, Appearance can keep
+  activities beneath the camera all the time.
+- **The microphone says who, then steps aside**: when an app starts listening or filming, the island says which one
+  for a few seconds, then leaves it to macOS's own indicator in the menu bar. Dictation that starts and stops is
+  announced once. Settings, Live Activities can keep it in the island while in use, and a muted microphone still
+  stays in sight.
+- **Fixed**: Col read the menus of the frontmost app even when an alert agent without menus came to the front, and
+  could then spread its wings over another app's menus. It now reads the app that owns the menu bar, measures again
+  whenever that app changes or Accessibility is granted, and treats a menu bar it cannot read as full.
+
 ## 3.0.0 (2026-11-16)
 
 - **Col on Windows and Linux**: the island comes to Windows 10 and 11 and to Linux as a preview, as native apps
