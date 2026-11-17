@@ -206,6 +206,12 @@ final class SystemActivities {
 
     // MARK: Microphone and camera
 
+    /// When each app (or the camera) was last announced, and what the island last showed for them.
+    private var privacyAnnounced: [String: Date] = [:]
+    private var privacyShown: String?
+
+    /// Says which app started listening or filming for a few seconds, then lets macOS's own indicator in the menu bar
+    /// carry on, unless the user keeps it in the island. A muted microphone stays in sight as long as it is muted.
     private func refreshPrivacy() {
         let shows = Preferences.showsMicrophoneAndCamera
         let microphoneInUse = shows && !microphoneApps.isEmpty
@@ -215,9 +221,30 @@ final class SystemActivities {
         registerImage?(app?.icon.flatMap(Self.bitmap(of:)), "privacy.app")
         guard let presentation = PrivacyIndicator.presentation(microphone: microphoneInUse, camera: cameraOn, muted: muted, appIcon: app != nil) else {
             remove?("privacy")
+            privacyShown = nil
             return
         }
-        post?(Activity(id: "privacy", priority: .standard, compact: presentation, updated: Date()))
+        let keeps = muted || Preferences.keepsPrivacyIndicator
+        let users = (microphoneInUse ? microphoneApps.map { $0.bundleIdentifier ?? $0.localizedName ?? "app" } : [])
+            + (cameraOn ? ["camera"] : [])
+        let shown = "\(keeps)|\(muted)|" + users.sorted().joined(separator: ",")
+        let now = Date()
+        if keeps {
+            privacyShown = shown
+            post?(Activity(id: "privacy", priority: .standard, compact: presentation, updated: now))
+            return
+        }
+        // Nothing new since the last announcement: it ran, or is still running.
+        guard shown != privacyShown else { return }
+        privacyShown = shown
+        let fresh = PrivacyIndicator.fresh(users, announced: privacyAnnounced, now: now)
+        guard !fresh.isEmpty else {
+            remove?("privacy")
+            return
+        }
+        for user in fresh { privacyAnnounced[user] = now }
+        post?(Activity(id: "privacy", priority: .standard, compact: presentation,
+                       expires: now.addingTimeInterval(PrivacyIndicator.announcement), updated: now))
     }
 
     /// Mutes or unmutes the microphone, from the island or the shortcut, and says so for a moment.

@@ -44,22 +44,47 @@ final class CompactRenderer {
         }
     }
 
-    /// Width one wing needs to show `presentation` comfortably, both wings sharing the wider of the two.
-    func wingWidth(for presentation: CompactPresentation?, notchHeight: CGFloat) -> CGFloat {
-        guard let presentation else { return 0 }
-        let widths = [presentation.leading, presentation.trailing].compactMap { $0 }.map {
-            itemWidth($0, notchHeight: notchHeight) + WingSlot.padding * 2
+    /// Width each wing needs to show its item of `presentation` comfortably: an icon's wing stays an icon's width
+    /// beside a line of text. A side without an item asks for nothing.
+    func wingWidths(for presentation: CompactPresentation?, notchHeight: CGFloat) -> (leading: CGFloat, trailing: CGFloat) {
+        guard let presentation else { return (0, 0) }
+        let side = WingSlot.side(for: notchHeight)
+        func width(_ item: CompactItem?) -> CGFloat {
+            guard let item else { return 0 }
+            return itemWidth(item, side: side, textLimit: wingLimit - WingSlot.padding * 2) + WingSlot.padding * 2
         }
-        return widths.max() ?? 0
+        return (width(presentation.leading), width(presentation.trailing))
     }
 
-    private func itemWidth(_ item: CompactItem, notchHeight: CGFloat) -> CGFloat {
-        let side = WingSlot.side(for: notchHeight)
+    /// The strip beneath the camera for `presentation`: each item at its own width, the text taking what the other
+    /// item leaves of the camera's width.
+    func beneathWings(for presentation: CompactPresentation?, layout: IslandLayout) -> Wings {
+        guard let presentation, presentation.leading != nil || presentation.trailing != nil else { return .none }
+        let side = IslandLayout.beneathItem
+        let room = layout.beneathRoom
+        let both = presentation.leading != nil && presentation.trailing != nil
+        func width(_ item: CompactItem?, besides other: CompactItem?) -> CGFloat {
+            guard let item else { return 0 }
+            let otherWidth = other.map { itemWidth($0, side: side, textLimit: room / 2) } ?? 0
+            let free = room - (both ? otherWidth + IslandLayout.beneathGap : 0)
+            return min(itemWidth(item, side: side, textLimit: free), free)
+        }
+        // A text on each side shares the room evenly.
+        if case .text? = presentation.leading, case .text? = presentation.trailing {
+            let half = (room - IslandLayout.beneathGap) / 2
+            return .beneath(leading: min(itemWidth(presentation.leading!, side: side, textLimit: half), half),
+                            trailing: min(itemWidth(presentation.trailing!, side: side, textLimit: half), half))
+        }
+        return .beneath(leading: width(presentation.leading, besides: presentation.trailing),
+                        trailing: width(presentation.trailing, besides: presentation.leading))
+    }
+
+    private func itemWidth(_ item: CompactItem, side: CGFloat, textLimit: CGFloat) -> CGFloat {
         switch item {
         case .text(let string, _):
-            return min(ceil(TextMetrics.width(of: string)), wingLimit - WingSlot.padding * 2)
+            return max(0, min(ceil(TextMetrics.width(of: string)), textLimit))
         case .level:
-            return side * 2.4
+            return side * 2.2
         case .battery:
             return side * 1.5
         default:
@@ -69,15 +94,26 @@ final class CompactRenderer {
 
     /// Shows `presentation`, positioning each item in the middle of its wing.
     func show(_ presentation: CompactPresentation?, layout: IslandLayout, wings: Wings, canvasHeight: CGFloat) {
-        let height = layout.notch.height
+        let beneath = wings.beneath && layout.canHangBeneath
+        let side = beneath ? IslandLayout.beneathItem : WingSlot.side(for: layout.notch.height)
         for (slot, item, isLeading) in [(leading, presentation?.leading, true), (trailing, presentation?.trailing, false)] {
             let center = layout.wingCenter(leading: isLeading, wings: wings)
             // Canvas coordinates are top-left; the layer tree is bottom-left.
             let position = CGPoint(x: center.x, y: canvasHeight - center.y)
-            // A wing narrowed to spare the menu bar narrows its item too; text then truncates.
             let wing = isLeading ? wings.leading : wings.trailing
-            let width = min(item.map { itemWidth($0, notchHeight: height) } ?? 0, max(0, wing - WingSlot.padding * 2))
-            slot.update(item, size: CGSize(width: width, height: WingSlot.side(for: height)), position: position, images: images, scale: scale)
+            let width: CGFloat
+            if beneath {
+                // Beneath the camera, the strip was sized for these very items.
+                width = wing
+            } else {
+                // A wing narrowed to spare the menu bar narrows its item too; text then glides or truncates.
+                let room = max(0, wing - WingSlot.padding * 2)
+                width = min(item.map { itemWidth($0, side: side, textLimit: room) } ?? 0, room)
+            }
+            // A line of text needs its full height, even in the slimmer strip beneath the camera.
+            var height = side
+            if case .text? = item { height = max(side, 18) }
+            slot.update(item, size: CGSize(width: width, height: height), position: position, images: images, scale: scale)
         }
         listen()
     }
@@ -118,8 +154,8 @@ final class CompactRenderer {
 /// One wing: a container that crossfades when the item changes, holding the layers of the current item.
 @MainActor
 private final class WingSlot {
-    static let padding: CGFloat = 9
-    static func side(for notchHeight: CGFloat) -> CGFloat { max(14, notchHeight - 12) }
+    static let padding: CGFloat = 7
+    static func side(for notchHeight: CGFloat) -> CGFloat { max(14, notchHeight - 14) }
 
     let container = CALayer()
     /// Image or symbol contents.

@@ -300,3 +300,54 @@ struct DrawnNotchTests {
 
 }
 
+
+@Suite struct BeneathTheCameraTests {
+    let notch = NotchMetrics(width: 185, height: 32, centerX: 756, isHardware: true)
+    var layout: IslandLayout { IslandLayout(notch: notch) }
+    let strip = Wings.beneath(leading: 15, trailing: 60)
+
+    @Test func theIslandGrowsDownNeverSideways() {
+        let closed = layout.shape(for: .collapsed, wings: strip)
+        #expect(closed.width == notch.width)
+        #expect(closed.offset == 0)
+        #expect(closed.height == notch.height + IslandLayout.beneathHeight)
+        // Only the small ears reach past the notch, as they do on the bare island.
+        #expect(closed.outerWidth - notch.width <= IslandLayout.wingEar * 2 + 0.001)
+        let peek = layout.shape(for: .peek, wings: strip)
+        #expect(peek.width == notch.width)
+        #expect(peek.height > closed.height)
+        #expect(layout.shape(for: .expanded, wings: strip) == layout.shape(for: .expanded))
+    }
+
+    @Test func itsItemsSitBelowTheCameraAgainstTheEnds() {
+        let mid = layout.canvasSize.width / 2
+        let lead = layout.wingCenter(leading: true, wings: strip)
+        let trail = layout.wingCenter(leading: false, wings: strip)
+        #expect(lead.y > notch.height)
+        #expect(lead.y == trail.y)
+        #expect(abs(lead.x - (mid - notch.width / 2 + IslandLayout.beneathInset + 7.5)) < 0.001)
+        #expect(abs(trail.x - (mid + notch.width / 2 - IslandLayout.beneathInset - 30)) < 0.001)
+    }
+
+    @Test func theWindowCoversTheStrip() {
+        let window = layout.windowSize(for: .collapsed, wings: strip)
+        #expect(window.height == notch.height + IslandLayout.beneathHeight)
+        #expect(window.width <= notch.width + IslandLayout.wingEar * 2 + 0.001)
+    }
+
+    @Test func itIsNeitherEmptyNorOneSidedAndKeepsBothItems() {
+        #expect(!strip.isEmpty)
+        #expect(!Wings.beneath(leading: 0, trailing: 20).isOneSided)
+        let mic = CompactPresentation(leading: .image(key: "privacy.app"), trailing: .symbol("mic.fill", tint: .orange))
+        #expect(mic.fitted(to: strip) == mic)
+    }
+
+    @Test func aPillCannotHangBeneath() {
+        let pill = IslandLayout(notch: NotchMetrics(width: 72, height: 24, centerX: 960, isHardware: false), floating: .pill)
+        #expect(!pill.canHangBeneath)
+        #expect(pill.shape(for: .collapsed, wings: strip).height < 24)
+        let drawn = IslandLayout(notch: NotchMetrics(width: 185, height: 24, centerX: 960, isHardware: false), floating: .notch)
+        #expect(drawn.canHangBeneath)
+        #expect(!IslandLayout(notch: notch, floating: .below).canHangBeneath)
+    }
+}

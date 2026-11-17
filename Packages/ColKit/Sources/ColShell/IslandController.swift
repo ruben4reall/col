@@ -43,6 +43,10 @@ public final class IslandController {
     /// Free width beside the notch before the app's menus (left) and the status items (right); nil when unknown.
     private var freeLeft: CGFloat?
     private var freeRight: CGFloat?
+    /// False while Col cannot read the menu bar it shares (no Accessibility): activities then go beneath the camera.
+    private var menuBarReadable = true
+    /// The app whose menus fill the menu bar changes without always becoming active (an alert agent, a panel).
+    private var menuBarOwnerObservation: NSKeyValueObservation?
     /// A pill or a drawn notch on a screen without a notch, with the app's menus reaching where it rests: it stays
     /// out of the way until the island is opened.
     private var restBlocked = false
@@ -585,7 +589,7 @@ public final class IslandController {
     /// measured the same way, from their own edges.
     private func measureMenuBar(statusItems: Bool = false) {
         guard let screen, let layout, layout.sharesMenuBar else {
-            freeLeft = nil; freeRight = nil; restBlocked = false
+            freeLeft = nil; freeRight = nil; restBlocked = false; menuBarReadable = true
             applySideRoom()
             return
         }
@@ -593,17 +597,18 @@ public final class IslandController {
         // not depend on the apps of the Mac they are taken on.
         let lent = UserDefaults.standard.double(forKey: "ColMenuBarFree")
         if lent > 0 {
-            freeLeft = lent; freeRight = lent; restBlocked = false
+            freeLeft = lent; freeRight = lent; restBlocked = false; menuBarReadable = true
             applySideRoom()
             return
         }
-        // Without Accessibility the menu bar cannot be read: a narrow wing on each side, rather than one over menus and
-        // icons Col cannot see.
+        // Without Accessibility the menu bar cannot be read: activities go beneath the camera (or, on a pill, keep a
+        // narrow wing), rather than over menus and icons Col cannot see.
         guard AXIsProcessTrusted() else {
-            freeLeft = WingBudget.unknownRoom; freeRight = WingBudget.unknownRoom; restBlocked = false
+            freeLeft = nil; freeRight = nil; restBlocked = false; menuBarReadable = false
             applySideRoom()
             return
         }
+        menuBarReadable = true
         let notchLeft = screen.frame.minX + layout.notch.centerX - layout.notch.width / 2
         let notchRight = notchLeft + layout.notch.width
         // Accessibility measures from the top left of the main screen.
@@ -612,30 +617,41 @@ public final class IslandController {
         if statusItems || statusItemsEdge == nil {
             statusItemsEdge = MenuBarSpace.statusItemsLeftEdge(after: notchRight, top: top, span: screen.frame.minX...screen.frame.maxX)
         }
-        let menus = MenuBarSpace.appMenus(notchCenter: notchLeft + layout.notch.width / 2)
-        freeLeft = WingBudget.free(notchEdge: notchLeft, nearestItem: menus?.leftEnd, leftSide: true)
+        // Menus or status items that could not be read are as good as unseen: rather than a wing over them, the
+        // activity goes beneath the camera until they can be.
+        guard let menus = MenuBarSpace.appMenus(notchCenter: notchLeft + layout.notch.width / 2), let statusItemsEdge else {
+            freeLeft = nil; freeRight = nil; restBlocked = false; menuBarReadable = false
+            applySideRoom()
+            if UserDefaults.standard.bool(forKey: "ColDebug") {
+                FileHandle.standardError.write(Data("menu bar: unreadable (menus or status items)\n".utf8))
+            }
+            return
+        }
+        freeLeft = WingBudget.free(notchEdge: notchLeft, nearestItem: menus.leftEnd, leftSide: true)
         // On the right, the nearest of the app's overflowing menus and the status items.
-        let rightItems = [menus?.rightStart, statusItemsEdge].compactMap { $0 }
+        let rightItems = [menus.rightStart, statusItemsEdge].compactMap { $0 }
         freeRight = WingBudget.free(notchEdge: notchRight, nearestItem: rightItems.min(), leftSide: false)
         // Without a notch, menus can reach the middle of the menu bar on a small screen: the resting island then
         // keeps out of their way.
         if layout.notch.isHardware {
             restBlocked = false
         } else {
-            let leftReach = (menus?.leftEnd ?? -.greatestFiniteMagnitude) + WingBudget.margin
+            let leftReach = (menus.leftEnd ?? -.greatestFiniteMagnitude) + WingBudget.margin
             let rightReach = (rightItems.min() ?? .greatestFiniteMagnitude) - WingBudget.margin
             restBlocked = leftReach > notchLeft || rightReach < notchRight
         }
         applySideRoom()
         if UserDefaults.standard.bool(forKey: "ColDebug") {
-            FileHandle.standardError.write(Data("menu bar: app \(NSWorkspace.shared.frontmostApplication?.localizedName ?? "?") free left \(String(describing: freeLeft)) right \(String(describing: freeRight)) status items \(String(describing: statusItemsEdge)) blocked \(restBlocked)\n".utf8))
+            FileHandle.standardError.write(Data("menu bar: app \(NSWorkspace.shared.menuBarOwningApplication?.localizedName ?? "?") free left \(String(describing: freeLeft)) right \(String(describing: freeRight)) status items \(String(describing: statusItemsEdge)) blocked \(restBlocked)\n".utf8))
         }
     }
 
     /// Hands the tighter side's room to the layout, so the island swells under the pointer only as far as it may.
     private func applySideRoom() {
         guard var layout else { return }
-        let room = [freeLeft, freeRight].compactMap { $0 }.min()
+        // A menu bar Col cannot read gets no swell at all beside the notch: the island only grows taller under the
+        // pointer, as it does when a menu sits right against it.
+        let room = menuBarReadable ? [freeLeft, freeRight].compactMap { $0 }.min() : 0
         guard layout.sideRoom != room else { return }
         layout.sideRoom = room
         self.layout = layout
@@ -743,6 +759,8 @@ public final class IslandController {
         }
         mediaChanged(trackChanged: false)
         agentsChanged()
+        // Where activities sit (beside or beneath the camera) may have changed.
+        refreshActivity()
         glance.preferencesChanged()
         ConnectCenter.shared.update()
     }
@@ -835,6 +853,27 @@ public final class IslandController {
             self?.refreshActivity()
         }
         menuBarWatcher.start()
+        menuBarOwnerObservation = NSWorkspace.shared.observe(\.menuBarOwningApplication) { [weak self] _, _ in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                MainActor.assumeIsolated {
+                    self?.measureMenuBar()
+                    self?.refreshActivity()
+                }
+            }
+        }
+        // Accessibility granted or taken away: the menu bar can be read, or no longer, without a relaunch. Activities
+        // move beside the camera, or back beneath it, right away.
+        observers.append(DistributedNotificationCenter.default().addObserver(
+            forName: NSNotification.Name("com.apple.accessibility.api"), object: nil, queue: .main
+        ) { [weak self] _ in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                MainActor.assumeIsolated {
+                    self?.menuBarWatcher.start()
+                    self?.measureMenuBar(statusItems: true)
+                    self?.refreshActivity()
+                }
+            }
+        })
         for name in [NSWorkspace.didLaunchApplicationNotification, NSWorkspace.didTerminateApplicationNotification] {
             observers.append(workspace.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
@@ -910,6 +949,14 @@ public final class IslandController {
             ])
         case "pomodoro":
             glance.pomodoro.showDemo(Pomodoro(phase: .focus, plan: .standard, starting: Date().addingTimeInterval(-9 * 60)), completed: 2)
+        case "privacy":
+            // An app listening, as when you dictate to an assistant: `-ColDemoApp` names the app whose icon shows.
+            let path = UserDefaults.standard.string(forKey: "ColDemoApp") ?? "/System/Applications/Voice Memos.app"
+            var rect = CGRect(x: 0, y: 0, width: 64, height: 64)
+            islandView.compact.register(NSWorkspace.shared.icon(forFile: path).cgImage(forProposedRect: &rect, context: nil, hints: nil), for: "privacy.app")
+            if let presentation = PrivacyIndicator.presentation(microphone: true, camera: false, muted: false, appIcon: true) {
+                post(Activity(id: "privacy", priority: .standard, compact: presentation, updated: Date()))
+            }
         default:
             break
         }
@@ -965,16 +1012,27 @@ public final class IslandController {
         scheduleExpiry(after: now)
         guard let layout else { return }
 
-        let requested = islandView.compact.wingWidth(for: current?.compact, notchHeight: layout.notch.height)
-        // Never over the menu bar: the wings shrink to the free space, or wait in the open island when none is left.
-        // Never over the menu bar, ears and swell included. A resting pill that menus reach shows nothing at all.
+        let requested = islandView.compact.wingWidths(for: current?.compact, notchHeight: layout.notch.height)
+        // Never over the menu bar, ears and swell included: the wings shrink to the free space, and when none is left,
+        // or the menu bar cannot be read, the activity goes beneath the camera. A resting pill that menus reach shows
+        // nothing at all.
         let newWings: Wings
         if restBlocked {
             newWings = .none
         } else if layout.sharesMenuBar {
-            newWings = WingBudget.allowed(requested: requested, left: freeLeft, right: freeRight, overhang: layout.wingOverhang)
+            newWings = WingBudget.placement(
+                leading: requested.leading,
+                trailing: requested.trailing,
+                beneath: islandView.compact.beneathWings(for: current?.compact, layout: layout),
+                left: freeLeft,
+                right: freeRight,
+                readable: menuBarReadable,
+                overhang: layout.wingOverhang,
+                canHangBeneath: layout.canHangBeneath,
+                prefersBeneath: Preferences.activitiesBeneath
+            )
         } else {
-            newWings = Wings(requested)
+            newWings = Wings(leading: requested.leading, trailing: requested.trailing)
         }
         let presentation = current?.compact.fitted(to: newWings)
         islandView.showCompact(presentation, wings: newWings)

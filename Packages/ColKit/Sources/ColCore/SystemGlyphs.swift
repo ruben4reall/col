@@ -1,3 +1,4 @@
+import Foundation
 /// Symbols and small rules for the system's live activities, kept here so they are tested.
 public enum SystemGlyphs {
     public static func volume(level: Double, muted: Bool) -> String {
@@ -90,14 +91,27 @@ public struct MediaKeyPress: Equatable, Sendable {
 /// What the closed island shows for the microphone and the camera: what is in use, and a muted microphone in red,
 /// even while nobody listens.
 public enum PrivacyIndicator {
+    /// The app that listens on the left, the microphone or the camera on the right, where a single wing keeps it.
+    /// With both the camera and the microphone on, the two glyphs share the wings.
     public static func presentation(microphone: Bool, camera: Bool, muted: Bool, appIcon: Bool) -> CompactPresentation? {
         guard microphone || camera || muted else { return nil }
         let mic: CompactItem = muted ? .symbol("mic.slash.fill", tint: .red) : .symbol("mic.fill", tint: .orange)
-        let app: CompactItem? = appIcon ? .image(key: "privacy.app") : nil
-        if camera {
-            return CompactPresentation(leading: .symbol("video.fill", tint: .green), trailing: microphone || muted ? mic : app)
-        }
-        return CompactPresentation(leading: mic, trailing: microphone ? app : nil)
+        let video: CompactItem = .symbol("video.fill", tint: .green)
+        if camera, microphone || muted { return CompactPresentation(leading: video, trailing: mic) }
+        let app: CompactItem? = microphone && appIcon ? .image(key: "privacy.app") : nil
+        return CompactPresentation(leading: app, trailing: camera ? video : mic)
+    }
+
+    /// How long the island says which app started listening or filming, before macOS's own indicator in the menu
+    /// bar carries on alone.
+    public static let announcement: TimeInterval = 5
+    /// An app that starts listening again within this time is not announced again: dictation that starts and stops
+    /// every few seconds stays quiet.
+    public static let quietPeriod: TimeInterval = 15 * 60
+
+    /// The users to announce now: those not announced within the quiet period.
+    public static func fresh(_ users: [String], announced: [String: Date], now: Date) -> [String] {
+        users.filter { now.timeIntervalSince(announced[$0] ?? .distantPast) > quietPeriod }
     }
 }
 
