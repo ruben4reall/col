@@ -3,6 +3,41 @@
     <channel>
         <title>Islet</title>
         <item>
+            <title>3.1.0</title>
+            <pubDate>Tue, 17 Nov 2026 20:10:26 +0100</pubDate>
+            <link>https://getcol.vercel.app</link>
+            <sparkle:fullReleaseNotesLink>https://github.com/ruben4reall/col/releases</sparkle:fullReleaseNotesLink>
+            <sparkle:version>3.1.0</sparkle:version>
+            <sparkle:shortVersionString>3.1.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <description sparkle:format="markdown"><![CDATA[- **A tidy menu bar**: one switch in Settings, Menu Bar, tidies the icons of your menu bar into drawers, each one a
+  single icon, and gives the island more room beside the notch. Smart Sort proposes the drawers the first time; a
+  click on a drawer opens it right under it, ⌃⌥⌘Space finds any icon, and ⌃⌥⌘F leaves only the clock and Control
+  Center. Drawers' icons, a tint for the menu bar, profiles and triggers are in the drawers' own settings. These are
+  the drawers of Tiroir, now part of Col: off by default, nothing of them runs until you turn them on, they ask for no
+  permission of their own, and if Tiroir is open, Col leaves the menu bar to it and offers to quit it. The first time,
+  Tiroir's drawers, profiles and look come along. Turn the switch off, quit Col or let it crash, and every icon comes
+  back. macOS 26 and later; on macOS 27, Col must run from the Applications folder.
+- **A smaller island**: each wing is now only as wide as what it shows, so an icon keeps an icon's width beside a
+  line of text, and the default reach beside the camera is narrower (Narrow, Standard and Wide are now 64, 100 and
+  140 points). Icons and spacing in the wings are a little tighter too.
+- **Beneath the camera**: when the menu bar leaves no room beside the notch, as with an app whose menus run past it,
+  or when Col cannot read the menu bar yet, an activity now shows in a slim strip beneath the camera instead of over
+  menus and icons. Music, timers and other running activities show there for a few seconds, then tuck into the notch
+  so the top of your window stays free; what needs you stays until you answer. Settings, Appearance can keep
+  activities beneath the camera all the time.
+- **The microphone says who, then steps aside**: when an app starts listening or filming, the island says which one
+  for a few seconds, then leaves it to macOS's own indicator in the menu bar. Dictation that starts and stops is
+  announced once. Settings, Live Activities can keep it in the island while in use, and a muted microphone still
+  stays in sight.
+- **Fixed**: Col read the menus of the frontmost app even when an alert agent without menus came to the front, and
+  could then spread its wings over another app's menus. It now reads the app that owns the menu bar, measures again
+  whenever that app changes or Accessibility is granted, and treats a menu bar it cannot read as full. On macOS 27.2
+  it also counts every app's icon beside the notch, where it used to see only Apple's own.
+]]></description>
+            <enclosure url="https://github.com/ruben4reall/col/releases/download/v3.1.0/Col-3.1.0.dmg" length="10420360" type="application/octet-stream" sparkle:edSignature="LLjuQvu+0qWpv2rwEOrx7TVgv8EPTFGY1UCcvkPqG98GguzQgL2vRmOBbRuEaBvRuZgk3C5ApYtC6cP7DICKCw=="/>
+        </item>
+        <item>
             <title>3.0.0</title>
             <pubDate>Mon, 16 Nov 2026 21:23:38 +0100</pubDate>
             <link>https://getcol.vercel.app</link>
