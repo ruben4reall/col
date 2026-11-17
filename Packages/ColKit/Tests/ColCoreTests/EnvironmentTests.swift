@@ -139,8 +139,19 @@ struct WingBudgetTests {
         #expect(WingBudget.allowed(leading: 0, trailing: 32, left: 200, right: 200) == Wings(leading: 0, trailing: 32))
         // Its own side blocked, it moves to the other.
         #expect(WingBudget.allowed(leading: 0, trailing: 32, left: 200, right: 5) == Wings(leading: 32, trailing: 0))
-        // Both items blocked on their own sides: the wider request goes where it fits.
-        #expect(WingBudget.allowed(leading: 100, trailing: 32, left: 50, right: 5) == Wings(leading: 50, trailing: 0))
+        // One item cannot have its side: a single wing shows the value, at the value's width.
+        #expect(WingBudget.allowed(leading: 100, trailing: 32, left: 50, right: 5) == Wings(leading: 32, trailing: 0))
+        #expect(WingBudget.allowed(leading: 32, trailing: 54, left: 200, right: 10) == Wings(leading: 54, trailing: 0))
         #expect(WingBudget.allowed(leading: 32, trailing: 32, left: 5, right: 5).isEmpty)
+    }
+
+    @Test func smallItemsKeepTheirWingOnASmallMenuBar() {
+        // A 24-point menu bar: an icon asks for 28 points, under the minimum, and still gets its wing.
+        #expect(WingBudget.allowed(leading: 28, trailing: 28, left: 200, right: 200) == Wings(28))
+        #expect(WingBudget.allowed(requested: 28, left: 200, right: 200) == Wings(28))
+        // A short count beside an icon keeps its own short wing.
+        #expect(WingBudget.allowed(leading: 32, trailing: 23, left: 200, right: 200) == Wings(leading: 32, trailing: 23))
+        // But a wing squeezed below what it holds is no wing.
+        #expect(WingBudget.allowed(leading: 28, trailing: 28, left: 20, right: 20).isEmpty)
     }
 }

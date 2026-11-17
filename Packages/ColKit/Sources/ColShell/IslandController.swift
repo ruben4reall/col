@@ -47,6 +47,12 @@ public final class IslandController {
     private var menuBarReadable = true
     /// The app whose menus fill the menu bar changes without always becoming active (an alert agent, a panel).
     private var menuBarOwnerObservation: NSKeyValueObservation?
+    private var pendingMeasure: DispatchWorkItem?
+    /// The ambient activity beneath the camera, and since when: after a few seconds it tucks back into the notch, as
+    /// the strip covers the top of the window below. Alerts and brief displays stay as long as they last.
+    private var beneathSince: (id: String, date: Date)?
+    private var beneathTimer: Task<Void, Never>?
+    static let beneathLinger: TimeInterval = 5
     /// A pill or a drawn notch on a screen without a notch, with the app's menus reaching where it rests: it stays
     /// out of the way until the island is opened.
     private var restBlocked = false
@@ -275,8 +281,8 @@ public final class IslandController {
 
     // MARK: Menu bar access
 
-    /// Once, when the island cannot see the menu bar it shares, it says why its wings stay narrow and offers to ask
-    /// for the permission. Never during the welcome, which asks for it itself.
+    /// Once, when the island cannot see the menu bar it shares, it says why activities sit beneath the camera and
+    /// offers to ask for the permission. Never during the welcome, which asks for it itself.
     private func showMenuBarAccessNoteIfDue() {
         let key = "menuBarAccessNoteShown"
         guard WelcomeWindow.hasWelcomed, !AXIsProcessTrusted(), layout?.sharesMenuBar == true,
@@ -617,19 +623,20 @@ public final class IslandController {
         if statusItems || statusItemsEdge == nil {
             statusItemsEdge = MenuBarSpace.statusItemsLeftEdge(after: notchRight, top: top, span: screen.frame.minX...screen.frame.maxX)
         }
-        // Menus or status items that could not be read are as good as unseen: rather than a wing over them, the
-        // activity goes beneath the camera until they can be.
-        guard let menus = MenuBarSpace.appMenus(notchCenter: notchLeft + layout.notch.width / 2), let statusItemsEdge else {
+        // Menus that could not be read are as good as unseen: rather than a wing over them, the activity goes beneath
+        // the camera until they can be.
+        guard let menus = MenuBarSpace.appMenus(notchCenter: notchLeft + layout.notch.width / 2) else {
             freeLeft = nil; freeRight = nil; restBlocked = false; menuBarReadable = false
             applySideRoom()
             if UserDefaults.standard.bool(forKey: "ColDebug") {
-                FileHandle.standardError.write(Data("menu bar: unreadable (menus or status items)\n".utf8))
+                FileHandle.standardError.write(Data("menu bar: the menus cannot be read\n".utf8))
             }
             return
         }
         freeLeft = WingBudget.free(notchEdge: notchLeft, nearestItem: menus.leftEnd, leftSide: true)
-        // On the right, the nearest of the app's overflowing menus and the status items.
-        let rightItems = [menus.rightStart, statusItemsEdge].compactMap { $0 }
+        // On the right, the nearest of the app's overflowing menus and the status items. Status items that could not
+        // be read leave the right side no room, rather than a wing over icons Col cannot see.
+        let rightItems = [menus.rightStart, statusItemsEdge ?? notchRight].compactMap { $0 }
         freeRight = WingBudget.free(notchEdge: notchRight, nearestItem: rightItems.min(), leftSide: false)
         // Without a notch, menus can reach the middle of the menu bar on a small screen: the resting island then
         // keeps out of their way.
@@ -637,13 +644,29 @@ public final class IslandController {
             restBlocked = false
         } else {
             let leftReach = (menus.leftEnd ?? -.greatestFiniteMagnitude) + WingBudget.margin
-            let rightReach = (rightItems.min() ?? .greatestFiniteMagnitude) - WingBudget.margin
+            // Only what was actually read keeps the resting island away.
+            let readRight = [menus.rightStart, statusItemsEdge].compactMap { $0 }.min()
+            let rightReach = (readRight ?? .greatestFiniteMagnitude) - WingBudget.margin
             restBlocked = leftReach > notchLeft || rightReach < notchRight
         }
         applySideRoom()
         if UserDefaults.standard.bool(forKey: "ColDebug") {
             FileHandle.standardError.write(Data("menu bar: app \(NSWorkspace.shared.menuBarOwningApplication?.localizedName ?? "?") free left \(String(describing: freeLeft)) right \(String(describing: freeRight)) status items \(String(describing: statusItemsEdge)) blocked \(restBlocked)\n".utf8))
         }
+    }
+
+    /// Measures the app's menus a moment from now, once for a burst of changes: an app that comes to the front also
+    /// takes the menu bar, and both say so.
+    private func measureMenusSoon() {
+        pendingMeasure?.cancel()
+        let work = DispatchWorkItem { [weak self] in
+            MainActor.assumeIsolated {
+                self?.measureMenuBar()
+                self?.refreshActivity()
+            }
+        }
+        pendingMeasure = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: work)
     }
 
     /// Hands the tighter side's room to the layout, so the island swells under the pointer only as far as it may.
@@ -671,12 +694,7 @@ public final class IslandController {
             updateVisibility()
         }
         // Menus change with the app; let them settle before measuring.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
-            MainActor.assumeIsolated {
-                self?.measureMenuBar()
-                self?.refreshActivity()
-            }
-        }
+        measureMenusSoon()
         if Preferences.displayChoice == "main", Self.notchScreen() != screen {
             screensChanged()
         } else {
@@ -854,12 +872,7 @@ public final class IslandController {
         }
         menuBarWatcher.start()
         menuBarOwnerObservation = NSWorkspace.shared.observe(\.menuBarOwningApplication) { [weak self] _, _ in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                MainActor.assumeIsolated {
-                    self?.measureMenuBar()
-                    self?.refreshActivity()
-                }
-            }
+            DispatchQueue.main.async { MainActor.assumeIsolated { self?.measureMenusSoon() } }
         }
         // Accessibility granted or taken away: the menu bar can be read, or no longer, without a relaunch. Activities
         // move beside the camera, or back beneath it, right away.
@@ -1016,7 +1029,7 @@ public final class IslandController {
         // Never over the menu bar, ears and swell included: the wings shrink to the free space, and when none is left,
         // or the menu bar cannot be read, the activity goes beneath the camera. A resting pill that menus reach shows
         // nothing at all.
-        let newWings: Wings
+        var newWings: Wings
         if restBlocked {
             newWings = .none
         } else if layout.sharesMenuBar {
@@ -1034,6 +1047,7 @@ public final class IslandController {
         } else {
             newWings = Wings(leading: requested.leading, trailing: requested.trailing)
         }
+        newWings = tuckedBeneath(newWings, current: current, now: now)
         let presentation = current?.compact.fitted(to: newWings)
         islandView.showCompact(presentation, wings: newWings)
         shownActivity = current
@@ -1042,6 +1056,26 @@ public final class IslandController {
             wings = newWings
             if machine.state != .expanded { reshape(from: machine.state) }
         }
+    }
+
+    /// An ambient or running activity beneath the camera shows for a few seconds when it arrives, then tucks into the
+    /// notch, where hovering or opening the island finds it. What needs the user, and brief displays, stay.
+    private func tuckedBeneath(_ wings: Wings, current: Activity?, now: Date) -> Wings {
+        guard wings.beneath, let current, current.priority < .alert else {
+            if !wings.beneath { beneathSince = nil }
+            beneathTimer?.cancel()
+            return wings
+        }
+        if beneathSince?.id != current.id { beneathSince = (current.id, now) }
+        let left = Self.beneathLinger - now.timeIntervalSince(beneathSince?.date ?? now)
+        beneathTimer?.cancel()
+        guard left > 0 else { return .none }
+        beneathTimer = Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .seconds(left + 0.02))
+            guard !Task.isCancelled else { return }
+            self?.refreshActivity()
+        }
+        return wings
     }
 
     /// Wakes up exactly when the next activity expires, instead of polling.

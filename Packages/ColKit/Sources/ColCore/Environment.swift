@@ -117,30 +117,36 @@ public enum WingBudget {
     /// A wing that filled the room would leave them over the first menu or icon.
     public static func allowed(requested: CGFloat, left: CGFloat?, right: CGFloat?, overhang: CGFloat = 0) -> Wings {
         guard requested > 0 else { return .none }
-        func fit(_ room: CGFloat?) -> CGFloat {
-            let wing = min(requested, room.map { $0 - overhang } ?? .greatestFiniteMagnitude)
-            return wing < minimum ? 0 : wing
-        }
+        func fit(_ room: CGFloat?) -> CGFloat { fitting(requested, in: room, overhang: overhang) }
         let leading = fit(left), trailing = fit(right)
         guard leading > 0, trailing > 0 else { return Wings(leading: leading, trailing: trailing) }
         return Wings(min(leading, trailing))
     }
 
+    /// The wing `requested` gets in `room`: all of it when there is room, less when there is less, none when what is
+    /// left could not even hold an icon (or the item itself, when it is smaller than that).
+    static func fitting(_ requested: CGFloat, in room: CGFloat?, overhang: CGFloat) -> CGFloat {
+        guard requested > 0 else { return 0 }
+        let available = room.map { $0 - overhang } ?? .greatestFiniteMagnitude
+        guard available >= min(minimum, requested) else { return 0 }
+        return min(requested, available)
+    }
+
     /// The wings that fit when each side asks for its own width: an icon's wing stays an icon's width beside a line
-    /// of text, so the island is no wider than what it shows. A side whose item does not fit gives up its wing; when
-    /// neither fits, the wider request takes whichever side holds it, the roomier first, as a single wing.
+    /// of text, so the island is no wider than what it shows. When the two items cannot both have their side, a single
+    /// wing shows the value, the trailing item (see `CompactPresentation.fitted(to:)`), at that item's width, on the
+    /// roomier side that holds it.
     public static func allowed(leading requestedLeading: CGFloat, trailing requestedTrailing: CGFloat,
                                left: CGFloat?, right: CGFloat?, overhang: CGFloat = 0) -> Wings {
         guard requestedLeading > 0 || requestedTrailing > 0 else { return .none }
-        func fit(_ requested: CGFloat, _ room: CGFloat?) -> CGFloat {
-            guard requested > 0 else { return 0 }
-            let wing = min(requested, room.map { $0 - overhang } ?? .greatestFiniteMagnitude)
-            return wing < minimum ? 0 : wing
+        let leading = fitting(requestedLeading, in: left, overhang: overhang)
+        let trailing = fitting(requestedTrailing, in: right, overhang: overhang)
+        let both = requestedLeading > 0 && requestedTrailing > 0
+        if both ? (leading > 0 && trailing > 0) : (leading > 0 || trailing > 0) {
+            return Wings(leading: leading, trailing: trailing)
         }
-        let leading = fit(requestedLeading, left), trailing = fit(requestedTrailing, right)
-        if leading > 0 || trailing > 0 { return Wings(leading: leading, trailing: trailing) }
-        let single = max(requestedLeading, requestedTrailing)
-        let onLeft = fit(single, left), onRight = fit(single, right)
+        let single = requestedTrailing > 0 ? requestedTrailing : requestedLeading
+        let onLeft = fitting(single, in: left, overhang: overhang), onRight = fitting(single, in: right, overhang: overhang)
         if onLeft > 0, onRight > 0 {
             return (left ?? .greatestFiniteMagnitude) >= (right ?? .greatestFiniteMagnitude)
                 ? Wings(leading: onLeft, trailing: 0) : Wings(leading: 0, trailing: onRight)

@@ -115,7 +115,7 @@ struct AppearancePane: View {
                     Preferences.wingLimit = wingLimit
                     changed()
                 }
-                if hasNotch || floatingStyle == .notch {
+                if (hasNotch && notchStyle == .notch) || floatingStyle == .notch {
                     IconToggle(symbol: "rectangle.bottomhalf.inset.filled", tint: .teal, title: "Always show activities beneath the camera",
                                detail: "Col already puts them there when the menu bar leaves no room beside the notch, so they never cover a menu or an icon.",
                                isOn: $activitiesBeneath)

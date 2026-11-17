@@ -221,7 +221,7 @@ enum Preferences {
             // Col 3.0 offered 96, 132 and 160: each choice keeps its meaning among the slimmer widths of 3.1.
             let stored = CGFloat(defaults.double(forKey: "wingLimit"))
             if stored <= 96 { return IslandLayout.narrowWing }
-            if stored < 150 { return IslandLayout.standardWing }
+            if stored < IslandLayout.wideWing { return IslandLayout.standardWing }
             return IslandLayout.wideWing
         }
         set { defaults.set(Double(newValue), forKey: "wingLimit"); changed() }

@@ -9,7 +9,9 @@ Each release's section is what Col's update window and the GitHub release show. 
   140 points). Icons and spacing in the wings are a little tighter too.
 - **Beneath the camera**: when the menu bar leaves no room beside the notch, as with an app whose menus run past it,
   or when Col cannot read the menu bar yet, an activity now shows in a slim strip beneath the camera instead of over
-  menus and icons. Settings, Appearance can keep activities there all the time.
+  menus and icons. Music, timers and other running activities show there for a few seconds, then tuck into the notch
+  so the top of your window stays free; what needs you stays until you answer. Settings, Appearance can keep
+  activities beneath the camera all the time.
 - **The microphone says who, then steps aside**: when an app starts listening or filming, the island says which one
   for a few seconds, then leaves it to macOS's own indicator in the menu bar. Dictation that starts and stops is
   announced once. Settings, Live Activities can keep it in the island while in use, and a muted microphone still

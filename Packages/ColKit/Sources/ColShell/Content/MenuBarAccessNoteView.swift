@@ -48,7 +48,7 @@ struct MenuBarAccessNoteView: View {
 
     private var detail: LocalizedStringKey {
         ProcessInfo.processInfo.isOperatingSystemAtLeast(OperatingSystemVersion(majorVersion: 27, minorVersion: 0, patchVersion: 0))
-            ? "With Device Control and Data Access, its wings never cover a menu or an icon. Until then they stay narrow."
-            : "With Accessibility, its wings never cover a menu or an icon. Until then they stay narrow."
+            ? "With Device Control and Data Access, its wings use the room beside the notch and never cover a menu or an icon. Until then, activities show beneath the camera."
+            : "With Accessibility, its wings use the room beside the notch and never cover a menu or an icon. Until then, activities show beneath the camera."
     }
 }
