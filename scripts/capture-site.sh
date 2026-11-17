@@ -216,6 +216,9 @@ sleep 0.8; shoot island whats-new
 run -ColNoNotch YES -floatingStyle pill; sleep 3; shoot island pill-rest
 player; sleep 2
 player; run; sleep 3; shoot island music-compact
+# Col 3.1: when the menu bar leaves no room beside the notch, the activity goes beneath the camera.
+player; run -activitiesBeneath YES; sleep 3; shoot island beneath-music
+run -activitiesBeneath YES -ColDemo privacy; sleep 2; shoot island beneath-privacy
 # A short line, whole in the wing, whatever room the menu bar leaves it.
 player; LYRICS_CLOSED=YES run; sleep 4; shoot island lyrics-compact
 player; run -ColOpen YES; sleep 3; shoot island home-open
@@ -327,7 +330,7 @@ echo "Website and README images:"
 mkdir -p site/assets/island site/assets/app site/assets/film site/assets/macos docs/images
 # Only what this run photographed.
 taken() { [ "$OUT/$1.png" -nt "$TMP/start" ]; }
-for s in rest music-compact lyrics-compact home-open airpods-pro airpods-max push-build agent-request claude-working agents-compact \
+for s in rest music-compact beneath-music beneath-privacy lyrics-compact home-open airpods-pro airpods-max push-build agent-request claude-working agents-compact \
   live-agents ai-page ask prompter shelf-drop shelf-one clipboard tools size-compact size-large \
   glass-liquid glass-transparent glass-tinted glass-black meeting-compact meeting-live weather devices widgets whats-new \
   pill-rest pill-music pill-open drawn-music below-music agent-question agent-plan lock-lyrics desktop-lyrics; do
