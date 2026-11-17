@@ -1,5 +1,5 @@
 project('col', ['c', 'vala'],
-  version: '3.0.0',
+  version: '3.1.0',
   license: 'MIT',
   meson_version: '>= 1.0',
   default_options: ['warning_level=1', 'buildtype=debugoptimized'],

@@ -34,7 +34,7 @@ This is the first Windows edition of [Col](../README.md), released with Col 3.0.
 
 ## Install
 
-1. Download `Col-3.0.0-windows-setup.exe` from the [latest release](https://github.com/ruben4reall/col/releases/latest).
+1. Download `Col-3.1.0-windows-setup.exe` from the [latest release](https://github.com/ruben4reall/col/releases/latest).
 2. Run it. It installs for your account only, in `%LOCALAPPDATA%\Programs\Col`, without administrator rights: a Start
    menu entry, `col://` links, `colctl` on your PATH, and, if you leave the box ticked, Col at sign-in.
 
@@ -45,8 +45,8 @@ Runtime, install Col again.
 
 Or take a zip, unzip it anywhere and run `Col.exe`: everything is in that folder.
 
-- `Col-3.0.0-windows-x64.zip` (or `-arm64.zip`): .NET inside, nothing else to install.
-- `Col-3.0.0-windows-x64-small.zip` (or `-arm64-small.zip`): for a PC that has the .NET 8 Desktop Runtime, from
+- `Col-3.1.0-windows-x64.zip` (or `-arm64.zip`): .NET inside, nothing else to install.
+- `Col-3.1.0-windows-x64-small.zip` (or `-arm64-small.zip`): for a PC that has the .NET 8 Desktop Runtime, from
   Microsoft's link above (x64 or Arm64, as your PC).
 
 Each release also carries these files under names without the version, so a page can always link to the latest:
@@ -61,9 +61,9 @@ Windows 10 version 2004 or later, or Windows 11; x64 or Arm64.
 
 | | Size |
 |---|---|
-| `Col-3.0.0-windows-setup.exe` (x64 and Arm64, small and full, in one) | 114 MB |
-| `Col-3.0.0-windows-x64.zip`, .NET inside | 85 MB |
-| `Col-3.0.0-windows-x64-small.zip` | 8 MB |
+| `Col-3.1.0-windows-setup.exe` (x64 and Arm64, small and full, in one) | 114 MB |
+| `Col-3.1.0-windows-x64.zip`, .NET inside | 85 MB |
+| `Col-3.1.0-windows-x64-small.zip` | 8 MB |
 | `Col.exe` with .NET inside, unpacked | 222 MB |
 | `Col.exe` small, unpacked | 25 MB |
 | `colctl.exe`, compiled ahead of time to native code (in every download) | 2.4 MB |

@@ -1,11 +1,11 @@
 ﻿; Col for Windows: a per-user installer, no administrator rights needed.
-;   iscc /DVersion=3.0.0 /DSource=..\..\artifacts windows\installer\Col.iss
+;   iscc /DVersion=3.1.0 /DSource=..\..\artifacts windows\installer\Col.iss
 ; Source holds win-x64\ and win-arm64\, each with Col.exe and colctl.exe, and win-x64-small\ and win-arm64-small\,
 ; the same without .NET inside. The PC's architecture picks one pair; the small Col.exe goes in when the .NET 8 Desktop
 ; Runtime is on the PC, the full one otherwise, or when the setup is run with /SELFCONTAINED=yes.
 
 #ifndef Version
-  #define Version "3.0.0"
+  #define Version "3.1.0"
 #endif
 #ifndef Source
   #define Source "..\..\artifacts"

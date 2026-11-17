@@ -22,7 +22,7 @@ internal static class AppPaths
     public static string Executable => Environment.ProcessPath ?? Path.Combine(AppContext.BaseDirectory, "Col.exe");
 
     public static string Version { get; } =
-        Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "3.0.0";
+        Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "3.1.0";
 }
 
 /// <summary>A short log of what went wrong, for bug reports: never what the user plays, copies or types.</summary>
