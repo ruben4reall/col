@@ -59,10 +59,10 @@ Col needs GTK 4.14 or later and libadwaita 1.5 or later: Ubuntu 24.04, Debian 13
 
 ### Debian and Ubuntu
 
-Download `col_3.0.0_amd64.deb` (or `arm64`) from the [release](https://github.com/ruben4reall/col/releases), then:
+Download `col_3.1.0_amd64.deb` (or `arm64`) from the [release](https://github.com/ruben4reall/col/releases), then:
 
 ```sh
-sudo apt install ./col_3.0.0_amd64.deb
+sudo apt install ./col_3.1.0_amd64.deb
 ```
 
 For Ubuntu 24.04 and later and Debian 13. Open Col from your applications. It installs `col-island` (the app) and
@@ -71,9 +71,9 @@ For Ubuntu 24.04 and later and Debian 13. Open Col from your applications. It in
 ### Any distribution
 
 ```sh
-tar xzf Col-3.0.0-linux-x86_64.tar.gz
-Col-3.0.0/install.sh            # for you, in ~/.local
-sudo Col-3.0.0/install.sh --system   # or for everyone, in /usr/local
+tar xzf Col-3.1.0-linux-x86_64.tar.gz
+Col-3.1.0/install.sh            # for you, in ~/.local
+sudo Col-3.1.0/install.sh --system   # or for everyone, in /usr/local
 ```
 
 `install.sh --uninstall` takes it away. The libraries come from your system; the script names the ones missing.

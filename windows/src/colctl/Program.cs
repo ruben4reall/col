@@ -330,7 +330,7 @@ static string? Text(JsonNode? node) => node is JsonValue value && value.TryGetVa
 
 static string Version() =>
     System.Reflection.CustomAttributeExtensions.GetCustomAttribute<System.Reflection.AssemblyInformationalVersionAttribute>(
-        typeof(HookRelay).Assembly)?.InformationalVersion ?? "3.0.0";
+        typeof(HookRelay).Assembly)?.InformationalVersion ?? "3.1.0";
 
 static int Fail(string message)
 {
