@@ -31,6 +31,11 @@ Everything Col reads, writes or runs, and why.
 | `~/Library/Application Support/Islet/`, `~/Library/Caches/Islet/` | Where Islet kept the same files: on the first launch of Col they move to Col's folders. `~/Library/Application Support/Islet` is then a link to Col's folder, where `islet.sock`, the socket Islet listened on, is a link to `col.sock`, so scripts written for Islet still reach Col while it runs | The move once, when you update from Islet; the socket's link at each launch |
 | `Islet.app`, where the update installed it | Renamed Col.app, and an older Islet.app left beside it or in Applications goes to the Trash. A copy installed with Homebrew keeps its name, so `brew` can still upgrade and remove it: `brew upgrade --cask --greedy col` replaces it with Col.app | Once, when you update from Islet |
 
+| `~/Library/Preferences/ch.rubencatalao.tiroir.plist` | Read once, if it exists: the settings of Tiroir, the app the menu bar's drawers come from (its drawers, profiles, triggers and look, key `settings`, and the places of its items in the menu bar), copied into Col's. The file is left as it was | The first time you turn on Tidy the menu bar into drawers |
+
+With Tidy the menu bar into drawers on, the drawers' settings live in Col's preferences (`menuBarDrawers`), with the
+places macOS keeps for their items (`NSStatusItem Preferred Position tiroir.…`).
+
 Clipboard history (except the text you pin) and the pictures you copy stay in memory and are never written to disk.
 Copies that password managers mark as concealed or transient are skipped.
 
@@ -47,6 +52,9 @@ Copies that password managers mark as concealed or transient are skipped.
   open the session's folder, which brings its window forward; other apps are only brought forward.
 - `/usr/bin/git`, when you install an extension from a repository with `colctl extensions install`: a shallow clone,
   without submodules and with hooks turned off, into a temporary folder that is removed afterwards.
+- Tiroir, the menu bar app the drawers come from, when it is open and you turn on Tidy the menu bar into drawers: Col
+  leaves the menu bar to it, and asks it to quit only when you click Quit Tiroir in Settings, Menu Bar, the way its own
+  Quit command would. Its app, its files and its login item are left as they are.
 - Souffleur, the prompter's former app, when it is open beside Col: Col asks it to quit as it opens (or in the minute
   after, as when both open at login), the way its own Quit command would, so that the two prompters do not both answer
   your shortcuts and your phone. It is never forced to quit, and its app, its files and its login item are left as
@@ -113,6 +121,15 @@ same Accessibility permission to watch the modifier keys only: never what you ty
 batteries of your accessories are read from IOKit's registry, and the text of an image on the shelf is read by
 Vision on your Mac.
 
+Tidy the menu bar into drawers, off by default, uses the same Accessibility permission (Device Control and Data Access
+on macOS 27) and nothing more: to read which app owns each icon of the menu bar and to press an icon for you. On macOS
+26 it moves icons with Command-drags posted as the pointer would, only after a pause of your pointer and keyboard,
+behind an invisible status item of Col's that pushes the hidden ones off screen. On macOS 27 it asks MenuBarAgent to
+leave whole apps out of the menu bar; while something is hidden, a global monitor of pointer moves (which needs no
+permission) lifts that request while the pointer rests on the clock, so Notification Center opens. Its shortcuts are
+Carbon hot keys, which hear their own keys and nothing else. When you turn it off, quit Col, or Col stops without
+quitting, every icon comes back: the status item and the request belong to Col's process and end with it.
+
 The microphone's mute (the Live page's button, or ⌃⌥⌘M once you turn it on) sets the default microphone's own mute,
 or turns its input volume to zero when it has none, and needs no permission. What Col muted is written in its
 settings (`microphoneMuteLedger`: each device's Core Audio UID, how it was muted, the volume it had), so that Col
@@ -159,8 +176,10 @@ Login Items. After an update from Islet, the login item is registered again for 
 MediaRemote (now playing), DisplayServices (brightness), undocumented `IOBluetoothDevice` properties (headphone
 battery and model), `CABackdropLayer`, `CAFilter` and the `glassBackground` filter of Liquid Glass (the Liquid and Transparent glass of the
 open island), SkyLight (the Lock
-Screen and its lyrics, off by default) and TCC (whether System Audio Recording is allowed, and asking for it, only for
-Bars that follow the sound, off by default). Each is looked up at run time: if a macOS update
+Screen and its lyrics, off by default), TCC (whether System Audio Recording is allowed, and asking for it, only for
+Bars that follow the sound, off by default), and, only once the menu bar's drawers start, MenuBarClientCore (hiding
+apps' icons on macOS 27) and SkyLight's `SetsCursorInBackground` (hiding the pointer while icons move on macOS 26).
+Each is looked up at run time: if a macOS update
 removes one, its feature turns off and nothing crashes. The [README](README.md#private-macos-apis) says why each is
 needed.
 

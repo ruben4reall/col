@@ -4,6 +4,14 @@ Each release's section is what Col's update window and the GitHub release show. 
 
 ## 3.1.0 (unreleased)
 
+- **A tidy menu bar**: one switch in Settings, Menu Bar, tidies the icons of your menu bar into drawers, each one a
+  single icon, and gives the island more room beside the notch. Smart Sort proposes the drawers the first time; a
+  click on a drawer opens it right under it, ⌃⌥⌘Space finds any icon, and ⌃⌥⌘F leaves only the clock and Control
+  Center. Drawers' icons, a tint for the menu bar, profiles and triggers are in the drawers' own settings. These are
+  the drawers of Tiroir, now part of Col: off by default, nothing of them runs until you turn them on, they ask for no
+  permission of their own, and if Tiroir is open, Col leaves the menu bar to it and offers to quit it. The first time,
+  Tiroir's drawers, profiles and look come along. Turn the switch off, quit Col or let it crash, and every icon comes
+  back. macOS 26 and later; on macOS 27, Col must run from the Applications folder.
 - **A smaller island**: each wing is now only as wide as what it shows, so an icon keeps an icon's width beside a
   line of text, and the default reach beside the camera is narrower (Narrow, Standard and Wide are now 64, 100 and
   140 points). Icons and spacing in the wings are a little tighter too.

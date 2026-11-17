@@ -23,6 +23,8 @@ jobs:
       - uses: actions/checkout@v5
       - name: Test ColKit
         run: swift test --package-path Packages/ColKit
+      - name: Test TiroirKit (the menu bar's drawers)
+        run: swift test --package-path Packages/TiroirKit
   app:
     runs-on: macos-26
     steps:

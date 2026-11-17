@@ -33,8 +33,31 @@ enum ApplicationsFolder {
             if !passing { UserDefaults.standard.set(true, forKey: declinedKey) }
             return false
         }
+        return moveNow(opening: urls)
+    }
+
+    /// Copies Col to Applications (a copy already there goes to the Trash), then quits and opens the copy. Returns false
+    /// when nothing moved: a development build, which never replaces the installed Col; a copy that is already where it
+    /// would go; or a copy that failed, which the user is told. The menu bar's drawers ask for it on macOS 27, which
+    /// honours only apps in the Mac's own Applications folder: with `sharedFolderOnly`, the folder in the user's home
+    /// will not do, and the user is told when the Mac's cannot be written.
+    @discardableResult
+    static func moveNow(opening urls: [URL] = [], sharedFolderOnly: Bool = false) -> Bool {
+        guard !AppLocation.isDevelopmentBuild else { return false }
+        let bundle = AppLocation.bundleURL
         let files = FileManager.default
-        let destination = applicationsFolder.appendingPathComponent(bundle.lastPathComponent)
+        let sharedIsWritable = files.isWritableFile(atPath: "/Applications")
+        guard let destination = AppLocation.moveDestination(for: bundle, sharedIsWritable: sharedIsWritable,
+                                                            allowsHome: !sharedFolderOnly) else {
+            if !sharedIsWritable, sharedFolderOnly {
+                let alert = NSAlert()
+                alert.messageText = String(localized: "Col cannot move itself into the Applications folder")
+                alert.informativeText = String(localized: "Your account cannot write there. Ask the person who manages this Mac to move Col into Applications.")
+                NSApp.activate()
+                alert.runModal()
+            }
+            return false
+        }
         do {
             try files.createDirectory(at: destination.deletingLastPathComponent(), withIntermediateDirectories: true)
             if files.fileExists(atPath: destination.path) {
@@ -51,13 +74,6 @@ enum ApplicationsFolder {
         // Opens the copy once this process has exited; the disk image can then be ejected.
         AppLocation.relaunch(at: destination, opening: urls)
         return true
-    }
-
-    /// The Mac's Applications folder, or the one in the user's home when the user cannot write to it.
-    private static var applicationsFolder: URL {
-        let shared = URL(fileURLWithPath: "/Applications", isDirectory: true)
-        guard !FileManager.default.isWritableFile(atPath: shared.path) else { return shared }
-        return URL(fileURLWithPath: NSHomeDirectory(), isDirectory: true).appendingPathComponent("Applications", isDirectory: true)
     }
 
     /// An app put in Applications by something other than the Finder kept its quarantine, so macOS runs it translocated:

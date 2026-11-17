@@ -55,6 +55,26 @@ public enum AppLocation {
         return ["/Applications/", home + "/Applications/"].contains { path.hasPrefix($0) }
     }
 
+    /// Where moving the app into Applications puts it: the Mac's Applications folder, or, when the user cannot write to
+    /// it and `allowsHome`, the one in the user's home. Nil when that is where the app already is (the move would send
+    /// the running copy to the Trash), or when only the Mac's folder will do and it cannot be written: macOS 27 lets only
+    /// apps there change the menu bar.
+    public nonisolated static func moveDestination(for bundle: URL, sharedIsWritable: Bool, allowsHome: Bool,
+                                                   home: String = NSHomeDirectory()) -> URL? {
+        let folder: URL
+        if sharedIsWritable {
+            folder = URL(fileURLWithPath: "/Applications", isDirectory: true)
+        } else if allowsHome {
+            folder = URL(fileURLWithPath: home, isDirectory: true).appendingPathComponent("Applications", isDirectory: true)
+        } else {
+            return nil
+        }
+        let destination = folder.appendingPathComponent(bundle.lastPathComponent)
+        guard destination.standardizedFileURL.resolvingSymlinksInPath().path != bundle.standardizedFileURL.resolvingSymlinksInPath().path
+        else { return nil }
+        return destination
+    }
+
     /// A development build, which leaves the user's own files and the installed app alone. It runs from a build
     /// folder, or with a socket of its own (COL_SOCKET) to run beside the installed Col.
     public static var isDevelopmentBuild: Bool {

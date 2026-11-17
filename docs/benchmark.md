@@ -4,6 +4,11 @@
 playing: Col 23 MB and its music helper 3.9 MB of memory footprint, 0 % of the processor (`scripts/bench.sh`). The
 tables below were measured with Col 2.0 on macOS 26.5.
 
+**The menu bar's drawers, 17 November 2026**, same Mac, macOS 27.2.1, Release builds run from the shell, 75 seconds
+after launch, Col alone (without its music helper): with Tidy the menu bar into drawers off, Col 3.1 measured 14.5 to
+15.5 MB over two runs, as Col 3.0 did (15.2 MB): off, nothing of the drawers runs. On, with 16 icons in the menu bar
+and 8 of them in three drawers, Col measured 24.3 MB.
+
 Idle memory footprint and CPU of Col on a 14-inch MacBook Pro (M3 Pro, macOS 26.5), Release build, measured with
 `footprint` and the kernel's CPU time counters (`proc_pid_rusage`) over 60 seconds without interaction, 20 seconds
 after launch. Helper processes count.

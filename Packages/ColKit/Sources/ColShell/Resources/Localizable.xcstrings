@@ -48723,66 +48723,66 @@
         }
       }
     },
-    "Lets Col take over the volume and brightness keys, and keep its wings clear of the menus and icons of the menu bar. Without it, macOS shows its own display too, and activities show beneath the camera.": {
+    "Lets Col take over the volume and brightness keys, keep its wings clear of the menus and icons of the menu bar, and tidy those icons into drawers. Without it, macOS shows its own display too, and activities show beneath the camera.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Permet à Col de prendre en charge les touches volume et luminosité, et de garder ses ailes à l’écart des menus et des icônes de la barre des menus. Sans elle, macOS affiche aussi le sien, et les activités s’affichent sous la caméra."
+            "value": "Permet à Col de prendre en charge les touches volume et luminosité, de garder ses ailes à l’écart des menus et des icônes de la barre des menus, et de ranger ces icônes dans des tiroirs. Sans elle, macOS affiche aussi le sien, et les activités s’affichent sous la caméra."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Damit kann Col die Lautstärke- und Helligkeitstasten übernehmen und seine Flügel von den Menüs und Symbolen der Menüleiste fernhalten. Ohne diese Berechtigung zeigt macOS zusätzlich seine eigene Anzeige, und Aktivitäten erscheinen unter der Kamera."
+            "value": "Damit kann Col die Lautstärke- und Helligkeitstasten übernehmen, seine Flügel von den Menüs und Symbolen der Menüleiste fernhalten und diese Symbole in Schubladen aufräumen. Ohne diese Berechtigung zeigt macOS zusätzlich seine eigene Anzeige, und Aktivitäten erscheinen unter der Kamera."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hiermee kan Col de volume- en helderheidstoetsen overnemen en zijn vleugels weghouden van de menu’s en symbolen in de menubalk. Zonder deze toestemming toont macOS ook zijn eigen weergave en verschijnen activiteiten onder de camera."
+            "value": "Hiermee kan Col de volume- en helderheidstoetsen overnemen, zijn vleugels weghouden van de menu’s en symbolen in de menubalk en die symbolen opruimen in laden. Zonder deze toestemming toont macOS ook zijn eigen weergave en verschijnen activiteiten onder de camera."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Permette a Col di gestire i tasti del volume e della luminosità, e di tenere le sue ali lontane dai menu e dalle icone della barra dei menu. Senza questa autorizzazione, macOS mostra anche il proprio indicatore, e le attività appaiono sotto la videocamera."
+            "value": "Permette a Col di gestire i tasti del volume e della luminosità, di tenere le sue ali lontane dai menu e dalle icone della barra dei menu, e di riordinare quelle icone in cassetti. Senza questa autorizzazione, macOS mostra anche il proprio indicatore, e le attività appaiono sotto la videocamera."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Permite a Col encargarse de las teclas de volumen y brillo, y mantener sus alas lejos de los menús e iconos de la barra de menús. Sin este permiso, macOS también muestra su propio indicador, y las actividades aparecen bajo la cámara."
+            "value": "Permite a Col encargarse de las teclas de volumen y brillo, mantener sus alas lejos de los menús e iconos de la barra de menús, y ordenar esos iconos en cajones. Sin este permiso, macOS también muestra su propio indicador, y las actividades aparecen bajo la cámara."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Permite que o Col assuma as teclas de volume e brilho e mantenha as asas longe dos menus e ícones da barra de menus. Sem essa permissão, o macOS também mostra o próprio indicador, e as atividades aparecem abaixo da câmera."
+            "value": "Permite que o Col assuma as teclas de volume e brilho, mantenha as asas longe dos menus e ícones da barra de menus e organize esses ícones em gavetas. Sem essa permissão, o macOS também mostra o próprio indicador, e as atividades aparecem abaixo da câmera."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Colが音量キーと明るさキーを引き継ぎ、ウイングがメニューバーのメニューやアイコンに重ならないようにします。許可しないと、macOS独自の表示も出てしまい、アクティビティはカメラの下に表示されます。"
+            "value": "Colが音量キーと明るさキーを引き継ぎ、ウイングがメニューバーのメニューやアイコンに重ならないようにし、それらのアイコンを引き出しに整理します。許可しないと、macOS独自の表示も出てしまい、アクティビティはカメラの下に表示されます。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "Col이 음량 및 밝기 키를 대신 처리하고, 날개가 메뉴 막대의 메뉴와 아이콘을 가리지 않도록 합니다. 이 권한이 없으면 macOS 자체의 표시도 함께 나타나고, 활동은 카메라 아래에 표시됩니다."
+            "value": "Col이 음량 및 밝기 키를 대신 처리하고, 날개가 메뉴 막대의 메뉴와 아이콘을 가리지 않도록 하며, 그 아이콘들을 서랍에 정리합니다. 이 권한이 없으면 macOS 자체의 표시도 함께 나타나고, 활동은 카메라 아래에 표시됩니다."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "让 Col 接管音量和亮度键，并让两翼避开菜单栏中的菜单和图标。没有此权限，macOS 也会显示它自己的指示，活动会显示在摄像头下方。"
+            "value": "让 Col 接管音量和亮度键，让两翼避开菜单栏中的菜单和图标，并将这些图标整理进抽屉。没有此权限，macOS 也会显示它自己的指示，活动会显示在摄像头下方。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "讓 Col 接管音量和亮度鍵，並讓兩翼避開選單列中的選單和圖像。沒有此權限，macOS 也會顯示它自己的指示，活動會顯示在相機下方。"
+            "value": "讓 Col 接管音量和亮度鍵，讓兩翼避開選單列中的選單和圖像，並將這些圖像整理進抽屜。沒有此權限，macOS 也會顯示它自己的指示，活動會顯示在相機下方。"
           }
         }
       }
@@ -48911,6 +48911,1990 @@
           "stringUnit": {
             "state": "translated",
             "value": "取得「輔助使用」權限後，兩翼會利用瀏海旁的空間，絕不遮擋選單或圖像。在此之前，活動會顯示在相機下方。"
+          }
+        }
+      }
+    },
+    "Menu Bar": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Barre des menus"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menüleiste"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menubalk"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Barra dei menu"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Barra de menús"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Barra de Menus"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "メニューバー"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "메뉴 막대"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "菜单栏"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選單列"
+          }
+        }
+      }
+    },
+    "The icons of your menu bar, tidied into drawers.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les icônes de votre barre des menus, rangées dans des tiroirs."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Symbole Ihrer Menüleiste, in Schubladen aufgeräumt."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De symbolen van je menubalk, opgeruimd in laden."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le icone della barra dei menu, riordinate in cassetti."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los iconos de tu barra de menús, ordenados en cajones."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os ícones da barra de menus, organizados em gavetas."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "メニューバーのアイコンを引き出しに整理します。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "메뉴 막대의 아이콘을 서랍에 정리합니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "将菜单栏的图标整理进抽屉。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "將選單列的圖像整理進抽屜。"
+          }
+        }
+      }
+    },
+    "Tidy the menu bar into drawers": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ranger la barre des menus dans des tiroirs"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menüleiste in Schubladen aufräumen"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menubalk opruimen in laden"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Riordina la barra dei menu in cassetti"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordenar la barra de menús en cajones"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Organizar a barra de menus em gavetas"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "メニューバーを引き出しに整理"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "메뉴 막대를 서랍에 정리"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "将菜单栏整理进抽屉"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "將選單列整理進抽屜"
+          }
+        }
+      }
+    },
+    "Icons you rarely look at wait in drawers, one click away, and the island gets more room beside the notch.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les icônes que vous regardez rarement attendent dans des tiroirs, à un clic, et l’île gagne de la place à côté de l’encoche."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Symbole, die Sie selten ansehen, warten in Schubladen, nur einen Klick entfernt, und die Insel bekommt mehr Platz neben der Notch."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Symbolen die je zelden bekijkt, wachten in laden, één klik verderop, en het eiland krijgt meer ruimte naast de notch."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le icone che guardi di rado aspettano nei cassetti, a portata di clic, e l’isola guadagna spazio accanto al notch."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los iconos que rara vez miras esperan en cajones, a un clic, y la isla gana espacio junto a la muesca."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os ícones que você raramente olha esperam em gavetas, a um clique, e a ilha ganha mais espaço ao lado do notch."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "あまり見ないアイコンは引き出しの中でワンクリックで開けるように待機し、ノッチの横のアイランドにも余裕が生まれます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "자주 보지 않는 아이콘은 클릭 한 번이면 열리는 서랍에서 기다리고, 노치 옆의 아일랜드는 더 넓은 공간을 얻습니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不常看的图标会在抽屉里等候，点按一下即可打开，刘海旁的岛也会有更多空间。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不常看的圖像會在抽屜裡等候，按一下即可打開，瀏海旁的島也會有更多空間。"
+          }
+        }
+      }
+    },
+    "Needs macOS 26 or later.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nécessite macOS 26 ou une version ultérieure."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erfordert macOS 26 oder neuer."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vereist macOS 26 of nieuwer."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Richiede macOS 26 o versioni successive."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Requiere macOS 26 o posterior."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Requer o macOS 26 ou posterior."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS 26以降が必要です。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS 26 이상이 필요합니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "需要 macOS 26 或更高版本。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "需要 macOS 26 或以上版本。"
+          }
+        }
+      }
+    },
+    "Tiroir’s drawers, profiles and look came along.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les tiroirs, les profils et l’apparence de Tiroir ont suivi."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Schubladen, Profile und das Aussehen von Tiroir wurden übernommen."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De laden, profielen en het uiterlijk van Tiroir zijn meegekomen."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I cassetti, i profili e l’aspetto di Tiroir sono stati ripresi."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los cajones, los perfiles y el aspecto de Tiroir se han traído."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As gavetas, os perfis e a aparência do Tiroir vieram junto."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroirの引き出し、プロファイル、外観を引き継ぎました。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir의 서랍, 프로필, 모양을 그대로 가져왔습니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已沿用 Tiroir 的抽屉、场景和外观。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已沿用 Tiroir 的抽屜、情境和外觀。"
+          }
+        }
+      }
+    },
+    "Turn this off, or quit Col, and every icon comes back to the menu bar.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Désactivez cette option ou quittez Col, et chaque icône revient dans la barre des menus."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deaktivieren Sie diese Option oder beenden Sie Col, und jedes Symbol kehrt in die Menüleiste zurück."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schakel dit uit of stop Col, en elk symbool komt terug in de menubalk."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disattiva l’opzione o esci da Col, e ogni icona torna nella barra dei menu."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desactiva esta opción o sal de Col, y cada icono vuelve a la barra de menús."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desative esta opção ou encerre o Col, e cada ícone volta para a barra de menus."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このオプションをオフにするかColを終了すると、すべてのアイコンがメニューバーに戻ります。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 옵션을 끄거나 Col을 종료하면 모든 아이콘이 메뉴 막대로 돌아옵니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关闭此选项或退出 Col 后，所有图标都会回到菜单栏。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "關閉此選項或結束 Col 後，所有圖像都會回到選單列。"
+          }
+        }
+      }
+    },
+    "Tiroir is open": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir est ouvert"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir ist geöffnet"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir is geopend"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir è aperto"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir está abierto"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tiroir está aberto"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroirが開いています"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir가 열려 있습니다"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir 已打开"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir 已打開"
+          }
+        }
+      }
+    },
+    "Tiroir already tidies your menu bar. Quit it, and Col takes over with the same drawers.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir range déjà votre barre des menus. Quittez-le, et Col prend le relais avec les mêmes tiroirs."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir räumt Ihre Menüleiste bereits auf. Beenden Sie Tiroir, und Col übernimmt mit denselben Schubladen."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir ruimt je menubalk al op. Stop Tiroir, en Col neemt het over met dezelfde laden."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir riordina già la barra dei menu. Esci da Tiroir, e Col prende il suo posto con gli stessi cassetti."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir ya ordena tu barra de menús. Sal de Tiroir y Col tomará el relevo con los mismos cajones."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tiroir já organiza sua barra de menus. Encerre o Tiroir, e o Col assume com as mesmas gavetas."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroirがすでにメニューバーを整理しています。Tiroirを終了すると、Colが同じ引き出しのまま引き継ぎます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir가 이미 메뉴 막대를 정리하고 있습니다. Tiroir를 종료하면 Col이 같은 서랍으로 이어받습니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir 已在整理你的菜单栏。退出 Tiroir 后，Col 会以相同的抽屉接手。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir 已在整理你的選單列。結束 Tiroir 後，Col 會以相同的抽屜接手。"
+          }
+        }
+      }
+    },
+    "Quit Tiroir": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quitter Tiroir"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir beenden"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop Tiroir"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esci da Tiroir"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salir de Tiroir"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encerrar Tiroir"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroirを終了"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir 종료"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "退出 Tiroir"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "結束 Tiroir"
+          }
+        }
+      }
+    },
+    "The drawers need it to see which app owns each icon and to open them. Until then, every icon stays in the menu bar.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les tiroirs en ont besoin pour savoir à quelle app appartient chaque icône et pour les ouvrir. D’ici là, toutes les icônes restent dans la barre des menus."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Schubladen benötigen sie, um zu sehen, zu welcher App jedes Symbol gehört, und um Symbole zu öffnen. Bis dahin bleiben alle Symbole in der Menüleiste."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De laden hebben dit nodig om te zien bij welke app elk symbool hoort en om symbolen te openen. Tot die tijd blijven alle symbolen in de menubalk."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I cassetti ne hanno bisogno per sapere a quale app appartiene ogni icona e per aprirle. Fino ad allora, tutte le icone restano nella barra dei menu."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los cajones lo necesitan para saber a qué app pertenece cada icono y para abrirlos. Hasta entonces, todos los iconos se quedan en la barra de menús."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As gavetas precisam disso para saber a qual app pertence cada ícone e para abri-los. Até lá, todos os ícones ficam na barra de menus."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "各アイコンがどのアプリのものかを調べてアイコンを開くために、引き出しにはこの許可が必要です。許可するまで、すべてのアイコンはメニューバーに残ります。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "서랍이 각 아이콘이 어느 앱의 것인지 확인하고 아이콘을 열려면 이 권한이 필요합니다. 그때까지 모든 아이콘은 메뉴 막대에 남습니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "抽屉需要此权限来识别每个图标所属的 App 并打开图标。在此之前，所有图标都会留在菜单栏中。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "抽屜需要此權限來辨識每個圖像所屬的 App 並打開圖像。在此之前，所有圖像都會留在選單列中。"
+          }
+        }
+      }
+    },
+    "Move Col to the Applications folder": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Placez Col dans le dossier Applications"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bewegen Sie Col in den Ordner „Programme“"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verplaats Col naar de map 'Apps'"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sposta Col nella cartella Applicazioni"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Traslada Col a la carpeta Aplicaciones"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mova o Col para a pasta Aplicativos"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Colを“アプリケーション”フォルダに移動"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col을 응용 프로그램 폴더로 이동"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "将 Col 移到“应用程序”文件夹"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "將 Col 移到「應用程式」檔案夾"
+          }
+        }
+      }
+    },
+    "macOS 27 lets only apps in the Applications folder change the menu bar. Until then, every icon stays in the menu bar.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS 27 ne permet qu’aux apps du dossier Applications de modifier la barre des menus. D’ici là, toutes les icônes restent dans la barre des menus."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unter macOS 27 dürfen nur Apps im Ordner „Programme“ die Menüleiste ändern. Bis dahin bleiben alle Symbole in der Menüleiste."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In macOS 27 kunnen alleen apps in de map 'Apps' de menubalk wijzigen. Tot die tijd blijven alle symbolen in de menubalk."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS 27 consente solo alle app nella cartella Applicazioni di modificare la barra dei menu. Fino ad allora, tutte le icone restano nella barra dei menu."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS 27 solo permite que las apps de la carpeta Aplicaciones cambien la barra de menús. Hasta entonces, todos los iconos se quedan en la barra de menús."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O macOS 27 só permite que os apps da pasta Aplicativos alterem a barra de menus. Até lá, todos os ícones ficam na barra de menus."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS 27では、“アプリケーション”フォルダ内のアプリしかメニューバーを変更できません。それまでは、すべてのアイコンがメニューバーに残ります。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS 27에서는 응용 프로그램 폴더에 있는 앱만 메뉴 막대를 변경할 수 있습니다. 그때까지 모든 아이콘은 메뉴 막대에 남습니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 macOS 27 中，只有“应用程序”文件夹中的 App 可以更改菜单栏。在此之前，所有图标都会留在菜单栏中。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 macOS 27 中，只有「應用程式」檔案夾中的 App 可以更改選單列。在此之前，所有圖像都會留在選單列中。"
+          }
+        }
+      }
+    },
+    "Move to Applications": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Placer dans Applications"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In „Programme“ bewegen"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verplaats naar 'Apps'"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sposta in Applicazioni"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trasladar a Aplicaciones"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mover para Aplicativos"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“アプリケーション”に移動"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "응용 프로그램으로 이동"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "移到“应用程序”"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "移到「應用程式」"
+          }
+        }
+      }
+    },
+    "This version of macOS changed what the drawers rely on": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cette version de macOS a modifié ce sur quoi les tiroirs s’appuient"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese macOS-Version hat geändert, worauf die Schubladen angewiesen sind"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deze versie van macOS heeft gewijzigd waar de laden op steunen"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Questa versione di macOS ha modificato ciò su cui si basano i cassetti"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta versión de macOS ha cambiado algo de lo que dependen los cajones"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta versão do macOS alterou algo de que as gavetas dependem"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このバージョンのmacOSでは、引き出しが利用している機能が変更されています"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 버전의 macOS에서 서랍이 사용하는 기능이 변경되었습니다"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此版本的 macOS 更改了抽屉所依赖的功能"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此版本的 macOS 更改了抽屜所依賴的功能"
+          }
+        }
+      }
+    },
+    "Every icon stays in the menu bar (%@).": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toutes les icônes restent dans la barre des menus (%@)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Symbole bleiben in der Menüleiste (%@)."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle symbolen blijven in de menubalk (%@)."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tutte le icone restano nella barra dei menu (%@)."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todos los iconos se quedan en la barra de menús (%@)."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todos os ícones ficam na barra de menus (%@)."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "すべてのアイコンはメニューバーに残ります（%@）。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "모든 아이콘이 메뉴 막대에 남습니다(%@)."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所有图标都会留在菜单栏中（%@）。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所有圖像都會留在選單列中（%@）。"
+          }
+        }
+      }
+    },
+    "Drawers": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroirs"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schubladen"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laden"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cassetti"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cajones"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gavetas"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "引き出し"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "서랍"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "抽屉"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "抽屜"
+          }
+        }
+      }
+    },
+    "Layout and drawers": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disposition et tiroirs"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Layout und Schubladen"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lay-out en laden"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Layout e cassetti"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disposición y cajones"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Layout e gavetas"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "レイアウトと引き出し"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "레이아웃 및 서랍"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "布局和抽屉"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "佈局和抽屜"
+          }
+        }
+      }
+    },
+    "Drag icons between the menu bar, your drawers and Hidden; name each drawer and choose its icon.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faites glisser les icônes entre la barre des menus, vos tiroirs et « Masquées » ; nommez chaque tiroir et choisissez son icône."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ziehen Sie Symbole zwischen der Menüleiste, Ihren Schubladen und „Ausgeblendet“ hin und her; benennen Sie jede Schublade und wählen Sie ihr Symbol."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep symbolen tussen de menubalk, je laden en 'Verborgen'; geef elke lade een naam en kies het symbool."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trascina le icone tra la barra dei menu, i tuoi cassetti e “Nascoste”; dai un nome a ogni cassetto e scegli la sua icona."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrastra iconos entre la barra de menús, tus cajones y “Ocultos”; pon nombre a cada cajón y elige su icono."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arraste ícones entre a barra de menus, suas gavetas e “Ocultos”; dê um nome a cada gaveta e escolha o ícone dela."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "メニューバー、引き出し、“非表示”の間でアイコンをドラッグし、各引き出しの名前とアイコンを決めます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "메뉴 막대, 서랍, ‘가려진 항목’ 사이에서 아이콘을 드래그하고, 각 서랍의 이름과 아이콘을 정합니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在菜单栏、抽屉和“已隐藏”之间拖移图标；为每个抽屉命名并选择它的图标。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在選單列、抽屜和「已隱藏」之間拖移圖像；為每個抽屜命名並選擇它的圖像。"
+          }
+        }
+      }
+    },
+    "Arrange…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ranger…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anordnen …"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rangschik…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disponi…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Organizar…"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Organizar…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "整理…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "정리…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "整理…"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "整理…"
+          }
+        }
+      }
+    },
+    "Look, triggers and shortcuts": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apparence, déclencheurs et raccourcis"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aussehen, Auslöser und Kurzbefehle"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uiterlijk, triggers en toetscombinaties"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aspetto, attivatori e abbreviazioni"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aspecto, activadores y atajos"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aparência, acionadores e atalhos"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "外観、トリガー、ショートカット"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "모양, 트리거 및 단축키"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "外观、触发器和快捷键"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "外觀、觸發器和快速鍵"
+          }
+        }
+      }
+    },
+    "A tint for the menu bar, profiles that switch by themselves, and a shortcut for any icon.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une teinte pour la barre des menus, des profils qui changent d’eux-mêmes, et un raccourci pour n’importe quelle icône."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eine Tönung für die Menüleiste, Profile, die von selbst wechseln, und ein Kurzbefehl für jedes Symbol."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Een tint voor de menubalk, profielen die vanzelf wisselen en een toetscombinatie voor elk symbool."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una tinta per la barra dei menu, profili che cambiano da soli e un’abbreviazione per qualsiasi icona."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un tinte para la barra de menús, perfiles que cambian solos y un atajo para cualquier icono."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uma tonalidade para a barra de menus, perfis que mudam sozinhos e um atalho para qualquer ícone."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "メニューバーの色合い、自動で切り替わるプロファイル、あらゆるアイコンのショートカット。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "메뉴 막대 색조, 스스로 전환되는 프로필, 모든 아이콘을 위한 단축키."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "菜单栏色调、会自动切换的场景，以及任意图标的快捷键。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選單列色調、會自動切換的情境，以及任意圖像的快速鍵。"
+          }
+        }
+      }
+    },
+    "Open…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnen …"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apri…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir…"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開く…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "열기…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开…"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打開…"
+          }
+        }
+      }
+    },
+    "Smart Sort": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Smart Sort"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Smart Sort"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Smart Sort"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Smart Sort"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Smart Sort"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Smart Sort"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Smart Sort"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Smart Sort"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Smart Sort"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Smart Sort"
+          }
+        }
+      }
+    },
+    "Sorts every icon again, by purpose or by developer, and shows the result before it applies.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Range à nouveau chaque icône, par usage ou par développeur, et montre le résultat avant de l’appliquer."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sortiert alle Symbole neu, nach Zweck oder nach Entwickler, und zeigt das Ergebnis, bevor es angewendet wird."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sorteert elk symbool opnieuw, op doel of op ontwikkelaar, en toont het resultaat voordat het wordt toegepast."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Riordina di nuovo ogni icona, per uso o per sviluppatore, e mostra il risultato prima di applicarlo."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vuelve a ordenar cada icono, por uso o por desarrollador, y muestra el resultado antes de aplicarlo."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Organiza de novo cada ícone, por finalidade ou por desenvolvedor, e mostra o resultado antes de aplicar."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "すべてのアイコンを用途別または開発元別にもう一度整理し、適用する前に結果を表示します。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "모든 아이콘을 용도별 또는 개발자별로 다시 정리하고, 적용하기 전에 결과를 보여 줍니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "按用途或按开发者重新整理每个图标，并在应用前显示结果。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "按用途或按開發者重新整理每個圖像，並在套用前顯示結果。"
+          }
+        }
+      }
+    },
+    "Sort Again…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ranger à nouveau…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neu sortieren …"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opnieuw sorteren…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Riordina di nuovo…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordenar de nuevo…"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Organizar de Novo…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "もう一度整理…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다시 정리…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重新整理…"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重新整理…"
+          }
+        }
+      }
+    },
+    "Hidden icons": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Icônes masquées"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ausgeblendete Symbole"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verborgen symbolen"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Icone nascoste"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iconos ocultos"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ícones ocultos"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "非表示のアイコン"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "가려진 아이콘"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已隐藏的图标"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已隱藏的圖像"
+          }
+        }
+      }
+    },
+    "Search icons": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechercher des icônes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Symbole suchen"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoek symbolen"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cerca icone"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buscar iconos"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buscar ícones"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アイコンを検索"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아이콘 검색"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "搜索图标"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "搜尋圖像"
+          }
+        }
+      }
+    },
+    "Profiles": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profils"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profile"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profielen"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profili"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Perfiles"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Perfis"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "プロファイル"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "프로필"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "场景"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "情境"
+          }
+        }
+      }
+    },
+    "Triggers": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déclencheurs"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auslöser"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Triggers"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attivatori"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activadores"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Acionadores"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "トリガー"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "트리거"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "触发器"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "觸發器"
+          }
+        }
+      }
+    },
+    "Tiroir": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiroir"
           }
         }
       }

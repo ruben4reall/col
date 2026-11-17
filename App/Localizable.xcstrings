@@ -2048,6 +2048,134 @@
           }
         }
       }
+    },
+    "Col cannot move itself into the Applications folder": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col ne peut pas se placer dans le dossier Applications"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col kann sich nicht in den Ordner „Programme“ bewegen"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col kan zichzelf niet naar de map 'Apps' verplaatsen"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col non può spostarsi nella cartella Applicazioni"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col no puede trasladarse a la carpeta Aplicaciones"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Col não consegue se mover para a pasta Aplicativos"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Colを“アプリケーション”フォルダに移動できません"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col을 응용 프로그램 폴더로 이동할 수 없습니다"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col 无法将自己移到“应用程序”文件夹"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Col 無法將自己移到「應用程式」檔案夾"
+          }
+        }
+      }
+    },
+    "Your account cannot write there. Ask the person who manages this Mac to move Col into Applications.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre compte ne peut pas y écrire. Demandez à la personne qui gère ce Mac de placer Col dans Applications."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ihr Benutzeraccount kann dort nicht schreiben. Bitten Sie die Person, die diesen Mac verwaltet, Col in „Programme“ zu bewegen."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Je account kan daar niet schrijven. Vraag degene die deze Mac beheert om Col naar 'Apps' te verplaatsen."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il tuo account non può scrivere lì. Chiedi a chi gestisce questo Mac di spostare Col in Applicazioni."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu cuenta no puede escribir ahí. Pide a quien administra este Mac que traslade Col a Aplicaciones."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sua conta não pode gravar ali. Peça a quem administra este Mac para mover o Col para Aplicativos."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "お使いのアカウントでは、そのフォルダに書き込めません。このMacの管理者に、Colを“アプリケーション”に移動するよう依頼してください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "사용자의 계정으로는 그곳에 쓸 수 없습니다. 이 Mac을 관리하는 사람에게 Col을 응용 프로그램으로 이동해 달라고 요청하십시오."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的账户无法写入该文件夹。请让管理这台 Mac 的人将 Col 移到“应用程序”。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的帳號無法寫入該檔案夾。請讓管理這台 Mac 的人將 Col 移到「應用程式」。"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -1,0 +1,349 @@
+import AppKit
+import Testing
+import TiroirCore
+@testable import TiroirSystem
+
+@MainActor
+final class FakeRestriction: RestrictionControlling {
+    var isAvailable = true
+    var refuses = false
+    private(set) var appliedAllowList: [String]?
+    private(set) var applied: [[String]] = []
+    private(set) var releases = 0
+    /// MenuBarAgent takes its time: the answer waits for `answer()`.
+    var holdsAnswers = false
+    private var held: CheckedContinuation<Void, Never>?
+    var isHolding: Bool { held != nil }
+
+    func answer() {
+        held?.resume()
+        held = nil
+    }
+
+    func apply(allowed: [String]) async -> Error? {
+        applied.append(allowed)
+        if holdsAnswers { await withCheckedContinuation { held = $0 } }
+        if refuses { return RestrictionError.noAnswer }
+        appliedAllowList = allowed
+        return nil
+    }
+
+    func release() {
+        appliedAllowList = nil
+        releases += 1
+    }
+}
+
+/// What MenuBarAgent would draw: every app with an icon, minus the apps the restriction leaves out.
+final class FakeAgent: @unchecked Sendable {
+    var apps: [String] = []
+    weak var restriction: FakeRestriction?
+    var drawn: [String] {
+        MainActor.assumeIsolated {
+            let allowed = restriction?.appliedAllowList.map(Set.init)
+            return apps.filter { allowed?.contains($0) ?? true }
+        }
+    }
+    func layout() -> AgentLayout {
+        var x: CGFloat = 1300
+        let items = drawn.map { bundleID -> AgentLayout.Item in
+            x -= 36
+            return AgentLayout.Item(bundleID: bundleID, systemIdentifier: nil, frame: CGRect(x: x, y: 0, width: 32, height: 33),
+                                    pid: 3000, element: nil, isOverflowButton: false)
+        }
+        let clock = AgentLayout.Item(bundleID: nil, systemIdentifier: AgentLayout.clockIdentifier,
+                                     frame: CGRect(x: 1363, y: 0, width: 151, height: 33), pid: 1, element: nil, isOverflowButton: false)
+        return AgentLayout(displays: [AgentLayout.Display(frame: CGRect(x: 0, y: 0, width: 1512, height: 33), items: [clock] + items)], agentPID: 1)
+    }
+}
+
+@MainActor
+final class FixedIcons: IconSource {
+    var isTrusted = true
+    let apps: [String]
+    private(set) var pressed: [String] = []
+    /// Called with the bundle identifier of each icon pressed: a test opens its menu there.
+    var onPress: ((String) -> Void)?
+    init(apps: [String]) { self.apps = apps }
+    func find() async -> [FoundIcon] {
+        apps.enumerated().map { index, bundleID in
+            let recorder = Recorder(owner: self)
+            return FoundIcon(app: RunningApp(pid: pid_t(3000 + index), bundleID: bundleID, name: bundleID),
+                             frame: CGRect(x: 1000 - CGFloat(index) * 40, y: 0, width: 32, height: 33),
+                             press: { recorder.press(bundleID) })
+        }
+    }
+    final class Recorder: @unchecked Sendable {
+        weak var owner: FixedIcons?
+        init(owner: FixedIcons) { self.owner = owner }
+        func press(_ bundleID: String) -> Bool {
+            MainActor.assumeIsolated {
+                owner?.pressed.append(bundleID)
+                owner?.onPress?(bundleID)
+            }
+            return true
+        }
+    }
+}
+
+final class NoWindows: StatusWindowSource, @unchecked Sendable {
+    var menusOpen = false
+    func statusWindows() -> [StatusWindow] { [] }
+    func raisedWindows(ownerPIDs: Set<pid_t>) -> Set<UInt32> { menusOpen ? [5000] : [] }
+}
+
+@MainActor
+@Suite struct GoldenGateEngineTests {
+    let restriction = FakeRestriction()
+    let agent = FakeAgent()
+    let icons = FixedIcons(apps: ["com.google.drivefs", "com.protonmail.bridge", "com.anthropic.claudefordesktop"])
+    let windows = NoWindows()
+    let clock = ClockZoneGuard()
+    let running = ["com.google.drivefs", "com.protonmail.bridge", "com.anthropic.claudefordesktop", "com.apple.finder", "com.apple.controlcenter"]
+
+    func engine(inApplications: Bool = true) -> GoldenGateEngine {
+        let agent = self.agent
+        agent.apps = ["com.google.drivefs", "com.protonmail.bridge", "com.anthropic.claudefordesktop"]
+        agent.restriction = restriction
+        return GoldenGateEngine(
+            icons: icons, restriction: restriction, windows: windows, clock: clock,
+            isInApplications: { inApplications }, frontmostBundleID: { nil }, runningBundleIDs: { self.running },
+            readAgent: { await MainActor.run { agent.layout() } }, readSettled: { _ in await MainActor.run { agent.layout() } }, pause: instant)
+    }
+
+    func plan(hiding bundleIDs: Set<String>) -> VisibilityPlan {
+        VisibilityPlan(concealed: Set(bundleIDs.map { IconID(bundleID: $0) }), hiddenApps: bundleIDs)
+    }
+
+    @Test func hidingSendsEveryOtherRunningAppAsTheAllowList() async {
+        let engine = engine()
+        await engine.start()
+        _ = await engine.apply(plan(hiding: ["com.google.drivefs"]))
+        let allowed = restriction.appliedAllowList ?? []
+        #expect(!allowed.contains("com.google.drivefs"))
+        #expect(allowed.contains("com.protonmail.bridge"))
+        #expect(allowed.contains("com.apple.finder"), "apps without icons are allowed too, so their icons show when they add one")
+        #expect(allowed.contains("com.apple.MenuBarAgent"))
+        #expect(allowed == allowed.sorted())
+        #expect(clock.isActive)
+        clock.stop()
+    }
+
+    @Test func appleAgentsAreNeverHidden() async {
+        let engine = engine()
+        await engine.start()
+        _ = await engine.apply(plan(hiding: ["com.apple.controlcenter"]))
+        #expect(restriction.appliedAllowList == nil, "nothing hideable asked: no restriction and no side effects")
+    }
+
+    @Test func nothingToHideReleasesTheRestriction() async {
+        let engine = engine()
+        await engine.start()
+        _ = await engine.apply(plan(hiding: ["com.google.drivefs"]))
+        _ = await engine.apply(plan(hiding: []))
+        #expect(restriction.appliedAllowList == nil)
+        #expect(!clock.isActive)
+    }
+
+    @Test func releasesWhileOverTheClockAndRestoresAfterLeaving() async {
+        let engine = engine()
+        await engine.start()
+        _ = await engine.apply(plan(hiding: ["com.google.drivefs"]))
+        clock.onChange?(true)
+        #expect(restriction.appliedAllowList == nil, "Notification Center can open")
+        _ = await engine.apply(plan(hiding: ["com.google.drivefs"]))
+        #expect(restriction.appliedAllowList == nil, "no restriction comes back while the pointer rests on the clock")
+        clock.onChange?(false)
+        for _ in 0..<20 where restriction.appliedAllowList == nil { await Task.yield() }
+        #expect(restriction.appliedAllowList?.contains("com.google.drivefs") == false)
+        clock.stop()
+    }
+
+    @Test func restoreInvalidatesTheAssertion() async {
+        let engine = engine()
+        await engine.start()
+        _ = await engine.apply(plan(hiding: ["com.google.drivefs"]))
+        engine.restore()
+        #expect(restriction.appliedAllowList == nil)
+        #expect(!clock.isActive)
+    }
+
+    @Test func outsideApplicationsNothingIsHidden() async {
+        let engine = engine(inApplications: false)
+        await engine.start()
+        #expect(engine.status == .needsApplicationsFolder)
+        _ = await engine.apply(plan(hiding: ["com.google.drivefs"]))
+        #expect(restriction.applied.isEmpty)
+    }
+
+    @Test func withoutTheFrameworkTheEngineSaysSo() async {
+        restriction.isAvailable = false
+        let engine = engine()
+        await engine.start()
+        #expect(engine.status == .unavailable("MenuBarClientCore"))
+    }
+
+    @Test func aRefusedRestrictionIsReported() async {
+        restriction.refuses = true
+        let engine = engine()
+        await engine.start()
+        let report = await engine.apply(plan(hiding: ["com.google.drivefs"]))
+        #expect(report.failed == [IconID(bundleID: "com.google.drivefs")])
+    }
+
+    @Test func aDrawnIconIsPressedWithoutTouchingTheRestriction() async throws {
+        let engine = engine()
+        await engine.start()
+        _ = await engine.scan()
+        try await engine.open(IconID(bundleID: "com.anthropic.claudefordesktop"), anchor: nil)
+        #expect(icons.pressed == ["com.anthropic.claudefordesktop"])
+        #expect(restriction.applied.isEmpty)
+    }
+
+    @Test func aHiddenAppIsLetThroughForItsMenuThenHiddenAgain() async throws {
+        let engine = engine()
+        engine.rehideDelay = 0
+        await engine.start()
+        _ = await engine.scan()
+        _ = await engine.apply(plan(hiding: ["com.google.drivefs", "com.protonmail.bridge"]))
+        #expect(!agent.drawn.contains("com.google.drivefs"))
+        let hidingApplies = restriction.applied.count
+        let windows = self.windows
+        icons.onPress = { _ in windows.menusOpen = true }
+        try await engine.open(IconID(bundleID: "com.google.drivefs"), anchor: nil)
+        #expect(icons.pressed == ["com.google.drivefs"])
+        #expect(restriction.applied.count == hidingApplies + 1)
+        #expect(restriction.appliedAllowList?.contains("com.google.drivefs") == true, "let through for its menu")
+        #expect(restriction.appliedAllowList?.contains("com.protonmail.bridge") == false, "the others stay hidden")
+        try await Task.sleep(for: .milliseconds(60))
+        #expect(restriction.applied.count == hidingApplies + 1, "still let through while the menu is open")
+        windows.menusOpen = false
+        for _ in 0..<80 where restriction.applied.count < hidingApplies + 2 {
+            await Task.yield()
+            try await Task.sleep(for: .milliseconds(5))
+        }
+        #expect(restriction.appliedAllowList?.contains("com.google.drivefs") == false, "hidden again once the menu closed")
+        clock.stop()
+    }
+
+    // MARK: Turned off means turned off
+
+    /// The drawers are turned off while MenuBarAgent is still answering a restriction: once it answers, nothing is held
+    /// and nothing watches the clock.
+    @Test func restoredWhileMenuBarAgentAnswersHoldsNothing() async {
+        let engine = engine()
+        await engine.start()
+        restriction.holdsAnswers = true
+        let plan = plan(hiding: ["com.google.drivefs"])
+        let applying = Task { await engine.apply(plan) }
+        for _ in 0..<50 where !restriction.isHolding { await Task.yield() }
+        #expect(restriction.isHolding)
+        engine.restore()
+        restriction.answer()
+        _ = await applying.value
+        #expect(restriction.appliedAllowList == nil)
+        #expect(!clock.isActive)
+    }
+
+    /// The pointer rests on the clock, which lifts the restriction for Notification Center, as the drawers are turned
+    /// off: leaving the clock afterwards must not bring the restriction back, nor may a late arrangement.
+    @Test func leavingTheClockAfterRestoreBringsNothingBack() async {
+        let engine = engine()
+        await engine.start()
+        _ = await engine.apply(plan(hiding: ["com.google.drivefs"]))
+        clock.onChange?(true)
+        engine.restore()
+        #expect(clock.onChange == nil)
+        _ = await engine.apply(plan(hiding: ["com.google.drivefs"]))
+        #expect(restriction.appliedAllowList == nil)
+        #expect(!clock.isActive)
+        await #expect(throws: EngineError.self) { try await engine.open(IconID(bundleID: "com.google.drivefs"), anchor: nil) }
+        #expect(restriction.appliedAllowList == nil)
+    }
+
+    /// Started again (the option turned on again), the engine works as before.
+    @Test func startedAgainAfterRestoreTheEngineWorks() async {
+        let engine = engine()
+        await engine.start()
+        engine.restore()
+        await engine.start()
+        _ = await engine.apply(plan(hiding: ["com.google.drivefs"]))
+        #expect(restriction.appliedAllowList?.contains("com.google.drivefs") == false)
+        engine.restore()
+        clock.stop()
+    }
+
+    /// Seen with Google Drive on macOS 27.2: its icon opens an ordinary window, which brings the app in front. The icon
+    /// stays while the app does, and goes back once another app comes in front.
+    @Test func anIconThatOpensAWindowStaysWhileItsAppIsInFront() async throws {
+        let restriction = self.restriction
+        let agent = self.agent
+        final class Front: @unchecked Sendable { var bundleID: String? }
+        let front = Front()
+        let engine = GoldenGateEngine(
+            icons: icons, restriction: restriction, windows: windows, clock: clock,
+            isInApplications: { true }, frontmostBundleID: { front.bundleID }, runningBundleIDs: { self.running },
+            readAgent: { await MainActor.run { agent.layout() } }, readSettled: { _ in await MainActor.run { agent.layout() } }, pause: instant)
+        agent.apps = ["com.google.drivefs", "com.protonmail.bridge", "com.anthropic.claudefordesktop"]
+        agent.restriction = restriction
+        engine.rehideDelay = 0
+        await engine.start()
+        _ = await engine.scan()
+        _ = await engine.apply(plan(hiding: ["com.google.drivefs", "com.protonmail.bridge"]))
+        icons.onPress = { bundleID in front.bundleID = bundleID }
+        try await engine.open(IconID(bundleID: "com.google.drivefs"), anchor: nil)
+        for _ in 0..<20 { await Task.yield() }
+        #expect(restriction.appliedAllowList?.contains("com.google.drivefs") == true, "still shown while Drive is in front")
+        front.bundleID = "com.apple.finder"
+        for _ in 0..<80 where restriction.appliedAllowList?.contains("com.google.drivefs") == true {
+            await Task.yield()
+            try await Task.sleep(for: .milliseconds(5))
+        }
+        #expect(restriction.appliedAllowList?.contains("com.google.drivefs") == false, "hidden again once another app is in front")
+        engine.restore()
+        clock.stop()
+    }
+
+    /// Seen on macOS 27.2: MenuBarAgent lays the bar out at once, and the app let through draws its icon a moment later.
+    /// The engine waits for it instead of giving up on a bar that only looked settled.
+    @Test func anIconDrawnLateIsStillOpened() async throws {
+        let restriction = self.restriction
+        let agent = self.agent
+        final class Reads: @unchecked Sendable { var count = 0 }
+        let reads = Reads()
+        let engine = GoldenGateEngine(
+            icons: icons, restriction: restriction, windows: windows, clock: clock,
+            isInApplications: { true }, frontmostBundleID: { nil }, runningBundleIDs: { self.running },
+            readAgent: {
+                // The first reads after the restriction lets Drive through do not show it yet.
+                await MainActor.run {
+                    // No restriction at all lets Drive through too.
+                    if restriction.appliedAllowList.map({ $0.contains("com.google.drivefs") }) ?? true { reads.count += 1 }
+                    let layout = agent.layout()
+                    guard reads.count < 4 else { return layout }
+                    var hidden = layout
+                    hidden.displays[0].items.removeAll { $0.bundleID == "com.google.drivefs" }
+                    return hidden
+                }
+            },
+            readSettled: { _ in
+                await MainActor.run {
+                    var layout = agent.layout()
+                    layout.displays[0].items.removeAll { $0.bundleID == "com.google.drivefs" }
+                    return layout
+                }
+            },
+            pause: instant)
+        agent.apps = ["com.google.drivefs", "com.protonmail.bridge", "com.anthropic.claudefordesktop"]
+        agent.restriction = restriction
+        engine.rehideDelay = 0
+        await engine.start()
+        _ = await engine.scan()
+        _ = await engine.apply(plan(hiding: ["com.google.drivefs"]))
+        try await engine.open(IconID(bundleID: "com.google.drivefs"), anchor: nil)
+        #expect(icons.pressed == ["com.google.drivefs"])
+        #expect(restriction.appliedAllowList.map { $0.contains("com.protonmail.bridge") } ?? true, "no need to hide the others")
+        engine.restore()
+        clock.stop()
+    }
+}
