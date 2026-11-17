@@ -49299,66 +49299,66 @@
         }
       }
     },
-    "Turn this off, or quit Col, and every icon comes back where it was.": {
+    "Turn this off, or quit Col, and every icon comes back to the menu bar.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Désactivez cette option ou quittez Col, et chaque icône reprend sa place."
+            "value": "Désactivez cette option ou quittez Col, et chaque icône revient dans la barre des menus."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Deaktivieren Sie diese Option oder beenden Sie Col, und jedes Symbol kehrt an seinen Platz zurück."
+            "value": "Deaktivieren Sie diese Option oder beenden Sie Col, und jedes Symbol kehrt in die Menüleiste zurück."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Schakel dit uit of stop Col, en elk symbool komt terug op zijn plek."
+            "value": "Schakel dit uit of stop Col, en elk symbool komt terug in de menubalk."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Disattiva l’opzione o esci da Col, e ogni icona torna al suo posto."
+            "value": "Disattiva l’opzione o esci da Col, e ogni icona torna nella barra dei menu."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Desactiva esta opción o sal de Col, y cada icono vuelve a su sitio."
+            "value": "Desactiva esta opción o sal de Col, y cada icono vuelve a la barra de menús."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Desative esta opção ou encerre o Col, e cada ícone volta ao seu lugar."
+            "value": "Desative esta opção ou encerre o Col, e cada ícone volta para a barra de menus."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "このオプションをオフにするかColを終了すると、すべてのアイコンが元の場所に戻ります。"
+            "value": "このオプションをオフにするかColを終了すると、すべてのアイコンがメニューバーに戻ります。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "이 옵션을 끄거나 Col을 종료하면 모든 아이콘이 원래 자리로 돌아옵니다."
+            "value": "이 옵션을 끄거나 Col을 종료하면 모든 아이콘이 메뉴 막대로 돌아옵니다."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "关闭此选项或退出 Col 后，所有图标都会回到原位。"
+            "value": "关闭此选项或退出 Col 后，所有图标都会回到菜单栏。"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "關閉此選項或結束 Col 後，所有圖像都會回到原位。"
+            "value": "關閉此選項或結束 Col 後，所有圖像都會回到選單列。"
           }
         }
       }

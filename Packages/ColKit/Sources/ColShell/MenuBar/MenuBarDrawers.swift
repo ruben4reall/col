@@ -34,8 +34,9 @@ protocol DrawersRunner: AnyObject {
 /// Col's menu bar option: the icons of the menu bar tidied into drawers, by the drawers of Tiroir, which run in Col's
 /// process from the moment the switch is on.
 ///
-/// Off, nothing of it runs: no observer, no timer, no monitor, and the drawers' code and the private framework they use
-/// on macOS 27 are never reached. On, it starts the drawers, unless the standalone Tiroir app runs: two apps arranging
+/// Off, nothing of the drawers runs: no observer, no timer, no monitor, no event tap, and the private framework they
+/// call on macOS 27 is never called. (The island itself reads MenuBarAgent's layout through the drawers' reader on
+/// macOS 27, in the background, a read that keeps nothing running.) On, it starts the drawers, unless the standalone Tiroir app runs: two apps arranging
 /// the same icons would undo each other's work, so Col waits for Tiroir to quit. The first time, Tiroir's own settings
 /// come along, so a Tiroir user finds the same drawers. Turned off, when Col quits and when it relaunches, every icon
 /// comes back; after a crash too, since the drawers' divider and restriction end with Col's process.
@@ -71,7 +72,8 @@ final class MenuBarDrawers {
 
     @ObservationIgnored private let defaults: UserDefaults
     @ObservationIgnored private let isSupported: Bool
-    @ObservationIgnored private let runningBundleIDs: () -> [String]
+    /// The apps that run, but the one with this process identifier, which is quitting.
+    @ObservationIgnored private let runningBundleIDs: (_ excluding: pid_t?) -> [String]
     @ObservationIgnored private let standaloneSettings: () -> UserDefaults?
     @ObservationIgnored private let workspace: NotificationCenter
     @ObservationIgnored private let makeRunner: (MenuBarDrawers) -> DrawersRunner?
@@ -82,7 +84,11 @@ final class MenuBarDrawers {
     init(
         defaults: UserDefaults = .standard,
         isSupported: Bool = ProcessInfo.processInfo.isOperatingSystemAtLeast(OperatingSystemVersion(majorVersion: 26, minorVersion: 0, patchVersion: 0)),
-        runningBundleIDs: @escaping () -> [String] = { NSWorkspace.shared.runningApplications.compactMap(\.bundleIdentifier) },
+        runningBundleIDs: @escaping (_ excluding: pid_t?) -> [String] = { excluding in
+            NSWorkspace.shared.runningApplications
+                .filter { !$0.isTerminated && $0.processIdentifier != excluding }
+                .compactMap(\.bundleIdentifier)
+        },
         standaloneSettings: @escaping () -> UserDefaults? = { UserDefaults(suiteName: TiroirInfo.bundleIdentifier) },
         workspace: NotificationCenter = NSWorkspace.shared.notificationCenter,
         makeRunner: ((MenuBarDrawers) -> DrawersRunner?)? = nil
@@ -124,13 +130,13 @@ final class MenuBarDrawers {
         removeObservers()
     }
 
-    private func activate() {
+    private func activate(excluding quitting: pid_t? = nil) {
         guard isSupported else {
             status = .needsNewerMacOS
             return
         }
         watchTheStandaloneApp()
-        if standaloneIsRunning {
+        if standaloneRuns(excluding: quitting) {
             stopRunner()
             status = .yieldsToTiroir
             return
@@ -161,7 +167,12 @@ final class MenuBarDrawers {
 
     /// Whether Tiroir (or Tansu, its name before 1.1) runs, in a release or a development build.
     var standaloneIsRunning: Bool {
-        runningBundleIDs().contains(where: Self.isStandalone)
+        standaloneRuns(excluding: nil)
+    }
+
+    /// While macOS says an app quit, the list of running apps may still hold it: the one quitting is left out.
+    func standaloneRuns(excluding quitting: pid_t?) -> Bool {
+        runningBundleIDs(quitting).contains(where: Self.isStandalone)
     }
 
     nonisolated static func isStandalone(_ bundleID: String) -> Bool {
@@ -181,17 +192,19 @@ final class MenuBarDrawers {
         guard observers.isEmpty else { return }
         for name in [NSWorkspace.didLaunchApplicationNotification, NSWorkspace.didTerminateApplicationNotification] {
             observers.append(workspace.addObserver(forName: name, object: nil, queue: .main) { [weak self] note in
-                let bundleID = (note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication)?.bundleIdentifier
-                    ?? note.userInfo?["bundleIdentifier"] as? String
+                let app = note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication
+                let bundleID = app?.bundleIdentifier ?? note.userInfo?["bundleIdentifier"] as? String
                 guard let bundleID, Self.isStandalone(bundleID) else { return }
-                MainActor.assumeIsolated { self?.standaloneChanged() }
+                let quitting = note.name == NSWorkspace.didTerminateApplicationNotification
+                    ? app?.processIdentifier ?? note.userInfo?["pid"] as? pid_t : nil
+                MainActor.assumeIsolated { self?.standaloneChanged(excluding: quitting) }
             })
         }
     }
 
-    func standaloneChanged() {
+    func standaloneChanged(excluding quitting: pid_t? = nil) {
         guard isEnabled else { return }
-        activate()
+        activate(excluding: quitting)
     }
 
     private func removeObservers() {

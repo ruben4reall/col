@@ -908,6 +908,7 @@ public final class IslandController {
         if Preferences.showsOnLockScreen { LockScreenSpace.shared?.adopt(panel) }
         if !WelcomeWindow.hasWelcomed { greet() }
         retireSouffleur()
+        followMenuBarAgent()
         startMenuBarDrawers()
         // `-ColDemo headphones` (or `max`) plays the headphones card with sample levels, without touching Bluetooth.
         if let demo = UserDefaults.standard.string(forKey: "ColDemo"), demo == "headphones" || demo == "max" {
@@ -1005,6 +1006,15 @@ public final class IslandController {
         media.stop()
         api.stop()
         ConnectCenter.shared.server.stop()
+    }
+
+    /// On macOS 27 the icons MenuBarAgent draws are read in the background, never on the main thread: when a read finds
+    /// them changed, the island measures the menu bar again with it.
+    private func followMenuBarAgent() {
+        MenuBarSpace.agentBarsChanged = { [weak self] in
+            self?.measureMenuBar(statusItems: true)
+            self?.refreshActivity()
+        }
     }
 
     /// The menu bar option: when it is on, the drawers start with the island, and each time they move icons or change their

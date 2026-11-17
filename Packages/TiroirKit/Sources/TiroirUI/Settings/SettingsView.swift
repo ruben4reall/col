@@ -90,18 +90,22 @@ struct EngineBanner: View {
         case .needsAccessibility:
             banner(Strings.needsAccessibilityBanner, button: Strings.openSystemSettings) { model.actions.requestAccessibility() }
         case .needsApplicationsFolder:
-            banner(Strings.needsApplicationsBanner, button: Strings.moveToApplications) { model.actions.moveToApplications() }
+            banner(Strings.needsApplicationsBanner, button: model.canMoveToApplications ? Strings.moveToApplications : nil) {
+                model.actions.moveToApplications()
+            }
         case .unavailable(let detail):
             banner(Strings.unavailableBanner(detail), button: Strings.tryAgain) { model.actions.retry() }
         }
     }
 
-    private func banner(_ text: String, button: String, action: @escaping () -> Void) -> some View {
+    private func banner(_ text: String, button: String?, action: @escaping () -> Void) -> some View {
         HStack(spacing: 12) {
             Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(Theme.warning)
             Text(verbatim: text).font(.system(size: 13)).fixedSize(horizontal: false, vertical: true)
             Spacer(minLength: 8)
-            Button(button, action: action).buttonStyle(PillButtonStyle(.primary))
+            if let button {
+                Button(button, action: action).buttonStyle(PillButtonStyle(.primary))
+            }
         }
         .padding(14)
         .card(radius: Theme.radius)

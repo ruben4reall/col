@@ -46,4 +46,20 @@ struct AppLocationTests {
         #expect(!AppLocation.isQuarantined(app))
         #expect(getxattr(executable.path, "com.apple.quarantine", nil, 0, 0, XATTR_NOFOLLOW) < 0)
     }
+
+    /// Moving Col into Applications never sends the running copy to the Trash, and for the menu bar's drawers on macOS 27
+    /// only the Mac's own Applications folder will do.
+    @Test func movingIntoApplicationsNeverReplacesTheRunningCopy() {
+        let downloads = URL(fileURLWithPath: "/Users/me/Downloads/Col.app")
+        let home = URL(fileURLWithPath: "/Users/me/Applications/Col.app")
+        let shared = URL(fileURLWithPath: "/Applications/Col.app")
+        #expect(AppLocation.moveDestination(for: downloads, sharedIsWritable: true, allowsHome: true, home: "/Users/me") == shared)
+        #expect(AppLocation.moveDestination(for: downloads, sharedIsWritable: false, allowsHome: true, home: "/Users/me") == home)
+        // An account that cannot write in /Applications, Col already in ~/Applications: that is where it is.
+        #expect(AppLocation.moveDestination(for: home, sharedIsWritable: false, allowsHome: true, home: "/Users/me") == nil)
+        #expect(AppLocation.moveDestination(for: shared, sharedIsWritable: true, allowsHome: true, home: "/Users/me") == nil)
+        // The drawers: only /Applications.
+        #expect(AppLocation.moveDestination(for: home, sharedIsWritable: false, allowsHome: false, home: "/Users/me") == nil)
+        #expect(AppLocation.moveDestination(for: home, sharedIsWritable: true, allowsHome: false, home: "/Users/me") == shared)
+    }
 }

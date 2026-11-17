@@ -27,6 +27,11 @@ public final class ClockZoneGuard {
 
     public var isActive: Bool { monitor != nil }
 
+    isolated deinit {
+        if let monitor { NSEvent.removeMonitor(monitor) }
+        leaving?.cancel()
+    }
+
     public func start() {
         guard monitor == nil else { return }
         monitor = NSEvent.addGlobalMonitorForEvents(matching: [.mouseMoved, .leftMouseDragged]) { [weak self] _ in

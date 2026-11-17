@@ -15,7 +15,9 @@ final class ColDrawersRunner: DrawersRunner {
             defaults: .standard,
             settingsKey: MenuBarDrawers.settingsKey,
             requestAccessibility: { PermissionCenter.shared.request(.accessibility) },
-            moveToApplications: { [weak drawers] in drawers?.moveToApplications?() },
+            // A development build never replaces the installed Col: the drawers then only say why they wait.
+            moveToApplications: AppLocation.isDevelopmentBuild || drawers.moveToApplications == nil
+                ? nil : { [weak drawers] in drawers?.moveToApplications?() },
             windowOpened: { WindowPresence.shared.add($0) },
             windowClosed: { window in
                 WindowPresence.shared.remove(window)

@@ -71,8 +71,9 @@ public struct DrawersHost {
     public var settingsKey: String
     /// Asks for Accessibility (Device Control and Data Access on macOS 27) the way Col does everywhere else.
     public var requestAccessibility: () -> Void
-    /// Moves Col to /Applications and opens it from there: macOS 27 honours only apps there.
-    public var moveToApplications: () -> Void
+    /// Moves Col to /Applications and opens it from there: macOS 27 honours only apps there. Nil when Col must not
+    /// move itself (a development build, which never replaces the installed Col): the drawers then only say why.
+    public var moveToApplications: (() -> Void)?
     /// A window of the drawers opened, or closed.
     public var windowOpened: (NSWindow) -> Void
     public var windowClosed: (NSWindow) -> Void
@@ -80,7 +81,7 @@ public struct DrawersHost {
     public var menuBarChanged: () -> Void
 
     public init(defaults: UserDefaults, settingsKey: String, requestAccessibility: @escaping () -> Void = {},
-                moveToApplications: @escaping () -> Void = {}, windowOpened: @escaping (NSWindow) -> Void = { _ in },
+                moveToApplications: (() -> Void)? = nil, windowOpened: @escaping (NSWindow) -> Void = { _ in },
                 windowClosed: @escaping (NSWindow) -> Void = { _ in }, menuBarChanged: @escaping () -> Void = {}) {
         self.defaults = defaults
         self.settingsKey = settingsKey

@@ -34,6 +34,8 @@ public final class Coordinator {
     private let reveal = RevealController()
     private let triggerSensors = TriggerSensors()
     private var shortcuts: ShortcutCenter?
+    /// The icon being opened from a drawer, search or a shortcut: `shutdown()` stops it where it is.
+    private var opening: Task<Void, Never>?
     /// Set by `shutdown()`: nothing touches the menu bar after it, even a scan or an arrangement still on its way.
     public private(set) var isShutDown = false
 
@@ -87,6 +89,7 @@ public final class Coordinator {
     // MARK: Launch
 
     public func start() async {
+        guard !isShutDown else { return }
         if options.demo, let path = options.backdrop { backdrop = Backdrop.show(imageAt: path) }
         wireActions()
         wireMenuBar()
@@ -106,14 +109,19 @@ public final class Coordinator {
         triggerSensors.onChange = { [weak self] in self?.evaluateTriggers() }
 
         await engine.start()
-        // Turned off while it started: `shutdown()` already gave everything back.
-        guard !isShutDown else { return }
+        // Turned off while it started: `shutdown()` already gave everything back, and the engine, which had not started
+        // yet then, gives back what it may have started since.
+        guard !isShutDown else {
+            engine.restore()
+            return
+        }
         interface.engineKind = engine.kind
         interface.engineStatus = engine.status
         interface.accessibilityTrusted = options.demo || permission.isTrusted
         interface.isInApplications = GoldenGateEngine.runsFromApplications()
         interface.appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "3.1.0"
         interface.iconSpacing = IconSpacing.current()
+        interface.canMoveToApplications = host.moveToApplications != nil
         applyBehavior()
         syncTriggerSensors()
         evaluateTriggers(apply: false)
@@ -176,6 +184,8 @@ public final class Coordinator {
         isShutDown = true
         pendingApply?.cancel()
         pendingApply = nil
+        opening?.cancel()
+        opening = nil
         welcome = nil
         panels.close()
         windows.closeAll()
@@ -478,15 +488,19 @@ public final class Coordinator {
         panels.close()
         guard !isShutDown else { return }
         let anchor = target.flatMap { statusItems.anchor(for: $0) }
-        Task {
+        opening?.cancel()
+        opening = Task { [weak self] in
+            guard let self else { return }
             do {
                 try await engine.open(id, anchor: anchor?.windowServer)
             } catch EngineError.personIsBusy {
                 // The person kept moving: better not to interfere.
-            } catch EngineError.notReady(.needsAccessibility) {
+            } catch EngineError.notReady(.needsAccessibility) where !isShutDown {
                 toast.show(Strings.needsAccessibilityToOpen, near: anchor?.appKit)
-            } catch {
+            } catch where !isShutDown && !Task.isCancelled {
                 toast.show(Strings.couldNotOpen(interface.row(id)?.name ?? id.bundleID), near: anchor?.appKit)
+            } catch {
+                // Stopped with the drawers: nothing to say.
             }
         }
     }
@@ -739,7 +753,7 @@ public final class Coordinator {
             self?.host.requestAccessibility()
             self?.permission.waitForGrant()
         }
-        actions.moveToApplications = { [weak self] in self?.host.moveToApplications() }
+        actions.moveToApplications = { [weak self] in self?.host.moveToApplications?() }
         actions.toggleFocus = { [weak self] in self?.toggleFocus() }
         actions.toggleShowEverything = { [weak self] in self?.toggleShowEverything() }
         actions.resetLayout = { [weak self] in self?.resetLayout() }

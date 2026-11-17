@@ -43,8 +43,7 @@ public enum DropZone {
             return Overlay(layer: layer, frame: frame, ownerPID: pid_t(owner))
         }
         let barHeight = screen.frame.maxY - screen.visibleFrame.maxY
-        return max(start, overlayStart(windows, barHeight: barHeight, screenWidth: screen.frame.width,
-                                       ownPID: ProcessInfo.processInfo.processIdentifier))
+        return max(start, overlayStart(windows, barHeight: barHeight, screenWidth: screen.frame.width))
     }
 
     struct Overlay: Equatable, Sendable {
@@ -53,15 +52,16 @@ public enum DropZone {
         var ownerPID: pid_t
     }
 
-    /// Right of every window another app keeps over the menu bar or right under it, above the icons' level and below
-    /// the menus'. A window across the whole screen is no island around the notch, and does not count.
-    nonisolated static func overlayStart(_ windows: [Overlay], barHeight: CGFloat, screenWidth: CGFloat,
-                                         ownPID: pid_t) -> CGFloat {
+    /// Right of every window kept over the menu bar or right under it, above the icons' level and below the menus'. A
+    /// window across the whole screen is no island around the notch, and does not count. Col's own island counts like
+    /// any other: the drawers run in Col's process, and none of their windows sits at those levels (their items are at
+    /// the icons' level, their panels at the menu bar's, their tint below it).
+    nonisolated static func overlayStart(_ windows: [Overlay], barHeight: CGFloat, screenWidth: CGFloat) -> CGFloat {
         let statusLevel = Int(CGWindowLevelForKey(.statusWindow))
         let menuLevel = Int(CGWindowLevelForKey(.popUpMenuWindow))
         return windows
             .filter { window in
-                window.layer > statusLevel && window.layer < menuLevel - 1 && window.ownerPID != ownPID
+                window.layer > statusLevel && window.layer < menuLevel - 1
                     && window.frame.minY < barHeight + 4 && window.frame.maxY > 0
                     && window.frame.minX < screenWidth && window.frame.maxX > 0
                     && window.frame.width < screenWidth * 0.9

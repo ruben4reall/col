@@ -23,7 +23,7 @@ struct MenuBarPane: View {
                         if drawers.importedFromTiroir {
                             Text("Tiroir’s drawers, profiles and look came along.", bundle: .module)
                         }
-                        Text("Turn this off, or quit Col, and every icon comes back where it was.", bundle: .module)
+                        Text("Turn this off, or quit Col, and every icon comes back to the menu bar.", bundle: .module)
                     }
                 }
             }

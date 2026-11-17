@@ -475,12 +475,25 @@ import TiroirCore
             DropZone.Overlay(layer: 28, frame: CGRect(x: 529, y: 32, width: 453, height: 180), ownerPID: 11), // right under the bar
             DropZone.Overlay(layer: 101, frame: CGRect(x: 1100, y: 33, width: 250, height: 300), ownerPID: 12), // a menu
             DropZone.Overlay(layer: 28, frame: CGRect(x: 0, y: 0, width: 1512, height: 982), ownerPID: 13),  // across the screen
-            DropZone.Overlay(layer: 28, frame: CGRect(x: 1200, y: 0, width: 100, height: 32), ownerPID: 99),  // Tiroir's own
             DropZone.Overlay(layer: 3, frame: CGRect(x: 1300, y: 0, width: 100, height: 32), ownerPID: 14),   // an ordinary window
             DropZone.Overlay(layer: 28, frame: CGRect(x: 600, y: 300, width: 100, height: 100), ownerPID: 15), // far below the bar
         ]
-        #expect(DropZone.overlayStart(windows, barHeight: 33, screenWidth: 1512, ownPID: 99) == 1022)
-        #expect(DropZone.overlayStart([], barHeight: 33, screenWidth: 1512, ownPID: 99) == 0)
+        #expect(DropZone.overlayStart(windows, barHeight: 33, screenWidth: 1512) == 1022)
+        #expect(DropZone.overlayStart([], barHeight: 33, screenWidth: 1512) == 0)
+    }
+
+    /// The drawers run in Col's process: Col's own island, over the notch at the main menu's level plus three, is kept
+    /// clear of like any other, and the drawers' items, panels and tint, at other levels, are not obstacles.
+    @Test func colsOwnIslandIsKeptClearOf() {
+        let mainMenu = Int(CGWindowLevelForKey(.mainMenuWindow))
+        let status = Int(CGWindowLevelForKey(.statusWindow))
+        let windows = [
+            DropZone.Overlay(layer: mainMenu + 3, frame: CGRect(x: 660, y: 0, width: 193, height: 32), ownerPID: 99), // the island
+            DropZone.Overlay(layer: status, frame: CGRect(x: 1226, y: 0, width: 34, height: 33), ownerPID: 99),       // a drawer's item
+            DropZone.Overlay(layer: mainMenu + 1, frame: CGRect(x: 1081, y: 33, width: 324, height: 187), ownerPID: 99), // its panel
+            DropZone.Overlay(layer: mainMenu - 1, frame: CGRect(x: 0, y: 0, width: 1512, height: 33), ownerPID: 99),  // the tint
+        ]
+        #expect(DropZone.overlayStart(windows, barHeight: 33, screenWidth: 1512) == 893)
     }
 
     /// Seen on a real menu bar: Focus asked right after the divider widened found nothing to hide, because AppKit still

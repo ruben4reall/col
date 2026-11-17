@@ -201,7 +201,7 @@ Tidy the menu bar into drawers, and Col sorts them for you.
 - **More room for the island.** Fewer icons beside the notch, wider wings.
 - **Make it yours.** Drawers' icons and names, a tint for the menu bar, profiles, and triggers that change the menu
   bar while an app is open, on battery or with an external display.
-- **Nothing lost.** Turn it off, quit Col, or let it crash, and every icon is back where it was.
+- **Nothing lost.** Turn it off, quit Col, or let it crash, and every icon is back in the menu bar.
 
 It needs macOS 26 or later and the same permission as the wings: Device Control and Data Access, Accessibility before
 macOS 27. On macOS 26, Col arranges icons with Command-drags, as you would; on macOS 27 it asks macOS to hide whole

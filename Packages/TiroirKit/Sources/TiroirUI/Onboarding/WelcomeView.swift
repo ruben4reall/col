@@ -88,8 +88,10 @@ public struct WelcomeView: View {
             if model.engineKind == .goldenGate, !model.isInApplications {
                 VStack(spacing: 8) {
                     Text(verbatim: Strings.applicationsFolderNote).font(.system(size: 12)).foregroundStyle(Theme.warning)
-                    Button(Strings.moveToApplications) { model.actions.moveToApplications() }
-                        .buttonStyle(PillButtonStyle(.secondary))
+                    if model.canMoveToApplications {
+                        Button(Strings.moveToApplications) { model.actions.moveToApplications() }
+                            .buttonStyle(PillButtonStyle(.secondary))
+                    }
                 }
             } else if model.engineKind == .tahoe {
                 Text(verbatim: Strings.tahoePointerNote)

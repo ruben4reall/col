@@ -17,6 +17,8 @@ public protocol RestrictionControlling: AnyObject {
 public enum RestrictionError: Error, Equatable {
     case unavailable
     case noAnswer
+    /// Released while MenuBarAgent was answering: the request is dropped.
+    case cancelled
 }
 
 @available(macOS 26, *)
@@ -24,6 +26,8 @@ public enum RestrictionError: Error, Equatable {
 public final class MenuBarRestriction: RestrictionControlling {
     private var active: (assertion: PrivateAPI.MenuBarAssertion, allowed: [String])?
     private var pending: PrivateAPI.MenuBarAssertion?
+    /// Counts the releases: a request that was waiting for MenuBarAgent across one is dropped.
+    private var releases = 0
     /// MenuBarAgent answers in milliseconds; past this, Tiroir stops waiting and keeps the previous restriction.
     static let answerTimeout: Duration = .seconds(2)
 
@@ -34,6 +38,7 @@ public final class MenuBarRestriction: RestrictionControlling {
 
     public func apply(allowed: [String]) async -> Error? {
         if active?.allowed == allowed { return nil }
+        let generation = releases
         pending?.invalidate()
         let answer = OneAnswer()
         let assertion = PrivateAPI.activateMenuBarRestriction(allowedBundleIdentifiers: allowed) { error in
@@ -46,6 +51,11 @@ public final class MenuBarRestriction: RestrictionControlling {
             answer.give(RestrictionError.noAnswer as NSError)
         }
         let error = await answer.wait()
+        // Released meanwhile: this request must not hold anything.
+        guard releases == generation else {
+            assertion.invalidate()
+            return RestrictionError.cancelled
+        }
         // A newer request replaced this one while it waited: it no longer matters.
         guard pending === assertion else { return nil }
         pending = nil
@@ -61,10 +71,16 @@ public final class MenuBarRestriction: RestrictionControlling {
     }
 
     public func release() {
+        releases += 1
         pending?.invalidate()
         pending = nil
         active?.assertion.invalidate()
         active = nil
+    }
+
+    /// MenuBarAgent drops a restriction when Col quits; one that outlives its owner inside Col is dropped here.
+    isolated deinit {
+        release()
     }
 }
 

@@ -45,12 +45,13 @@ private final class ScratchDefaults {
 private final class Harness {
     let col = ScratchDefaults()
     let tiroir = ScratchDefaults()
-    var running: [String] = ["com.apple.finder"]
+    var running: [(pid: pid_t, bundleID: String)] = [(1, "com.apple.finder")]
     var supported = true
     let workspace = NotificationCenter()
     private(set) var runners: [FakeRunner] = []
     private(set) lazy var drawers = MenuBarDrawers(
-        defaults: col.defaults, isSupported: supported, runningBundleIDs: { [unowned self] in running },
+        defaults: col.defaults, isSupported: supported,
+        runningBundleIDs: { [unowned self] excluding in running.filter { $0.pid != excluding }.map(\.bundleID) },
         standaloneSettings: { [tiroir] in tiroir.defaults }, workspace: workspace,
         makeRunner: { [unowned self] _ in
             let runner = FakeRunner()
@@ -60,10 +61,16 @@ private final class Harness {
 
     var runner: FakeRunner? { drawers.runner as? FakeRunner }
 
-    /// Tiroir launched or quit, as NSWorkspace says it.
-    func tiroir(_ name: Notification.Name, _ bundleID: String = TiroirInfo.bundleIdentifier) async {
-        if name == NSWorkspace.didLaunchApplicationNotification { running.append(bundleID) } else { running.removeAll { $0 == bundleID } }
-        workspace.post(name: name, object: nil, userInfo: ["bundleIdentifier": bundleID])
+    /// Tiroir launched or quit, as NSWorkspace says it. `staysListed` keeps the app in the list of running apps a moment
+    /// after it quit, as macOS can.
+    func tiroir(_ name: Notification.Name, _ bundleID: String = TiroirInfo.bundleIdentifier, pid: pid_t = 42,
+                staysListed: Bool = false) async {
+        if name == NSWorkspace.didLaunchApplicationNotification {
+            running.append((pid, bundleID))
+        } else if !staysListed {
+            running.removeAll { $0.bundleID == bundleID }
+        }
+        workspace.post(name: name, object: nil, userInfo: ["bundleIdentifier": bundleID, "pid": pid])
         // The observers hear it on the main queue.
         try? await Task.sleep(for: .milliseconds(30))
     }
@@ -153,7 +160,7 @@ private final class Harness {
     /// quits.
     @Test func whileTiroirRunsColWaitsThenTakesOver() async {
         let harness = Harness()
-        harness.running.append(TiroirInfo.bundleIdentifier)
+        harness.running.append((42, TiroirInfo.bundleIdentifier))
         harness.drawers.setEnabled(true)
         #expect(harness.drawers.status == .yieldsToTiroir)
         #expect(harness.runners.isEmpty)
@@ -162,6 +169,16 @@ private final class Harness {
         await harness.tiroir(NSWorkspace.didTerminateApplicationNotification)
         #expect(harness.drawers.status == .running)
         #expect(harness.runners.count == 1)
+    }
+
+    /// macOS can still list an app that just quit: the one quitting does not count.
+    @Test func tiroirStillListedAsItQuitsDoesNotHoldColBack() async {
+        let harness = Harness()
+        harness.running.append((42, TiroirInfo.bundleIdentifier))
+        harness.drawers.setEnabled(true)
+        #expect(harness.drawers.status == .yieldsToTiroir)
+        await harness.tiroir(NSWorkspace.didTerminateApplicationNotification, staysListed: true)
+        #expect(harness.drawers.status == .running)
     }
 
     @Test func whenTiroirOpensColStepsAside() async {
@@ -184,7 +201,7 @@ private final class Harness {
 
     @Test func offTiroirQuittingStartsNothing() async {
         let harness = Harness()
-        harness.running.append(TiroirInfo.bundleIdentifier)
+        harness.running.append((42, TiroirInfo.bundleIdentifier))
         harness.drawers.setEnabled(true)
         harness.drawers.setEnabled(false)
         await harness.tiroir(NSWorkspace.didTerminateApplicationNotification)

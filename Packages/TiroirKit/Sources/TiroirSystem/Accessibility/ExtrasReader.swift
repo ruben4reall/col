@@ -96,7 +96,7 @@ public final class ExtrasReader: @unchecked Sendable {
         guard error == .success, let value, CFGetTypeID(value) == AXUIElementGetTypeID() else {
             return ([], error != .cannotComplete)
         }
-        let bar = AXElement(value as! AXUIElement) // checked by the type identifier above
+        let bar = AXElement(value as! AXUIElement, timeout: timeout) // checked by the type identifier above
         let items = bar.children.compactMap { slot -> ExtraItem? in
             let child = Self.menuExtra(in: slot)
             // macOS 27's » button, which shows the icons that do not fit: no icon of its own.

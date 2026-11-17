@@ -107,6 +107,8 @@ public final class InterfaceModel {
     public var applyProgress: (done: Int, total: Int)?
     public var accessibilityTrusted = false
     public var isInApplications = true
+    /// Whether Col can move itself to /Applications from here: never from a development build.
+    public var canMoveToApplications = true
     public var appVersion = "1.0.0"
     public var settingsPane: SettingsPane = .layout
     /// Shortcuts macOS refused because another app holds them: "search", "allDrawer", "focus", "showEverything", a

@@ -3,22 +3,33 @@ import CoreGraphics
 import Foundation
 
 /// An Accessibility element that may cross threads. The element is a token for another process: every call on it is
-/// a round trip, capped by the messaging timeout so an app that stops answering never stalls Tiroir.
+/// a round trip, capped by the messaging timeout so an app that stops answering never stalls Col.
+///
+/// macOS applies a messaging timeout only to the element it was set on, never to the elements reached from it: an
+/// element keeps its own `timeout` and gives it to every element it hands out (its children, its windows, any element
+/// attribute), so a whole walk through another app stays under the same cap.
 @available(macOS 26, *)
 public struct AXElement: @unchecked Sendable {
     public let raw: AXUIElement
+    /// The cap of each call, in seconds; nil leaves macOS's own (about six seconds).
+    public let timeout: Float?
 
-    public init(_ raw: AXUIElement) {
+    public init(_ raw: AXUIElement, timeout: Float? = nil) {
         self.raw = raw
+        self.timeout = timeout
+        if let timeout { AXUIElementSetMessagingTimeout(raw, timeout) }
     }
 
     public static func application(_ pid: pid_t, timeout: Float = 0.2) -> AXElement {
-        let element = AXUIElementCreateApplication(pid)
-        AXUIElementSetMessagingTimeout(element, timeout)
-        return AXElement(element)
+        AXElement(AXUIElementCreateApplication(pid), timeout: timeout)
     }
 
     public static var systemWide: AXElement { AXElement(AXUIElementCreateSystemWide()) }
+
+    /// An element this one hands out, under the same cap.
+    func adopt(_ raw: AXUIElement) -> AXElement {
+        AXElement(raw, timeout: timeout)
+    }
 
     public func attribute<T>(_ name: String) -> T? {
         var value: CFTypeRef?
@@ -26,21 +37,31 @@ public struct AXElement: @unchecked Sendable {
         return value as? T
     }
 
+    /// Whether the element's process answered at all: false when the call ran out of time, which tells an app that does
+    /// not answer from an attribute it lacks.
+    public func answers(_ name: String) -> Bool {
+        var value: CFTypeRef?
+        return AXUIElementCopyAttributeValue(raw, name as CFString, &value) != .cannotComplete
+    }
+
     public func element(_ name: String) -> AXElement? {
         var value: CFTypeRef?
         guard AXUIElementCopyAttributeValue(raw, name as CFString, &value) == .success, let value,
               CFGetTypeID(value) == AXUIElementGetTypeID() else { return nil }
-        return AXElement(value as! AXUIElement) // checked by the type identifier above
+        return adopt(value as! AXUIElement) // checked by the type identifier above
     }
 
-    public var children: [AXElement] {
+    /// Elements in an attribute that holds a list, such as the children or the windows, under the same cap.
+    public func elements(_ name: String) -> [AXElement] {
         var value: CFTypeRef?
-        guard AXUIElementCopyAttributeValue(raw, kAXChildrenAttribute as CFString, &value) == .success,
+        guard AXUIElementCopyAttributeValue(raw, name as CFString, &value) == .success,
               let array = value as? [AnyObject] else { return [] }
         return array.compactMap { item in
-            CFGetTypeID(item) == AXUIElementGetTypeID() ? AXElement(item as! AXUIElement) : nil
+            CFGetTypeID(item) == AXUIElementGetTypeID() ? adopt(item as! AXUIElement) : nil
         }
     }
+
+    public var children: [AXElement] { elements(kAXChildrenAttribute) }
 
     public var position: CGPoint? {
         guard let value: AXValue = attributeValue(kAXPositionAttribute) else { return nil }
@@ -66,6 +87,7 @@ public struct AXElement: @unchecked Sendable {
     public var descriptionText: String? { attribute(kAXDescriptionAttribute) }
     public var help: String? { attribute(kAXHelpAttribute) }
 
+    /// Answered by this process: no call to the element's app.
     public var pid: pid_t? {
         var pid: pid_t = 0
         return AXUIElementGetPid(raw, &pid) == .success ? pid : nil
