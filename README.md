@@ -71,6 +71,8 @@ until version 2.0.
 - **Programmable.** The `colctl` command, a local API, `col://` links, Shortcuts actions and extensions put your own
   live activities and widgets in the notch. With Col Connect, your phone, Home Assistant or a build machine on your
   network push them too, each with a token of its own; and a widget can read any web address that answers JSON.
+- **A tidy menu bar.** One switch tidies the icons of your menu bar into drawers, each one a single icon, and gives
+  the island more room beside the notch. Smart Sort proposes the drawers; search finds any icon.
 - **Never in the way.** The wings never cover a menu or a menu bar icon, measured again the moment an icon comes or
   goes (macOS 27's » button included), as wide as you choose. The island steps aside in full screen and in front of
   the apps you pick. On a Mac without a notch, or an external display, it is a pill in the menu bar, Col's own notch,
@@ -184,12 +186,36 @@ Shortcut), Home Assistant or any device of your network.
 colctl widget set temp --title "Living room" --value 21.5 --unit °C --symbol thermometer.medium --tint orange
 ```
 
+## A tidy menu bar
+
+Beside the notch there is room for about a dozen icons, and the rest vanish behind it. Turn on Settings, Menu Bar,
+Tidy the menu bar into drawers, and Col sorts them for you.
+
+- **Drawers.** Each drawer is one icon in the menu bar. A click opens it right under it, and a click on an app opens
+  that app's own menu, as if its icon had been there all along. The clock, Control Center, the battery, Wi-Fi and
+  Sound stay in view.
+- **Smart Sort.** Col reads what each app is for and proposes drawers: Files and Cloud, Security and VPN, Messages,
+  AI, Developer and more. You see the result before it applies, and new icons find their drawer by themselves.
+- **Search and Focus.** ⌃⌥⌘Space and two letters open any icon's menu, wherever it lives. ⌃⌥⌘F leaves only the clock
+  and Control Center, for a presentation or a screen share.
+- **More room for the island.** Fewer icons beside the notch, wider wings.
+- **Make it yours.** Drawers' icons and names, a tint for the menu bar, profiles, and triggers that change the menu
+  bar while an app is open, on battery or with an external display.
+- **Nothing lost.** Turn it off, quit Col, or let it crash, and every icon is back where it was.
+
+It needs macOS 26 or later and the same permission as the wings: Device Control and Data Access, Accessibility before
+macOS 27. On macOS 26, Col arranges icons with Command-drags, as you would; on macOS 27 it asks macOS to hide whole
+apps, and Col must run from the Applications folder. Off, nothing of it runs. The drawers come from
+[Tiroir](https://github.com/ruben4reall/tiroir), by the same author: if Tiroir runs, Col leaves the menu bar to it
+and offers to quit it, and the first time, Tiroir's drawers, profiles and look come along.
+
 ## Permissions
 
 Each one only if a module you chose needs it:
 
 - **Device Control and Data Access** (Accessibility before macOS 27), to take over the volume and brightness keys and
-  to measure the menu bar, so the island never covers it. Without it, the wings stay narrow.
+  to measure the menu bar, so the island never covers it, and, if you turn them on, for the drawers to see which app
+  owns each icon and open it. Without it, the wings stay narrow and every icon stays in the menu bar.
 - **Calendars and Reminders**, for the agenda.
 - **Bluetooth**, for the battery and the model of your headphones.
 - **Camera**, only while the mirror is open.
@@ -254,7 +280,7 @@ opens and thrown away as it closes, and the Liquid Glass under them only draws w
 
 ## Private macOS APIs
 
-Col uses private macOS functions for eight features. Each is looked up at runtime: if a macOS update removes one, its
+Col uses private macOS functions for ten features. Each is looked up at runtime: if a macOS update removes one, its
 feature turns off and nothing crashes.
 
 | Feature | Functions | Why |
@@ -267,6 +293,8 @@ feature turns off and nothing crashes.
 | Transparent glass of the open island | `CABackdropLayer`, `CAFilter` (Core Animation) | A light blur of the desktop with a set strength: Liquid Glass has no setting clear enough to see through a panel this size. Without them, Transparent uses Liquid Glass. |
 | Lock Screen and its lyrics (beta, off by default) | `SLSMainConnectionID`, `SLSSpaceCreate`, `SLSSpaceSetAbsoluteLevel`, `SLSShowSpaces`, `SLSSpaceAddWindowsAndRemoveFromSpaces` (SkyLight) | Only a window in a space at lock screen level can draw above it. Technique from [Lakr233/SkyLightWindow](https://github.com/Lakr233/SkyLightWindow) (MIT), rewritten. |
 | Bars that follow the sound (off by default) | `TCCAccessPreflight`, `TCCAccessRequest` (TCC) | macOS has no public way to tell whether System Audio Recording was allowed, nor to ask before recording starts. Without them, macOS asks the first time the bars listen. The sound itself comes from Core Audio's public process taps. |
+| Menu bar drawers on macOS 27 (off by default) | `MBAssessmentModeConfiguration`, `MBAssessmentModeAssertion` (MenuBarClientCore) | macOS 27 draws the whole menu bar in one agent; this restriction is the only way another app can leave icons out. Loaded only once the drawers start. Technique from [MenuBarHider](https://github.com/happy666End/MenuBarHider) (MIT) and [Ellipsis](https://github.com/ronny/ellipsis) (Apache-2.0), rewritten. |
+| Menu bar drawers on macOS 26 (off by default) | `SLSSetConnectionProperty` with `SetsCursorInBackground` (SkyLight) | Hides the pointer while the drawers move icons with Command-drags, so it does not blink. Without it, it blinks. |
 
 ## Build from source
 
@@ -277,6 +305,7 @@ brew install xcodegen
 git clone https://github.com/ruben4reall/col.git
 cd col
 swift test --package-path Packages/ColKit   # the island's rules, activities, agents, parsers
+swift test --package-path Packages/TiroirKit # the menu bar's drawers, both engines on a simulated menu bar
 scripts/build.sh                               # prints the path of the Debug app
 open .build/xcode/Build/Products/Debug/Col.app
 ```
@@ -287,7 +316,9 @@ open .build/xcode/Build/Products/Debug/Col.app
 - `swift scripts/fake-player.swift` publishes a silent track, to work on the player without sound.
 - Debug switches, for screenshots and for working on one screen: `-ColOpen YES`, `-ColPage live`,
   `-ColDemo headphones` or `max`, `-ColSettings island`. `scripts/capture-site.sh` uses them to photograph the
-  real app for the website and this README.
+  real app for the website and this README. With the menu bar option on, `-ColDrawersDemo YES` shows generic icons
+  and never touches your menu bar or your drawers, and `-ColDrawersPane layout`, `-ColDrawersWelcomeStep 2`,
+  `-ColDrawersOpen 0` (or `all`) and `-ColDrawersSearch cl` open one of the drawers' screens.
 - `node site/tools/audit.mjs` checks the website at four sizes under its production headers (errors, blocked
   resources, broken images, overflow, the contrast of every text) and writes a screenshot of every section to
   `site/.shots/`; `node site/tools/frames.mjs` photographs the animated scenes at several moments.
@@ -301,6 +332,7 @@ open .build/xcode/Build/Products/Debug/Col.app
 |---|---|
 | `Packages/ColKit/Sources/ColCore` | Geometry, the rules that open and close the island, activities, agents, parsers. No AppKit, fully tested |
 | `Packages/ColKit/Sources/ColShell` | The panel, Core Animation drawing, SwiftUI pages, system monitors, the socket server |
+| `Packages/TiroirKit` | The menu bar's drawers, from Tiroir: Smart Sort, the macOS 26 and 27 engines, their windows. Private functions in `TiroirSystem/PrivateAPI.swift` only |
 | `App/` | Entry point, updates, Shortcuts actions |
 | `MediaBridge/` | The helper that reads now playing information |
 | `CLI/` | The `colctl` command and the agents' hooks |
@@ -310,6 +342,10 @@ open .build/xcode/Build/Products/Debug/Col.app
 
 - Now playing on macOS 15.4 and later: the technique of [ungive/mediaremote-adapter](https://github.com/ungive/mediaremote-adapter) (BSD 3-Clause), rewritten.
 - The window above the Lock Screen: the technique of [Lakr233/SkyLightWindow](https://github.com/Lakr233/SkyLightWindow) (MIT), rewritten.
+- The menu bar's drawers come from [Tiroir](https://github.com/ruben4reall/tiroir) (MIT), by the same author. Hiding
+  icons on macOS 27: the technique of [MenuBarHider](https://github.com/happy666End/MenuBarHider) (MIT) and
+  [Ellipsis](https://github.com/ronny/ellipsis) (Apache-2.0), rewritten. The divider on macOS 26: the technique of
+  [Hidden Bar](https://github.com/dwarvesf/hidden) (MIT), rewritten.
 - Updates by [Sparkle](https://sparkle-project.org) (MIT).
 - The logos of AI apps and agents whose app is not installed: [LobeHub Icons](https://github.com/lobehub/lobe-icons) (MIT). The logos belong to their owners.
 
