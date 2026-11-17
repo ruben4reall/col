@@ -908,6 +908,7 @@ public final class IslandController {
         if Preferences.showsOnLockScreen { LockScreenSpace.shared?.adopt(panel) }
         if !WelcomeWindow.hasWelcomed { greet() }
         retireSouffleur()
+        startMenuBarDrawers()
         // `-ColDemo headphones` (or `max`) plays the headphones card with sample levels, without touching Bluetooth.
         if let demo = UserDefaults.standard.string(forKey: "ColDemo"), demo == "headphones" || demo == "max" {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
@@ -994,6 +995,8 @@ public final class IslandController {
     }
 
     public func stop() {
+        // Every icon back in the menu bar before anything else goes.
+        MenuBarDrawers.shared.stop()
         // A microphone Col muted is not left muted with nothing to show it.
         system.microphone.restoreAll()
         PrompterCenter.shared.willTerminate()
@@ -1002,6 +1005,18 @@ public final class IslandController {
         media.stop()
         api.stop()
         ConnectCenter.shared.server.stop()
+    }
+
+    /// The menu bar option: when it is on, the drawers start with the island, and each time they move icons or change their
+    /// own items the island measures the room beside the notch again, the room the drawers give it.
+    private func startMenuBarDrawers() {
+        let drawers = MenuBarDrawers.shared
+        drawers.menuBarChanged = { [weak self] in
+            self?.measureMenuBar(statusItems: true)
+            self?.refreshActivity()
+        }
+        MenuBarSpace.ownItems = { drawers.ownItemFrames }
+        drawers.start()
     }
 
     // MARK: Activities

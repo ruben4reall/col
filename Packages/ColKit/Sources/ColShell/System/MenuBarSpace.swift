@@ -12,6 +12,10 @@ enum MenuBarSpace {
         NSRunningApplication.runningApplications(withBundleIdentifier: menuBarAgentID).first
     }
 
+    /// Col's own items in the menu bar (the drawers, when the menu bar option is on), in AppKit coordinates. Before
+    /// macOS 27 each app draws its own items, and Col does not ask itself over Accessibility: it says where they are.
+    static var ownItems: @MainActor () -> [CGRect] = { [] }
+
     /// Where the frontmost app's menus end on each side of the notch. With many menus macOS moves the last ones to
     /// the right of the notch, so both sides can hold menus. Needs Accessibility; nil without it, or when the menus
     /// cannot be read.
@@ -60,6 +64,16 @@ enum MenuBarSpace {
                       span.contains(frame.minX), abs(frame.minY - top) < 4
                 else { continue }
                 edge = min(edge ?? frame.minX, frame.minX)
+            }
+        }
+        // Since macOS 27 MenuBarAgent draws Col's items too; before, they are Col's own windows.
+        if owners.first?.bundleIdentifier != menuBarAgentID {
+            let primaryHeight = NSScreen.screens.first?.frame.height ?? 0
+            for item in ownItems() {
+                // AppKit measures from the bottom left of the main screen, Accessibility from its top left.
+                let itemTop = primaryHeight - item.maxY
+                guard item.minX > x, span.contains(item.minX), abs(itemTop - top) < 4 else { continue }
+                edge = min(edge ?? item.minX, item.minX)
             }
         }
         return edge

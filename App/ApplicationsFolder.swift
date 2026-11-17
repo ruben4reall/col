@@ -33,6 +33,15 @@ enum ApplicationsFolder {
             if !passing { UserDefaults.standard.set(true, forKey: declinedKey) }
             return false
         }
+        return moveNow(opening: urls)
+    }
+
+    /// Copies Col to Applications (a copy already there goes to the Trash), then quits and opens the copy. Returns false
+    /// when the copy failed, which the user is told. The menu bar's drawers ask for it on macOS 27, which honours only
+    /// apps there.
+    @discardableResult
+    static func moveNow(opening urls: [URL] = []) -> Bool {
+        let bundle = AppLocation.bundleURL
         let files = FileManager.default
         let destination = applicationsFolder.appendingPathComponent(bundle.lastPathComponent)
         do {

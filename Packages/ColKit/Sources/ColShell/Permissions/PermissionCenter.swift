@@ -37,7 +37,7 @@ final class PermissionCenter {
         /// What Col does with it, and what happens without it.
         var detail: LocalizedStringResource {
             switch self {
-            case .accessibility: LocalizedStringResource("Lets Col take over the volume and brightness keys, and keep its wings clear of the menus and icons of the menu bar. Without it, macOS shows its own display too, and activities show beneath the camera.", bundle: .settings)
+            case .accessibility: LocalizedStringResource("Lets Col take over the volume and brightness keys, keep its wings clear of the menus and icons of the menu bar, and tidy those icons into drawers. Without it, macOS shows its own display too, and activities show beneath the camera.", bundle: .settings)
             case .calendars: LocalizedStringResource("Shows your next events beside the clock. Without it, the agenda stays empty.", bundle: .settings)
             case .bluetooth: LocalizedStringResource("Reads the battery of your AirPods and other headphones. Without it, the card shows no battery.", bundle: .settings)
             case .camera: LocalizedStringResource("Used only while the mirror is open. Seeing that another app uses the camera needs no permission.", bundle: .settings)

@@ -7,6 +7,9 @@ options:
 packages:
   ColKit:
     path: Packages/ColKit
+  # The menu bar option's drawers, from Tiroir. ColShell links them; listed here so Xcode shows the package.
+  TiroirKit:
+    path: Packages/TiroirKit
   Sparkle:
     url: https://github.com/sparkle-project/Sparkle
     exactVersion: 2.10.0

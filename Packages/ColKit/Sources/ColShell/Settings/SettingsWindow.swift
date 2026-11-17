@@ -97,7 +97,7 @@ final class SettingsModel {
 /// The panes, in the order of the sidebar.
 enum SettingsPane: String, CaseIterable, Identifiable {
     case general, appearance, pages, activities
-    case music, prompter, aiApps, glance
+    case music, prompter, aiApps, glance, menuBar
     case permissions, shortcuts, developers, about
     case connect
     var id: String { rawValue }
@@ -124,7 +124,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
     var group: Group {
         switch self {
         case .general, .appearance, .pages, .activities: .island
-        case .music, .prompter, .aiApps, .glance: .modules
+        case .music, .prompter, .aiApps, .glance, .menuBar: .modules
         case .permissions, .shortcuts, .developers, .about, .connect: .app
         }
     }
@@ -139,6 +139,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .prompter: LocalizedStringResource("Prompter", bundle: .settings)
         case .aiApps: LocalizedStringResource("AI apps", bundle: .settings)
         case .glance: LocalizedStringResource("Weather and tools", bundle: .settings)
+        case .menuBar: LocalizedStringResource("Menu Bar", bundle: .settings)
         case .permissions: LocalizedStringResource("Permissions", bundle: .settings)
         case .shortcuts: LocalizedStringResource("Shortcuts and gestures", bundle: .settings)
         case .developers: LocalizedStringResource("Developers", bundle: .settings)
@@ -157,6 +158,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .prompter: LocalizedStringResource("Your script under the camera, at the pace of your voice.", bundle: .settings)
         case .aiApps: LocalizedStringResource("Your AI apps in the notch: their sessions, their requests, their state.", bundle: .settings)
         case .glance: LocalizedStringResource("The weather, Pomodoro, and what the shelf, clipboard and System pages can do.", bundle: .settings)
+        case .menuBar: LocalizedStringResource("The icons of your menu bar, tidied into drawers.", bundle: .settings)
         case .permissions: LocalizedStringResource("What Col may use, and for what.", bundle: .settings)
         case .shortcuts: LocalizedStringResource("Every way to open and drive the island.", bundle: .settings)
         case .developers: LocalizedStringResource("The colctl command, the local API and extensions.", bundle: .settings)
@@ -175,6 +177,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .prompter: "text.aligncenter"
         case .aiApps: "sparkles"
         case .glance: "cloud.sun.fill"
+        case .menuBar: "menubar.rectangle"
         case .permissions: "hand.raised.fill"
         case .shortcuts: "command"
         case .developers: "chevron.left.forwardslash.chevron.right"
@@ -193,6 +196,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .prompter: .orange
         case .aiApps: Color(red: 0.36, green: 0.42, blue: 1)
         case .glance: .cyan
+        case .menuBar: .teal
         case .permissions: .blue
         case .shortcuts: Color(red: 0.42, green: 0.45, blue: 0.5)
         case .developers: Color(red: 0.42, green: 0.45, blue: 0.5)
@@ -222,6 +226,8 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .aiApps: ["Claude Code", "Codex", "Gemini CLI", "Cursor", "GitHub Copilot (VS Code)", "Connect", "Allow", "Deny"]
         case .glance: ["Weather", "Open-Meteo", "Location", "Pomodoro", "Tools for files on the shelf", "Search your copies",
                        "Graphics processor on the System page", "Convert", "Resize", "Compress", "Text"]
+        case .menuBar: ["Tidy the menu bar into drawers", "Drawers", "Smart Sort", "Hidden icons", "Search icons", "Focus",
+                        "Profiles", "Triggers", "Tiroir"]
         case .permissions: ["Accessibility", "Device Control", "Calendars", "Reminders", "Bluetooth", "Camera", "Microphone", "Speech Recognition",
                             "Local Network", "Downloads", "System Audio Recording", "Location"]
         case .shortcuts: ["Keyboard", "Gestures", "Swipe", "Click", "Trackpad", "Right-click"]
@@ -327,6 +333,7 @@ struct SettingsView: View {
         case .prompter: PrompterPane()
         case .aiApps: AIAppsPane()
         case .glance: GlancePane()
+        case .menuBar: MenuBarPane()
         case .permissions: PermissionsPane()
         case .shortcuts: ShortcutsPane()
         case .developers: DevelopersPane(extensions: extensions)

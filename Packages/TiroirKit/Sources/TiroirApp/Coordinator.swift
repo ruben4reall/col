@@ -74,6 +74,12 @@ public final class Coordinator {
         panels.isQuiet = options.quiet
         windows.onWindowOpened = host.windowOpened
         windows.onWindowClosed = host.windowClosed
+        // Closed before its end, the welcome counts as done, with the menu bar as it is: it does not come back at every
+        // launch of Col. Smart Sort stays one click away, in Col's settings.
+        windows.onWelcomeClosed = { [weak self] in
+            guard let self, welcome != nil, !isShutDown else { return }
+            finishWelcome()
+        }
     }
 
     static let demoDomain = "ch.rubencatalao.islet.drawers-demo"
@@ -597,6 +603,11 @@ public final class Coordinator {
         }
     }
 
+    /// The drawers' own items in the menu bar, in AppKit coordinates: Col keeps the island's wings off them.
+    public var ownItemFrames: [CGRect] {
+        statusItems.itemFrames
+    }
+
     /// Everything on the menu bar that is not empty room, in AppKit coordinates.
     private func occupiedFrames() -> [CGRect] {
         snapshot.icons.filter(\.isOnScreen).map { ScreenCoordinates.appKitRect(fromWindowServer: $0.frame) } + statusItems.itemFrames
@@ -604,13 +615,13 @@ public final class Coordinator {
 
     // MARK: Windows
 
-    func openSettings(_ pane: SettingsPane?) {
+    public func openSettings(_ pane: SettingsPane?) {
         panels.close()
         guard !isShutDown else { return }
         windows.showSettings(model: interface, pane: pane)
     }
 
-    func showWelcome(step: WelcomeModel.Step) {
+    public func showWelcome(step: WelcomeModel.Step) {
         guard !isShutDown else { return }
         // Col asks for the permission in its own settings and welcome: once it is granted, this step has nothing to say.
         let model = WelcomeModel(step: step == .permission && permission.isTrusted ? .sort : step)

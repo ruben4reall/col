@@ -33,6 +33,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
         NameChange.migrateIfNeeded()
+        MenuBarOption.moveToApplications = { ApplicationsFolder.moveNow() }
         AppMenu.install()
         let updater = SparkleUpdater()
         self.updater = updater
