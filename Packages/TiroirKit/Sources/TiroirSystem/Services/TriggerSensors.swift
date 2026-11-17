@@ -7,6 +7,7 @@ import TiroirCore
 /// listens to the system's own notifications and reads its value only when told of a change. The time of day takes one
 /// timer to the next start or end of a range, set again at each boundary, after sleep and when the clock changes. With
 /// no trigger, nothing here runs. No sensor needs a permission, and nothing leaves the Mac.
+@available(macOS 26, *)
 @MainActor
 public final class TriggerSensors {
     /// Called once after a burst of changes.

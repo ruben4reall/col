@@ -2,6 +2,7 @@ import Foundation
 import TiroirCore
 
 /// The words of Settings, Appearance about the menu bar's shape and its look in Dark Mode.
+@available(macOS 26, *)
 extension Strings {
     // MARK: Shape
 

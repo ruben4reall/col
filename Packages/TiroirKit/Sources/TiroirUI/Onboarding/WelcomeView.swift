@@ -4,6 +4,7 @@ import TiroirCore
 import TiroirSystem
 
 /// The welcome window's content (spec 6.1): hello, one permission, Smart Sort, ready. Under a minute.
+@available(macOS 26, *)
 public struct WelcomeView: View {
     let model: InterfaceModel
     @Bindable var welcome: WelcomeModel
@@ -242,12 +243,14 @@ public struct WelcomeView: View {
     }
 }
 
+@available(macOS 26, *)
 private struct MarkEditing: Identifiable {
     let id: UUID
 }
 
 /// The welcome's first picture: a crowded row of generic icons that folds into three drawers. It plays once, only
 /// while the welcome is on screen.
+@available(macOS 26, *)
 struct SortingPicture: View {
     @State private var sorted = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion

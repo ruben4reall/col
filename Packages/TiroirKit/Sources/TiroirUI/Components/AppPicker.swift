@@ -3,6 +3,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 /// Chooses an app by its bundle identifier: one that is open now, or any other from the Applications folder.
+@available(macOS 26, *)
 struct AppPicker: View {
     @Binding var bundleID: String?
 
@@ -43,6 +44,7 @@ struct AppPicker: View {
 }
 
 /// Names and icons of apps by bundle identifier, for triggers' sentences and the app picker.
+@available(macOS 26, *)
 @MainActor
 enum AppLookup {
     struct App: Identifiable {

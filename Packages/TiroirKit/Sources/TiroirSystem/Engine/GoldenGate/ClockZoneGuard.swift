@@ -7,6 +7,7 @@ import AppKit
 /// the clock and puts it back half a second after the pointer leaves. It watches the pointer only while something is
 /// hidden, through a global mouse-move monitor, which needs no permission. Technique from MenuBarHider (MIT),
 /// rewritten.
+@available(macOS 26, *)
 @MainActor
 public final class ClockZoneGuard {
     /// Called with true when the pointer arrives on the clock, false half a second after it leaves.

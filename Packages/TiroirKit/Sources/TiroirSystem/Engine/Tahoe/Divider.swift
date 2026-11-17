@@ -3,6 +3,7 @@ import AppKit
 /// Tiroir's divider on macOS 26: an invisible status item. Icons on its left are out of the menu bar while it is
 /// expanded, because it grows wide enough to push them past the left edge of the screen. The technique comes from
 /// Hidden Bar (MIT), rewritten.
+@available(macOS 26, *)
 @MainActor
 public protocol DividerControlling: AnyObject {
     /// The divider in window server coordinates, nil before macOS has placed it.
@@ -15,6 +16,7 @@ public protocol DividerControlling: AnyObject {
     func remove()
 }
 
+@available(macOS 26, *)
 @MainActor
 public final class Divider: DividerControlling {
     public static let autosaveName = "tiroir.divider"

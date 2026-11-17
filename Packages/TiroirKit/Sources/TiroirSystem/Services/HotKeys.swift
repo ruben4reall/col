@@ -3,11 +3,13 @@ import Carbon.HIToolbox
 import TiroirCore
 
 /// One shortcut registered with macOS.
+@available(macOS 26, *)
 public struct HotKeyRegistration: Hashable, Sendable {
     public let id: UInt32
 }
 
 /// Registers shortcuts with macOS; tests use a fake and never take a shortcut on the Mac.
+@available(macOS 26, *)
 @MainActor
 public protocol HotKeyRegistrar: AnyObject {
     /// Nil when macOS refused it (another app holds it).
@@ -17,6 +19,7 @@ public protocol HotKeyRegistrar: AnyObject {
 
 /// Tiroir's global shortcuts (spec 6.3, Shortcuts). `RegisterEventHotKey` needs no Accessibility or Input Monitoring
 /// permission: it hears its own shortcuts and nothing else. Pattern from Pli and Brainmerge.
+@available(macOS 26, *)
 @MainActor
 public final class ShortcutCenter {
     public enum Action: Hashable, Sendable {
@@ -81,6 +84,7 @@ public final class ShortcutCenter {
 }
 
 /// The real registrar: Carbon's RegisterEventHotKey, and one handler on the app's event target for its presses.
+@available(macOS 26, *)
 @MainActor
 public final class CarbonHotKeyRegistrar: HotKeyRegistrar {
     /// "TNSU": marks Tiroir's shortcuts among the app's hot key events.
@@ -144,6 +148,7 @@ public final class CarbonHotKeyRegistrar: HotKeyRegistrar {
 }
 
 /// Recording a shortcut from a key press (the recorder in Settings).
+@available(macOS 26, *)
 public enum ShortcutRecording {
     public enum Result: Equatable, Sendable {
         case shortcut(Shortcut)

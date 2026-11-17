@@ -4,6 +4,7 @@ import TiroirCore
 
 /// Settings, Appearance (spec 6.3): the shape Tiroir gives the menu bar, its tint, hairline and shadow, and a look of its
 /// own for Dark Mode if the person wants one, with a live preview.
+@available(macOS 26, *)
 struct AppearancePane: View {
     @Bindable var model: InterfaceModel
     /// The look the controls edit while Dark Mode has its own.
@@ -139,6 +140,7 @@ struct AppearancePane: View {
 /// The menu bar in miniature over a desktop, dressed as it will be: the shape, and the tint, hairline and shadow of the
 /// look being edited, over a dark desktop or, for the Light Mode look, a light one. The pieces come from the same
 /// geometry as the real tint, measured on the miniature's menus and icons.
+@available(macOS 26, *)
 struct TintPreview: View {
     let shape: Appearance.Shape
     let look: Appearance.Look

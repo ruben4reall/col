@@ -3,6 +3,7 @@ import Foundation
 import TiroirCore
 
 /// Which engine runs (spec 4).
+@available(macOS 26, *)
 public enum EngineKind: String, Sendable {
     /// macOS 26: a divider pushes icons off screen, synthetic Command-drags move them.
     case tahoe
@@ -13,6 +14,7 @@ public enum EngineKind: String, Sendable {
 }
 
 /// Whether the engine can work right now.
+@available(macOS 26, *)
 public enum EngineStatus: Equatable, Sendable {
     case ready
     /// Accessibility is not granted: everything shows, nothing moves.
@@ -23,6 +25,7 @@ public enum EngineStatus: Equatable, Sendable {
     case unavailable(String)
 }
 
+@available(macOS 26, *)
 public enum EngineError: Error, Equatable, Sendable {
     case notReady(EngineStatus)
     case iconNotFound(IconID)
@@ -38,6 +41,7 @@ public enum EngineError: Error, Equatable, Sendable {
 }
 
 /// What an arrangement did.
+@available(macOS 26, *)
 public struct ApplyReport: Equatable, Sendable {
     /// Icons now on the side the plan wants, that were not there before.
     public var moved: [IconID]
@@ -60,6 +64,7 @@ public struct ApplyReport: Equatable, Sendable {
 
 /// The part of Tiroir that talks to the menu bar. Two implementations, one per macOS generation; everything above
 /// this protocol (drawers, Smart Sort, search, Settings) is shared.
+@available(macOS 26, *)
 @MainActor
 public protocol MenuBarEngine: AnyObject {
     var kind: EngineKind { get }

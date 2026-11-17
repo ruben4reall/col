@@ -4,6 +4,7 @@ import TiroirCore
 import TiroirSystem
 
 /// Records a shortcut: click, press the keys, done. Esc cancels; a key without ⌘, ⌥ or ⌃ is refused.
+@available(macOS 26, *)
 public struct ShortcutRecorder: View {
     @Binding var shortcut: Shortcut?
     var problem: String?
@@ -70,6 +71,7 @@ public struct ShortcutRecorder: View {
 
 /// Chooses a drawer's mark: an icon from the library (the default, drawn like macOS's own menu bar icons), an emoji,
 /// or up to three letters.
+@available(macOS 26, *)
 public struct MarkPicker: View {
     @Binding var mark: DrawerMark
     @State private var tab: Tab

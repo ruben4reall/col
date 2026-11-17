@@ -4,6 +4,7 @@ import CoreGraphics
 /// Where a Command-drag can drop an icon on macOS 26 (spec 4.3, Arranging). macOS places no icon under the notch, and
 /// apps drawn around it keep windows over the menu bar, or right under it, that catch the pointer when it comes near:
 /// a drop there lands anywhere. A drop is safe right of both, with room for their hover areas.
+@available(macOS 26, *)
 @MainActor
 public enum DropZone {
     /// Room kept right of the notch: drops closer than this failed on a MacBook Pro whose notch apps widen on hover.

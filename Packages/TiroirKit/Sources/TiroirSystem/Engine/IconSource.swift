@@ -4,6 +4,7 @@ import Foundation
 import TiroirCore
 
 /// One icon as its app describes it, with the way to press it.
+@available(macOS 26, *)
 public struct FoundIcon: Sendable {
     public var app: RunningApp
     public var frame: CGRect
@@ -22,12 +23,14 @@ public struct FoundIcon: Sendable {
 }
 
 /// Where engines learn which app owns which icon. The system implementation asks every app over Accessibility.
+@available(macOS 26, *)
 @MainActor
 public protocol IconSource: AnyObject {
     var isTrusted: Bool { get }
     func find() async -> [FoundIcon]
 }
 
+@available(macOS 26, *)
 @MainActor
 public final class AccessibilityIconSource: IconSource {
     private let reader: ExtrasReader
@@ -49,6 +52,7 @@ public final class AccessibilityIconSource: IconSource {
 }
 
 /// Turns what apps say about their icons into menu bar icons with stable identities (spec 4.3, Discovery).
+@available(macOS 26, *)
 public enum IconAssembly {
     /// Identity, kind and label of each found icon, before any window is known.
     public static func identify(_ found: [FoundIcon]) -> [(found: FoundIcon, id: IconID)] {

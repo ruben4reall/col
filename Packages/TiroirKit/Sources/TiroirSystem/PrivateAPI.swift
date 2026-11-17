@@ -4,6 +4,7 @@ import Foundation
 
 /// Every private macOS function Tiroir uses, in one file (spec 4.5). Each one is looked up at run time: when a macOS
 /// update removes or renames it, its feature turns off and Tiroir says so in Settings; nothing crashes.
+@available(macOS 26, *)
 public enum PrivateAPI {
     // MARK: macOS 27: MenuBarAgent's restriction
 

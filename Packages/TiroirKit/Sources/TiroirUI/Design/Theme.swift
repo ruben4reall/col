@@ -2,6 +2,7 @@ import SwiftUI
 import TiroirCore
 
 /// Tiroir's colors (spec 7), the same values as `brand/tokens/tokens.json`; `ThemeTests` keeps them in step.
+@available(macOS 26, *)
 public enum Theme {
     // MARK: Brand palette
 
@@ -56,12 +57,14 @@ public enum Theme {
     public static let gutter: CGFloat = 20
 }
 
+@available(macOS 26, *)
 extension Color {
     public init(_ rgba: RGBA) {
         self.init(.sRGB, red: rgba.red, green: rgba.green, blue: rgba.blue, opacity: rgba.alpha)
     }
 }
 
+@available(macOS 26, *)
 extension NSColor {
     public convenience init(_ rgba: RGBA) {
         self.init(srgbRed: rgba.red, green: rgba.green, blue: rgba.blue, alpha: rgba.alpha)

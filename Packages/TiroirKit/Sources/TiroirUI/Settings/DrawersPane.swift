@@ -3,6 +3,7 @@ import SwiftUI
 import TiroirCore
 
 /// Settings, Drawers (spec 6.3): each drawer's name, mark, what the menu bar shows of it, its shortcut.
+@available(macOS 26, *)
 struct DrawersPane: View {
     @Bindable var model: InterfaceModel
     @State private var confirmingDelete: Drawer?

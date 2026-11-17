@@ -7,6 +7,7 @@ import TiroirCore
 /// A move waits until the person pauses (no button held, no modifier, the pointer still for 0.15 s) so it never
 /// fights them, then posts one Command-drag and reads the window list until the icon settles. A move that did not
 /// land is tried again through the next posting route; the route that worked is remembered.
+@available(macOS 26, *)
 @MainActor
 public final class ItemMover {
     public enum Destination: Equatable, Sendable {

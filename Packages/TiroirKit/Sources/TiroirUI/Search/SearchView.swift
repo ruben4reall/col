@@ -3,6 +3,7 @@ import SwiftUI
 import TiroirCore
 
 /// Search (spec 6.2): a glass field under the menu bar. Two letters and Return open an icon's menu.
+@available(macOS 26, *)
 public struct SearchView: View {
     let model: InterfaceModel
     let onOpen: (IconID) -> Void

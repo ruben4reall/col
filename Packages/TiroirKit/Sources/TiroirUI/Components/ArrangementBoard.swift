@@ -3,6 +3,7 @@ import SwiftUI
 import TiroirCore
 
 /// One card of the arrangement board: the menu bar, a drawer, or Hidden.
+@available(macOS 26, *)
 public struct BoardSection: Identifiable {
     public var placement: Placement
     public var title: String
@@ -29,6 +30,7 @@ public struct BoardSection: Identifiable {
 
 /// Cards of icons that can be dragged from one card to another: the welcome's Smart Sort step and Settings, Layout.
 /// A right-click on an icon does the same without dragging (Move To), and more where the board allows it.
+@available(macOS 26, *)
 public struct ArrangementBoard: View {
     let sections: [BoardSection]
     let columns: Int
@@ -64,6 +66,7 @@ public struct ArrangementBoard: View {
     private var allRows: [IconRow] { sections.flatMap(\.rows) }
 }
 
+@available(macOS 26, *)
 struct BoardCard: View {
     let section: BoardSection
     let onDrop: (IconID, Placement) -> Void
@@ -154,6 +157,7 @@ struct BoardCard: View {
     }
 }
 
+@available(macOS 26, *)
 extension BoardCard {
     @ViewBuilder
     func chipMenu(_ row: IconRow, movable: Bool) -> some View {
@@ -175,6 +179,7 @@ extension BoardCard {
 }
 
 /// Lays chips out in rows, wrapping at the available width.
+@available(macOS 26, *)
 public struct FlowLayout: SwiftUI.Layout {
     var spacing: CGFloat
 

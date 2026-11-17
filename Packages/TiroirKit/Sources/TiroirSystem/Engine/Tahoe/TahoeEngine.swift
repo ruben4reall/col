@@ -3,6 +3,7 @@ import TiroirCore
 
 /// The macOS 26 engine (spec 4.3): Tiroir's divider pushes concealed icons off screen; synthetic Command-drags carry
 /// icons across it; an icon opened from a drawer is brought next to the drawer's mark for the time its menu is open.
+@available(macOS 26, *)
 @MainActor
 public final class TahoeEngine: MenuBarEngine {
     public let kind = EngineKind.tahoe
@@ -676,9 +677,11 @@ public final class TahoeEngine: MenuBarEngine {
 }
 
 /// A divider that can hold a middle width while Tiroir arranges icons.
+@available(macOS 26, *)
 @MainActor
 public protocol ArrangingDivider: DividerControlling {
     func setArranging()
 }
 
+@available(macOS 26, *)
 extension Divider: ArrangingDivider {}

@@ -4,6 +4,7 @@ import TiroirCore
 
 /// A borderless panel just under the menu bar that takes the keyboard without bringing Tiroir to the front: the app
 /// the person was using stays active (spec 6.2).
+@available(macOS 26, *)
 final class FloatingPanel: NSPanel {
     var onClose: (() -> Void)?
 
@@ -31,6 +32,7 @@ final class FloatingPanel: NSPanel {
 
 /// Opens and closes one floating panel at a time: a drawer, the All drawer, or search. A click anywhere else, a switch
 /// of Space or of app closes it.
+@available(macOS 26, *)
 @MainActor
 public final class PanelController {
     private var panel: FloatingPanel?

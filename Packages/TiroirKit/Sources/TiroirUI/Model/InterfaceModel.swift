@@ -4,6 +4,7 @@ import TiroirCore
 import TiroirSystem
 
 /// One icon as the interface shows it: the scan's facts plus the app's name, icon and kind.
+@available(macOS 26, *)
 public struct IconRow: Identifiable, Equatable {
     public var id: IconID
     /// "Google Drive", or the module's label for macOS icons ("Battery").
@@ -50,6 +51,7 @@ public struct IconRow: Identifiable, Equatable {
 }
 
 /// What the app tells the interface it can do. The coordinator in TiroirApp fills it in.
+@available(macOS 26, *)
 @MainActor
 public struct InterfaceActions {
     public var updateSettings: (TiroirSettings) -> Void = { _ in }
@@ -83,12 +85,14 @@ public struct InterfaceActions {
 }
 
 /// Settings' sections.
+@available(macOS 26, *)
 public enum SettingsPane: String, CaseIterable, Identifiable, Sendable {
     case layout, drawers, profiles, triggers, appearance, behavior, shortcuts, general, about
     public var id: String { rawValue }
 }
 
 /// Everything the drawers, search, the welcome and Settings show, on the main actor.
+@available(macOS 26, *)
 @MainActor
 @Observable
 public final class InterfaceModel {

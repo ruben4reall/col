@@ -4,6 +4,7 @@ import TiroirCore
 
 /// Settings, Profiles: every saved setup of the menu bar on a card, the active one marked, each with its shortcut, and
 /// the current setup saved as a new profile in one click.
+@available(macOS 26, *)
 struct ProfilesPane: View {
     @Bindable var model: InterfaceModel
     @State private var naming: Naming?

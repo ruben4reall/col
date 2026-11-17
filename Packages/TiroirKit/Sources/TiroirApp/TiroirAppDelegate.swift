@@ -3,6 +3,7 @@ import TiroirSystem
 
 /// Tiroir's application delegate. The app target subclasses it to add the Sparkle updater and the move to
 /// /Applications, the only code that lives outside this package.
+@available(macOS 26, *)
 @MainActor
 open class TiroirAppDelegate: NSObject, NSApplicationDelegate {
     public private(set) var coordinator: Coordinator?

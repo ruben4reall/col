@@ -4,6 +4,7 @@ import Foundation
 
 /// An Accessibility element that may cross threads. The element is a token for another process: every call on it is
 /// a round trip, capped by the messaging timeout so an app that stops answering never stalls Tiroir.
+@available(macOS 26, *)
 public struct AXElement: @unchecked Sendable {
     public let raw: AXUIElement
 

@@ -1,6 +1,7 @@
 import Foundation
 
 /// Words of Show Every Icon from the menu bar, icon shortcuts, the settings file and diagnostics.
+@available(macOS 26, *)
 extension Strings {
     // MARK: Behavior, Tiroir's own icons
 

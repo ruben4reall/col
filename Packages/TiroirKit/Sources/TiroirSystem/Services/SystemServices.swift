@@ -4,6 +4,7 @@ import TiroirCore
 
 /// Tells when apps launch or quit, once per burst: an app often starts helpers along with it, and its icon appears
 /// a moment after it launches.
+@available(macOS 26, *)
 @MainActor
 public final class AppObserver {
     public var onChange: (@MainActor () -> Void)?
@@ -36,6 +37,7 @@ public final class AppObserver {
 }
 
 /// Tells when displays are added, removed or rearranged, and when the Mac wakes.
+@available(macOS 26, *)
 @MainActor
 public final class DisplayObserver {
     public var onChange: (@MainActor () -> Void)?
@@ -51,6 +53,7 @@ public final class DisplayObserver {
     }
 }
 
+@available(macOS 26, *)
 public enum LoginItemStatus: Sendable, Equatable {
     case enabled
     case disabled
@@ -60,6 +63,7 @@ public enum LoginItemStatus: Sendable, Equatable {
 }
 
 /// Open at Login through SMAppService: macOS lists Tiroir in Login Items & Extensions, where it can also be removed.
+@available(macOS 26, *)
 @MainActor
 public final class LoginItem {
     private let service: SMAppService
@@ -84,6 +88,7 @@ public final class LoginItem {
 }
 
 /// Picks the engine for this Mac (spec 4.1).
+@available(macOS 26, *)
 @MainActor
 public enum EngineFactory {
     public static func make(demo: Bool) -> MenuBarEngine {
@@ -97,6 +102,7 @@ public enum EngineFactory {
 }
 
 /// Memory footprint of this process, for Settings, General (the same measure as Activity Monitor's "Memory").
+@available(macOS 26, *)
 public enum MemoryUse {
     public static func footprintBytes() -> UInt64? {
         var info = task_vm_info_data_t()

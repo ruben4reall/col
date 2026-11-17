@@ -2,6 +2,7 @@ import Foundation
 import TiroirCore
 
 /// The words of triggers: Settings, Triggers, its sentences and its editor.
+@available(macOS 26, *)
 extension Strings {
     // MARK: Triggers pane
 

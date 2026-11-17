@@ -1,5 +1,6 @@
 import AppKit
 
+@available(macOS 26, *)
 extension NSScreen {
     /// The display's identifier, which outlives a rearrangement of the displays.
     public var displayID: CGDirectDisplayID? {

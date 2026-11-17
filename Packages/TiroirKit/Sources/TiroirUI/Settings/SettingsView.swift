@@ -4,6 +4,7 @@ import TiroirCore
 import TiroirSystem
 
 /// Settings (spec 6.3): one dark window with a sidebar, in the family of Pli and Islet.
+@available(macOS 26, *)
 public struct SettingsView: View {
     @Bindable var model: InterfaceModel
 
@@ -81,6 +82,7 @@ public struct SettingsView: View {
 }
 
 /// Says plainly when the engine cannot work, and what to do.
+@available(macOS 26, *)
 struct EngineBanner: View {
     let model: InterfaceModel
 
@@ -113,6 +115,7 @@ struct EngineBanner: View {
 }
 
 /// A labelled row of a settings group.
+@available(macOS 26, *)
 struct SettingRow<Control: View>: View {
     let title: String
     var note: String?
@@ -134,6 +137,7 @@ struct SettingRow<Control: View>: View {
 }
 
 /// A group of settings rows on a card.
+@available(macOS 26, *)
 struct SettingsGroup<Content: View>: View {
     var title: String?
     @ViewBuilder var content: Content

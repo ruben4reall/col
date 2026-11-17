@@ -7,6 +7,7 @@ import TiroirUI
 /// A plain text report for a bug report (Settings, General). It holds what a maintainer needs to understand a
 /// problem: the Mac, macOS, the engine, what Tiroir sees in the menu bar (bundle identifiers, never labels or window
 /// titles) and Tiroir's own recent log messages. It never leaves the Mac by itself.
+@available(macOS 26, *)
 @MainActor
 enum Diagnostics {
     static func report(interface: InterfaceModel, engine: MenuBarEngine, snapshot: MenuBarSnapshot) -> String {

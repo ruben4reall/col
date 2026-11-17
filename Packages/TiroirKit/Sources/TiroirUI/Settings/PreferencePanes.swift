@@ -4,6 +4,7 @@ import TiroirCore
 import TiroirSystem
 
 /// Settings, Behavior (spec 6.3).
+@available(macOS 26, *)
 struct BehaviorPane: View {
     @Bindable var model: InterfaceModel
 
@@ -115,6 +116,7 @@ struct BehaviorPane: View {
 }
 
 /// Settings, Shortcuts (spec 6.3): Tiroir's own shortcuts, then one per icon.
+@available(macOS 26, *)
 struct ShortcutsPane: View {
     @Bindable var model: InterfaceModel
 
@@ -198,6 +200,7 @@ struct ShortcutsPane: View {
 }
 
 /// Settings, General (spec 6.3).
+@available(macOS 26, *)
 struct GeneralPane: View {
     @Bindable var model: InterfaceModel
     @State private var confirmingReset = false
@@ -279,6 +282,7 @@ struct GeneralPane: View {
 }
 
 /// Settings, About (spec 6.3).
+@available(macOS 26, *)
 struct AboutPane: View {
     let model: InterfaceModel
 

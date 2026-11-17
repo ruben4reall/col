@@ -3,6 +3,7 @@ import ApplicationServices
 import os
 
 /// An app that may own menu bar icons.
+@available(macOS 26, *)
 public struct RunningApp: Sendable, Equatable {
     public var pid: pid_t
     public var bundleID: String
@@ -18,6 +19,7 @@ public struct RunningApp: Sendable, Equatable {
 }
 
 /// One menu bar icon as its app describes it over Accessibility (`AXExtrasMenuBar`).
+@available(macOS 26, *)
 public struct ExtraItem: Sendable {
     public var app: RunningApp
     public var frame: CGRect
@@ -28,6 +30,7 @@ public struct ExtraItem: Sendable {
 }
 
 /// Reads the icons of every running app, concurrently, with a short timeout per app.
+@available(macOS 26, *)
 public final class ExtrasReader: @unchecked Sendable {
     /// An app that did not answer is left alone this long.
     public static let backoff: TimeInterval = 30

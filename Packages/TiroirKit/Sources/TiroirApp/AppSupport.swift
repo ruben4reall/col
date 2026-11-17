@@ -3,6 +3,7 @@ import TiroirUI
 
 /// Switches read at launch from the command line or the defaults (`-TiroirDemo YES`). They let scripts photograph the
 /// real app for the website and the README, and never touch the person's own menu bar in demo mode.
+@available(macOS 26, *)
 public struct LaunchOptions: Sendable {
     /// Generic icons instead of the menu bar's.
     public var demo: Bool
@@ -40,6 +41,7 @@ public struct LaunchOptions: Sendable {
 
 /// A still picture behind Tiroir's windows, for captures in demo mode only: the glass then shows the picture, never
 /// the windows of whoever runs the capture.
+@available(macOS 26, *)
 @MainActor
 enum Backdrop {
     static func show(imageAt path: String) -> NSWindow? {
@@ -59,6 +61,7 @@ enum Backdrop {
 }
 
 /// Software updates, which the app target provides with Sparkle; this package never imports it.
+@available(macOS 26, *)
 @MainActor
 public protocol UpdateChecking: AnyObject {
     var automaticallyChecksForUpdates: Bool { get set }
@@ -68,6 +71,7 @@ public protocol UpdateChecking: AnyObject {
 }
 
 /// The menu bar of Tiroir's own windows: About, Settings and Quit, the editing commands text fields need, and Close.
+@available(macOS 26, *)
 @MainActor
 enum MainMenu {
     static func make(onSettings: @escaping () -> Void) -> NSMenu {
@@ -109,6 +113,7 @@ enum MainMenu {
 }
 
 /// A menu item that runs a closure.
+@available(macOS 26, *)
 @MainActor
 final class ActionItem: NSMenuItem {
     private let run: () -> Void

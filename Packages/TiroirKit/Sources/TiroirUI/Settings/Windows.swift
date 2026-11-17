@@ -4,6 +4,7 @@ import TiroirCore
 
 /// Hosts the welcome and Settings in dark windows. Tiroir shows in the Dock and the app switcher only while one of
 /// them is open, the way menu bar apps do.
+@available(macOS 26, *)
 @MainActor
 public final class WindowPresenter: NSObject, NSWindowDelegate {
     private var welcome: NSWindow?
@@ -89,6 +90,7 @@ public final class WindowPresenter: NSObject, NSWindowDelegate {
 }
 
 /// A short message under the menu bar for a few seconds: an icon that could not open, a move that failed.
+@available(macOS 26, *)
 @MainActor
 public final class Toast {
     private var panel: NSPanel?
@@ -135,6 +137,7 @@ public final class Toast {
 
 /// Windows shown without taking the keyboard (captures while someone works) draw their controls as in the window in
 /// front, so pictures show Tiroir as people see it.
+@available(macOS 26, *)
 private struct QuietCapture<Content: View>: View {
     let isQuiet: Bool
     let content: Content

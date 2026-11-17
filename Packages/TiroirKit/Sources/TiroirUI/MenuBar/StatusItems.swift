@@ -3,6 +3,7 @@ import TiroirCore
 import TiroirSystem
 
 /// Tiroir's own items in the menu bar: its icon (the All drawer) and one item per drawer (spec 6.2).
+@available(macOS 26, *)
 @MainActor
 public final class StatusItemsController {
     public enum Target: Hashable, Sendable {
@@ -192,6 +193,7 @@ public final class StatusItemsController {
 }
 
 /// Receives a status item's clicks and forwards them with the item's target.
+@available(macOS 26, *)
 @MainActor
 private final class ClickHandler: NSObject {
     static var key: UInt8 = 0
@@ -209,6 +211,7 @@ private final class ClickHandler: NSObject {
 }
 
 /// Tells when the pointer enters and leaves a status item, without taking its clicks.
+@available(macOS 26, *)
 private final class HoverTracker: NSView {
     var onEnter: (() -> Void)?
     var onExit: (() -> Void)?
@@ -226,6 +229,7 @@ private final class HoverTracker: NSView {
 
 /// Tiroir's own menu bar glyph: a small chest of three drawers, drawn as a template image so it follows the menu bar
 /// like the system's icons.
+@available(macOS 26, *)
 public enum TiroirGlyph {
     public enum State { case closed, open, focus }
 

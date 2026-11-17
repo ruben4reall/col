@@ -4,6 +4,7 @@ import TiroirCore
 
 /// Settings, Triggers: each trigger reads as a sentence on a card, with its switch, and a mark while its condition
 /// holds. With none yet, a sentence and a few examples to add in one click.
+@available(macOS 26, *)
 struct TriggersPane: View {
     @Bindable var model: InterfaceModel
     @State private var editing: TriggerDraft?
@@ -113,6 +114,7 @@ struct TriggersPane: View {
 
 /// Adds or edits a trigger: When (a condition and its value), Then (an action and its target), and the sentence they
 /// make.
+@available(macOS 26, *)
 struct TriggerEditor: View {
     let model: InterfaceModel
     @State var draft: TriggerDraft

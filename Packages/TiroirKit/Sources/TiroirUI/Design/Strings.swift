@@ -4,6 +4,7 @@ import TiroirCore
 /// Every word the interface shows. Each one is a key of `Resources/Localizable.xcstrings`, so another language needs no
 /// code change, and views never write a user-facing literal: `StringCatalogTests` checks both. Strings with a value
 /// use a format key (`%lld`, `%@`) filled with `String(format:)`.
+@available(macOS 26, *)
 public enum Strings {
     // MARK: Tiroir
 

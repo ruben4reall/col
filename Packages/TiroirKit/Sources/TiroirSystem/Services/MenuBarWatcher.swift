@@ -4,6 +4,7 @@ import CoreGraphics
 /// Hears the pointer on the menu bar for Show Every Icon (spec 6.3, Behavior): a rest, a click or a scroll on an
 /// empty part of the bar. Global monitors of mouse events need no permission and only see what happens outside
 /// Tiroir's own windows. Only the monitors a setting asks for run: with the defaults, nothing listens.
+@available(macOS 26, *)
 @MainActor
 public final class MenuBarWatcher {
     public var onHover: (@MainActor () -> Void)?

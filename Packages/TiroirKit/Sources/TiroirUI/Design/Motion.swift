@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// The springs and durations every surface shares (spec 7).
+@available(macOS 26, *)
 public enum Motion {
     /// A drawer drops under its emoji.
     public static let drawer = Animation.spring(response: 0.32, dampingFraction: 0.86)

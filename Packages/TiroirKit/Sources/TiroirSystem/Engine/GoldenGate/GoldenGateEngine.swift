@@ -4,6 +4,7 @@ import TiroirCore
 /// The macOS 27 engine (spec 4.4): MenuBarAgent's restriction shows every app except the hidden ones. Nothing ever
 /// moves, the pointer included; an icon opened from a drawer is let through the restriction for the time its menu is
 /// open.
+@available(macOS 26, *)
 @MainActor
 public final class GoldenGateEngine: MenuBarEngine {
     public let kind = EngineKind.goldenGate

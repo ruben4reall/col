@@ -3,6 +3,7 @@ import SwiftUI
 import TiroirCore
 
 /// A card on the dark windows: a faint fill and a hairline edge.
+@available(macOS 26, *)
 public struct CardBackground: ViewModifier {
     var radius: CGFloat = Theme.cardRadius
 
@@ -13,6 +14,7 @@ public struct CardBackground: ViewModifier {
     }
 }
 
+@available(macOS 26, *)
 extension View {
     public func card(radius: CGFloat = Theme.cardRadius) -> some View {
         modifier(CardBackground(radius: radius))
@@ -20,6 +22,7 @@ extension View {
 }
 
 /// A capsule button: white for the main action (the way Pli and Islet do it), glass for the others.
+@available(macOS 26, *)
 public struct PillButtonStyle: ButtonStyle {
     public enum Kind { case primary, secondary, destructive }
     var kind: Kind
@@ -55,6 +58,7 @@ public struct PillButtonStyle: ButtonStyle {
 }
 
 /// One icon in a drawer, search or the layout editor: the app's icon and its name.
+@available(macOS 26, *)
 public struct IconTile: View {
     let row: IconRow
     var size: CGFloat = 36
@@ -106,6 +110,7 @@ public struct IconTile: View {
 }
 
 /// A small caption above a group of controls.
+@available(macOS 26, *)
 public struct SectionTitle: View {
     let text: String
     public init(_ text: String) { self.text = text }
@@ -119,6 +124,7 @@ public struct SectionTitle: View {
 }
 
 /// The last points of a scrolling area fade out, so a card cut by the edge reads as more to scroll, not as a mistake.
+@available(macOS 26, *)
 struct ScrollFade: View {
     var body: some View {
         VStack(spacing: 0) {

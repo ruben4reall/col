@@ -1,6 +1,7 @@
 import Foundation
 
 /// MenuBarAgent's restriction on macOS 27, kept to one live assertion (spec 4.4, Hiding).
+@available(macOS 26, *)
 @MainActor
 public protocol RestrictionControlling: AnyObject {
     var isAvailable: Bool { get }
@@ -12,11 +13,13 @@ public protocol RestrictionControlling: AnyObject {
     func release()
 }
 
+@available(macOS 26, *)
 public enum RestrictionError: Error, Equatable {
     case unavailable
     case noAnswer
 }
 
+@available(macOS 26, *)
 @MainActor
 public final class MenuBarRestriction: RestrictionControlling {
     private var active: (assertion: PrivateAPI.MenuBarAssertion, allowed: [String])?
@@ -66,6 +69,7 @@ public final class MenuBarRestriction: RestrictionControlling {
 }
 
 /// The first answer wins; later ones are ignored.
+@available(macOS 26, *)
 @MainActor
 final class OneAnswer {
     private var value: NSError??

@@ -4,6 +4,7 @@ import TiroirCore
 
 /// The glass panel that drops from a drawer's mark (spec 6.2): the drawer's icons as a grid of app icons with their
 /// names. Arrow keys move, Return opens, Escape closes, typing filters.
+@available(macOS 26, *)
 public struct DrawerView: View {
     let model: InterfaceModel
     let target: StatusItemsController.Target

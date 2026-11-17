@@ -3,6 +3,7 @@ import ApplicationServices
 
 /// The one permission Tiroir needs (spec 6.1): Accessibility, to see which app owns each icon, to open icons and, on
 /// macOS 26, to move them. Tiroir never asks for Screen Recording.
+@available(macOS 26, *)
 @MainActor
 public final class AccessibilityPermission {
     public private(set) var isTrusted: Bool

@@ -4,6 +4,7 @@ import TiroirUI
 import UniformTypeIdentifiers
 
 /// The settings as a file (Settings, General): a copy to keep, or the same setup on another Mac.
+@available(macOS 26, *)
 @MainActor
 enum SettingsFile {
     static func export(_ settings: TiroirSettings) {

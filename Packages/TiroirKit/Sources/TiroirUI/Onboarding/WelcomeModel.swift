@@ -4,6 +4,7 @@ import TiroirCore
 import TiroirSystem
 
 /// The welcome's state (spec 6.1): four steps, each with one decision.
+@available(macOS 26, *)
 @MainActor
 @Observable
 public final class WelcomeModel {

@@ -3,6 +3,7 @@ import CoreFoundation
 /// The room macOS leaves between menu bar icons, for every app (Settings, Layout). macOS keeps it in two preferences of
 /// the global domain for this Mac, NSStatusItemSpacing and NSStatusItemSelectionPadding (16 points each by default),
 /// and each app reads them when it starts: a change shows as apps open, and everywhere after logging out and back in.
+@available(macOS 26, *)
 public enum IconSpacing: String, CaseIterable, Sendable {
     case standard, snug, compact, tight
 

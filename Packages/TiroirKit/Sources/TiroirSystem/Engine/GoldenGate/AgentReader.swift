@@ -7,6 +7,7 @@ import ApplicationServices
 /// that draws the icon, or to MenuBarAgent itself for a system item such as the clock. The `«` button, which macOS
 /// shows when icons do not fit beside the notch, is the one slot without a child. Icons that do not fit keep a frame,
 /// stacked at the left of the region: they are not drawn.
+@available(macOS 26, *)
 public struct AgentLayout: Sendable {
     public struct Item: Sendable {
         public var bundleID: String?
@@ -56,6 +57,7 @@ public struct AgentLayout: Sendable {
     }
 }
 
+@available(macOS 26, *)
 public enum AgentReader {
     public static let agentBundleID = "com.apple.MenuBarAgent"
 

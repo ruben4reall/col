@@ -3,6 +3,7 @@ import TiroirCore
 
 /// A trigger being written in the editor. Every value is kept while the person tries other kinds, so going back to a
 /// kind finds what was chosen for it.
+@available(macOS 26, *)
 public struct TriggerDraft: Identifiable, Equatable {
     public var id: UUID
     /// A trigger that does not exist yet.

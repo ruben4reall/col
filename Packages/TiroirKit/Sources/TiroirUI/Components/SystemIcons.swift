@@ -3,6 +3,7 @@ import TiroirCore
 
 /// Pictures for macOS's own icons, which have no app icon of their own in a drawer: a symbol on a neutral tile, the
 /// way System Settings draws its panes.
+@available(macOS 26, *)
 @MainActor
 public enum SystemIcons {
     private static var cache: [String: NSImage] = [:]

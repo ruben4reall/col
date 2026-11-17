@@ -5,6 +5,7 @@ import TiroirSystem
 
 /// Settings, Layout (spec 6.3): the menu bar as it is, the room left beside the notch, and the cards to drag icons
 /// between.
+@available(macOS 26, *)
 struct LayoutPane: View {
     @Bindable var model: InterfaceModel
     @State private var editingMark: UUID?
@@ -79,11 +80,13 @@ struct LayoutPane: View {
     }
 }
 
+@available(macOS 26, *)
 private struct DrawerEditing: Identifiable {
     let id: UUID
 }
 
 /// The menu bar as it stands: the icons that show, Tiroir's drawers, and the notch when there is one.
+@available(macOS 26, *)
 struct MenuBarPreview: View {
     let model: InterfaceModel
 
@@ -134,6 +137,7 @@ struct MenuBarPreview: View {
 }
 
 /// How much of the room beside the notch the icons take (spec 6.4).
+@available(macOS 26, *)
 struct RoomGauge: View {
     let model: InterfaceModel
 
@@ -195,6 +199,7 @@ struct RoomGauge: View {
 }
 
 /// Smart Sort again, from Settings: the same proposal as the welcome, applied on confirmation.
+@available(macOS 26, *)
 struct SmartSortSheet: View {
     let model: InterfaceModel
     @Binding var isPresented: Bool

@@ -5,6 +5,7 @@ import TiroirSystem
 /// Show Every Icon from the menu bar itself, and hiding them again (spec 6.3, Behavior). A rest, a click or a scroll
 /// on empty room shows every icon; once every icon shows, they hide again after the pointer has been away from the
 /// menu bar for a few seconds with no menu open. The watch runs only while every icon shows.
+@available(macOS 26, *)
 @MainActor
 final class RevealController {
     /// A rest or a click on empty room: show every icon.

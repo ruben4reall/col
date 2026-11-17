@@ -3,6 +3,7 @@ import AppKit
 /// The icons a drawer can show: SF Symbols, the icons macOS draws its own menu bar with, grouped by theme. A search
 /// matches a theme or any part of a symbol's name ("lock", "cloud", "chart"), and an exact SF Symbol name outside the
 /// library works too. `SymbolLibraryTests` checks that every name exists on this macOS.
+@available(macOS 26, *)
 public enum SymbolLibrary {
     public struct Section: Identifiable, Sendable {
         public let title: String

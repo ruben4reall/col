@@ -2,6 +2,7 @@ import Foundation
 import TiroirCore
 
 /// Triggers in words: "When Zoom is open, show the Messages drawer in the menu bar".
+@available(macOS 26, *)
 @MainActor
 enum TriggerText {
     static func sentence(_ trigger: Trigger, in model: InterfaceModel) -> String {
@@ -55,6 +56,7 @@ enum TriggerText {
 }
 
 /// One of the examples an empty Triggers pane offers, added in one click.
+@available(macOS 26, *)
 struct TriggerExample: Identifiable {
     var id: String
     var title: String

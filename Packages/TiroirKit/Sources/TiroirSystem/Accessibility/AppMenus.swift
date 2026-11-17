@@ -3,6 +3,7 @@ import CoreGraphics
 
 /// An app's menus in the menu bar (the Apple menu, its own menu, File, Edit…), as Accessibility describes them. The
 /// split shape of the tint ends its left piece where the front app's menus end.
+@available(macOS 26, *)
 public enum AppMenus {
     /// The frames of the app's menu bar items, in window server coordinates. Empty when the app has no menus, does not
     /// answer in time, or Accessibility is off. Every read is a round trip to the app, capped by `timeout`: call it

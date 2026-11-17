@@ -3,6 +3,7 @@ import TiroirCore
 
 /// Generic icons instead of the menu bar (spec 13): the website's pictures and the README's are real captures of
 /// Tiroir, and demo mode guarantees they never show anyone's own apps. Nothing in the real menu bar moves.
+@available(macOS 26, *)
 @MainActor
 public final class DemoEngine: MenuBarEngine {
     public let kind = EngineKind.demo

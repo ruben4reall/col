@@ -2,6 +2,7 @@ import AppKit
 import CoreGraphics
 
 /// One window of the menu bar's icons, as the window server lists it (macOS 26).
+@available(macOS 26, *)
 public struct StatusWindow: Equatable, Sendable {
     public var id: UInt32
     /// Top-left origin, main display.
@@ -16,6 +17,7 @@ public struct StatusWindow: Equatable, Sendable {
 }
 
 /// Where the engine reads windows. The system implementation reads the window server; tests use a simulated bar.
+@available(macOS 26, *)
 public protocol StatusWindowSource: Sendable {
     /// Every icon window (status window level), from right to left, including the ones pushed off screen.
     func statusWindows() -> [StatusWindow]
@@ -26,6 +28,7 @@ public protocol StatusWindowSource: Sendable {
 
 /// The window server, through the public window list. Needs no permission: only window names would need Screen
 /// Recording, and Tiroir never reads them.
+@available(macOS 26, *)
 public struct SystemStatusWindows: StatusWindowSource {
     public init() {}
 
@@ -106,6 +109,7 @@ public struct SystemStatusWindows: StatusWindowSource {
 
 /// Converts between AppKit's screen coordinates (bottom-left origin) and the window server's (top-left origin of the
 /// main display).
+@available(macOS 26, *)
 public enum ScreenCoordinates {
     @MainActor
     public static var mainDisplayHeight: CGFloat {

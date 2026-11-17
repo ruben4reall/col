@@ -3,6 +3,7 @@ import CoreGraphics
 
 /// Where synthetic events enter the system. Menu bar managers disagree, and what works can change with a macOS
 /// update, so Tiroir tries them in this order and remembers the one that worked.
+@available(macOS 26, *)
 public enum PostingRoute: String, CaseIterable, Sendable {
     /// The session event tap, as if a person had moved the mouse.
     case session
@@ -14,6 +15,7 @@ public enum PostingRoute: String, CaseIterable, Sendable {
 
 /// Posts the synthetic mouse events that move and click icons on macOS 26. The system implementation talks to the
 /// window server; tests use a simulated menu bar.
+@available(macOS 26, *)
 @MainActor
 public protocol EventPosting: AnyObject {
     /// A Command-drag of the icon window `windowID` from `start` to `end`, the way people rearrange the menu bar.
@@ -23,12 +25,14 @@ public protocol EventPosting: AnyObject {
 }
 
 /// Whether the person is using the mouse or the keyboard right now.
+@available(macOS 26, *)
 public protocol UserActivitySource: Sendable {
     var secondsSincePointerMoved: TimeInterval { get }
     var isMouseButtonDown: Bool { get }
     var areModifiersDown: Bool { get }
 }
 
+@available(macOS 26, *)
 public struct SystemUserActivity: UserActivitySource {
     public init() {}
 
@@ -70,6 +74,7 @@ public struct SystemUserActivity: UserActivitySource {
 ///   on the icon, which may be off screen;
 /// - the press carries Command, the release does not;
 /// - the pointer is hidden during the move, then put back where it was.
+@available(macOS 26, *)
 @MainActor
 public final class SystemEventPoster: EventPosting {
     /// Undocumented field that also carries the window under the pointer.

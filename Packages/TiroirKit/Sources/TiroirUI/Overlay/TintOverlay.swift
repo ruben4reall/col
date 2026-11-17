@@ -11,6 +11,7 @@ import TiroirSystem
 /// dark look it follows the system's appearance; with the split shape on a display without a notch it reads where the
 /// front app's menus end each time another app comes to the front, and takes where the icons start from the
 /// coordinator's scans.
+@available(macOS 26, *)
 @MainActor
 public final class TintOverlay {
     private var windows: [CGDirectDisplayID: NSWindow] = [:]

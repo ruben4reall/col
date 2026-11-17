@@ -2,6 +2,7 @@ import Foundation
 import TiroirCore
 
 /// The words of profiles: Settings, Profiles and the Profiles menu of Tiroir's icon.
+@available(macOS 26, *)
 extension Strings {
     // MARK: Profiles pane
 

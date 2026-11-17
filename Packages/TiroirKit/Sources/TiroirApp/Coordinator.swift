@@ -8,6 +8,7 @@ import TiroirUI
 /// change of the layout saves the settings and asks the engine to make the menu bar match, once per burst of changes.
 /// Triggers reach the engine through the same plan: what they show is planned on top of the layout, which they never
 /// rewrite; only a trigger's profile switch changes the settings, as a switch by hand would.
+@available(macOS 26, *)
 @MainActor
 public final class Coordinator {
     public let interface: InterfaceModel

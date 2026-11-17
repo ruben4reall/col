@@ -6,6 +6,7 @@ import Foundation
 /// for the audio devices that take sound in, CoreMediaIO's for cameras. Listeners exist only between `start()` and
 /// `stop()`, and follow devices that come and go. Tiroir never opens a device, never records, and needs no Camera or
 /// Microphone permission for this.
+@available(macOS 26, *)
 @MainActor
 final class CameraAndMicrophone {
     /// Called when a device starts or stops running, or when devices come or go.

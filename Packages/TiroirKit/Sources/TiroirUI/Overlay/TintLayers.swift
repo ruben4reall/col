@@ -5,6 +5,7 @@ import TiroirCore
 
 /// The Core Animation layers of the tint on one display: the fill, the hairline and the shadow, edge to edge or
 /// following the rounded pieces of the floating and split shapes.
+@available(macOS 26, *)
 @MainActor
 enum TintLayers {
     /// How far the shadow reaches below the menu bar.
@@ -127,6 +128,7 @@ enum TintLayers {
     }
 }
 
+@available(macOS 26, *)
 extension TintGeometry.Pieces {
     /// The outline of the pieces, with the continuous corners of macOS's own capsules. `inset` brings it inside the
     /// edge, for a stroke that stays within the pieces.

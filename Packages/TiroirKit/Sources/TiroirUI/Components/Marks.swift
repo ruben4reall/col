@@ -3,6 +3,7 @@ import SwiftUI
 import TiroirCore
 
 /// A drawer's mark, drawn in a window.
+@available(macOS 26, *)
 public struct MarkView: View {
     let mark: DrawerMark
     let size: CGFloat
@@ -26,6 +27,7 @@ public struct MarkView: View {
 
 /// A drawer's mark in the menu bar: an emoji in color, a symbol as a template image that follows the menu bar's
 /// appearance like the system's own icons, or a few letters.
+@available(macOS 26, *)
 @MainActor
 public enum StatusMark {
     public static func apply(_ drawer: Drawer, count: Int, to button: NSStatusBarButton) {
@@ -61,6 +63,7 @@ public enum StatusMark {
 }
 
 /// The emoji the mark picker offers first; the system's Character Viewer has every other emoji.
+@available(macOS 26, *)
 public enum MarkLibrary {
     public static let emoji: [String] = [
         "☁️", "📁", "🗂️", "🗄️", "📦", "🔒", "🔐", "🛡️", "🔑", "💬", "✉️", "📨", "📞", "✨", "🤖", "🧠", "🛠️", "🧰", "⚙️",

@@ -4,6 +4,7 @@ import TiroirCore
 
 /// What Tiroir knows about an app that owns icons: its name and icon for the drawers, its declared App Store category
 /// and its developer for Smart Sort.
+@available(macOS 26, *)
 public struct AppInfo {
     public var bundleID: String
     public var name: String
@@ -15,6 +16,7 @@ public struct AppInfo {
 
 /// Looks apps up once and remembers them. Reading a code signature takes a few milliseconds, so it happens once per
 /// app and per launch of Tiroir.
+@available(macOS 26, *)
 @MainActor
 public final class AppDirectory {
     private var cache: [String: AppInfo] = [:]
