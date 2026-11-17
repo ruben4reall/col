@@ -30,9 +30,13 @@ import Testing
     }
 
     @Test func runsTheCommandInItsFolderWithItsEnvironment() async throws {
+        // A fresh CI machine can hold the first shell for seconds while macOS checks it: warmed up first, and given
+        // time, since this test is about what the command sees, not about the timeout.
+        try await warmUp()
         let (outcome, _) = try await run(
             #"printf '%s|%s|%s' "$COL_EXTENSION" "$(pwd -P)" "$HOME"; echo oops >&2; exit 3"#,
-            environment: ["PATH": "/usr/bin:/bin", "COL_EXTENSION": "weather"]
+            environment: ["PATH": "/usr/bin:/bin", "COL_EXTENSION": "weather"],
+            timeout: 60
         )
         #expect(String(decoding: outcome.output, as: UTF8.self) == "weather|\(folder.path)|")
         #expect(outcome.status == 3)
