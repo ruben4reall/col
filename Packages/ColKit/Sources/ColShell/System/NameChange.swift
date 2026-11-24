@@ -220,7 +220,11 @@ public enum NameChange {
     /// The login item opens the app from where it was registered. When the app has moved since (renamed, replaced by
     /// Homebrew under its new name, dragged elsewhere), it is registered again from here. The first time a place is
     /// seen, it is only noted, unless `registerAgain` asks: macOS tells the user each time an app registers one.
+    ///
+    /// A development build is left out entirely: it neither registers nor notes its place, so the installed Col keeps
+    /// the login item, and takes it back the next time it opens if a build of an older version had taken it.
     private static func followLoginItem(_ defaults: UserDefaults, registerAgain: Bool) {
+        guard !LoginItem.isDevelopmentCopy else { return }
         let path = Bundle.main.bundleURL.path
         let registered = defaults.string(forKey: loginItemKey)
         guard registered != path else { return }

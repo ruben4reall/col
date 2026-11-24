@@ -29,6 +29,13 @@ notary() { xcrun notarytool "$@" --key "$NOTARY_KEY_PATH" --key-id "$NOTARY_KEY_
 
 # 0. Checks. A published build comes from committed sources, under a version never released before.
 [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || fail "MARKETING_VERSION in project.yml is not x.y.z: '$VERSION'"
+# The tag builds Windows and Linux too: each must carry the Mac's version, or its build fails on the tag and the
+# release loses the stable links of its downloads.
+for pair in "linux/meson.build:version: '$VERSION'" "linux/data/ch.rubencatalao.Col.metainfo.xml:<release version=\"$VERSION\"" \
+            "packaging/linux/arch/PKGBUILD:pkgver=$VERSION" "windows/Directory.Build.props:<Version>$VERSION</Version>"; do
+  file=${pair%%:*}
+  grep -qF "${pair#*:}" "$file" || fail "$file does not carry version $VERSION"
+done
 if [ -n "$TEAM" ]; then
   [ -z "$(git status --porcelain)" ] || fail "the working tree has uncommitted changes"
   if git rev-parse -q --verify "refs/tags/v$VERSION" >/dev/null; then fail "tag v$VERSION exists: raise MARKETING_VERSION"; fi

@@ -50898,6 +50898,70 @@
           }
         }
       }
+    },
+    "A development build never opens at login: the Col in Applications does.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une build de développement ne s’ouvre jamais à la connexion : c’est le Col du dossier Applications qui s’ouvre."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein Entwicklungs-Build öffnet sich nie bei der Anmeldung: Das tut das Col im Ordner „Programme“."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Een ontwikkelbuild opent nooit bij inloggen: dat doet de Col in Apps."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una build di sviluppo non si apre mai al login: lo fa il Col nella cartella Applicazioni."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una compilación de desarrollo nunca se abre al iniciar sesión: lo hace el Col de Aplicaciones."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um build de desenvolvimento nunca abre ao iniciar a sessão: quem abre é o Col em Aplicativos."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開発用ビルドはログイン時に開きません。開くのは「アプリケーション」内のColです。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "개발용 빌드는 로그인 시 열리지 않습니다. 응용 프로그램 폴더의 Col이 열립니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开发版本不会在登录时打开，打开的是“应用程序”中的 Col。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開發版本不會在登入時打開，打開的是「應用程式」中的 Col。"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
