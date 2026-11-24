@@ -2,6 +2,29 @@
 
 Each release's section is what Col's update window and the GitHub release show. Dates are in ISO format.
 
+## 3.2.0 (2026-11-25)
+
+- **An intro when Col opens**: as it starts, at login or after an update, a line of light runs around the notch, the
+  island swells out of it with Col in one wing and four bars in the other, and a short chime rises, each of its bells
+  sending a wave out over the desktop; then the island tucks back in. The whole intro is handed to the system at once,
+  so the picture keeps time with the sound however busy the Mac is as Col starts, and nothing of it stays in memory
+  afterwards. Turn it off, or keep it without its chime, in Settings, General, where it can also be seen again. It
+  never plays over a full screen app or with the screen locked, and with Reduce Motion the island only fades in and
+  out. The chime is Col's own, written in code, with no sample from anywhere. On Windows and Linux too.
+- **Drawers, redrawn**: a drawer now drops from its icon the way the island drops from the notch, a black drop whose
+  neck lights the drawer's own icon, its apps arriving one after the other. The All drawer shows every drawer under its
+  name, its icons in rows instead of a scrolling line.
+- **Your menu bar in the island**: a Menu Bar page in the open island holds your drawers, one tap away from any icon's
+  menu, and turning the drawers on adds it. Until they are on, the page offers to turn them on; so does the card that
+  introduces this version.
+- **Fixed**: a development build of Col could take over opening at login from the Col in Applications, which then
+  stopped opening at login and receiving updates. Development builds now leave the login item alone, and the installed
+  Col takes it back as it opens in this version.
+- **Fixed**: on macOS 27 the menu bar's tint, one of the drawers' options, was drawn below the menu bar, over the top
+  of your windows; it lies on the menu bar again.
+- **Fixed**: the drawers' tests no longer compile for the wrong system with Xcode 27, and a release now refuses to
+  start when Windows or Linux do not carry the Mac's version.
+
 ## 3.1.0 (2026-11-17)
 
 - **A tidy menu bar**: one switch in Settings, Menu Bar, tidies the icons of your menu bar into drawers, each one a

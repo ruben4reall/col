@@ -3,7 +3,7 @@
 # Col for Linux, built from the release's source. For the AUR; not published there yet.
 
 pkgname=col
-pkgver=3.1.0
+pkgver=3.2.0
 pkgrel=1
 pkgdesc='The island at the top of your screen: music and synced lyrics, coding agents with Allow and Deny, volume, timer'
 arch=('x86_64' 'aarch64')
