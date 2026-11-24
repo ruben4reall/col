@@ -17,7 +17,7 @@ DESKTOP="${COL_DESKTOP:?set COL_DESKTOP to a 3024 x 1964 PNG of a macOS desktop}
 OUT=.build/site-shots
 TMP=$(mktemp -d)
 touch "$TMP/start"
-PARTS=" ${COL_PARTS:-island drawers films textedit welcome settings readme} "
+PARTS=" ${COL_PARTS:-island drawers films textedit welcome settings readme gifs} "
 part() { [[ "$PARTS" == *" $1 "* ]]; }
 mkdir -p "$OUT"
 [ -d "$APP" ] || scripts/build.sh >/dev/null
@@ -324,6 +324,31 @@ if part settings; then
 for pane in appearance pages prompter aiApps; do player; run -ColSettings "$pane"; sleep 3; front; shoot window "settings-$pane"; done
 # Connect, with the widgets pushed to the island listed.
 run -ColSettings connect; sleep 1; widgets; sleep 2; front; shoot window settings-connect
+fi
+
+if part gifs; then
+# Col 3.2, the README's films: the recording starts first, Col opens into it, plays its intro (without its chime),
+# the demo song comes beside the camera, the island opens on it, then closes (-ColFilm). On a MacBook with a notch
+# (Col's own drawn notch, in the notch's place), and on a Mac without one (the pill in the menu bar). Then the drawers.
+echo "README films:"
+[ -n "$BACKDROP" ] || backdrop
+swiftc -O scripts/record-film.swift -o "$TMP/record-film" 2>/dev/null
+SCREEN_W=$(swift -e 'import AppKit; print(Int(NSScreen.main!.frame.width))' 2>/dev/null || echo 1512)
+take() {   # take <name> <seconds> <x> <width> <height> <Col's switches…>
+  local name=$1 seconds=$2 x=$3 width=$4 height=$5
+  shift 5
+  pkill -f "$APP/Contents/MacOS/Col" 2>/dev/null; sleep 0.8
+  "$TMP/record-film" "$OUT/$name.mov" "$seconds" "Col,$(pgrep -f desktop-backdrop | paste -sd, -)" "$x" 0 "$width" "$height" >/dev/null 2>&1 &
+  local recorder=$!
+  sleep 1.2
+  run "$@"
+  wait $recorder
+  echo "  $name (film)"
+}
+player; take readme-notch 11.5 $(( SCREEN_W / 2 - 400 )) 800 280 -ColIntro YES -playsIntroSound NO -ColFilm YES -ColNoNotch YES -floatingStyle notch
+player; take readme-pill 11.5 $(( SCREEN_W / 2 - 400 )) 800 280 -ColIntro YES -playsIntroSound NO -ColFilm YES -ColNoNotch YES -floatingStyle pill
+take readme-drawers 6 $(( SCREEN_W - 760 )) 760 560 -ColIntro NO -tidiesMenuBar YES -ColDrawersDemo YES -ColDrawersOpen all -ColDrawersQuiet YES \
+  -ColDrawersBackdrop "$DESKTOP"
 fi
 
 if part drawers; then
