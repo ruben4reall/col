@@ -53,6 +53,9 @@ namespace Col {
             island.add (switch_row (_("Show the island at rest"),
                 _("Off, it appears only when something happens. The top edge of the screen always brings it out."), "visible-at-rest"));
             island.add (switch_row (_("Open on hover"), _("Rest the pointer on the island to open it. A click always does."), "open-on-hover"));
+            island.add (switch_row (_("Play the intro when Col opens"),
+                _("Light runs around the pill, the island swells and sends out a few waves."), "intro"));
+            island.add (switch_row (_("With its chime"), null, "intro-sound"));
 
             var size = new Adw.ComboRow ();
             size.title = _("Size of the open island");

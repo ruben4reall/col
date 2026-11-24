@@ -34,6 +34,7 @@
     <Resource Include="Assets\col-64.png" />
     <Resource Include="Assets\col-256.png" />
     <Resource Include="Assets\Marks\*.png" />
+    <Resource Include="Assets\intro.wav" />
   </ItemGroup>
   <!-- Less memory at rest: the heap stays small and is given back to Windows. -->
   <ItemGroup>

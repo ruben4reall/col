@@ -39,10 +39,16 @@ public enum IslandPath {
 
     /// The floating island: rounded on all four corners, drawn with the same kinds of segments as the attached one.
     private static func floating(_ shape: IslandShape, centerX: CGFloat) -> CGPath {
-        let left = centerX - shape.width / 2, right = centerX + shape.width / 2
-        let top = shape.gap, bottom = shape.gap + shape.height
-        let radius = min(shape.cornerRadius, shape.height / 2, shape.width / 2)
-        let reach = min(radius * smoothing, shape.height / 2, shape.width / 2)
+        rounded(CGRect(x: centerX - shape.width / 2, y: shape.gap, width: shape.width, height: shape.height), radius: shape.cornerRadius)
+    }
+
+    /// A rectangle with the island's continuous corners, always drawn with the same segments: the floating island, and
+    /// the intro's waves around it, which may reach past the top edge.
+    public static func rounded(_ rect: CGRect, radius cornerRadius: CGFloat) -> CGPath {
+        let left = rect.minX, right = rect.maxX
+        let top = rect.minY, bottom = rect.maxY
+        let radius = min(cornerRadius, rect.height / 2, rect.width / 2)
+        let reach = min(radius * smoothing, rect.height / 2, rect.width / 2)
         let handle = reach * handleRatio
         let path = CGMutablePath()
         path.move(to: CGPoint(x: left + reach, y: top))

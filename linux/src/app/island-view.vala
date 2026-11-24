@@ -65,6 +65,15 @@ namespace Col {
         /* Visible at rest, whatever the settings say (screenshots of the closed island). */
         public bool force_visible = false;
 
+        /* The intro, while it plays (IntroScore): when it began, and how far it has come. */
+        int64 intro_start = -1;
+        bool intro_swelled = false;
+        bool intro_tucked = false;
+        uint intro_tick = 0;
+        Intro.Chime? chime = null;
+        /* The closed island's width while the intro swells it: a mark on the left, bars on the right. */
+        const double INTRO_WIDTH = 176;
+
         public int envelope_width { get; private set; }
         public int envelope_height { get; private set; }
 
@@ -138,7 +147,7 @@ namespace Col {
         /* State */
 
         public IslandState rest_state () {
-            if (model.current () != null || model.settings.visible_at_rest || force_visible) {
+            if (intro_holds () || model.current () != null || model.settings.visible_at_rest || force_visible) {
                 return IslandState.COLLAPSED;
             }
             return IslandState.HIDDEN;
@@ -169,6 +178,7 @@ namespace Col {
         }
 
         public void open () {
+            cut_intro ();
             cancel (ref hover_source);
             cancel (ref exit_source);
             move_to (IslandState.EXPANDED);
@@ -189,6 +199,7 @@ namespace Col {
 
         void pointer_entered () {
             pointer_inside = true;
+            cut_intro ();
             cancel (ref exit_source);
             if (state == IslandState.EXPANDED) {
                 return;
@@ -264,6 +275,99 @@ namespace Col {
         }
 
         /* --------------------------------------------------------------------------------------------------------- */
+        /* Intro */
+
+        /* The intro holds the closed island, swollen: activities wait until it settles back. */
+        bool intro_holds () {
+            return intro_start >= 0 && intro_swelled && !intro_tucked;
+        }
+
+        double intro_time () {
+            return intro_start < 0 ? -1 : (get_monotonic_time () - intro_start) / 1000000.0;
+        }
+
+        /* Plays the intro, with its chime unless `sound` is false. Not while the island is open. */
+        public void play_intro (bool sound) {
+            if (intro_start >= 0 || state == IslandState.EXPANDED) {
+                return;
+            }
+            // Without animations, only the chime.
+            if (reduce_motion ()) {
+                if (sound) {
+                    chime = new Intro.Chime ();
+                    Timeout.add (3500, () => {
+                        chime = null;
+                        return Source.REMOVE;
+                    });
+                }
+                return;
+            }
+            intro_start = get_monotonic_time ();
+            intro_swelled = false;
+            intro_tucked = false;
+            update_envelope ();
+            if (sound) {
+                chime = new Intro.Chime ();
+            }
+            intro_tick = add_tick_callback ((widget, clock) => intro_frame ());
+        }
+
+        bool intro_frame () {
+            double t = intro_time ();
+            if (t < 0) {
+                intro_tick = 0;
+                return Source.REMOVE;
+            }
+            if (!intro_swelled && t >= IntroScore.SWELL) {
+                intro_swelled = true;
+                move_to (IslandState.COLLAPSED);
+                update_targets ();
+            }
+            if (!intro_tucked && t >= IntroScore.TUCK) {
+                intro_tucked = true;
+                move_to (rest_state ());
+                update_targets ();
+            }
+            queue_draw ();
+            if (t >= IntroScore.END) {
+                intro_tick = 0;
+                finish_intro ();
+                return Source.REMOVE;
+            }
+            return Source.CONTINUE;
+        }
+
+        /* Ends the intro at once: the pointer came to the island, or something opened it. */
+        void cut_intro () {
+            if (intro_start < 0) {
+                return;
+            }
+            if (intro_tick != 0) {
+                remove_tick_callback (intro_tick);
+                intro_tick = 0;
+            }
+            finish_intro ();
+        }
+
+        void finish_intro () {
+            bool held = intro_holds ();
+            intro_start = -1;
+            intro_swelled = false;
+            intro_tucked = false;
+            // The chime rings on a little after the picture; it lets go once it has played.
+            Timeout.add (900, () => {
+                chime = null;
+                return Source.REMOVE;
+            });
+            if (held) {
+                move_to (rest_state ());
+            }
+            update_targets ();
+            update_envelope ();
+            queue_draw ();
+        }
+
+        /* --------------------------------------------------------------------------------------------------------- */
         /* Geometry and springs */
 
         static int level (IslandState state) {
@@ -284,7 +388,8 @@ namespace Col {
 
         Frame target_frame (IslandState for_state) {
             double cx = envelope_width / 2.0;
-            return Geometry.frame (for_state, cx, compact.width_for (shown), model.settings.island_size (), gap);
+            double width = intro_holds () ? INTRO_WIDTH : compact.width_for (shown);
+            return Geometry.frame (for_state, cx, width, model.settings.island_size (), gap);
         }
 
         public Frame current_frame () {
@@ -374,7 +479,8 @@ namespace Col {
         /* The surface the island needs: the largest of the state it goes to and the one it still shows. */
         void update_envelope () {
             int w, h;
-            var largest = state_of_level (int.max (level (state), level (visual)));
+            // The intro's waves need the room of the open island.
+            var largest = intro_start >= 0 ? IslandState.EXPANDED : state_of_level (int.max (level (state), level (visual)));
             Geometry.envelope (largest, model.settings.island_size (), gap, out w, out h);
             if (w != envelope_width || h != envelope_height) {
                 envelope_width = w;
@@ -424,7 +530,17 @@ namespace Col {
 
         public override void snapshot (Gtk.Snapshot snapshot) {
             double alpha = presence.value.clamp (0, 1);
+            double intro = intro_time ();
+            var rest = Geometry.frame (IslandState.COLLAPSED, get_width () / 2.0, Geometry.REST_WIDTH, model.settings.island_size (), gap);
+            var swollen = Geometry.frame (IslandState.COLLAPSED, get_width () / 2.0, INTRO_WIDTH, model.settings.island_size (), gap);
+            if (intro >= 0) {
+                Intro.draw_back (snapshot, intro, rest, swollen, accent (), get_width (), get_height ());
+            }
             if (alpha <= 0.005) {
+                if (intro >= 0) {
+                    Intro.draw_front (snapshot, intro, rest, accent (), get_width (), get_height ());
+                    return;
+                }
                 // A surface with nothing drawn gets no buffer, and the compositor would neither show it nor give it the
                 // pointer: the hidden island keeps a strip one step away from transparent.
                 var faint = Gdk.RGBA ();
@@ -459,13 +575,22 @@ namespace Col {
             cr.stroke ();
 
             snapshot.push_rounded_clip (rounded);
-            compact.draw (snapshot, shown, f, compact_alpha.value.clamp (0, 1) * alpha);
+            if (intro_holds () || (intro >= IntroScore.SWELL && intro < IntroScore.TUCK)) {
+                // The intro's own wings while it holds the island, fading in as it swells.
+                double shown_alpha = ((intro - IntroScore.SWELL) / 0.2).clamp (0, 1) * (1 - ((intro - (IntroScore.TUCK - 0.2)) / 0.2).clamp (0, 1));
+                Intro.draw_wings (snapshot, intro, f, accent (), shown_alpha * alpha);
+            } else {
+                compact.draw (snapshot, shown, f, compact_alpha.value.clamp (0, 1) * alpha);
+            }
             if (expanded.get_child_visible () && open_alpha.value > 0.01) {
                 snapshot.push_opacity (open_alpha.value.clamp (0, 1) * alpha);
                 snapshot_child (expanded, snapshot);
                 snapshot.pop ();
             }
             snapshot.pop ();
+            if (intro >= 0) {
+                Intro.draw_front (snapshot, intro, rest, accent (), get_width (), get_height ());
+            }
         }
     }
 }

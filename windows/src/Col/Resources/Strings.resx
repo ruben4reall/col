@@ -112,4 +112,7 @@
   <data name="About_Unsigned" xml:space="preserve"><value>An unsigned preview</value></data>
   <data name="About_Unsigned_Detail" xml:space="preserve"><value>This preview is not signed with a code-signing certificate yet, so Windows SmartScreen may warn before the first launch: choose More info, then Run anyway.</value></data>
   <data name="About_Credits" xml:space="preserve"><value>The logos of coding agents come from LobeHub Icons (MIT) and belong to their owners.</value></data>
+  <data name="General_Intro" xml:space="preserve"><value>Play the intro when Col opens</value></data>
+  <data name="General_Intro_Detail" xml:space="preserve"><value>Light runs around the pill, the island swells and sends out a few waves.</value></data>
+  <data name="General_IntroSound" xml:space="preserve"><value>With its chime</value></data>
 </root>

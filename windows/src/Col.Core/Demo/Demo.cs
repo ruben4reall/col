@@ -20,6 +20,10 @@ public enum DemoState
     Timer,
     Tools,
     Settings,
+    /// <summary>The intro, without its chime.</summary>
+    Intro,
+    /// <summary>A short film: the intro, a song in the closed island, the island open on its lyrics, closed again.</summary>
+    Showcase,
 }
 
 public static class Demo

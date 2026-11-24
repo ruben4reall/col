@@ -1,4 +1,4 @@
-foreach name : ['lyrics', 'agents', 'geometry', 'hooks']
+foreach name : ['lyrics', 'agents', 'geometry', 'hooks', 'intro']
   test_exe = executable('test-' + name, 'test-' + name + '.vala',
     dependencies: [core_dep],
     c_args: ['-include', 'config.h'],

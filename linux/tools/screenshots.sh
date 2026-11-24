@@ -93,4 +93,32 @@ for state in $states; do
         cat "$run/$state.log" >&2
     fi
 done
+# The README's film, with COL_FILM=1: the intro, a song in the closed island, the island open on its lyrics, closed
+# again, about twenty frames a second around the island (scripts/make-readme-gifs.sh turns the frames into a GIF).
+if [ "${COL_FILM:-}" = 1 ] && [ "$scale" = 1 ]; then
+    mkdir -p "$out/film-showcase"
+    "$col" --demo showcase >"$run/showcase.log" 2>&1 &
+    pid=$!
+    sleep 2
+    python3 -I - "$out/film-showcase" "$crop" 12.5 0.05 <<'PY'
+import os, subprocess, sys, time
+folder, crop, seconds, interval = sys.argv[1], sys.argv[2], float(sys.argv[3]), float(sys.argv[4])
+start = time.monotonic()
+index = 0
+stamps = []
+while time.monotonic() - start < seconds:
+    taken = time.monotonic() - start
+    subprocess.run(["grim", "-l", "1", "-g", crop, os.path.join(folder, "frame-%04d.png" % index)], check=False)
+    stamps.append("%.3f" % taken)
+    index += 1
+    wait = start + index * interval - time.monotonic()
+    if wait > 0:
+        time.sleep(wait)
+with open(os.path.join(folder, "times.txt"), "w") as times:
+    times.write("\n".join(stamps) + "\n")
+print("showcase film: %d frames" % index)
+PY
+    kill "$pid" 2>/dev/null || true
+    wait "$pid" 2>/dev/null || true
+fi
 echo "screenshots in $out"

@@ -26,6 +26,10 @@ public sealed class ColSettings
     public bool VolumeDisplay { get; set; } = true;
     public bool BatteryDisplay { get; set; } = true;
     public bool ClipboardHistory { get; set; } = true;
+    /// <summary>Col opens with its intro: light around the pill, waves, the island swelling.</summary>
+    public bool Intro { get; set; } = true;
+    /// <summary>The intro's chime, with its picture.</summary>
+    public bool IntroSound { get; set; } = true;
 
     public ColSettings Copy() => (ColSettings)MemberwiseClone();
 

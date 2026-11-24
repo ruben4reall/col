@@ -246,6 +246,8 @@ internal partial class IslandWindow : Window
     private void Handle(IslandEvent @event)
     {
         if (_frozen) return;
+        // Reaching for the island, or something asking for it, ends the intro at once.
+        if (@event is IslandEvent.PointerEntered or IslandEvent.Pressed or IslandEvent.Requested) CutIntro();
         Run(_machine.Handle(@event));
     }
 
@@ -341,6 +343,8 @@ internal partial class IslandWindow : Window
 
     private void Update()
     {
+        // While the intro has the island swollen, activities wait for it to settle back.
+        if (IntroHoldsIsland) return;
         var activity = _hub.Current();
         var compact = activity?.Compact;
         var state = _machine.State;
@@ -400,7 +404,7 @@ internal partial class IslandWindow : Window
     private void OnRendering(object? sender, EventArgs e)
     {
         var now = Now;
-        var moving = _width.Step(now) | _height.Step(now) | _radius.Step(now) | _opacity.Step(now) | _openness.Step(now);
+        var moving = _width.Step(now) | _height.Step(now) | _radius.Step(now) | _opacity.Step(now) | _openness.Step(now) | IntroStep();
         Apply(now);
         // At rest, nothing runs.
         if (!moving) StopRendering();

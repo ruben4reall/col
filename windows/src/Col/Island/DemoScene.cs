@@ -65,7 +65,27 @@ internal static class DemoScene
                 island.Freeze(IslandState.Collapsed);
                 hub.OpenSettings(page);
                 break;
+            case DemoState.Intro:
+                island.PlayIntro(sound: false);
+                break;
+            case DemoState.Showcase:
+                // The film the README shows: a few seconds apart, the steps a person would see.
+                After(3.0, () => island.PlayIntro(sound: false));
+                After(6.5, () => PlaySong(hub));
+                After(9.0, island.OpenForAWhile);
+                break;
         }
+    }
+
+    private static void After(double seconds, Action action)
+    {
+        var timer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(seconds) };
+        timer.Tick += (_, _) =>
+        {
+            timer.Stop();
+            action();
+        };
+        timer.Start();
     }
 
     private static void PlaySong(Hub hub)

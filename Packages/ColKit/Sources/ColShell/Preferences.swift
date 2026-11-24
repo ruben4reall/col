@@ -39,6 +39,18 @@ enum Preferences {
         defaults.object(forKey: key) == nil ? fallback : defaults.bool(forKey: key)
     }
 
+    /// Col opens with its intro: light around the notch, the island swelling out of it, waves, and a chime.
+    static var playsIntro: Bool {
+        get { bool("playsIntro", default: true) }
+        set { defaults.set(newValue, forKey: "playsIntro"); changed() }
+    }
+
+    /// The intro's chime, with its picture.
+    static var playsIntroSound: Bool {
+        get { bool("playsIntroSound", default: true) }
+        set { defaults.set(newValue, forKey: "playsIntroSound"); changed() }
+    }
+
     /// Replace the volume and brightness displays of macOS with Col's. Needs the Accessibility permission.
     static var replacesSystemHUD: Bool {
         get { bool("replacesSystemHUD", default: true) }

@@ -94,6 +94,13 @@ namespace Col {
                 settings.welcome_shown = true;
                 show_settings_with (true);
             }
+            // A moment after launch, once the island has its surface: the intro, with its chime if the settings keep it.
+            if (settings.intro) {
+                Timeout.add (600, () => {
+                    island.view.play_intro (settings.intro_sound);
+                    return Source.REMOVE;
+                });
+            }
         }
 
         public override void shutdown () {

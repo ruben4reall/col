@@ -19,6 +19,9 @@ namespace Col {
         public bool battery_display { get; set; default = true; }
         public bool clipboard_history { get; set; default = true; }
         public bool welcome_shown { get; set; default = false; }
+        /* Col opens with its intro: light around the pill, waves, the island swelling, and a chime. */
+        public bool intro { get; set; default = true; }
+        public bool intro_sound { get; set; default = true; }
 
         /* The copies the user pinned: the only ones of the clipboard history that are saved. */
         public GenericArray<string> pins = new GenericArray<string> ();
@@ -66,6 +69,8 @@ namespace Col {
             battery_display = JsonText.get_bool (object, "battery-display", battery_display);
             clipboard_history = JsonText.get_bool (object, "clipboard-history", clipboard_history);
             welcome_shown = JsonText.get_bool (object, "welcome-shown", welcome_shown);
+            intro = JsonText.get_bool (object, "intro", intro);
+            intro_sound = JsonText.get_bool (object, "intro-sound", intro_sound);
             var saved = JsonText.get_array (object, "pins");
             if (saved != null) {
                 for (uint i = 0; i < saved.get_length (); i++) {
@@ -91,6 +96,8 @@ namespace Col {
             object.set_boolean_member ("battery-display", battery_display);
             object.set_boolean_member ("clipboard-history", clipboard_history);
             object.set_boolean_member ("welcome-shown", welcome_shown);
+            object.set_boolean_member ("intro", intro);
+            object.set_boolean_member ("intro-sound", intro_sound);
             var array = new Json.Array ();
             foreach (var pin in pins) {
                 array.add_string_element (pin);

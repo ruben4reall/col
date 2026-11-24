@@ -60,6 +60,15 @@ foreach ($state in $states) {
     Start-Sleep -Milliseconds 600
 }
 
+# The README's film: the intro, a song in the closed island, the island open on its lyrics, closed again, filmed
+# at 25 frames a second around the island (scripts/make-readme-gifs.sh turns the frames into a GIF).
+$process = Start-Process -FilePath $App -ArgumentList @('--demo', 'showcase') -PassThru
+Start-Sleep -Milliseconds 2200
+$width = [ColDesktop]::GetSystemMetrics(0)
+$count = Save-Film -Folder (Join-Path $Out 'film-showcase') -X ([int](($width - 760) / 2)) -Y 0 -Width 760 -Height 300 -Seconds 12.5 -Interval 40
+Write-Host "showcase film: $count frames"
+Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
+
 $log = Join-Path $env:LOCALAPPDATA 'Col\col.log'
 if (Test-Path $log) {
     Write-Host '--- col.log ---'

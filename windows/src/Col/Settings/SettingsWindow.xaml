@@ -68,6 +68,25 @@
                     </Border>
                     <Border Style="{StaticResource Win.Card}">
                         <DockPanel>
+                            <TextBlock Style="{StaticResource Win.CardIcon}" Text="&#xE945;" />
+                            <CheckBox x:Name="IntroToggle" DockPanel.Dock="Right" Style="{StaticResource Win.Toggle}" />
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource Win.CardTitle}" Text="{l:Loc General_Intro}" />
+                                <TextBlock Style="{StaticResource Win.CardDetail}" Text="{l:Loc General_Intro_Detail}" />
+                            </StackPanel>
+                        </DockPanel>
+                    </Border>
+                    <Border Style="{StaticResource Win.Card}">
+                        <DockPanel>
+                            <TextBlock Style="{StaticResource Win.CardIcon}" Text="&#xE767;" />
+                            <CheckBox x:Name="IntroSoundToggle" DockPanel.Dock="Right" Style="{StaticResource Win.Toggle}" />
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource Win.CardTitle}" Text="{l:Loc General_IntroSound}" />
+                            </StackPanel>
+                        </DockPanel>
+                    </Border>
+                    <Border Style="{StaticResource Win.Card}">
+                        <DockPanel>
                             <TextBlock Style="{StaticResource Win.CardIcon}" Text="&#xE740;" />
                             <Border DockPanel.Dock="Right" Background="{DynamicResource Win.Control}" BorderBrush="{DynamicResource Win.Control.Stroke}"
                                     BorderThickness="1" CornerRadius="6" VerticalAlignment="Center">

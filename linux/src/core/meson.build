@@ -4,6 +4,7 @@ core_sources = files(
   'geometry.vala',
   'hooks.vala',
   'http.vala',
+  'intro.vala',
   'json-text.vala',
   'lyrics.vala',
   'paths.vala',

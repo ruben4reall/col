@@ -31,7 +31,7 @@ internal partial class SettingsWindow : Window
         NavAgents.Checked += (_, _) => ShowPage("agents");
         NavAbout.Checked += (_, _) => ShowPage("about");
 
-        foreach (var toggle in new[] { VisibleAtRest, OpenOnHover, VolumeDisplay, BatteryDisplay, ClipboardToggle, NowPlayingToggle, LyricsToggle, LyricLineClosed })
+        foreach (var toggle in new[] { VisibleAtRest, OpenOnHover, IntroToggle, IntroSoundToggle, VolumeDisplay, BatteryDisplay, ClipboardToggle, NowPlayingToggle, LyricsToggle, LyricLineClosed })
         {
             toggle.Checked += (_, _) => Save();
             toggle.Unchecked += (_, _) => Save();
@@ -100,6 +100,9 @@ internal partial class SettingsWindow : Window
         LaunchAtLogin.IsChecked = !_hub.IsDemo ? StartupRegistration.IsOn : true;
         VisibleAtRest.IsChecked = settings.VisibleAtRest;
         OpenOnHover.IsChecked = settings.OpenOnHover;
+        IntroToggle.IsChecked = settings.Intro;
+        IntroSoundToggle.IsChecked = settings.IntroSound;
+        IntroSoundToggle.IsEnabled = settings.Intro;
         VolumeDisplay.IsChecked = settings.VolumeDisplay;
         BatteryDisplay.IsChecked = settings.BatteryDisplay;
         ClipboardToggle.IsChecked = settings.ClipboardHistory;
@@ -145,6 +148,9 @@ internal partial class SettingsWindow : Window
         var settings = _hub.Settings.Copy();
         settings.VisibleAtRest = VisibleAtRest.IsChecked == true;
         settings.OpenOnHover = OpenOnHover.IsChecked == true;
+        settings.Intro = IntroToggle.IsChecked == true;
+        settings.IntroSound = IntroSoundToggle.IsChecked == true;
+        IntroSoundToggle.IsEnabled = settings.Intro;
         settings.VolumeDisplay = VolumeDisplay.IsChecked == true;
         settings.BatteryDisplay = BatteryDisplay.IsChecked == true;
         settings.ClipboardHistory = ClipboardToggle.IsChecked == true;

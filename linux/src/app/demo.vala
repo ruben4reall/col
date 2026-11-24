@@ -86,7 +86,44 @@ namespace Col.Demo {
         return false;
     }
 
+    /* `--demo intro` plays the intro without its chime; `--demo showcase` is the README's film: the intro, a song in
+     * the closed island, the island open on its lyrics, closed again. Both move, so neither is frozen. */
+    void showcase (Model model, IslandView view, bool film) {
+        model.settings.volume_display = true;
+        model.settings.lyrics = true;
+        if (!film) {
+            view.play_intro (false);
+            return;
+        }
+        Timeout.add (3000, () => {
+            view.play_intro (false);
+            return Source.REMOVE;
+        });
+        Timeout.add (6500, () => {
+            var media = song ();
+            media.rate = 1;
+            model.set_media (media);
+            model.set_lyrics (Lyrics.parse (LRC), media.track_key ());
+            return Source.REMOVE;
+        });
+        Timeout.add (9000, () => {
+            view.held_open = true;
+            view.expanded.show_page ("music");
+            view.open ();
+            return Source.REMOVE;
+        });
+        Timeout.add (12000, () => {
+            view.held_open = false;
+            view.close ();
+            return Source.REMOVE;
+        });
+    }
+
     public void apply (Model model, IslandView view, string state) {
+        if (state == "intro" || state == "showcase") {
+            showcase (model, view, state == "showcase");
+            return;
+        }
         model.frozen = true;
         view.frozen = true;
         view.expanded.music.freeze ();

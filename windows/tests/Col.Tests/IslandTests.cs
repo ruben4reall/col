@@ -266,3 +266,42 @@ public class IslandMachineTests
         Assert.Equal(IslandState.Collapsed, machine.State);
     }
 }
+
+public class IntroScoreTests
+{
+    [Fact]
+    public void TheScoreRunsInOrderAsOnTheMac()
+    {
+        Assert.True(IntroScore.TraceStart < IntroScore.TraceEnd);
+        Assert.Equal(IntroScore.Swell, IntroScore.Bells[0]);
+        Assert.Equal([0.42, 0.57, 0.72, 0.87], IntroScore.Bells);
+        Assert.True(IntroScore.Tuck < IntroScore.End);
+    }
+
+    [Fact]
+    public void BarsStayBetweenRestAndFullAndRingWithTheirBell()
+    {
+        for (var bar = 0; bar < 4; bar++)
+        {
+            for (var step = 0; step <= 300; step++)
+            {
+                var level = IntroScore.BarLevel(bar, step / 100.0);
+                Assert.InRange(level, IntroScore.BarRest - 1e-9, 1 + 1e-9);
+            }
+            Assert.True(IntroScore.BarLevel(bar, IntroScore.Bells[bar] + 0.03) > IntroScore.BarLevel(bar, IntroScore.Bells[bar] - 0.01));
+        }
+        Assert.Equal(IntroScore.BarRest, IntroScore.BarLevel(0, 0));
+    }
+
+    [Fact]
+    public void AWaveLeavesWithItsBellAndFades()
+    {
+        Assert.Null(IntroScore.WaveProgress(0, IntroScore.Bells[0] - 0.01));
+        Assert.Equal(0, IntroScore.WaveProgress(0, IntroScore.Bells[0]));
+        Assert.Null(IntroScore.WaveProgress(0, IntroScore.Bells[0] + IntroScore.WaveDuration + 0.01));
+        Assert.True(IntroScore.Ease(0.5) > 0.5);
+        Assert.Equal(0, IntroScore.WaveOpacity(0));
+        Assert.Equal(1, IntroScore.WaveOpacity(0.1), 6);
+        Assert.Equal(0, IntroScore.WaveOpacity(1), 6);
+    }
+}
