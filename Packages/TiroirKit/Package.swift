@@ -4,7 +4,8 @@ import PackageDescription
 // The drawers of Col's menu bar option. They need macOS 26 or later, and Col runs from macOS 14: the libraries are
 // built for macOS 14 and every declaration outside TiroirCore is marked `@available(macOS 26, *)`, so nothing of them
 // is reached on an older system. Swift Testing refuses suites marked that way, so the tests are compiled for macOS 26
-// itself (they run on the Mac or CI runner that builds them).
+// itself (they run on the Mac or CI runner that builds them). Swift 6.4's new build system ignores that target, so run
+// them with the native one: `swift test --build-system native --package-path Packages/TiroirKit`.
 #if arch(arm64)
 let testTriple = "arm64-apple-macosx26.0"
 #else

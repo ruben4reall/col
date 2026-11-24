@@ -24,7 +24,9 @@ jobs:
       - name: Test ColKit
         run: swift test --package-path Packages/ColKit
       - name: Test TiroirKit (the menu bar's drawers)
-        run: swift test --package-path Packages/TiroirKit
+        # The native build system honours the macOS 26 target the test targets ask for (Package.swift); Swift 6.4's new
+        # one does not yet, and would compile them for macOS 14.
+        run: swift test --build-system native --package-path Packages/TiroirKit
   app:
     runs-on: macos-26
     steps:

@@ -1,9 +1,8 @@
 import AppKit
-import ServiceManagement
 import SwiftUI
 
 struct GeneralPane: View {
-    @State private var launchesAtLogin = SMAppService.mainApp.status == .enabled
+    @State private var launchesAtLogin = LoginItem.isEnabled
     @State private var fullScreen = Preferences.hidesInFullScreen
     @State private var display = Preferences.displayChoice
     @State private var keepsClipboard = Preferences.keepsClipboardHistory
@@ -14,14 +13,20 @@ struct GeneralPane: View {
     var body: some View {
         PaneScaffold(pane: .general) {
             Section {
-                IconToggle(symbol: "power", tint: .green, title: "Open Col at login", isOn: $launchesAtLogin)
-                    .onChange(of: launchesAtLogin) {
-                        do {
-                            if launchesAtLogin { try SMAppService.mainApp.register() } else { try SMAppService.mainApp.unregister() }
-                        } catch {
-                            launchesAtLogin = SMAppService.mainApp.status == .enabled
+                if LoginItem.isDevelopmentCopy {
+                    IconToggle(symbol: "power", tint: .green, title: "Open Col at login",
+                               detail: "A development build never opens at login: the Col in Applications does.", isOn: .constant(false))
+                        .disabled(true)
+                } else {
+                    IconToggle(symbol: "power", tint: .green, title: "Open Col at login", isOn: $launchesAtLogin)
+                        .onChange(of: launchesAtLogin) {
+                            do {
+                                try LoginItem.set(launchesAtLogin)
+                            } catch {
+                                launchesAtLogin = LoginItem.isEnabled
+                            }
                         }
-                    }
+                }
                 Picker(selection: $display) {
                     Text("The screen with the notch", bundle: .module).tag("notch")
                     Text("The screen you are working on", bundle: .module).tag("main")

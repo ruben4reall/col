@@ -3,7 +3,6 @@ import CoreBluetooth
 import EventKit
 import ColCore
 import Observation
-import ServiceManagement
 import SwiftUI
 
 /// The first-launch welcome. The island greets first, from the notch; then this window is born out of the island, teaches
@@ -202,7 +201,7 @@ final class WelcomeWindow: NSObject, NSWindowDelegate {
 
     private func finish() {
         let launches = UserDefaults.standard.object(forKey: "welcomeLaunchAtLogin") as? Bool ?? true
-        if launches { try? SMAppService.mainApp.register() } else { try? SMAppService.mainApp.unregister() }
+        try? LoginItem.set(launches)
         // Answered here, so Sparkle never has to ask about automatic checks in an alert of its own.
         Updates.checker?.automaticallyChecksForUpdates = UserDefaults.standard.object(forKey: "welcomeChecksForUpdates") as? Bool ?? true
         goBack { IslandController.shared?.sayReady() }
