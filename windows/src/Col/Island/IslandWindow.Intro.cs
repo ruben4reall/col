@@ -29,7 +29,7 @@ internal partial class IslandWindow
     internal double IntroTime => _introStart < 0 ? -1 : Now - _introStart;
 
     /// <summary>The pill at rest and swollen, for the intro's drawing: its centre, and both sizes.</summary>
-    internal (Point Center, Size Rest, Size Swollen) IntroGeometry
+    internal (Point Center, Size Resting, Size Swollen) IntroGeometry
     {
         get
         {
