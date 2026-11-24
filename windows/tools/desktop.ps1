@@ -157,3 +157,29 @@ function Save-Screen([string] $Path, [switch] $Full, [switch] $Zoom) {
     $bitmap.Save($Path, [System.Drawing.Imaging.ImageFormat]::Png)
     $bitmap.Dispose()
 }
+
+# Films part of the screen, a frame every $Interval milliseconds for $Seconds, kept in memory while filming and written
+# as numbered PNGs afterwards, so writing never slows the frames down. Returns the number of frames.
+function Save-Film([string] $Folder, [int] $X, [int] $Y, [int] $Width, [int] $Height, [double] $Seconds, [int] $Interval) {
+    $frames = [System.Collections.ArrayList]::new()
+    $clock = [System.Diagnostics.Stopwatch]::StartNew()
+    $next = 0.0
+    while ($clock.Elapsed.TotalSeconds -lt $Seconds) {
+        $bitmap = New-Object System.Drawing.Bitmap $Width, $Height
+        $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+        $target = $graphics.GetHdc()
+        [ColDesktop]::Capture($target, $X, $Y, $Width, $Height) | Out-Null
+        $graphics.ReleaseHdc($target)
+        $graphics.Dispose()
+        [void]$frames.Add($bitmap)
+        $next += $Interval
+        $wait = $next - $clock.Elapsed.TotalMilliseconds
+        if ($wait -gt 0) { Start-Sleep -Milliseconds ([int]$wait) }
+    }
+    New-Item -ItemType Directory -Force -Path $Folder | Out-Null
+    for ($index = 0; $index -lt $frames.Count; $index++) {
+        $frames[$index].Save((Join-Path $Folder ('frame-{0:D4}.png' -f $index)), [System.Drawing.Imaging.ImageFormat]::Png)
+        $frames[$index].Dispose()
+    }
+    return $frames.Count
+}

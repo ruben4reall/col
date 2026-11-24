@@ -62,7 +62,7 @@ enum AppIcons {
         Bundle.module.url(forResource: "mark-" + mark, withExtension: "png") != nil
     }
 
-    private static func draw(_ icon: NSImage, pixels: Int) -> CGImage? {
+    static func draw(_ icon: NSImage, pixels: Int) -> CGImage? {
         guard let space = CGColorSpace(name: CGColorSpace.displayP3),
               let context = CGContext(data: nil, width: pixels, height: pixels, bitsPerComponent: 8, bytesPerRow: 0, space: space,
                                       bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)

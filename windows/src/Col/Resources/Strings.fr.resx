@@ -112,4 +112,7 @@
   <data name="About_Unsigned" xml:space="preserve"><value>Un aperçu non signé</value></data>
   <data name="About_Unsigned_Detail" xml:space="preserve"><value>Cet aperçu n'est pas encore signé par un certificat de signature de code, Windows SmartScreen peut donc avertir avant le premier lancement : choisissez Informations complémentaires, puis Exécuter quand même.</value></data>
   <data name="About_Credits" xml:space="preserve"><value>Les logos des agents de code viennent de LobeHub Icons (MIT) et appartiennent à leurs propriétaires.</value></data>
+  <data name="General_Intro" xml:space="preserve"><value>Jouer l’intro à l’ouverture de Col</value></data>
+  <data name="General_Intro_Detail" xml:space="preserve"><value>Un filet de lumière fait le tour de la pilule, l’île s’étire et envoie quelques ondes.</value></data>
+  <data name="General_IntroSound" xml:space="preserve"><value>Avec sa petite musique</value></data>
 </root>

@@ -129,6 +129,17 @@ internal partial class App : Application
         StartServices();
         if (options.Link is { } link) _hub.Open(link);
         if (options.OpenSettings || (firstLaunch && !options.Background)) OpenSettings(options.Page);
+        // A moment after launch, once the island has its place: the intro, with its chime if the settings keep it.
+        if (settings.Intro && options.Link is null)
+        {
+            var later = new DispatcherTimer(DispatcherPriority.Normal, Dispatcher) { Interval = TimeSpan.FromMilliseconds(600) };
+            later.Tick += (_, _) =>
+            {
+                later.Stop();
+                _island?.PlayIntro(settings.IntroSound);
+            };
+            later.Start();
+        }
     }
 
     private void StartServices()

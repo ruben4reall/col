@@ -47,6 +47,7 @@ app_sources = files(
   'demo.vala',
   'expanded.vala',
   'glyphs.vala',
+  'intro.vala',
   'island-view.vala',
   'island-window.vala',
   'live.vala',
@@ -63,12 +64,15 @@ app_sources = files(
   'platform.c',
 )
 
+# The intro's chime and Col's mark, inside the program: nothing to find on disk, installed or not.
+app_resources = gnome.compile_resources('col-resources', 'col.gresource.xml', source_dir: meson.current_source_dir())
+
 app_vapis = [
   valac.find_library('gtk4-layer-shell', dirs: meson.project_source_root() / 'vapi'),  # namespace LayerShell
   valac.find_library('platform', dirs: meson.project_source_root() / 'vapi'),
 ]
 
-col = executable('col-island', app_sources, protocols,
+col = executable('col-island', app_sources, protocols, app_resources,
   dependencies: [layer_shell, core_dep, gtk, adw, soup, pulse, pulse_glib, gdk_pixbuf, gtk_wayland, wayland_client] + platform_deps + app_vapis,
   include_directories: [config_inc, include_directories('.')],
   c_args: ['-include', 'config.h'] + platform_args,

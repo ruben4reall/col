@@ -86,6 +86,11 @@ public final class IslandController {
     /// The Souffleurs Col asked to quit, watched in that minute until they have.
     private var souffleurExits: [NSKeyValueObservation] = []
 
+    /// The intro Col opens with, while it plays. Activities and the notes the island opens on wait for it.
+    private var intro: StartupIntro?
+    private var introActive = false
+    private var afterIntro: [@MainActor () -> Void] = []
+
     /// The models the island's content reads, kept to draw a second island in the settings.
     private let services: IslandServices
     private var previewClose: Task<Void, Never>?
@@ -326,15 +331,15 @@ public final class IslandController {
                 self.souffleurExits = []
             }
         }
-        // A note left due by an earlier launch, whose welcome was put off.
+        // A note left due by an earlier launch, whose welcome was put off. Notes wait for the intro to end.
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
-            MainActor.assumeIsolated { self?.showSouffleurNoteIfDue() }
+            MainActor.assumeIsolated { self?.whenIntroIsOver { self?.showSouffleurNoteIfDue() } }
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
-            MainActor.assumeIsolated { self?.showWhatsNewIfDue() }
+            MainActor.assumeIsolated { self?.whenIntroIsOver { self?.showWhatsNewIfDue() } }
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
-            MainActor.assumeIsolated { self?.showMenuBarAccessNoteIfDue() }
+            MainActor.assumeIsolated { self?.whenIntroIsOver { self?.showMenuBarAccessNoteIfDue() } }
         }
     }
 
@@ -415,6 +420,13 @@ public final class IslandController {
     /// Mutes or unmutes the microphone, from the Live page's button.
     func toggleMicrophone() {
         system.toggleMicrophone()
+    }
+
+    /// Closes the open island, as a click elsewhere would: before an icon of the menu bar opens its menu.
+    func closeIsland() {
+        guard machine.state == .expanded else { return }
+        openedByRequest = false
+        send(.dismissed)
     }
 
     public func openIsland() {
@@ -833,6 +845,9 @@ public final class IslandController {
 
     public func start() {
         Self.shared = self
+        // Decided before anything shows, so no activity reaches the notch ahead of the intro.
+        let opensWithIntro = Self.introIsDue
+        introActive = opensWithIntro
         place()
         panel.onResignKey = { [weak self] in self?.keyboardLost() }
         observers.append(NotificationCenter.default.addObserver(
@@ -906,7 +921,7 @@ public final class IslandController {
         lockScreen.start()
         desktopLyrics.start()
         if Preferences.showsOnLockScreen { LockScreenSpace.shared?.adopt(panel) }
-        if !WelcomeWindow.hasWelcomed { greet() }
+        if !WelcomeWindow.hasWelcomed { whenIntroIsOver { [weak self] in self?.greet() } }
         retireSouffleur()
         followMenuBarAgent()
         startMenuBarDrawers()
@@ -993,6 +1008,75 @@ public final class IslandController {
             if let page = UserDefaults.standard.string(forKey: "ColPage") { navigation.show(navigation.route(named: page)) }
             send(.pressed)
         }
+        // `-ColFilm YES` plays the README's film by itself, after the intro: the song beside the camera, the island
+        // open on it, then closed again.
+        if UserDefaults.standard.bool(forKey: "ColFilm") {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5.4) { [weak self] in MainActor.assumeIsolated { self?.send(.pressed) } }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 9.2) { [weak self] in MainActor.assumeIsolated { self?.closeIsland() } }
+        }
+        // A moment after launch, once the menu bar has been measured and the first work is done.
+        if opensWithIntro {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                MainActor.assumeIsolated { self?.playIntro() }
+            }
+        }
+    }
+
+    // MARK: Intro
+
+    /// Whether Col opens with its intro: as set in Settings, General, unless `-ColIntro YES` or `NO` says otherwise.
+    /// Never when Col opens for pictures (its debug switches), nor while the screen is locked, asleep, or another
+    /// user's.
+    private static var introIsDue: Bool {
+        let defaults = UserDefaults.standard
+        if defaults.object(forKey: "ColIntro") != nil { return defaults.bool(forKey: "ColIntro") }
+        guard Preferences.playsIntro else { return false }
+        let switches = ["ColDemo", "ColDemoShelf", "ColOpen", "ColWelcome", "ColSettings", "ColPrompt", "ColNoNotch", "ColCenterX",
+                        "ColWallpaper", "ColMenuBarFree", "ColDrawersDemo"]
+        guard !switches.contains(where: { defaults.object(forKey: $0) != nil }) else { return false }
+        let session = CGSessionCopyCurrentDictionary() as? [String: Any]
+        let locked = session?["CGSSessionScreenIsLocked"] as? Bool ?? false
+        let onConsole = session?[kCGSessionOnConsoleKey as String] as? Bool ?? true
+        return !locked && onConsole && CGDisplayIsAsleep(CGMainDisplayID()) == 0
+    }
+
+    /// Plays the intro over the notch: as Col opens, and from Settings, General. Not over full screen, nor while the
+    /// island is open or the prompter has the notch.
+    func playIntro() {
+        guard intro == nil else { return }
+        guard let screen, let layout, machine.state != .expanded, !fullScreenActive, !hiddenForApp, !prompterInNotch else {
+            return finishIntro()
+        }
+        introActive = true
+        refreshActivity()
+        // Col's icon on the left and four bars on the right, placed by the same rules as a song's.
+        let presentation = CompactPresentation(leading: .symbol("app.fill"), trailing: .equalizer(tint: .white, playing: true))
+        let wings = wingPlacement(for: presentation, layout: layout)
+        let side = (wings.beneath ? IslandLayout.beneathItem : max(14, layout.notch.height - 14)) * 1.15
+        let icon = AppIcons.draw(NSApp.applicationIconImage, pixels: Int((side * screen.backingScaleFactor).rounded(.up)))
+        let intro = StartupIntro(StartupIntro.Setup(
+            screen: screen, layout: layout, wings: wings, restVisible: islandView.restVisible,
+            tint: Theme.accentRGBA.nsColor, icon: icon, playsSound: Preferences.playsIntroSound,
+            hiddenFromCapture: Preferences.hiddenFromScreenCapture
+        ))
+        self.intro = intro
+        intro.play { [weak self] in self?.finishIntro() }
+    }
+
+    /// The intro has played, or was cut short: activities show again, and what waited for it follows.
+    private func finishIntro() {
+        intro = nil
+        guard introActive else { return }
+        introActive = false
+        refreshActivity()
+        let pending = afterIntro
+        afterIntro = []
+        pending.forEach { $0() }
+    }
+
+    /// Runs `action` now, or once the intro has played.
+    private func whenIntroIsOver(_ action: @escaping @MainActor () -> Void) {
+        if introActive { afterIntro.append(action) } else { action() }
     }
 
     public func stop() {
@@ -1046,32 +1130,12 @@ public final class IslandController {
         let now = Date()
         board.prune(now: now)
         custom.prune(now: now)
-        let current = board.current(now: now)
+        // While the intro plays, its own island has the notch: activities wait, unharmed, on the board.
+        let current = introActive ? nil : board.current(now: now)
         scheduleExpiry(after: now)
         guard let layout else { return }
 
-        let requested = islandView.compact.wingWidths(for: current?.compact, notchHeight: layout.notch.height)
-        // Never over the menu bar, ears and swell included: the wings shrink to the free space, and when none is left,
-        // or the menu bar cannot be read, the activity goes beneath the camera. A resting pill that menus reach shows
-        // nothing at all.
-        var newWings: Wings
-        if restBlocked {
-            newWings = .none
-        } else if layout.sharesMenuBar {
-            newWings = WingBudget.placement(
-                leading: requested.leading,
-                trailing: requested.trailing,
-                beneath: islandView.compact.beneathWings(for: current?.compact, layout: layout),
-                left: freeLeft,
-                right: freeRight,
-                readable: menuBarReadable,
-                overhang: layout.wingOverhang,
-                canHangBeneath: layout.canHangBeneath,
-                prefersBeneath: Preferences.activitiesBeneath
-            )
-        } else {
-            newWings = Wings(leading: requested.leading, trailing: requested.trailing)
-        }
+        var newWings = wingPlacement(for: current?.compact, layout: layout)
         newWings = tuckedBeneath(newWings, current: current, now: now)
         let presentation = current?.compact.fitted(to: newWings)
         islandView.showCompact(presentation, wings: newWings)
@@ -1081,6 +1145,26 @@ public final class IslandController {
             wings = newWings
             if machine.state != .expanded { reshape(from: machine.state) }
         }
+    }
+
+    /// Where the wings of `presentation` go. Never over the menu bar, ears and swell included: the wings shrink to the
+    /// free space, and when none is left, or the menu bar cannot be read, the activity goes beneath the camera. A
+    /// resting pill that menus reach shows nothing at all.
+    private func wingPlacement(for presentation: CompactPresentation?, layout: IslandLayout) -> Wings {
+        if restBlocked { return .none }
+        let requested = islandView.compact.wingWidths(for: presentation, notchHeight: layout.notch.height)
+        guard layout.sharesMenuBar else { return Wings(leading: requested.leading, trailing: requested.trailing) }
+        return WingBudget.placement(
+            leading: requested.leading,
+            trailing: requested.trailing,
+            beneath: islandView.compact.beneathWings(for: presentation, layout: layout),
+            left: freeLeft,
+            right: freeRight,
+            readable: menuBarReadable,
+            overhang: layout.wingOverhang,
+            canHangBeneath: layout.canHangBeneath,
+            prefersBeneath: Preferences.activitiesBeneath
+        )
     }
 
     /// An ambient or running activity sent beneath the camera for want of room shows for a few seconds when it
@@ -1261,6 +1345,8 @@ public final class IslandController {
     // MARK: Interaction
 
     private func send(_ event: IslandEvent) {
+        // Reaching for the island, or something asking for it, ends the intro at once.
+        if let intro, [.pointerEntered, .pressed, .requested, .swipedDown].contains(event) { intro.cut() }
         let previous = machine.state
         switch event {
         case .pointerEntered: WelcomeWindow.shared.gesture(.hover)

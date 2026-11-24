@@ -456,3 +456,15 @@ msgstr ""
 #: src/app/tools.vala:141
 msgid "Pin"
 msgstr ""
+
+#: src/app/preferences.vala:56
+msgid "Play the intro when Col opens"
+msgstr ""
+
+#: src/app/preferences.vala:57
+msgid "Light runs around the pill, the island swells and sends out a few waves."
+msgstr ""
+
+#: src/app/preferences.vala:58
+msgid "With its chime"
+msgstr ""

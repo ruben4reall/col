@@ -3,6 +3,8 @@ import SwiftUI
 
 struct GeneralPane: View {
     @State private var launchesAtLogin = LoginItem.isEnabled
+    @State private var playsIntro = Preferences.playsIntro
+    @State private var playsIntroSound = Preferences.playsIntroSound
     @State private var fullScreen = Preferences.hidesInFullScreen
     @State private var display = Preferences.displayChoice
     @State private var keepsClipboard = Preferences.keepsClipboardHistory
@@ -26,6 +28,17 @@ struct GeneralPane: View {
                                 launchesAtLogin = LoginItem.isEnabled
                             }
                         }
+                }
+                IconToggle(symbol: "sparkles", tint: .purple, title: "Play the intro when Col opens",
+                           detail: "Light runs around the notch, the island swells and sends out a few waves.", isOn: $playsIntro)
+                    .onChange(of: playsIntro) { Preferences.playsIntro = playsIntro }
+                IconToggle(symbol: "speaker.wave.2.fill", tint: .pink, title: "With its chime", isOn: $playsIntroSound)
+                    .onChange(of: playsIntroSound) { Preferences.playsIntroSound = playsIntroSound }
+                    .disabled(!playsIntro)
+                LabeledContent {
+                    Button { IslandController.shared?.playIntro() } label: { Text("Play", bundle: .module) }
+                } label: {
+                    Text("See the intro again", bundle: .module)
                 }
                 Picker(selection: $display) {
                     Text("The screen with the notch", bundle: .module).tag("notch")
