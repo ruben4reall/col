@@ -467,7 +467,7 @@ public final class Coordinator {
         let view = DrawerView(model: interface, target: target, onOpen: { [weak self] id in
             self?.open(id, from: target)
         }, onClose: { [weak self] in self?.panels.close() })
-        panels.show(view, under: anchor.appKit, target: target)
+        panels.showDrop(view, mark: NeckMark(model: interface, target: target), under: anchor.appKit, target: target)
         // The drawer shows at once; a fresh scan follows, and the panel updates by itself.
         Task { await refresh(apply: false) }
     }
@@ -502,6 +502,15 @@ public final class Coordinator {
             } catch {
                 // Stopped with the drawers: nothing to say.
             }
+        }
+    }
+
+    /// Opens an icon from Col's island: once the island has gone back into the notch, so the icon's menu never opens
+    /// under it.
+    public func openFromIsland(_ id: IconID) {
+        let target = drawerTarget(of: id)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.32) { [weak self] in
+            MainActor.assumeIsolated { self?.open(id, from: target) }
         }
     }
 

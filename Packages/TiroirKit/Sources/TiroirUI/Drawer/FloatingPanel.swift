@@ -36,6 +36,7 @@ final class FloatingPanel: NSPanel {
 @MainActor
 public final class PanelController {
     private var panel: FloatingPanel?
+    private var state: DropState?
     private var outsideMonitor: Any?
     private var observers: [NSObjectProtocol] = []
     public private(set) var openTarget: StatusItemsController.Target?
@@ -47,24 +48,45 @@ public final class PanelController {
 
     public var isOpen: Bool { panel?.isVisible == true }
 
-    /// Shows `content` under `anchor` (AppKit coordinates), centered on it and kept on its screen.
+    /// Shows `content` under `anchor` (AppKit coordinates), centered on it and kept on its screen. With `mark`, the
+    /// panel is a drawer that drops from its item in the menu bar, the way Col's island hangs from the notch: the item
+    /// turns black with its mark in white, and the panel flows out of it. Without, it floats under the menu bar.
     public func show<Content: View>(_ content: Content, under anchor: CGRect, target: StatusItemsController.Target?) {
-        close()
-        let panel = FloatingPanel()
-        let room = Theme.panelShadowRoom
-        let hosting = NSHostingView(rootView: content.padding(room).preferredColorScheme(nil))
-        hosting.sizingOptions = [.intrinsicContentSize]
-        panel.contentView = hosting
-        let size = hosting.fittingSize
+        showDrop(content, mark: EmptyView(), under: anchor, target: target, hangs: false)
+    }
+
+    /// A drawer dropping from its item in the menu bar, whose mark `mark` draws.
+    public func showDrop<Content: View, Mark: View>(_ content: Content, mark: Mark, under anchor: CGRect,
+                                                    target: StatusItemsController.Target?, hangs: Bool = true) {
+        close(animated: false)
         let screen = NSScreen.screens.first { $0.frame.contains(CGPoint(x: anchor.midX, y: anchor.midY)) } ?? NSScreen.main
-        let visible = screen?.visibleFrame ?? .zero
-        // The glass itself starts `room` inside the window: its top edge sits 6 points under the anchor.
-        var origin = CGPoint(x: anchor.midX - size.width / 2, y: anchor.minY - 6 + room - size.height)
-        origin.x = min(max(origin.x, visible.minX + 8 - room), visible.maxX - size.width - 8 + room)
-        origin.y = max(origin.y, visible.minY + 8 - room)
-        panel.setFrame(CGRect(origin: origin, size: size), display: true)
+        guard let screen else { return }
+        let size = NSHostingView(rootView: content.environment(\.colorScheme, .dark)).fittingSize
+        let room = Theme.panelShadowRoom
+        let visible = screen.visibleFrame
+        // From the top of the screen to the item's lower edge: the menu bar's height, which the neck fills.
+        let neckHeight = hangs ? max(0, screen.frame.maxY - anchor.minY) : 0
+        let gap: CGFloat = hangs ? 0 : 6
+        var panelX = anchor.midX - size.width / 2
+        panelX = min(max(panelX, visible.minX + 8), visible.maxX - size.width - 8)
+        let left = min(panelX, hangs ? anchor.minX - DropShape.ear : panelX) - room
+        let right = max(panelX + size.width, hangs ? anchor.maxX + DropShape.ear : panelX) + room
+        let top = hangs ? screen.frame.maxY : anchor.minY - gap
+        let height = (hangs ? neckHeight : 0) + size.height + room * 1.6
+        let frame = CGRect(x: left, y: max(top - height, visible.minY - room), width: right - left, height: height)
+        let neck = hangs ? CGRect(x: anchor.minX - left, y: 0, width: anchor.width, height: neckHeight) : .zero
+        let panelRect = CGRect(x: panelX - left, y: hangs ? neckHeight : 0, width: size.width, height: size.height)
+        let state = DropState()
+        let panel = FloatingPanel()
+        let hosting = NSHostingView(rootView: DropPanel(neck: neck, panel: panelRect, size: frame.size, mark: mark, content: content,
+                                                        state: state))
+        hosting.sizingOptions = []
+        hosting.frame = CGRect(origin: .zero, size: frame.size)
+        panel.contentView = hosting
+        panel.setFrame(frame, display: true)
         panel.onClose = { [weak self] in self?.close() }
         self.panel = panel
+        self.state = state
         openTarget = target
         isSearchOpen = target == nil
         panel.orderFrontRegardless()
@@ -82,25 +104,33 @@ public final class PanelController {
     }
 
     public func close() {
+        close(animated: true)
+    }
+
+    /// Closes the open panel: the drawer goes back into its item, then its window goes.
+    public func close(animated: Bool) {
         if let outsideMonitor { NSEvent.removeMonitor(outsideMonitor) }
         outsideMonitor = nil
         for observer in observers { NotificationCenter.default.removeObserver(observer); NSWorkspace.shared.notificationCenter.removeObserver(observer) }
         observers.removeAll()
-        panel?.orderOut(nil)
-        panel = nil
         openTarget = nil
         isSearchOpen = false
+        guard let panel else { return }
+        self.panel = nil
+        let state = self.state
+        self.state = nil
+        guard animated, let state, !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion else {
+            panel.orderOut(nil)
+            return
+        }
+        panel.ignoresMouseEvents = true
+        withAnimation(.spring(response: 0.26, dampingFraction: 1)) { state.progress = 0 }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.24) { panel.orderOut(nil) }
     }
 
-    /// Resizes the open panel to its content, keeping its top edge (the drawer grows downwards as a filter changes).
-    public func fitToContent() {
-        guard let panel, let content = panel.contentView else { return }
-        let size = content.fittingSize
-        var frame = panel.frame
-        frame.origin.y = frame.maxY - size.height
-        frame.size = size
-        panel.setFrame(frame, display: true, animate: false)
-    }
+    /// The drop is laid out for its content once, as it opens: a filter that changes the drawer's icons scrolls within
+    /// it rather than resizing the window.
+    public func fitToContent() {}
 
     private func watchForDismissal() {
         outsideMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in

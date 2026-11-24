@@ -1,4 +1,5 @@
 import AppKit
+import SwiftUI
 import TiroirApp
 import TiroirSystem
 import TiroirUI
@@ -53,4 +54,20 @@ final class ColDrawersRunner: DrawersRunner {
     }
 
     var drawerCount: Int { coordinator.interface.settings.layout.drawers.count }
+
+    func islandView(close: @escaping () -> Void) -> AnyView {
+        let coordinator = coordinator
+        return AnyView(IslandDrawersView(
+            model: coordinator.interface,
+            accent: Theme.accent,
+            onOpen: { id in
+                close()
+                coordinator.openFromIsland(id)
+            },
+            onSettings: {
+                close()
+                coordinator.openSettings(.drawers)
+            }
+        ))
+    }
 }

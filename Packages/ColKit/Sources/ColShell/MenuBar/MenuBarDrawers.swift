@@ -1,4 +1,5 @@
 import AppKit
+import SwiftUI
 import Observation
 import TiroirCore
 
@@ -29,6 +30,8 @@ protocol DrawersRunner: AnyObject {
     var ownItemFrames: [CGRect] { get }
     var issue: DrawersIssue? { get }
     var drawerCount: Int { get }
+    /// The drawers as the island shows them, on its Menu Bar page; `close` closes the island.
+    func islandView(close: @escaping () -> Void) -> AnyView
 }
 
 /// Col's menu bar option: the icons of the menu bar tidied into drawers, by the drawers of Tiroir, which run in Col's
@@ -121,6 +124,8 @@ final class MenuBarDrawers {
     func setEnabled(_ enabled: Bool) {
         guard enabled != isEnabled || (enabled && status == .off) else { return }
         defaults.set(enabled, forKey: Self.enabledKey)
+        // Turned on, the drawers get their page in the island too, unless a page already holds them.
+        if enabled, isSupported, defaults === UserDefaults.standard { Preferences.pageDeck = Preferences.pageDeck.addingMenuBarPage() }
         if enabled { activate() } else { deactivate() }
     }
 
