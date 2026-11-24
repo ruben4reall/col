@@ -25,6 +25,9 @@ final class FloatingPanel: NSPanel {
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { false }
 
+    /// AppKit pushes windows below the menu bar; a drawer hangs from it, its neck over the drawer's item.
+    override func constrainFrameRect(_ frameRect: NSRect, to screen: NSScreen?) -> NSRect { frameRect }
+
     override func cancelOperation(_ sender: Any?) {
         onClose?()
     }
