@@ -77,8 +77,11 @@ namespace Col.Demo {
         model.agents.receive ((!) CodingAgent.CLAUDE.event_from ((!) raw), (decision) => {});
     }
 
+    /* The states that move: the intro, and the README's film. */
+    public const string MOVING = "intro, showcase";
+
     public bool is_known (string state) {
-        foreach (unowned string known in STATES.split (", ")) {
+        foreach (unowned string known in (STATES + ", " + MOVING).split (", ")) {
             if (known == state) {
                 return true;
             }
