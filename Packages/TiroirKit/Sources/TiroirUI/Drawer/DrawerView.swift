@@ -20,7 +20,6 @@ public struct DrawerView: View {
     static let maximumColumns = 5
     static let tileWidth: CGFloat = 80
     static let chestTileWidth: CGFloat = 74
-    static let chestMaximumColumns = 6
 
     /// Three to five columns: a drawer is as wide as its icons need, never a sliver.
     var columns: Int {
@@ -56,27 +55,26 @@ public struct DrawerView: View {
 
     var flatRows: [IconRow] { sections.flatMap(\.rows) }
 
-    /// The chest is as wide as its fullest drawer needs, from four icons to six: it never spreads empty room, and it
-    /// keeps its width while typing filters it.
+    /// The chest holds two drawers a row, each three icons wide: it keeps its width while typing filters it.
     var chestWidth: CGFloat {
-        CGFloat(chestColumns) * (Self.chestTileWidth + 4) + 24
+        Self.chestSectionWidth * 2 + 12 + 28
     }
 
-    var chestColumns: Int {
-        let counts = model.settings.layout.drawers.map { model.members(of: $0.id).count } + [model.hiddenRows.count]
-        return min(max(counts.max() ?? 0, 4), Self.chestMaximumColumns)
-    }
+    static let chestColumns = 3
+    static var chestSectionWidth: CGFloat { CGFloat(chestColumns) * (chestTileWidth + 4) }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: target == .all ? 14 : 10) {
             header
             if flatRows.isEmpty && filter.isEmpty {
                 emptyState
             } else {
                 ScrollView(.vertical, showsIndicators: false) {
                     if target == .all {
-                        // The All drawer is the chest itself: each drawer under its mark and name, its icons below.
-                        VStack(alignment: .leading, spacing: 12) {
+                        // The All drawer is the chest itself: the drawers side by side, two a row, each under its mark
+                        // and name with its icons below, three a row.
+                        LazyVGrid(columns: Array(repeating: GridItem(.fixed(Self.chestSectionWidth), spacing: 12, alignment: .top), count: 2),
+                                  alignment: .leading, spacing: 14) {
                             ForEach(sections, id: \.id) { section in
                                 chestSection(section)
                             }
@@ -203,16 +201,17 @@ public struct DrawerView: View {
     /// One drawer of the chest: its mark, name and count, then its icons in rows below.
     private func chestSection(_ section: (id: String, title: String?, mark: DrawerMark?, rows: [IconRow])) -> some View {
         VStack(alignment: .leading, spacing: 6) {
-            HStack(spacing: 7) {
-                if let mark = section.mark { MarkView(mark, size: 13).frame(width: 18) }
-                Text(verbatim: section.title ?? "").font(.system(size: 12, weight: .semibold))
+            HStack(spacing: 6) {
+                if let mark = section.mark { MarkView(mark, size: 12).frame(width: 16) }
+                Text(verbatim: section.title ?? "").font(.system(size: 11.5, weight: .semibold))
                 Text(verbatim: "\(section.rows.count)").font(.system(size: 11, weight: .medium)).foregroundStyle(.tertiary)
             }
+            .foregroundStyle(.secondary)
             .padding(.horizontal, 6)
             if section.rows.isEmpty {
                 Text(verbatim: Strings.emptyDrawerTitle).font(.system(size: 11)).foregroundStyle(.tertiary).padding(.horizontal, 6)
             } else {
-                LazyVGrid(columns: Array(repeating: GridItem(.fixed(Self.chestTileWidth), spacing: 4), count: chestColumns),
+                LazyVGrid(columns: Array(repeating: GridItem(.fixed(Self.chestTileWidth), spacing: 4), count: Self.chestColumns),
                           alignment: .leading, spacing: 4) {
                     ForEach(section.rows) { row in
                         let index = flatRows.firstIndex(of: row)

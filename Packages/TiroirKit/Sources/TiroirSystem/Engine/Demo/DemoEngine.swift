@@ -92,12 +92,28 @@ public final class DemoEngine: MenuBarEngine {
         return overrides
     }
 
-    /// A rounded tile with a symbol, the size of an app icon.
+    /// The made-up apps' colours, as real apps have theirs: the same hue a little lighter at the top.
+    static let tints: [String: NSColor] = [
+        "cloud.fill": NSColor(srgbRed: 0.2, green: 0.52, blue: 0.98, alpha: 1),
+        "photo.on.rectangle.angled": NSColor(srgbRed: 0.98, green: 0.58, blue: 0.2, alpha: 1),
+        "lock.shield.fill": NSColor(srgbRed: 0.18, green: 0.7, blue: 0.42, alpha: 1),
+        "key.fill": NSColor(srgbRed: 0.45, green: 0.47, blue: 0.52, alpha: 1),
+        "bubble.left.and.bubble.right.fill": NSColor(srgbRed: 0.55, green: 0.36, blue: 0.95, alpha: 1),
+        "envelope.fill": NSColor(srgbRed: 0.16, green: 0.62, blue: 0.9, alpha: 1),
+        "sparkles": NSColor(srgbRed: 0.9, green: 0.36, blue: 0.7, alpha: 1),
+        "waveform": NSColor(srgbRed: 0.95, green: 0.3, blue: 0.32, alpha: 1),
+        "shippingbox.fill": NSColor(srgbRed: 0.2, green: 0.6, blue: 0.68, alpha: 1),
+        "terminal.fill": NSColor(srgbRed: 0.2, green: 0.22, blue: 0.25, alpha: 1),
+        "music.note": NSColor(srgbRed: 0.98, green: 0.24, blue: 0.4, alpha: 1),
+        "cpu": NSColor(srgbRed: 0.33, green: 0.4, blue: 0.95, alpha: 1),
+    ]
+
+    /// A rounded tile with a symbol, the size of an app icon, in the app's colour.
     static func tile(symbol: String) -> NSImage {
         NSImage(size: NSSize(width: 64, height: 64), flipped: false) { rect in
             let path = NSBezierPath(roundedRect: rect.insetBy(dx: 4, dy: 4), xRadius: 14, yRadius: 14)
-            NSColor(white: 0.18, alpha: 1).setFill()
-            path.fill()
+            let tint = tints[symbol] ?? NSColor(white: 0.3, alpha: 1)
+            NSGradient(starting: tint.blended(withFraction: 0.22, of: .white) ?? tint, ending: tint)?.draw(in: path, angle: -90)
             let configuration = NSImage.SymbolConfiguration(pointSize: 28, weight: .medium)
                 .applying(.init(paletteColors: [NSColor(white: 0.95, alpha: 1)]))
             if let image = NSImage(systemSymbolName: symbol, accessibilityDescription: nil)?.withSymbolConfiguration(configuration) {
