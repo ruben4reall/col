@@ -58,7 +58,7 @@ Every picture here is the app itself, filmed as it runs, with a demo song and no
       <sub>A layer-shell overlay on KDE Plasma, COSMIC, Hyprland, Sway and niri; under XWayland on GNOME.</sub>
     </td>
     <td align="center" width="50%">
-      <img src="docs/images/readme-drawers.gif" alt="A drawer of the menu bar drops from its icon like the island from the notch, its apps arriving one after the other" width="100%"><br>
+      <img src="docs/images/readme-drawers.gif" alt="The All drawer of the menu bar hanging from its icon like the island from the notch, its apps sorted by what they do, then going back into its icon" width="100%"><br>
       <b>A tidy menu bar</b><br>
       <sub>Drawers that drop from their icon, and your menu bar in the island.</sub>
     </td>
@@ -228,7 +228,7 @@ Beside the notch there is room for about a dozen icons, and the rest vanish behi
 Tidy the menu bar into drawers, and Col sorts them for you.
 
 <p align="center">
-  <img src="docs/images/drawers.webp" alt="The All drawer of the menu bar dropped from its icon: icons sorted into Files and Cloud, Security and VPN, Messages, AI, Developer and Other" width="456">
+  <img src="docs/images/drawers.webp" alt="The All drawer of the menu bar dropped from its icon: icons sorted into Files and Cloud, Security and VPN, Messages, AI, Developer and Other" width="552">
 </p>
 
 - **Drawers.** Each drawer is one icon in the menu bar. A click drops it right out of that icon, black like the
@@ -361,7 +361,9 @@ open .build/xcode/Build/Products/Debug/Col.app
   film. A development build never opens at login: the Col in Applications keeps that. `scripts/capture-site.sh` uses them to photograph the
   real app for the website and this README. With the menu bar option on, `-ColDrawersDemo YES` shows generic icons
   and never touches your menu bar or your drawers, and `-ColDrawersPane layout`, `-ColDrawersWelcomeStep 2`,
-  `-ColDrawersOpen 0` (or `all`) and `-ColDrawersSearch cl` open one of the drawers' screens.
+  `-ColDrawersOpen 0` (or `all`) and `-ColDrawersSearch cl` open one of the drawers' screens. `-ColDrawersBackdrop`
+  lays a picture under the drawers and draws their own icons on its menu bar, since a capture of Col's windows has
+  no menu bar; `COL_CONFIGURATION=Release scripts/capture-site.sh` films the app as people get it.
 - `node site/tools/audit.mjs` checks the website at four sizes under its production headers (errors, blocked
   resources, broken images, overflow, the contrast of every text) and writes a screenshot of every section to
   `site/.shots/`; `node site/tools/frames.mjs` photographs the animated scenes at several moments.
