@@ -130,7 +130,7 @@ public final class TintOverlay {
     }
 
     static func makeWindow() -> NSWindow {
-        let window = NSWindow(contentRect: .zero, styleMask: .borderless, backing: .buffered, defer: false)
+        let window = MenuBarWindow(contentRect: .zero, styleMask: .borderless, backing: .buffered, defer: false)
         window.level = NSWindow.Level(rawValue: NSWindow.Level.mainMenu.rawValue - 1)
         window.collectionBehavior = [.canJoinAllSpaces, .stationary, .ignoresCycle, .fullScreenNone]
         window.ignoresMouseEvents = true
@@ -203,4 +203,11 @@ public final class TintOverlay {
             render()
         }
     }
+}
+
+/// A window on the menu bar itself: AppKit would move it below the menu bar, where the tint would cover the top of the
+/// windows instead of the bar.
+@available(macOS 26, *)
+private final class MenuBarWindow: NSWindow {
+    override func constrainFrameRect(_ frameRect: NSRect, to screen: NSScreen?) -> NSRect { frameRect }
 }
