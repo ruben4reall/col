@@ -83,6 +83,26 @@ public final class StatusItemsController {
         return (frame, ScreenCoordinates.windowServerRect(fromAppKit: frame))
     }
 
+    /// Whether the menu bar has placed a target's item: a new item waits in a corner of the screen until it has.
+    public func isPlaced(_ target: Target) -> Bool {
+        guard let frame = anchor(for: target)?.appKit else { return false }
+        return Self.isInMenuBar(frame)
+    }
+
+    /// Tiroir's items that show, with their frames in AppKit coordinates, once the menu bar has placed them all.
+    public var placedItems: [(target: Target, frame: CGRect)]? {
+        var items: [(target: Target, frame: CGRect)] = []
+        if let main, main.isVisible, let frame = main.button?.window?.frame { items.append((.all, frame)) }
+        for (id, item) in drawerItems where item.isVisible {
+            if let frame = item.button?.window?.frame { items.append((.drawer(id), frame)) }
+        }
+        return !items.isEmpty && items.allSatisfy({ Self.isInMenuBar($0.frame) }) ? items : nil
+    }
+
+    private static func isInMenuBar(_ frame: CGRect) -> Bool {
+        frame.width > 0 && NSScreen.screens.contains { abs($0.frame.maxY - frame.maxY) < 2 && $0.frame.minX <= frame.midX && frame.midX <= $0.frame.maxX }
+    }
+
     /// The frames of Tiroir's own items that show, in AppKit coordinates.
     public var itemFrames: [CGRect] {
         ([main].compactMap { $0 } + Array(drawerItems.values)).compactMap { item in
@@ -140,7 +160,16 @@ public final class StatusItemsController {
         }
     }
 
-    static func positionKey(_ autosaveName: String) -> String { "NSStatusItem Preferred Position \(autosaveName)" }
+    nonisolated static func positionKey(_ autosaveName: String) -> String { "NSStatusItem Preferred Position \(autosaveName)" }
+
+    /// Forgets the places kept for drawers other than `drawers`.
+    nonisolated public static func forgetPlaces(keeping drawers: Set<UUID>, in defaults: UserDefaults = .standard) {
+        let prefix = positionKey("tiroir.drawer.")
+        for key in defaults.dictionaryRepresentation().keys where key.hasPrefix(prefix) {
+            guard let id = UUID(uuidString: String(key.dropFirst(prefix.count))), !drawers.contains(id) else { continue }
+            defaults.removeObject(forKey: key)
+        }
+    }
 
     private func makeItem(autosaveName: String, position: Double, target: Target) -> NSStatusItem {
         let defaults = UserDefaults.standard

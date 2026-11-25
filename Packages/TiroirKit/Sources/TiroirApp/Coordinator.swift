@@ -63,7 +63,16 @@ public final class Coordinator {
         // Demo mode never reads or writes the person's settings. A suite also searches the app's own domain, so the
         // demo keeps its settings under a key of its own, which the person's settings never have.
         let defaults = options.demo ? (UserDefaults(suiteName: Self.demoDomain) ?? host.defaults) : host.defaults
-        if options.demo { defaults.removePersistentDomain(forName: Self.demoDomain) }
+        if options.demo {
+            defaults.removePersistentDomain(forName: Self.demoDomain)
+            // macOS keeps each item's place in Col's own preferences, and the demo makes its drawers anew each time:
+            // the places of drawers that are not the person's go, so they do not pile up there.
+            let own = SettingsStore(defaults: host.defaults, key: host.settingsKey).load()
+            if own.outcome == .fresh || own.outcome == .loaded {
+                let layouts = [own.settings.layout] + own.settings.profiles.map(\.layout)
+                StatusItemsController.forgetPlaces(keeping: Set(layouts.flatMap { $0.drawers.map(\.id) }))
+            }
+        }
         store = SettingsStore(defaults: defaults, key: options.demo ? "demoSettings" : host.settingsKey)
         let loaded = store.load()
         if case .unreadable = loaded.outcome { Log.app.error("settings unreadable: using the defaults") }
@@ -138,6 +147,15 @@ public final class Coordinator {
             }
         }
         syncChrome()
+        if let backdrop {
+            // The menu bar places the new items a moment after they are made; then the backdrop shows them.
+            var waited = 0
+            while statusItems.placedItems == nil, waited < 30, !isShutDown {
+                try? await Task.sleep(for: .milliseconds(100))
+                waited += 1
+            }
+            if let items = statusItems.placedItems { Backdrop.showItems(items, model: interface, on: backdrop) }
+        }
 
         if !interface.settings.hasCompletedWelcome || options.welcomeStep != nil {
             showWelcome(step: options.welcomeStep.flatMap(WelcomeModel.Step.init(rawValue:)) ?? .hello)
@@ -145,9 +163,16 @@ public final class Coordinator {
         if let pane = options.settingsPane { openSettings(pane) }
         if let index = options.openDrawer {
             try? await Task.sleep(for: .milliseconds(500))
-            guard !isShutDown else { return }
             let drawers = interface.settings.layout.drawers
-            if index < 0 { openDrawer(.all) } else if drawers.indices.contains(index) { openDrawer(.drawer(drawers[index].id)) }
+            let target: StatusItemsController.Target? = index < 0 ? .all : drawers.indices.contains(index) ? .drawer(drawers[index].id) : nil
+            // The menu bar places a new item a moment after it is made: the drawer waits to hang from its own.
+            var waited = 0
+            while let target, !statusItems.isPlaced(target), waited < 30, !isShutDown {
+                try? await Task.sleep(for: .milliseconds(100))
+                waited += 1
+            }
+            guard !isShutDown else { return }
+            if let target { openDrawer(target) }
         }
         if let query = options.search {
             try? await Task.sleep(for: .milliseconds(500))
@@ -468,8 +493,12 @@ public final class Coordinator {
             self?.open(id, from: target)
         }, onClose: { [weak self] in self?.panels.close() })
         panels.showDrop(view, mark: NeckMark(model: interface, target: target), under: anchor.appKit, target: target)
-        // The drawer shows at once; a fresh scan follows, and the panel updates by itself.
-        Task { await refresh(apply: false) }
+        // The drawer shows at once; a fresh scan follows once it has dropped, and the panel updates by itself. Run during
+        // the drop, the scan would hold the main thread and the drawer would show without it.
+        Task {
+            try? await Task.sleep(for: .milliseconds(500))
+            await refresh(apply: false)
+        }
     }
 
     func openSearch(query: String = "") {

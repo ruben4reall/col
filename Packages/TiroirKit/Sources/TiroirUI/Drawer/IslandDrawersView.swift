@@ -50,7 +50,11 @@ public struct IslandDrawersView: View {
                     HStack(spacing: 6) {
                         ForEach(shelves) { shelf in chip(shelf) }
                     }
+                    .padding(.leading, 6)
+                    .padding(.trailing, TrailingFade.width)
                 }
+                .scrollEdgeEffectHidden(true, for: .horizontal)
+                .mask { TrailingFade() }
                 Button(action: onSettings) {
                     Image(systemName: "slider.horizontal.3")
                         .font(.system(size: 12, weight: .semibold))
@@ -72,7 +76,10 @@ public struct IslandDrawersView: View {
                                 .animation(.spring(response: 0.34, dampingFraction: 0.82).delay(min(Double(index) * 0.018, 0.2)), value: appeared)
                         }
                     }
+                    .padding(.trailing, TrailingFade.width)
                 }
+                .scrollEdgeEffectHidden(true, for: .horizontal)
+                .mask { TrailingFade() }
                 .id(current.id)
                 .transition(.opacity)
             } else {
@@ -109,6 +116,21 @@ public struct IslandDrawersView: View {
 
     private func tile(_ row: IconRow) -> some View {
         IslandIconTile(row: row) { onOpen(row.id) }
+    }
+}
+
+/// A row that scrolls sideways fades out at its trailing edge: a chip or an icon the island's edge cuts reads as more
+/// to come rather than as a mistake. The row ends with as much room, so its last item, scrolled to, shows whole.
+@available(macOS 26, *)
+private struct TrailingFade: View {
+    static let width: CGFloat = 22
+
+    var body: some View {
+        HStack(spacing: 0) {
+            Rectangle()
+            LinearGradient(colors: [.black, .clear], startPoint: .leading, endPoint: .trailing)
+                .frame(width: Self.width)
+        }
     }
 }
 

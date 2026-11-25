@@ -90,7 +90,8 @@ struct DropShape: Shape {
 }
 
 /// A drawer's panel as it opens: the black drop, the drawer's own mark lit in the neck, and the content below, which
-/// comes in once the panel has room for it. Closing runs the other way, then the window goes.
+/// comes in once the panel has room for it. Its controller opens it once the window shows; closing runs the other way,
+/// then the window goes.
 @available(macOS 26, *)
 struct DropPanel<Content: View, Mark: View>: View {
     let neck: CGRect
@@ -98,8 +99,10 @@ struct DropPanel<Content: View, Mark: View>: View {
     let size: CGSize
     let mark: Mark
     let content: Content
-    /// Set by the panel's controller to close: the drop goes back into the neck, then `onClosed` runs.
+    /// Set by the panel's controller to open and to close it.
     @Bindable var state: DropState
+    /// The neck lies over the drawer's item: a click on it closes the drawer, as a click on the item would.
+    var onNeckClick: () -> Void = {}
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
@@ -112,6 +115,8 @@ struct DropPanel<Content: View, Mark: View>: View {
                 mark
                     .foregroundStyle(.white)
                     .frame(width: neck.width, height: neck.height)
+                    .contentShape(Rectangle())
+                    .onTapGesture(perform: onNeckClick)
                     .padding(.leading, neck.minX)
                     .padding(.top, neck.minY)
                     .frame(width: size.width, height: size.height, alignment: .topLeading)
@@ -126,25 +131,22 @@ struct DropPanel<Content: View, Mark: View>: View {
         }
         .frame(width: size.width, height: size.height, alignment: .topLeading)
         .environment(\.colorScheme, .dark)
-        .onAppear {
-            state.isOpening = true
-            withAnimation(reduceMotion ? .easeOut(duration: 0.16) : .spring(response: 0.42, dampingFraction: 0.78)) { state.progress = 1 }
-        }
     }
 
+    /// Never quite 0: SwiftUI skips drawing what has no opacity, and would draw the drawer's icons for the first time
+    /// halfway through the drop, holding it; drawn with the first frame, the drop runs smoothly.
     private var contentOpacity: Double {
         let p = Double(min(max(state.progress, 0), 1))
-        return reduceMotion ? p : max(0, (p - 0.45) / 0.55)
+        return max(0.001, reduceMotion ? p : (p - 0.45) / 0.55)
     }
 }
 
-/// Whether a drop is open, for its panel to animate in and out.
+/// How far a drop is open, for its panel to animate in and out.
 @available(macOS 26, *)
 @Observable
 @MainActor
 final class DropState {
     var progress: CGFloat = 0
-    var isOpening = false
 }
 
 /// A drawer's item drawn in white in the neck of its drop, where it sits in the menu bar: its mark, and its name and
@@ -174,5 +176,49 @@ public struct NeckMark: View {
                 .lineLimit(1)
             }
         }
+    }
+}
+
+/// Tiroir's items as the menu bar shows them, in white: Tiroir's icon and each drawer's mark, at their places. For the
+/// pictures of demo mode, which see Col's windows and not the menu bar, where macOS draws the items.
+@available(macOS 26, *)
+public struct MenuBarItemsPicture: View {
+    public struct Item: Identifiable {
+        public let target: StatusItemsController.Target
+        /// In the picture's space, from its top left corner.
+        public let frame: CGRect
+        public var id: StatusItemsController.Target { target }
+
+        public init(target: StatusItemsController.Target, frame: CGRect) {
+            self.target = target
+            self.frame = frame
+        }
+    }
+
+    let model: InterfaceModel
+    let items: [Item]
+
+    public init(model: InterfaceModel, items: [Item]) {
+        self.model = model
+        self.items = items
+    }
+
+    public var body: some View {
+        ZStack(alignment: .topLeading) {
+            ForEach(items) { item in
+                Group {
+                    if item.target == .all {
+                        Image(nsImage: TiroirGlyph.image(.closed)).renderingMode(.template)
+                    } else {
+                        NeckMark(model: model, target: item.target)
+                    }
+                }
+                .foregroundStyle(.white)
+                .frame(width: item.frame.width, height: item.frame.height)
+                .offset(x: item.frame.minX, y: item.frame.minY)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .allowsHitTesting(false)
     }
 }

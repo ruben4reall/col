@@ -2,17 +2,19 @@ import AppKit
 import SwiftUI
 import TiroirCore
 
-/// A borderless panel just under the menu bar that takes the keyboard without bringing Tiroir to the front: the app
-/// the person was using stays active (spec 6.2).
+/// A borderless panel over the menu bar that takes the keyboard without bringing Tiroir to the front: the app the
+/// person was using stays active (spec 6.2).
 @available(macOS 26, *)
 final class FloatingPanel: NSPanel {
     var onClose: (() -> Void)?
 
     init() {
         super.init(contentRect: .zero, styleMask: [.nonactivatingPanel, .borderless, .fullSizeContentView], backing: .buffered, defer: true)
+        // Floating first: setting it puts the panel back at the floating level, under the menu bar. A drawer's neck lies
+        // over its item, so the item is black with its mark in white whatever colour the menu bar gives its icons.
+        isFloatingPanel = true
         level = NSWindow.Level(rawValue: NSWindow.Level.mainMenu.rawValue + 1)
         collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .ignoresCycle, .transient]
-        isFloatingPanel = true
         hidesOnDeactivate = false
         backgroundColor = .clear
         isOpaque = false
@@ -67,6 +69,12 @@ public final class PanelController {
         let size = NSHostingView(rootView: content.environment(\.colorScheme, .dark)).fittingSize
         let room = Theme.panelShadowRoom
         let visible = screen.visibleFrame
+        // A drawer hangs from its item while the item sits in a menu bar that shows. While a full-screen app hides the
+        // menu bar, or before the menu bar has placed a new item (it waits in a corner of the screen), the drawer
+        // floats under the top of the screen instead: under its item, or in the middle when the item has no place yet.
+        let menuBarShows = visible.maxY < screen.frame.maxY - 1
+        let hangs = hangs && menuBarShows && anchor.minY >= visible.maxY - 1 && anchor.maxY <= screen.frame.maxY + 1
+        let anchor = anchor.minY >= visible.maxY - 40 ? anchor : CGRect(x: visible.midX - 1, y: visible.maxY, width: 2, height: 0)
         // From the top of the screen to the item's lower edge: the menu bar's height, which the neck fills.
         let neckHeight = hangs ? max(0, screen.frame.maxY - anchor.minY) : 0
         let gap: CGFloat = hangs ? 0 : 6
@@ -74,7 +82,7 @@ public final class PanelController {
         panelX = min(max(panelX, visible.minX + 8), visible.maxX - size.width - 8)
         let left = min(panelX, hangs ? anchor.minX - DropShape.ear : panelX) - room
         let right = max(panelX + size.width, hangs ? anchor.maxX + DropShape.ear : panelX) + room
-        let top = hangs ? screen.frame.maxY : anchor.minY - gap
+        let top = hangs ? screen.frame.maxY : min(anchor.minY, visible.maxY) - gap
         let height = (hangs ? neckHeight : 0) + size.height + room * 1.6
         let frame = CGRect(x: left, y: max(top - height, visible.minY - room), width: right - left, height: height)
         let neck = hangs ? CGRect(x: anchor.minX - left, y: 0, width: anchor.width, height: neckHeight) : .zero
@@ -82,7 +90,7 @@ public final class PanelController {
         let state = DropState()
         let panel = FloatingPanel()
         let hosting = NSHostingView(rootView: DropPanel(neck: neck, panel: panelRect, size: frame.size, mark: mark, content: content,
-                                                        state: state))
+                                                        state: state, onNeckClick: { [weak self] in self?.close() }))
         hosting.sizingOptions = []
         hosting.frame = CGRect(origin: .zero, size: frame.size)
         panel.contentView = hosting
@@ -93,6 +101,14 @@ public final class PanelController {
         openTarget = target
         isSearchOpen = target == nil
         panel.orderFrontRegardless()
+        // The drop starts on the next turn of the run loop, once the window is in with the neck alone.
+        let reduceMotion = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
+        DispatchQueue.main.async { [weak self] in
+            MainActor.assumeIsolated {
+                guard self?.state === state else { return }
+                withAnimation(reduceMotion ? .easeOut(duration: 0.16) : .spring(response: 0.42, dampingFraction: 0.78)) { state.progress = 1 }
+            }
+        }
         guard !isQuiet else { return }
         panel.makeKey()
         watchForDismissal()

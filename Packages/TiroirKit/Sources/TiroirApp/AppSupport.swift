@@ -1,4 +1,5 @@
 import AppKit
+import SwiftUI
 import TiroirUI
 
 /// Switches read when the drawers start, from the command line or the defaults (`-ColDrawersDemo YES`). They let scripts
@@ -58,6 +59,25 @@ enum Backdrop {
         window.orderFrontRegardless()
         return window
     }
+
+    /// Draws Tiroir's own items on the picture's menu bar, where the menu bar shows them: the pictures see Col's
+    /// windows, and macOS draws the items in its own.
+    static func showItems(_ items: [(target: StatusItemsController.Target, frame: CGRect)], model: InterfaceModel, on window: NSWindow) {
+        guard let content = window.contentView else { return }
+        content.subviews.filter { $0.identifier == itemsID }.forEach { $0.removeFromSuperview() }
+        let height = content.bounds.height
+        let pictured = items.map { item in
+            let local = window.convertFromScreen(item.frame)
+            return MenuBarItemsPicture.Item(target: item.target,
+                                            frame: CGRect(x: local.minX, y: height - local.maxY, width: local.width, height: local.height))
+        }
+        let view = NSHostingView(rootView: MenuBarItemsPicture(model: model, items: pictured))
+        view.identifier = itemsID
+        view.frame = content.bounds
+        content.addSubview(view)
+    }
+
+    private static let itemsID = NSUserInterfaceItemIdentifier("menuBarItems")
 }
 
 /// What Col gives the drawers, which run in its process: where their settings live, Col's own way to ask for the one
