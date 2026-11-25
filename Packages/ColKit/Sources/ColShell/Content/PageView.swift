@@ -19,6 +19,7 @@ extension WidgetKind {
         case .devices: LocalizedStringResource("Devices", bundle: bundle)
         case .pomodoro: LocalizedStringResource("Pomodoro", bundle: bundle)
         case .widgets: LocalizedStringResource("Widgets", bundle: bundle)
+        case .menuBar: LocalizedStringResource("Menu Bar", bundle: bundle)
         }
     }
 
@@ -39,6 +40,7 @@ extension WidgetKind {
         case .devices: LocalizedStringResource("Your mouse, keyboard and trackpad, with their battery", bundle: bundle)
         case .pomodoro: LocalizedStringResource("Focus and breaks, and today’s sessions", bundle: bundle)
         case .widgets: LocalizedStringResource("What your scripts, devices and web addresses show", bundle: bundle)
+        case .menuBar: LocalizedStringResource("The icons of your menu bar, drawer by drawer", bundle: bundle)
         }
     }
 
@@ -58,6 +60,7 @@ extension WidgetKind {
         case .devices: "magicmouse.fill"
         case .pomodoro: "brain.head.profile.fill"
         case .widgets: "square.grid.2x2"
+        case .menuBar: "menubar.rectangle"
         }
     }
 
@@ -77,6 +80,7 @@ extension WidgetKind {
         case .devices: .gray
         case .pomodoro: .red
         case .widgets: .indigo
+        case .menuBar: .purple
         }
     }
 }
@@ -124,7 +128,7 @@ enum WidgetAvailability {
         case .lyrics: services.media.hasPlayer && services.lyrics.lyrics != nil
         case .devices: !services.glance.accessories.levels.isEmpty
         case .widgets: services.widgets.hasContent
-        case .clock, .agenda, .prompter, .ai, .shelf, .clipboard, .tools, .system, .weather, .pomodoro: true
+        case .clock, .agenda, .prompter, .ai, .shelf, .clipboard, .tools, .system, .weather, .pomodoro, .menuBar: true
         }
     }
 }
@@ -169,6 +173,8 @@ struct WidgetView: View {
             PomodoroWidget(pomodoro: services.glance.pomodoro, width: width)
         case .widgets:
             WidgetsWidget(center: services.widgets, width: width)
+        case .menuBar:
+            MenuBarWidget()
         }
     }
 }

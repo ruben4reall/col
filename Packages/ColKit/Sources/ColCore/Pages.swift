@@ -6,13 +6,15 @@ public enum WidgetKind: String, Codable, CaseIterable, Sendable {
     case weather, devices, pomodoro
     /// Widgets pushed by other programs and devices, or read from an address (docs/widgets.md).
     case widgets
+    /// The menu bar's drawers and their icons (3.2).
+    case menuBar
 
     /// The widths the widget can be drawn at: half a page beside another widget, or the whole page.
     public var widths: Set<WidgetWidth> {
         switch self {
         case .music, .lyrics, .agenda, .prompter, .ai, .weather, .devices, .pomodoro, .widgets: [.half, .full]
         case .clock: [.half]
-        case .shelf, .clipboard, .tools, .system: [.full]
+        case .shelf, .clipboard, .tools, .system, .menuBar: [.full]
         }
     }
 
@@ -99,6 +101,19 @@ public struct PageDeck: Codable, Equatable, Sendable {
         PageLayout(id: "tools", stacks: [WidgetStack([.tools])]),
         PageLayout(id: "system", stacks: [WidgetStack([.system])]),
     ])
+
+    /// The page of the menu bar's drawers, added when the drawers are turned on.
+    public static let menuBarPage = PageLayout(id: "menubar", symbol: "menubar.rectangle", stacks: [WidgetStack([.menuBar])])
+
+    /// The deck with the drawers' page after the others, unless a page already holds them.
+    public func addingMenuBarPage() -> PageDeck {
+        guard firstPage(holding: .menuBar) == nil else { return self }
+        var deck = self
+        var page = Self.menuBarPage
+        while deck.pages.contains(where: { $0.id == page.id }) { page.id += "-1" }
+        deck.pages.append(page)
+        return deck
+    }
 
     /// The optional pages Islet 1 showed until its list was saved.
     static let isletPages = ["shelf", "clipboard", "tools", "system"]

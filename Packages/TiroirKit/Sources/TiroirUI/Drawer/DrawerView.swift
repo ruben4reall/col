@@ -19,8 +19,7 @@ public struct DrawerView: View {
 
     static let maximumColumns = 5
     static let tileWidth: CGFloat = 80
-    static let chestLabelWidth: CGFloat = 150
-    static let chestTileWidth: CGFloat = 70
+    static let chestTileWidth: CGFloat = 74
 
     /// Three to five columns: a drawer is as wide as its icons need, never a sliver.
     var columns: Int {
@@ -56,27 +55,28 @@ public struct DrawerView: View {
 
     var flatRows: [IconRow] { sections.flatMap(\.rows) }
 
-    /// The chest is as wide as its fullest drawer needs, from three icons to five: it never spreads empty room, and it
-    /// keeps its width while typing filters it.
+    /// The chest holds two drawers a row, each three icons wide: it keeps its width while typing filters it.
     var chestWidth: CGFloat {
-        let counts = model.settings.layout.drawers.map { model.members(of: $0.id).count } + [model.hiddenRows.count]
-        let widest = min(max(counts.max() ?? 0, 3), Self.maximumColumns)
-        return Self.chestLabelWidth + CGFloat(widest) * (Self.chestTileWidth + 4) + 40
+        Self.chestSectionWidth * 2 + 12 + 28
     }
 
+    static let chestColumns = 3
+    static var chestSectionWidth: CGFloat { CGFloat(chestColumns) * (chestTileWidth + 4) }
+
     public var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: target == .all ? 14 : 10) {
             header
             if flatRows.isEmpty && filter.isEmpty {
                 emptyState
             } else {
                 ScrollView(.vertical, showsIndicators: false) {
                     if target == .all {
-                        // The All drawer is the chest itself: one row per drawer, its mark and name on the left.
-                        VStack(alignment: .leading, spacing: 2) {
-                            ForEach(Array(sections.enumerated()), id: \.element.id) { index, section in
-                                if index > 0 { Divider().opacity(0.35).padding(.leading, 4) }
-                                chestRow(section)
+                        // The All drawer is the chest itself: the drawers side by side, two a row, each under its mark
+                        // and name with its icons below, three a row.
+                        LazyVGrid(columns: Array(repeating: GridItem(.fixed(Self.chestSectionWidth), spacing: 12, alignment: .top), count: 2),
+                                  alignment: .leading, spacing: 14) {
+                            ForEach(sections, id: \.id) { section in
+                                chestSection(section)
                             }
                         }
                     } else {
@@ -86,18 +86,17 @@ public struct DrawerView: View {
                 .frame(maxHeight: 480)
             }
         }
-        .padding(14)
+        .padding(.horizontal, 14)
+        .padding(.top, 12)
+        .padding(.bottom, 16)
         .frame(width: target == .all ? chestWidth : CGFloat(columns) * (Self.tileWidth + 6) + 22)
-        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: Theme.panelRadius, style: .continuous))
-        .shadow(color: .black.opacity(0.28), radius: 16, y: 8)
-        .scaleEffect(appeared || reduceMotion ? 1 : 0.94, anchor: .top)
-        .opacity(appeared ? 1 : 0)
         .focusable()
         .focusEffectDisabled()
         .focused($focused)
         .onAppear {
             focused = true
-            withAnimation(reduceMotion ? Motion.fade : Motion.drawer) { appeared = true }
+            // The icons arrive one after the other once the drop has room for them.
+            withAnimation(reduceMotion ? Motion.fade : Motion.drawer.delay(0.12)) { appeared = true }
         }
         .onKeyPress(.escape) {
             if filter.isEmpty { onClose() } else { filter = "" }
@@ -173,6 +172,7 @@ public struct DrawerView: View {
             ForEach(rows) { row in
                 let index = flatRows.firstIndex(of: row)
                 IconTile(row: row, isSelected: index != nil && index == selection)
+                    .arriving(appeared || reduceMotion, order: index ?? 0)
                     .onTapGesture { onOpen(row.id) }
                     // VoiceOver and other assistive apps open the icon as a click would.
                     .accessibilityAddTraits(.isButton)
@@ -198,20 +198,26 @@ public struct DrawerView: View {
         Button(Strings.showInFinder) { model.actions.showInFinder(row.id) }
     }
 
-    /// One drawer of the chest: its mark and name, then its icons in a row that scrolls sideways when long.
-    private func chestRow(_ section: (id: String, title: String?, mark: DrawerMark?, rows: [IconRow])) -> some View {
-        HStack(alignment: .center, spacing: 10) {
-            HStack(spacing: 8) {
-                if let mark = section.mark { MarkView(mark, size: 16).frame(width: 22) }
-                Text(verbatim: section.title ?? "").font(.system(size: 12, weight: .semibold)).lineLimit(2)
+    /// One drawer of the chest: its mark, name and count, then its icons in rows below.
+    private func chestSection(_ section: (id: String, title: String?, mark: DrawerMark?, rows: [IconRow])) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 6) {
+                if let mark = section.mark { MarkView(mark, size: 12).frame(width: 16) }
+                Text(verbatim: section.title ?? "").font(.system(size: 11.5, weight: .semibold))
+                Text(verbatim: "\(section.rows.count)").font(.system(size: 11, weight: .medium)).foregroundStyle(.tertiary)
             }
-            .frame(width: Self.chestLabelWidth, alignment: .leading)
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 4) {
+            .foregroundStyle(.secondary)
+            .padding(.horizontal, 6)
+            if section.rows.isEmpty {
+                Text(verbatim: Strings.emptyDrawerTitle).font(.system(size: 11)).foregroundStyle(.tertiary).padding(.horizontal, 6)
+            } else {
+                LazyVGrid(columns: Array(repeating: GridItem(.fixed(Self.chestTileWidth), spacing: 4), count: Self.chestColumns),
+                          alignment: .leading, spacing: 4) {
                     ForEach(section.rows) { row in
                         let index = flatRows.firstIndex(of: row)
-                        IconTile(row: row, size: 28, isSelected: index != nil && index == selection, showsSubtitle: false)
+                        IconTile(row: row, size: 30, isSelected: index != nil && index == selection, showsSubtitle: false)
                             .frame(width: Self.chestTileWidth)
+                            .arriving(appeared || reduceMotion, order: index ?? 0)
                             .onTapGesture { onOpen(row.id) }
                             .accessibilityAddTraits(.isButton)
                             .accessibilityAction { onOpen(row.id) }
@@ -220,8 +226,6 @@ public struct DrawerView: View {
                 }
             }
         }
-        .padding(.horizontal, 4)
-        .padding(.vertical, 2)
     }
 
     /// Up and down in the chest move to the first icon of the drawer above or below.
@@ -247,5 +251,27 @@ public struct DrawerView: View {
         let current = selection ?? (delta > 0 ? -1 : count)
         selection = min(max(current + delta, 0), count - 1)
         return .handled
+    }
+}
+
+@available(macOS 26, *)
+private struct Arriving: ViewModifier {
+    let shown: Bool
+    let order: Int
+    func body(content: Content) -> some View {
+        content
+            .opacity(shown ? 1 : 0)
+            .offset(y: shown ? 0 : 8)
+            .scaleEffect(shown ? 1 : 0.92)
+            // One after the other, a few milliseconds apart, never more than a quarter of a second in all.
+            .animation(.spring(response: 0.34, dampingFraction: 0.82).delay(min(Double(order) * 0.014, 0.25)), value: shown)
+    }
+}
+
+@available(macOS 26, *)
+extension View {
+    /// Fades and rises into place, in turn after the views before it.
+    func arriving(_ shown: Bool, order: Int) -> some View {
+        modifier(Arriving(shown: shown, order: order))
     }
 }

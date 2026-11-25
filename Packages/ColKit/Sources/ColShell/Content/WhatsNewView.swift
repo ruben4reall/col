@@ -11,16 +11,17 @@ struct WhatsNewView: View {
         var id: String { symbol }
     }
 
-    /// Col 3, in five tiles.
+    /// Col 3.2, in five tiles.
     static let items: [Item] = [
-        Item(symbol: "capsule.fill", tint: .indigo, title: "A pill on every Mac"),
-        Item(symbol: "quote.bubble.fill", tint: .pink, title: "Lyrics on the Lock Screen"),
-        Item(symbol: "cloud.sun.fill", tint: .cyan, title: "Weather and Pomodoro"),
-        Item(symbol: "dot.radiowaves.up.forward", tint: .orange, title: "Col Connect"),
-        Item(symbol: "pc", tint: .green, title: "On Windows and Linux"),
+        Item(symbol: "sparkles", tint: .purple, title: "An intro when Col opens"),
+        Item(symbol: "menubar.rectangle", tint: .indigo, title: "Drawers, redrawn"),
+        Item(symbol: "rectangle.topthird.inset.filled", tint: .teal, title: "Your menu bar in the island"),
+        Item(symbol: "wrench.and.screwdriver.fill", tint: .orange, title: "Fixes all around"),
+        Item(symbol: "pc", tint: .green, title: "On Windows and Linux too"),
     ]
 
-    static let releaseURL = URL(string: "https://github.com/ruben4reall/col/releases/tag/v3.0.0")!
+    static let releaseURL = URL(string: "https://github.com/ruben4reall/col/releases/tag/v3.2.0")!
+    @State private var drawers = MenuBarDrawers.shared
 
     @State private var shown = false
     private var still: Bool { NSWorkspace.shared.accessibilityDisplayShouldReduceMotion }
@@ -28,10 +29,20 @@ struct WhatsNewView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .firstTextBaseline) {
-                Text("What’s new in Col 3", bundle: .module)
+                Text("What’s new in Col 3.2", bundle: .module)
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(.white)
                 Spacer(minLength: 8)
+                // The drawers are this version's news: one click turns them on.
+                if drawers.isSupportedHere, drawers.status == .off {
+                    Button {
+                        drawers.setEnabled(true)
+                        IslandController.shared?.closeIsland()
+                    } label: {
+                        Text("Tidy My Menu Bar", bundle: .module)
+                    }
+                    .buttonStyle(IslandCapsuleStyle())
+                }
                 Link(destination: Self.releaseURL) {
                     HStack(spacing: 3) {
                         Text("See Everything", bundle: .module)
@@ -78,10 +89,14 @@ struct WhatsNewView: View {
     }
 }
 
-/// Remembers which major version the island last introduced.
+/// Remembers which edition the island last introduced: a major version, or a minor one that brings something worth
+/// a card (3.2).
 @MainActor
 enum WhatsNew {
-    private static let key = "whatsNewShownForMajor"
+    private static let majorKey = "whatsNewShownForMajor"
+    private static let editionKey = "whatsNewShownForEdition"
+    /// The edition the card describes.
+    static let edition = "3.2"
 
     /// The major version of the running app.
     static var currentMajor: Int {
@@ -89,13 +104,17 @@ enum WhatsNew {
         return Int(version.split(separator: ".").first ?? "0") ?? 0
     }
 
-    /// Due once per major version from 3 on, for someone who already used an earlier one: a new install has the
-    /// welcome instead, and marks the version as introduced.
+    /// Due once per edition, for someone who already used an earlier one (the island asks only once the welcome is
+    /// done): a new install has the welcome instead, which marks the edition as introduced. Col 3.0 and 3.1 noted only
+    /// the major version they introduced, so they never saw this edition.
     static var isDue: Bool {
-        currentMajor >= 3 && UserDefaults.standard.integer(forKey: key) < currentMajor
+        guard currentMajor >= 3 else { return false }
+        guard let shown = UserDefaults.standard.string(forKey: editionKey) else { return true }
+        return shown.compare(edition, options: .numeric) == .orderedAscending
     }
 
     static func markShown() {
-        UserDefaults.standard.set(currentMajor, forKey: key)
+        UserDefaults.standard.set(currentMajor, forKey: majorKey)
+        UserDefaults.standard.set(edition, forKey: editionKey)
     }
 }

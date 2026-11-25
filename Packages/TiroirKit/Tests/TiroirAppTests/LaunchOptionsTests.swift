@@ -39,6 +39,20 @@ import TiroirUI
         scratch.defaults.set("all", forKey: "ColDrawersOpen")
         #expect(LaunchOptions.current(scratch.defaults).openDrawer == -1)
     }
+
+    /// Demo mode makes its drawers anew each time: the places macOS kept for earlier ones go, the person's own stay.
+    @Test func forgettingPlacesKeepsThePersonsDrawers() {
+        let scratch = Scratch()
+        let mine = UUID(), demo = UUID()
+        let key = { (id: UUID) in "NSStatusItem Preferred Position tiroir.drawer.\(id.uuidString)" }
+        scratch.defaults.set(3.0, forKey: key(mine))
+        scratch.defaults.set(4.0, forKey: key(demo))
+        scratch.defaults.set(0.0, forKey: "NSStatusItem Preferred Position tiroir.main")
+        StatusItemsController.forgetPlaces(keeping: [mine], in: scratch.defaults)
+        #expect(scratch.defaults.object(forKey: key(mine)) != nil)
+        #expect(scratch.defaults.object(forKey: key(demo)) == nil)
+        #expect(scratch.defaults.object(forKey: "NSStatusItem Preferred Position tiroir.main") != nil)
+    }
 }
 
 /// A name for a test's own preferences domain. A name that is an absolute path makes macOS keep the domain in that file,

@@ -1,6 +1,7 @@
 import AppKit
 @testable import ColShell
 import Foundation
+import SwiftUI
 import Testing
 import TiroirCore
 
@@ -18,6 +19,7 @@ private final class FakeRunner: DrawersRunner {
     func stop() { stops += 1 }
     func openSettings(_ pane: DrawersPane?) { opened.append(pane) }
     func showSmartSort() { sorts += 1 }
+    func islandView(close: @escaping () -> Void) -> AnyView { AnyView(EmptyView()) }
 }
 
 /// Preferences of their own, in the temporary folder: a name that is an absolute path keeps the domain in that file, so
