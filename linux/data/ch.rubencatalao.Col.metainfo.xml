@@ -44,6 +44,11 @@
     <display_length compare="ge">768</display_length>
   </requires>
   <releases>
+    <release version="3.2.0" date="2026-11-25">
+      <description>
+        <p>Col opens with a short intro: a line of light around the pill, the island swelling as its own chime rises, and waves spreading below it. Settings, Island turns it off or keeps it silent.</p>
+      </description>
+    </release>
     <release version="3.1.0" date="2026-11-17">
       <description>
         <p>Released alongside Col 3.1 for the Mac. Nothing changes on Linux.</p>
