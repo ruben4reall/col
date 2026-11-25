@@ -42,6 +42,8 @@ recording.outputFileType = .mov
 let delegate = Finished()
 try stream.addRecordingOutput(SCRecordingOutput(configuration: recording, delegate: delegate))
 try await stream.startCapture()
+// Scripts wait for this line before they open what is filmed: starting a stream can take a second or two.
+FileHandle.standardOutput.write("recording\n".data(using: .utf8)!)
 // Windows that appear later, such as the prompter's, join the film.
 let started = Date()
 while Date().timeIntervalSince(started) < seconds {

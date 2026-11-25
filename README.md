@@ -17,9 +17,13 @@
 
 # Col
 
-**The notch, made useful. On every Mac, and now on Windows and Linux.**
+**The notch, made useful. On every Mac, and on Windows and Linux.**
 
 [Website](https://getcol.vercel.app) · [Download for Mac](https://github.com/ruben4reall/col/releases/latest/download/Col.dmg) · [Windows and Linux](#col-on-windows-and-linux) · [Changelog](CHANGELOG.md) · [API](docs/api.md)
+
+<p align="center">
+  <img src="docs/images/readme-notch.gif" alt="Col on a MacBook with a notch: light runs around the notch, the island swells out of it with Col and four bars as its chime rings, waves spread over the desktop, then a song shows beside the camera and the island opens on its player and lyrics" width="760">
+</p>
 
 Col turns the top of your screen into a living island. While you work, it shows what matters beside the camera: the
 song playing and its lyrics, your AirPods connecting, the volume, your next meeting, a build running, an AI agent
@@ -30,9 +34,36 @@ Col is free and open source: a native Swift app on the Mac, with native editions
 the best notch apps do, then opens the notch to your scripts, your devices and your AI agents. It was called Islet
 until version 2.0.
 
-<p align="center">
-  <img src="docs/images/open.webp" alt="Col open below the notch of a MacBook, playing a song: the cover, the title, a scrubber and the controls" width="800">
-</p>
+## One island, wherever you work
+
+Every picture here is the app itself, filmed as it runs, with a demo song and nothing of anyone's Mac or PC.
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/images/readme-pill.gif" alt="Col on a Mac without a notch: the pill in the menu bar plays its intro, shows a song, then opens" width="100%"><br>
+      <b>A Mac without a notch</b><br>
+      <sub>A pill in the menu bar, clear of the top edge. Or Col's own notch, or a capsule below the menu bar.</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="docs/images/readme-windows.gif" alt="Col on Windows: the pill at the top of the screen plays its intro, shows a song, then opens on its lyrics" width="100%"><br>
+      <b>Windows 10 and 11</b><br>
+      <sub>A floating pill at the top of the screen, in C# and WPF.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/images/readme-linux.gif" alt="Col on Linux: the pill at the top of a Wayland desktop plays its intro, shows a song, then opens on its lyrics" width="100%"><br>
+      <b>Linux</b><br>
+      <sub>A layer-shell overlay on KDE Plasma, COSMIC, Hyprland, Sway and niri; under XWayland on GNOME.</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="docs/images/readme-drawers.gif" alt="The All drawer of the menu bar hanging from its icon like the island from the notch, its apps sorted by what they do, then going back into its icon" width="100%"><br>
+      <b>A tidy menu bar</b><br>
+      <sub>Drawers that drop from their icon, and your menu bar in the island.</sub>
+    </td>
+  </tr>
+</table>
 
 ## What it does
 
@@ -71,8 +102,12 @@ until version 2.0.
 - **Programmable.** The `colctl` command, a local API, `col://` links, Shortcuts actions and extensions put your own
   live activities and widgets in the notch. With Col Connect, your phone, Home Assistant or a build machine on your
   network push them too, each with a token of its own; and a widget can read any web address that answers JSON.
-- **A tidy menu bar.** One switch tidies the icons of your menu bar into drawers, each one a single icon, and gives
-  the island more room beside the notch. Smart Sort proposes the drawers; search finds any icon.
+- **A tidy menu bar.** One switch tidies the icons of your menu bar into drawers, each one a single icon that drops
+  its apps the way the island drops from the notch, and gives the island more room beside the notch. Smart Sort
+  proposes the drawers; search finds any icon; the island's Menu Bar page holds them all.
+- **A hello every time.** Col opens with a short intro: a line of light around the notch, the island swelling out of
+  it while its own chime rises, waves spreading over the desktop. Two and a half seconds, then nothing of it stays in
+  memory; Settings, General turns it off, or keeps it silent.
 - **Never in the way.** Each wing is only as wide as what it shows, and never covers a menu or a menu bar icon,
   measured again the moment an icon comes or goes (macOS 27's » button included). When the menu bar leaves no room
   beside the notch, the activity slips into a slim strip beneath the camera, then tucks back into the notch. The
@@ -141,7 +176,7 @@ sharing Col's API, its `colctl` command and its agents' hooks.
 |---|---|---|
 | Made with | C# and WPF | Vala, GTK 4 and libadwaita |
 | The island | A floating pill at the top of the screen | A floating pill, a layer-shell overlay on KDE Plasma, COSMIC, Hyprland, Sway, niri; under XWayland on GNOME |
-| In it | Now playing (system media controls) with synced lyrics, Claude Code and Codex with Allow and Deny, the volume, the battery, a timer, clipboard history, keep awake | Now playing (MPRIS) with synced lyrics, Claude Code and Codex with Allow and Deny, the volume (PipeWire or PulseAudio), the battery (UPower), a timer, clipboard history, keep awake |
+| In it | The intro and its chime, now playing (system media controls) with synced lyrics, Claude Code and Codex with Allow and Deny, the volume, the battery, a timer, clipboard history, keep awake | The intro and its chime, now playing (MPRIS) with synced lyrics, Claude Code and Codex with Allow and Deny, the volume (PipeWire or PulseAudio), the battery (UPower), a timer, clipboard history, keep awake |
 | Install | [Installer](https://github.com/ruben4reall/col/releases/latest/download/Col-windows-setup.exe), or a zip for [x64](https://github.com/ruben4reall/col/releases/latest/download/Col-windows-x64.zip) and [Arm64](https://github.com/ruben4reall/col/releases/latest/download/Col-windows-arm64.zip) | `.deb` for Ubuntu 24.04+ and Debian 13 ([amd64](https://github.com/ruben4reall/col/releases/latest/download/col_amd64.deb), [arm64](https://github.com/ruben4reall/col/releases/latest/download/col_arm64.deb)), a tarball ([x86_64](https://github.com/ruben4reall/col/releases/latest/download/Col-linux-x86_64.tar.gz), [aarch64](https://github.com/ruben4reall/col/releases/latest/download/Col-linux-aarch64.tar.gz)), an Arch PKGBUILD |
 | Details | [windows/README.md](windows/README.md) | [linux/README.md](linux/README.md) |
 
@@ -193,12 +228,14 @@ Beside the notch there is room for about a dozen icons, and the rest vanish behi
 Tidy the menu bar into drawers, and Col sorts them for you.
 
 <p align="center">
-  <img src="docs/images/drawers.webp" alt="The All drawer of the menu bar: twelve icons sorted into Files and Cloud, Security and VPN, Messages, AI, Developer and Other" width="456">
+  <img src="docs/images/drawers.webp" alt="The All drawer of the menu bar dropped from its icon: icons sorted into Files and Cloud, Security and VPN, Messages, AI, Developer and Other" width="552">
 </p>
 
-- **Drawers.** Each drawer is one icon in the menu bar. A click opens it right under it, and a click on an app opens
-  that app's own menu, as if its icon had been there all along. The clock, Control Center, the battery, Wi-Fi and
-  Sound stay in view.
+- **Drawers.** Each drawer is one icon in the menu bar. A click drops it right out of that icon, black like the
+  island, and a click on an app opens that app's own menu, as if its icon had been there all along. The clock,
+  Control Center, the battery, Wi-Fi and Sound stay in view.
+- **In the island.** The open island's Menu Bar page holds every drawer, a tap away from any icon's menu. Turning the
+  drawers on adds the page.
 - **Smart Sort.** Col reads what each app is for and proposes drawers: Files and Cloud, Security and VPN, Messages,
   AI, Developer and more. You see the result before it applies, and new icons find their drawer by themselves.
 - **Search and Focus.** ⌃⌥⌘Space and two letters open any icon's menu, wherever it lives. ⌃⌥⌘F leaves only the clock
@@ -303,14 +340,14 @@ feature turns off and nothing crashes.
 
 ## Build from source
 
-You need Xcode 26 and [XcodeGen](https://github.com/yonaskolb/XcodeGen).
+You need Xcode 26 or later and [XcodeGen](https://github.com/yonaskolb/XcodeGen).
 
 ```sh
 brew install xcodegen
 git clone https://github.com/ruben4reall/col.git
 cd col
 swift test --package-path Packages/ColKit   # the island's rules, activities, agents, parsers
-swift test --package-path Packages/TiroirKit # the menu bar's drawers, both engines on a simulated menu bar
+swift test --build-system native --package-path Packages/TiroirKit # the drawers, both engines on a simulated menu bar
 scripts/build.sh                               # prints the path of the Debug app
 open .build/xcode/Build/Products/Debug/Col.app
 ```
@@ -320,16 +357,21 @@ open .build/xcode/Build/Products/Debug/Col.app
 
 - `swift scripts/fake-player.swift` publishes a silent track, to work on the player without sound.
 - Debug switches, for screenshots and for working on one screen: `-ColOpen YES`, `-ColPage live`,
-  `-ColDemo headphones` or `max`, `-ColSettings island`. `scripts/capture-site.sh` uses them to photograph the
+  `-ColDemo headphones` or `max`, `-ColSettings island`, `-ColIntro YES` or `NO`, and `-ColFilm YES` for the README's
+  film. A development build never opens at login: the Col in Applications keeps that. `scripts/capture-site.sh` uses them to photograph the
   real app for the website and this README. With the menu bar option on, `-ColDrawersDemo YES` shows generic icons
   and never touches your menu bar or your drawers, and `-ColDrawersPane layout`, `-ColDrawersWelcomeStep 2`,
-  `-ColDrawersOpen 0` (or `all`) and `-ColDrawersSearch cl` open one of the drawers' screens.
+  `-ColDrawersOpen 0` (or `all`) and `-ColDrawersSearch cl` open one of the drawers' screens. `-ColDrawersBackdrop`
+  lays a picture under the drawers and draws their own icons on its menu bar, since a capture of Col's windows has
+  no menu bar; `COL_CONFIGURATION=Release scripts/capture-site.sh` films the app as people get it.
 - `node site/tools/audit.mjs` checks the website at four sizes under its production headers (errors, blocked
   resources, broken images, overflow, the contrast of every text) and writes a screenshot of every section to
   `site/.shots/`; `node site/tools/frames.mjs` photographs the animated scenes at several moments.
 - The website's scenes move real captures of the app and real pieces of macOS. Their demo content (the shelf's files,
   a few copies, a TextEdit window) comes from `-ColDemoShelf <folder>`, `-ColDemo clipboard` and
   `brand/scripts/demo-files.swift`: the user's own shelf and clipboard are never read.
+- `scripts/make-intro-sound.sh` writes the intro's chime from code (`scripts/make-intro-sound.swift`), for the three
+  systems, and `scripts/make-readme-gifs.sh` turns the films of the real app into this README's pictures.
 - `scripts/release.sh` makes a disk image. Without `COL_TEAM_ID` it is ad hoc, for your own use; with a team it is
   signed, notarized and stapled, and `scripts/finish-release.sh` writes the signed update feed.
 
