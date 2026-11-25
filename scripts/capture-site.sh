@@ -126,9 +126,21 @@ backdrop() {
   BACKDROP=$!
   sleep 3
 }
-film() { swift scripts/record-film.swift "$OUT/$1.mov" "$2" "Col,$(pgrep -f desktop-backdrop | paste -sd, -)" "$3" 0 "$4" "$5" >/dev/null 2>&1; echo "  $1 (film)"; }
 RECORDER="$TMP/record-film"
 recorder() { [ -x "$RECORDER" ] || swiftc -O scripts/record-film.swift -o "$RECORDER" 2>/dev/null; }
+# record <file> <seconds> <x> <y> <width> <height>: starts filming Col's windows and the desktop's, and returns once the
+# recording runs, its process in RECORDING. Starting one can take ScreenCaptureKit a second or two; while macOS waits
+# for someone to allow the screen recording, it never starts, and the capture stops there rather than wait forever.
+record() {
+  recorder
+  rm -f "$TMP/recorder.out"
+  "$RECORDER" "$1" "$2" "Col,$(pgrep -f desktop-backdrop | paste -sd, -)" "$3" "$4" "$5" "$6" >"$TMP/recorder.out" 2>&1 &
+  RECORDING=$!
+  for _ in {1..80}; do grep -q recording "$TMP/recorder.out" 2>/dev/null && return 0; sleep 0.1; done
+  kill "$RECORDING" 2>/dev/null
+  echo "The recording did not start: is the screen recording allowed in System Settings, Privacy & Security?" >&2
+  exit 1
+}
 # click <x> <y>: a click at a point of the screen, in points from its top left corner.
 click() {
   [ -x "$TMP/click" ] || swiftc -O - -o "$TMP/click" 2>/dev/null <<'SWIFT'
@@ -143,10 +155,11 @@ for type in [CGEventType.mouseMoved, .leftMouseDown, .leftMouseUp] {
 SWIFT
   "$TMP/click" "$1" "$2"
 }
+film() { record "$OUT/$1.mov" "$2" "$3" 0 "$4" "$5"; wait "$RECORDING"; echo "  $1 (film)"; }
 # still <name> <x> <y> <width> <height>: what the films see, as a picture: Col's windows and the desktop's, nothing else.
 still() {
-  recorder
-  "$RECORDER" "$TMP/still.mov" 1.5 "Col,$(pgrep -f desktop-backdrop | paste -sd, -)" "$2" "$3" "$4" "$5" >/dev/null 2>&1
+  record "$TMP/still.mov" 1.5 "$2" "$3" "$4" "$5"
+  wait "$RECORDING"
   swift - "$TMP/still.mov" "$OUT/$1.png" <<'SWIFT' >/dev/null 2>&1
 import AVFoundation
 import AppKit
@@ -394,11 +407,9 @@ take() {   # take <name> <seconds> <x> <width> <height> <Col's switches…>
   local name=$1 seconds=$2 x=$3 width=$4 height=$5
   shift 5
   pkill -f "$APP/Contents/MacOS/Col" 2>/dev/null; sleep 0.8
-  rm -f "$TMP/recorder.out"
-  "$RECORDER" "$OUT/$name.mov" "$seconds" "Col,$(pgrep -f desktop-backdrop | paste -sd, -)" "$x" 0 "$width" "$height" >"$TMP/recorder.out" 2>&1 &
-  local recorder=$!
-  # Col opens 1.2 seconds into the film (run waits 0.6 of them): once the recording runs, which can take a moment.
-  for _ in {1..80}; do grep -q recording "$TMP/recorder.out" 2>/dev/null && break; sleep 0.1; done
+  # Col opens 1.2 seconds into the film (run waits 0.6 of them), once the recording runs.
+  record "$OUT/$name.mov" "$seconds" "$x" 0 "$width" "$height"
+  local recorder=$RECORDING
   sleep 0.6
   run "$@"
   # What happens in the film once Col runs, when DURING names it.
