@@ -35,10 +35,8 @@ struct GeneralPane: View {
                 IconToggle(symbol: "speaker.wave.2.fill", tint: .pink, title: "With its chime", isOn: $playsIntroSound)
                     .onChange(of: playsIntroSound) { Preferences.playsIntroSound = playsIntroSound }
                     .disabled(!playsIntro)
-                LabeledContent {
+                IconRow(symbol: "play.fill", tint: .indigo, title: Text("See the intro again", bundle: .module)) {
                     Button { IslandController.shared?.playIntro() } label: { Text("Play", bundle: .module) }
-                } label: {
-                    Text("See the intro again", bundle: .module)
                 }
                 Picker(selection: $display) {
                     Text("The screen with the notch", bundle: .module).tag("notch")
