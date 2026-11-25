@@ -6,13 +6,17 @@
 # Nothing is drawn by hand: each picture is Col itself, in English, driven by its debug switches and its local API,
 # with a silent demo track, demo files and original lyrics, so no sound and no personal data (calendar, clipboard,
 # library) appear. The Col already running is quit first and opened again at the end.
-# COL_PARTS takes again only some of it: island, films, textedit, welcome, settings, readme (all of them by default).
+# COL_PARTS takes again only some of it: island, drawers, films, textedit, welcome, settings, readme, gifs (all of them
+# by default).
 # Only the pictures taken in this run are written to site/ and docs/.
 set -uo pipefail
 cd "$(dirname "$0")/.."
 BUILD="${COL_BUILD_DIR:-.build/xcode}"
 [[ "$BUILD" = /* ]] || BUILD="$PWD/$BUILD"
-APP="$BUILD/Build/Products/Debug/Col.app"
+# COL_CONFIGURATION=Release films the app as people get it: a debug build can take a second to draw a full drawer the
+# first time, and the drawer would then appear without its drop.
+CONFIGURATION="${COL_CONFIGURATION:-Debug}"
+APP="$BUILD/Build/Products/$CONFIGURATION/Col.app"
 DESKTOP="${COL_DESKTOP:?set COL_DESKTOP to a 3024 x 1964 PNG of a macOS desktop}"
 OUT=.build/site-shots
 TMP=$(mktemp -d)
@@ -20,7 +24,7 @@ touch "$TMP/start"
 PARTS=" ${COL_PARTS:-island drawers films textedit welcome settings readme gifs} "
 part() { [[ "$PARTS" == *" $1 "* ]]; }
 mkdir -p "$OUT"
-[ -d "$APP" ] || scripts/build.sh >/dev/null
+[ -d "$APP" ] || COL_BUILD_DIR="$BUILD" scripts/build.sh "$CONFIGURATION" >/dev/null
 # A socket of its own: the captures never reach another copy.
 export COL_SOCKET="$TMP/col.sock"
 COLCTL="$APP/Contents/Helpers/colctl"
@@ -35,10 +39,15 @@ LYRICS_EXISTED=$([ -d "$SUPPORT/Lyrics" ] && echo 1 || echo 0)
 WIDGETS="$SUPPORT/Widgets.json"
 [ -f "$WIDGETS" ] && cp -p "$WIDGETS" "$TMP/Widgets.json"
 PLAYER= BACKDROP=
+# `swift script.swift` runs the script in a process of its own, which outlives the swift command: these stop the demo
+# track and the desktop over the screen by their script's name.
+stop_player() { pkill -f "scripts/fake-player.swift" 2>/dev/null; PLAYER=; }
+stop_backdrop() { pkill -f "scripts/desktop-backdrop.swift" 2>/dev/null; BACKDROP=; }
 # Whatever happens, the desktop over the screen and the demo track go, the lyrics, the widgets and any folder the
 # captures made leave, and the user's copy comes back.
 cleanup() {
-  kill $PLAYER $BACKDROP 2>/dev/null
+  stop_player
+  stop_backdrop
   pkill -f "$APP/Contents/MacOS/Col" 2>/dev/null
   sleep 1
   rm -f "$LYRICS"
@@ -104,7 +113,7 @@ qwen3:8b" -showsLyricsInClosedIsland "${LYRICS_CLOSED:-NO}" -keepsClipboardHisto
 }
 # The demo track, restarted before each capture of the player so every picture shows the same moment of the song.
 player() {
-  [ -n "$PLAYER" ] && kill "$PLAYER" 2>/dev/null
+  stop_player
   ALBUM="Long Light" swift scripts/fake-player.swift "Golden Hour" "Sunset Avenue" 214 "$TMP/cover.png" >/dev/null 2>&1 &
   PLAYER=$!
   sleep 3
@@ -112,12 +121,59 @@ player() {
 post() { curl -s --unix-socket "$COL_SOCKET" -X POST "http://col/v1/agents/events?agent=$1" -d "$2" >/dev/null; }
 pid() { pgrep -f "$APP/Contents/MacOS/Col" | head -1; }
 backdrop() {
-  [ -n "$BACKDROP" ] && kill "$BACKDROP" 2>/dev/null
-  swift scripts/desktop-backdrop.swift "$DESKTOP" "$@" >/dev/null 2>&1 &
+  stop_backdrop
+  swift scripts/desktop-backdrop.swift "${BACKDROP_IMAGE:-$DESKTOP}" "$@" >/dev/null 2>&1 &
   BACKDROP=$!
   sleep 3
 }
 film() { swift scripts/record-film.swift "$OUT/$1.mov" "$2" "Col,$(pgrep -f desktop-backdrop | paste -sd, -)" "$3" 0 "$4" "$5" >/dev/null 2>&1; echo "  $1 (film)"; }
+RECORDER="$TMP/record-film"
+recorder() { [ -x "$RECORDER" ] || swiftc -O scripts/record-film.swift -o "$RECORDER" 2>/dev/null; }
+# click <x> <y>: a click at a point of the screen, in points from its top left corner.
+click() {
+  [ -x "$TMP/click" ] || swiftc -O - -o "$TMP/click" 2>/dev/null <<'SWIFT'
+import CoreGraphics
+import Foundation
+let a = CommandLine.arguments
+let point = CGPoint(x: Double(a[1])!, y: Double(a[2])!)
+for type in [CGEventType.mouseMoved, .leftMouseDown, .leftMouseUp] {
+    CGEvent(mouseEventSource: nil, mouseType: type, mouseCursorPosition: point, mouseButton: .left)?.post(tap: .cghidEventTap)
+    usleep(80_000)
+}
+SWIFT
+  "$TMP/click" "$1" "$2"
+}
+# still <name> <x> <y> <width> <height>: what the films see, as a picture: Col's windows and the desktop's, nothing else.
+still() {
+  recorder
+  "$RECORDER" "$TMP/still.mov" 1.5 "Col,$(pgrep -f desktop-backdrop | paste -sd, -)" "$2" "$3" "$4" "$5" >/dev/null 2>&1
+  swift - "$TMP/still.mov" "$OUT/$1.png" <<'SWIFT' >/dev/null 2>&1
+import AVFoundation
+import AppKit
+let a = CommandLine.arguments
+let asset = AVURLAsset(url: URL(fileURLWithPath: a[1]))
+let generator = AVAssetImageGenerator(asset: asset)
+generator.requestedTimeToleranceBefore = .zero
+generator.requestedTimeToleranceAfter = .zero
+let last = CMTimeSubtract(asset.duration, CMTime(value: 1, timescale: 60))
+let image = try! generator.copyCGImage(at: last, actualTime: nil)
+try! NSBitmapImageRep(cgImage: image).representation(using: .png, properties: [:])!.write(to: URL(fileURLWithPath: a[2]))
+SWIFT
+  [ -f "$OUT/$1.png" ] && echo "  $1"
+}
+# The drawers hang over the menu bar: their desktop lies under them. macOS draws the drawers' own items in a menu bar of
+# its own, which no capture of Col's windows holds, so the drawers' backdrop draws them where they are, on a desktop
+# without the picture's battery, Wi-Fi and Spotlight icons, where the items go (COL_DRAWERS_DESKTOP, by default
+# desktop-drawers.png beside COL_DESKTOP).
+DRAWERS_DESKTOP="${COL_DRAWERS_DESKTOP:-${DESKTOP%.png}-drawers.png}"
+[ -f "$DRAWERS_DESKTOP" ] || DRAWERS_DESKTOP="$DESKTOP"
+DRAWERS=(-ColIntro NO -tidiesMenuBar YES -ColDrawersDemo YES -ColDrawersQuiet YES -ColDrawersBackdrop "$DRAWERS_DESKTOP")
+# A drawer open over that desktop (0 is the first, all the All drawer): its window's "id x y width height", in points.
+open_drawer() {
+  BACKDROP_IMAGE="$DRAWERS_DESKTOP" backdrop 0 0
+  run "${DRAWERS[@]}" -ColDrawersOpen "$1"; sleep 6
+  windows | awk '$2==25' | sort -k5 -n -r | head -1 | awk '{print $1, $3, $4, $5, $6}'
+}
 # Widgets a home server, a washing machine and a build would push, for the Widgets place and Settings, Connect.
 widgets() {
   echo '{"title":"Living room","value":21.5,"unit":"°C","symbol":"thermometer.medium","tint":"orange","lines":["Humidity 48%","Window closed"],"buttons":[{"title":"Heat","url":"http://homeassistant.local:8123/api/webhook/heat","symbol":"flame.fill"}]}' \
@@ -290,7 +346,7 @@ for glass in liquid transparent tinted off; do
   player; GLASS=$glass run -ColOpen YES; sleep 3; shoot island "glass-$name"
 done
 fi
-kill "$BACKDROP" 2>/dev/null; BACKDROP=
+stop_backdrop
 
 echo "Windows:"
 # Where a copy comes from, for the clipboard scene: a real TextEdit window with its text selected. Only when TextEdit
@@ -332,32 +388,50 @@ if part gifs; then
 # (Col's own drawn notch, in the notch's place), and on a Mac without one (the pill in the menu bar). Then the drawers.
 echo "README films:"
 [ -n "$BACKDROP" ] || backdrop
-swiftc -O scripts/record-film.swift -o "$TMP/record-film" 2>/dev/null
+recorder
 SCREEN_W=$(swift -e 'import AppKit; print(Int(NSScreen.main!.frame.width))' 2>/dev/null || echo 1512)
 take() {   # take <name> <seconds> <x> <width> <height> <Col's switches…>
   local name=$1 seconds=$2 x=$3 width=$4 height=$5
   shift 5
   pkill -f "$APP/Contents/MacOS/Col" 2>/dev/null; sleep 0.8
-  "$TMP/record-film" "$OUT/$name.mov" "$seconds" "Col,$(pgrep -f desktop-backdrop | paste -sd, -)" "$x" 0 "$width" "$height" >/dev/null 2>&1 &
+  rm -f "$TMP/recorder.out"
+  "$RECORDER" "$OUT/$name.mov" "$seconds" "Col,$(pgrep -f desktop-backdrop | paste -sd, -)" "$x" 0 "$width" "$height" >"$TMP/recorder.out" 2>&1 &
   local recorder=$!
-  sleep 1.2
+  # Col opens 1.2 seconds into the film (run waits 0.6 of them): once the recording runs, which can take a moment.
+  for _ in {1..80}; do grep -q recording "$TMP/recorder.out" 2>/dev/null && break; sleep 0.1; done
+  sleep 0.6
   run "$@"
+  # What happens in the film once Col runs, when DURING names it.
+  local during=
+  if [ -n "${DURING:-}" ]; then "$DURING" & during=$!; fi
   wait $recorder
+  [ -n "$during" ] && wait $during
   echo "  $name (film)"
 }
-player; take readme-notch 11.5 $(( SCREEN_W / 2 - 400 )) 800 280 -ColIntro YES -playsIntroSound NO -ColFilm YES -ColNoNotch YES -floatingStyle notch
-player; take readme-pill 11.5 $(( SCREEN_W / 2 - 400 )) 800 280 -ColIntro YES -playsIntroSound NO -ColFilm YES -ColNoNotch YES -floatingStyle pill
-take readme-drawers 6 $(( SCREEN_W - 760 )) 760 560 -ColIntro NO -tidiesMenuBar YES -ColDrawersDemo YES -ColDrawersOpen all -ColDrawersQuiet YES \
-  -ColDrawersBackdrop "$DESKTOP"
+player; take readme-notch 13 $(( SCREEN_W / 2 - 400 )) 800 280 -ColIntro YES -playsIntroSound NO -ColFilm YES -ColNoNotch YES -floatingStyle notch
+player; take readme-pill 13 $(( SCREEN_W / 2 - 400 )) 800 280 -ColIntro YES -playsIntroSound NO -ColFilm YES -ColNoNotch YES -floatingStyle pill
+# The drawers, as people use them: a click on the first drawer's icon drops it, its apps arriving one after the other,
+# and a click on its neck sends it back. It is opened once first, to find its icon and frame it, wherever the menu bar
+# puts it. No song for this one.
+stop_player
+read -r _ dx _ dw _ <<< "$(open_drawer 0)"
+if [ -n "${dw:-}" ]; then
+  icon=$(( dx + dw / 2 ))
+  fx=$(( icon - 380 )); fx=$(( fx < 0 ? 0 : (fx > SCREEN_W - 760 ? SCREEN_W - 760 : fx) ))
+  drop() { sleep 2.4; click "$icon" 16; sleep 3.4; click "$icon" 16; }
+  DURING=drop take readme-drawers 9.5 $fx 760 330 "${DRAWERS[@]}"
+else
+  echo "  readme-drawers: no drawer"
+fi
 fi
 
 if part drawers; then
-# Col 3.1: the menu bar's drawers, in demo mode (generic icons, nothing of this Mac's menu bar), the All drawer open
-# over the website's desktop.
-run -tidiesMenuBar YES -ColDrawersDemo YES -ColDrawersOpen all -ColDrawersQuiet YES -ColDrawersBackdrop "$DESKTOP"; sleep 6
-line=$(windows | awk '$2==3' | head -1)
-if [ -n "$line" ]; then
-  screencapture -x -l "${line%% *}" "$OUT/drawers.png" && echo "  drawers"
+# The menu bar's drawers, in demo mode (generic icons, nothing of this Mac's menu bar): the All drawer dropped from its
+# icon, alone for the website, which lays it on its own desktop, and with the desktop and the menu bar for the README.
+read -r did dx dy dw dh <<< "$(open_drawer all)"
+if [ -n "${did:-}" ]; then
+  screencapture -x -o -l "$did" "$OUT/drawers.png" && echo "  drawers"
+  still drawers-desktop "$dx" 0 "$dw" "$dh"
 else
   echo "  drawers: no window"
 fi
@@ -374,8 +448,8 @@ for s in rest music-compact beneath-music beneath-privacy lyrics-compact home-op
   taken "$s" && cwebp -quiet -q 90 -alpha_q 100 -exact "$OUT/$s.png" -o "site/assets/island/$s.webp"
 done
 mkdir -p site/assets/menubar
-taken drawers && cwebp -quiet -q 90 -alpha_q 100 -exact "$OUT/drawers.png" -o site/assets/menubar/drawers.webp \
-  && cp site/assets/menubar/drawers.webp docs/images/drawers.webp
+taken drawers && cwebp -quiet -q 90 -alpha_q 100 -exact "$OUT/drawers.png" -o site/assets/menubar/drawers.webp
+taken drawers-desktop && cwebp -quiet -q 88 "$OUT/drawers-desktop.png" -o docs/images/drawers.webp
 for s in welcome-discover welcome-island welcome-gestures welcome-ready settings-appearance settings-pages settings-prompter settings-aiApps \
   settings-connect; do
   taken "$s" && cwebp -quiet -q 88 -alpha_q 100 "$OUT/$s.png" -o "site/assets/app/$s.webp"

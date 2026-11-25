@@ -13,21 +13,27 @@ OUT=docs/images
 command -v ffmpeg >/dev/null || { echo "ffmpeg is missing: brew install ffmpeg" >&2; exit 1; }
 mkdir -p "$OUT"
 
-# gif <input options...> -- <output> <fps> <width>: a palette made for the film itself, refreshed where frames change.
+# gif <input options...> -- <output> <fps> <width>: a palette made for the film itself, refreshed where frames change,
+# and the last frame held a moment before the picture starts again.
 gif() {
   local args=()
   while [ "$1" != -- ]; do args+=("$1"); shift; done
   shift
   local output=$1 fps=$2 width=$3
   ffmpeg -loglevel error -y "${args[@]}" -vf \
-    "fps=$fps,scale=$width:-2:flags=lanczos,split[a][b];[a]palettegen=max_colors=200:stats_mode=diff[p];[b][p]paletteuse=dither=sierra2_4a:diff_mode=rectangle" \
+    "tpad=stop_mode=clone:stop_duration=0.8,fps=$fps,scale=$width:-2:flags=lanczos,split[a][b];[a]palettegen=max_colors=200:stats_mode=diff[p];[b][p]paletteuse=dither=sierra2_4a:diff_mode=rectangle" \
     -loop 0 "$output"
   printf '  %-34s %6s KB\n' "$output" "$(( $(stat -f %z "$output") / 1024 ))"
 }
 
+# The films start 1.2 seconds before Col opens (scripts/capture-site.sh, take): the pictures start a second in, so the
+# bare desktop shows only a moment before the island comes.
+LEAD_IN=1.0
+
 echo "README pictures:"
 for name in notch pill drawers; do
-  [ -f "$SHOTS/readme-$name.mov" ] && gif -i "$SHOTS/readme-$name.mov" -- "$OUT/readme-$name.gif" 24 760
+  film="$SHOTS/readme-$name.mov"
+  [ -f "$film" ] && gif -ss "$LEAD_IN" -i "$film" -- "$OUT/readme-$name.gif" 20 760
 done
 if [ -n "${1:-}" ] && [ -d "$1" ]; then
   gif -framerate 25 -i "$1/frame-%04d.png" -- "$OUT/readme-windows.gif" 20 760
